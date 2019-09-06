@@ -1,16 +1,19 @@
 package operator;
 
+import dataStructure.Tuple;
+import dataStructure.DataTable;
+
 public class ScanOperator extends Operator {
 
-	void getNextTuple(){
-		
+	Tuple getNextTuple(){
+		return null;
 	}
 	
 	void reset() {
-		
+		return;
 	}
 	
-	void dump() {
-		
+	DataTable dump() {
+		return null;
 	}
 }
