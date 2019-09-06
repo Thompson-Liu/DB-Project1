@@ -1,6 +1,6 @@
 package operator;
 
-public abstract class Operator {
+public class ScanOperator extends Operator {
 
 	void getNextTuple(){
 		
