@@ -27,4 +27,12 @@ public class DataTable {
 	public ArrayList<Integer> getData(int index){
 		return data.get(index);
 	}
+	
+	public void printTable(DataTable dt) {
+		
+	}
+	
+	public void printTableInfo(DataTable dt) {
+		
+	}
 }

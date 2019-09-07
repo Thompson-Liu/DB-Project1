@@ -13,4 +13,12 @@ public class SelectInfo {
 	public void setSelectCol(List l) {
 		this.SelectCol=new ArrayList<String>(l);
 	}
+	
+	public void SetFrom(list l) {
+		this.From = new ArrayList<String>(l);
+	}
+	
+	public void printSelectInfo(SelectInfo s) {
+		System.out.println("Select Item "+Arrays.deepToString(SelectCol));
+	}
 }

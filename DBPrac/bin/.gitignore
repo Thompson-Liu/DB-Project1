@@ -1,8 +1,9 @@
-<<<<<<< HEAD
-/dataStructure/
-/operator/
-=======
-/parser/
-/dataStructure/
-/expression/
->>>>>>> c199446128db626e0a060f0878856f3b7e628a42
+/Catalog.class
+/DataTable.class
+/Operator.class
+/Parser.class
+/ParserExample.class
+/ScanOperator.class
+/SelectInfo.class
+/TableNameFinder.class
+/Tuple.class
