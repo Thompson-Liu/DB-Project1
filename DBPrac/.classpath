@@ -6,6 +6,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="/Users/mingzhaoliu/Dropbox/Homework/2019-2020 Fall/CS 4321/DB-Project1/jsqlparser.jar"/>
+=======
+	<classpathentry kind="lib" path="/Users/yutingyang/Desktop/db_prac/DB-Project1/DBPrac/jsqlparser.jar"/>
+>>>>>>> c199446128db626e0a060f0878856f3b7e628a42
 	<classpathentry kind="output" path="bin"/>
 </classpath>
