@@ -1,9 +1,4 @@
-/Catalog.class
-/DataTable.class
-/Operator.class
-/Parser.class
-/ParserExample.class
-/ScanOperator.class
-/SelectInfo.class
-/TableNameFinder.class
-/Tuple.class
+/parser/
+/dataStructure/
+/operator/
+/expression/

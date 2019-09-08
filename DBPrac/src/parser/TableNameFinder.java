@@ -1,7 +1,12 @@
 package parser;
 
+import java.util.*;
+
+import com.sun.tools.javac.util.StringUtils;
+
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
 import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.DoubleValue;
@@ -39,9 +44,24 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectVisitor;
 import net.sf.jsqlparser.statement.select.SubSelect;
+import net.sf.jsqlparser.statement.select.Union;
 
-public class TableNameFinder implements ExpressionVisitor {
+// To deal with nested recursion to find the list of tables using for SELECT
+public class TableNameFinder implements SelectVisitor, ExpressionVisitor{
+	
+	private ArrayList tables;
+	private Integer depth=0;   // for printing and testing purposes
+	
+	// everytime passing in this instance it will change the ArrayList tables
+	public List getTableList(Select select) {
+		tables = new ArrayList();
+		select.getSelectBody().accept(this);
+		return tables;
+	}
 
 	@Override
 	public void visit(NullValue arg0) {
@@ -100,6 +120,7 @@ public class TableNameFinder implements ExpressionVisitor {
 	@Override
 	public void visit(GreaterThan arg0) {
 		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -112,7 +133,9 @@ public class TableNameFinder implements ExpressionVisitor {
 	@Override
 	public void visit(MinorThan arg0) {
 		// TODO Auto-generated method stub
-
+        System.out.println("left=" + arg0.getLeftExpression() + 
+        		"  op=" +  arg0.getStringExpression() + "  right=" + arg0.getRightExpression());
+        
 	}
 
 	@Override
@@ -167,6 +190,14 @@ public class TableNameFinder implements ExpressionVisitor {
 	@Override
 	public void visit(AndExpression arg0) {
 		// TODO Auto-generated method stub
+        System.out.println( "depth is "+ Integer.toString(depth) + "AND");
+
+        depth++;
+        arg0.getLeftExpression().accept(this);
+        arg0.getRightExpression().accept(this);
+        if(  depth != 0 ){
+            depth--;
+        }
 		
 	}
 
@@ -266,6 +297,17 @@ public class TableNameFinder implements ExpressionVisitor {
 		
 	}
 
+	@Override
+	public void visit(PlainSelect arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Union arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

@@ -14,11 +14,15 @@ public class SelectInfo {
 		this.SelectCol=new ArrayList<String>(l);
 	}
 	
-	public void SetFrom(list l) {
+	public void SetFrom(List l) {
 		this.From = new ArrayList<String>(l);
 	}
 	
+	public void setWhere() {
+		this.where = 
+	}
+	
 	public void printSelectInfo(SelectInfo s) {
-		System.out.println("Select Item "+Arrays.deepToString(SelectCol));
+		System.out.println("Select Item "+Arrays.toString(SelectCol.toArray()));
 	}
 }
