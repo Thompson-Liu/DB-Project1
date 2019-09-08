@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import dataStructure.Catalog;
+import dataStructure.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
@@ -43,7 +44,11 @@ public class Interpreter {
 				ScanOperator scanOperator= new ScanOperator(tableName);
 				EvaluateExpression expressionVisitor= new EvaluateExpression(scanOperator.getNextTuple(),
 					fileName.getName());
-				System.out.println(expressionVisitor.evaluate(plainSelect).printData());
+				System.out.println("plain select is " + plainSelect.toString());
+				Tuple rst= expressionVisitor.evaluate(plainSelect);
+				if (rst != null) {
+					System.out.println(rst.printData());
+				}
 				System.out.println("there");
 //				System.out.println("select items are" + plainSelect.getSelectItems());
 //				System.out.println("from items are" + plainSelect.getFromItem());

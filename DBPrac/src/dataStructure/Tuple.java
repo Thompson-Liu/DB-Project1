@@ -24,7 +24,6 @@ public class Tuple {
 	}
 
 	public String printData() {
-		if (dataTuple == null) { return ""; }
 		String str= "";
 		for (int x : dataTuple) {
 			str+= x + " ";
