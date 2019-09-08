@@ -1,1 +1,7 @@
 /.metadata/
+jsqlparser.jar
+/DBPrac/bin/
+/DBPrac/db/
+/DBPrac/.classpath
+/DBPrac/.project
+/DBPrac/.settings

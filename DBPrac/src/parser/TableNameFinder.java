@@ -1,12 +1,11 @@
 package parser;
 
-import java.util.*;
-
-import com.sun.tools.javac.util.StringUtils;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
-import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
 import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.DoubleValue;
@@ -48,25 +47,24 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.FromItemVisitor;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectVisitor;
 import net.sf.jsqlparser.statement.select.SubJoin;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.select.Union;
 
 // To deal with nested recursion to find the list of tables using for SELECT
-public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromItemVisitor{
-	
+public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromItemVisitor {
+
 	private ArrayList tables;
-	private Integer depth=0;   // for printing and testing purposes
-	
+	private Integer depth= 0;   // for printing and testing purposes
+
 	@Override
 	public void visit(PlainSelect plainSelect) {
-		plainSelect.getFromItem().accept((FromItemVisitor) this);
-		
+		plainSelect.getFromItem().accept(this);
+
 		if (plainSelect.getJoins() != null) {
-			for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
-				Join join = (Join) joinsIt.next();
+			for (Iterator joinsIt= plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
+				Join join= (Join) joinsIt.next();
 				join.getRightItem().accept(this);
 			}
 		}
@@ -74,11 +72,11 @@ public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromIt
 			plainSelect.getWhere().accept(this);
 
 	}
-	
+
 	// everytime passing in this instance it will change the ArrayList tables
 	public List getTableList(PlainSelect select) {
-		tables = new ArrayList();
-		select.getSelectBody().accept(this);
+		tables= new ArrayList();
+		select.accept(this);
 		return tables;
 	}
 
@@ -126,9 +124,8 @@ public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromIt
 
 	@Override
 	public void visit(Parenthesis arg0) {
-		
-	}
 
+	}
 
 	@Override
 	public void visit(EqualsTo arg0) {
@@ -139,7 +136,6 @@ public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromIt
 	@Override
 	public void visit(GreaterThan arg0) {
 		// TODO Auto-generated method stub
-		
 
 	}
 
@@ -152,9 +148,9 @@ public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromIt
 	@Override
 	public void visit(MinorThan arg0) {
 		// TODO Auto-generated method stub
-        System.out.println("left=" + arg0.getLeftExpression() + 
-        		"  op=" +  arg0.getStringExpression() + "  right=" + arg0.getRightExpression());
-        
+		System.out.println("left=" + arg0.getLeftExpression() +
+			"  op=" + arg0.getStringExpression() + "  right=" + arg0.getRightExpression());
+
 	}
 
 	@Override
@@ -179,154 +175,152 @@ public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromIt
 	@Override
 	public void visit(StringValue arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Addition arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Division arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Multiplication arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Subtraction arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(AndExpression arg0) {
-        arg0.getLeftExpression().accept(this);
-        arg0.getRightExpression().accept(this);
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
 
-		
 	}
 
 	@Override
 	public void visit(OrExpression arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Between arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(InExpression arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(IsNullExpression arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(LikeExpression arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(SubSelect arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(CaseExpression arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(WhenClause arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(ExistsExpression arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(AllComparisonExpression arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(AnyComparisonExpression arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Concat arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Matches arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(BitwiseAnd arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(BitwiseOr arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(BitwiseXor arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Union arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Table arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(SubJoin arg0) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 }
