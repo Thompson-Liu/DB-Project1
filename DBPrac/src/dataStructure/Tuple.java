@@ -16,7 +16,11 @@ public class Tuple {
 		}
 	}
 	
-	public ArrayList<Integer> getData() {
+	public ArrayList<Integer> getTuple() {
 		return dataTuple;
+	}
+	
+	public int getData(int index) {
+		return dataTuple.get(index);
 	}
 }

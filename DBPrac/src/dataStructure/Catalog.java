@@ -1,16 +1,17 @@
 package dataStructure;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Catalog {
 	
 	private static Catalog dbCatalog = null;
 	private HashMap<String, String> tableDir;
-	private HashMap<String, String[]> tableSchema;
+	private HashMap<String, ArrayList<String>> tableSchema;
 	
 	private Catalog() {
 		tableDir = new HashMap<String, String>();
-		tableSchema = new HashMap<String, String[]>();
+		tableSchema = new HashMap<String, ArrayList<String>>();
 	}
 	
 	public static Catalog getInstance() {
@@ -24,7 +25,7 @@ public class Catalog {
 		return tableDir.get(name);
 	}
 	
-	public String[] getSchema(String name) {
+	public ArrayList<String> getSchema(String name) {
 		return tableSchema.get(name);
 	}
 	
@@ -32,7 +33,7 @@ public class Catalog {
 		tableDir.put(name, dir);
 	}
 	
-	public void addSchema(String name, String[] schema) {
+	public void addSchema(String name, ArrayList<String> schema) {
 		tableSchema.put(name, schema);
 	}
 }
