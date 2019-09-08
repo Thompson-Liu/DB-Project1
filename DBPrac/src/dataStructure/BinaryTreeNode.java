@@ -8,7 +8,7 @@ public class BinaryTreeNode<T> {
 	   //================================================================
 	   //  Creates a new tree node with the specified data.
 	   //================================================================
-	   BinaryTreeNode (T obj) 
+	   public BinaryTreeNode (T obj) 
 	   {
 	      element = obj;
 	      left = null;
@@ -27,4 +27,4 @@ public class BinaryTreeNode<T> {
 		   this.right = right;
 	   }
 	   
-	}  // class BinaryTreeNode
+	}  
