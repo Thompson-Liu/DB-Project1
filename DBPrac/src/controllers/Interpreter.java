@@ -8,6 +8,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import parser.EvaluateExpression;
+import operator.ScanOperator;
 
 public class Interpreter {
 
@@ -25,6 +26,7 @@ public class Interpreter {
 				System.out.println("Select body is " + select.getSelectBody());
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
+				String fileName = plainSelect.getFromItem();
 //				System.out.println("select items are" + plainSelect.getSelectItems());
 //				System.out.println("from items are" + plainSelect.getFromItem());
 //				System.out.println("remaining from items" + plainSelect.getJoins());
@@ -33,6 +35,8 @@ public class Interpreter {
 			System.err.println("Exception occurred during parsing");
 			e.printStackTrace();
 		}
+		
+		
 
 		EvaluateExpression expressionVisitor= new EvaluateExpression();
 
