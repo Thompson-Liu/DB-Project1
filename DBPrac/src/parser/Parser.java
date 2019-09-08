@@ -43,10 +43,13 @@ public class Parser {
 			
 			// Where clause dealing
 			TableNameFinder tableName = new TableNameFinder();
-			Expression whereClause = plainSelect.getWhere();
-			if(whereClause !=null) {
-				whereClause.accept(tableName);// this calling will change the tableName
-			}
+			List tableList = tableName.getTableList(plainSelect);
+			
+			
+//			Expression whereClause = plainSelect.getWhere();
+//			if(whereClause !=null) {
+//				whereClause.accept(tableName);// this calling will change the tableName
+//			}
 			
 			
 			

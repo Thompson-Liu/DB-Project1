@@ -44,20 +44,39 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.select.FromItemVisitor;
+import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectVisitor;
+import net.sf.jsqlparser.statement.select.SubJoin;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.select.Union;
 
 // To deal with nested recursion to find the list of tables using for SELECT
-public class TableNameFinder implements SelectVisitor, ExpressionVisitor{
+public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromItemVisitor{
 	
 	private ArrayList tables;
 	private Integer depth=0;   // for printing and testing purposes
 	
+	@Override
+	public void visit(PlainSelect plainSelect) {
+		plainSelect.getFromItem().accept((FromItemVisitor) this);
+		
+		if (plainSelect.getJoins() != null) {
+			for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
+				Join join = (Join) joinsIt.next();
+				join.getRightItem().accept(this);
+			}
+		}
+		if (plainSelect.getWhere() != null)
+			plainSelect.getWhere().accept(this);
+
+	}
+	
 	// everytime passing in this instance it will change the ArrayList tables
-	public List getTableList(Select select) {
+	public List getTableList(PlainSelect select) {
 		tables = new ArrayList();
 		select.getSelectBody().accept(this);
 		return tables;
@@ -298,13 +317,19 @@ public class TableNameFinder implements SelectVisitor, ExpressionVisitor{
 	}
 
 	@Override
-	public void visit(PlainSelect arg0) {
+	public void visit(Union arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void visit(Union arg0) {
+	public void visit(Table arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(SubJoin arg0) {
 		// TODO Auto-generated method stub
 		
 	}
