@@ -1,5 +1,10 @@
 package parser;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
+import dataStructure.Catalog;
+import dataStructure.Tuple;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
@@ -39,35 +44,31 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-import dataStructure.Tuple;
-import dataStructure.Catalog;
-import java.util.ArrayList;
-import java.util.Stack;
-
-import dataStructure.BinaryTreeNode;
-
 public class EvaluateExpression implements ExpressionVisitor {
-	
+
 	private Stack<Integer> sofar;
 	private Tuple dataTuple;
 	private ArrayList<String> schema;
-	
+
 	public EvaluateExpression(Tuple data, String tableName) {
-		sofar = new Stack<Integer>();
-		dataTuple = data;
-		schema = Catalog.getInstance().getSchema(tableName);
+		sofar= new Stack<Integer>();
+		dataTuple= data;
+		schema= Catalog.getInstance().getSchema(tableName);
 	}
-	
-	public Tuple evaluate() {
-		int result = sofar.pop();
-		if (result == 1)	
+
+	public Tuple evaluate(PlainSelect plainselect) {
+		plainselect.getWhere().accept(this);
+		if (sofar.size() == 0) { return dataTuple; }
+		int result= sofar.pop();
+		if (result == 1)
 			return dataTuple;
-		else	
+		else
 			return null;
 	}
-	
+
 	@Override
 	public void visit(NullValue arg0) {
 		return;
@@ -95,7 +96,7 @@ public class EvaluateExpression implements ExpressionVisitor {
 
 	@Override
 	public void visit(LongValue arg0) {
-		sofar.push((int)(arg0.getValue()));
+		sofar.push((int) (arg0.getValue()));
 	}
 
 	@Override
@@ -148,8 +149,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(AndExpression arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right =sofar.pop();
-		int left = sofar.pop();
+		int right= sofar.pop();
+		int left= sofar.pop();
 		sofar.push((right == left && left == 1) ? 1 : 0);
 	}
 
@@ -167,8 +168,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(EqualsTo arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right =sofar.pop();
-		int left = sofar.pop();
+		int right= sofar.pop();
+		int left= sofar.pop();
 		sofar.push((left == right) ? 1 : 0);
 	}
 
@@ -176,8 +177,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(GreaterThan arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right = sofar.pop();
-		int left = sofar.pop();
+		int right= sofar.pop();
+		int left= sofar.pop();
 		sofar.push((left > right) ? 1 : 0);
 	}
 
@@ -185,8 +186,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(GreaterThanEquals arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right = sofar.pop();
-		int left = sofar.pop();
+		int right= sofar.pop();
+		int left= sofar.pop();
 		sofar.push((left >= right) ? 1 : 0);
 	}
 
@@ -209,8 +210,10 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(MinorThan arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right = sofar.pop();
-		int left = sofar.pop();
+		int right= sofar.pop();
+		int left= sofar.pop();
+		System.out.println(left);
+		System.out.println(right);
 		sofar.add((left < right) ? 1 : 0);
 	}
 
@@ -218,8 +221,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(MinorThanEquals arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right = sofar.pop();
-		int left = sofar.pop();
+		int right= sofar.pop();
+		int left= sofar.pop();
 		sofar.add((left <= right) ? 1 : 0);
 	}
 
@@ -227,14 +230,14 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(NotEqualsTo arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right =sofar.pop();
-		int left = sofar.pop();
+		int right= sofar.pop();
+		int left= sofar.pop();
 		sofar.add((left != right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(Column arg0) {
-		int index = schema.indexOf(arg0.getColumnName());
+		int index= schema.indexOf(arg0.getColumnName());
 		sofar.push(dataTuple.getData(index));
 	}
 
