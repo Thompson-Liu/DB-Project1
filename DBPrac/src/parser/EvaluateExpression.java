@@ -60,6 +60,14 @@ public class EvaluateExpression implements ExpressionVisitor {
 		schema = Catalog.getInstance().getSchema(tableName);
 	}
 	
+	public Tuple evaluate() {
+		int result = sofar.pop();
+		if (result == 1)	
+			return dataTuple;
+		else	
+			return null;
+	}
+	
 	@Override
 	public void visit(NullValue arg0) {
 		return;
