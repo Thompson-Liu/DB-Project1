@@ -10,10 +10,12 @@ public class DataTable {
 	
 	private String name;
 	private ArrayList<ArrayList<Integer>> data;
+	private A
 	
 	public DataTable(String tableName) {
 		name = tableName;
 		data = new ArrayList<ArrayList<Integer>>();
+		
 	}
 	
 	public String getTableName() {
