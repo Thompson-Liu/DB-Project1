@@ -40,13 +40,18 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
+import dataStructure.BinaryTreeNode;;
 
 public class EvaluateExpression implements ExpressionVisitor {
 
+	private BinaryTreeNode node;
+	
+	public boolean 
+	
 	@Override
 	public void visit(NullValue arg0) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -112,6 +117,7 @@ public class EvaluateExpression implements ExpressionVisitor {
 	@Override
 	public void visit(Addition arg0) {
 		// TODO Auto-generated method stub
+		
 
 	}
 

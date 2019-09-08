@@ -1,6 +1,7 @@
 package parser;
 
 import java.io.FileReader;
+import dataStructure.BinaryTreeNode;
 import expression.*;
 import java.util.*;
 
@@ -44,6 +45,7 @@ public class Parser {
 			// Where clause dealing
 			TableNameFinder tableName = new TableNameFinder();
 			List tableList = tableName.getTableList(plainSelect);
+			BinaryTreeNode a = EvaluateExpression.getNode(plainSelect);
 			
 			
 //			Expression whereClause = plainSelect.getWhere();
