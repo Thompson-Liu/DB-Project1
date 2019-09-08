@@ -52,12 +52,20 @@ public class EvaluateExpression implements ExpressionVisitor {
 	
 	private Stack<Integer> sofar;
 	private Tuple dataTuple;
-	private String[] schema;
+	private ArrayList<String> schema;
 	
 	public EvaluateExpression(Tuple data, String tableName) {
 		sofar = new Stack<Integer>();
 		dataTuple = data;
 		schema = Catalog.getInstance().getSchema(tableName);
+	}
+	
+	public Tuple evaluate() {
+		int result = sofar.pop();
+		if (result == 1)	
+			return dataTuple;
+		else	
+			return null;
 	}
 	
 	@Override
@@ -226,7 +234,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 
 	@Override
 	public void visit(Column arg0) {
-		// TODO Auto-generated method stub
+		int index = schema.indexOf(arg0.getColumnName());
+		sofar.add(dataTuple.getData(index));
 		return;
 	}
 

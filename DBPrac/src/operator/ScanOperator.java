@@ -47,7 +47,7 @@ public class ScanOperator extends Operator {
 			return null;
 		} else {
 			Tuple tuple = new Tuple(read);
-			data.addData(tuple.getData());
+			data.addData(tuple.getTuple());
 			return tuple;
 		}
 	}
