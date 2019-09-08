@@ -33,7 +33,6 @@ public class ScanOperator extends Operator {
 		} catch (IOException e) {
 			System.err.println("Marking stream returns an error");
 		}
-		
 	}
 	
 	public Tuple getNextTuple(){
