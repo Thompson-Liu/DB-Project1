@@ -235,8 +235,7 @@ public class EvaluateExpression implements ExpressionVisitor {
 	@Override
 	public void visit(Column arg0) {
 		int index = schema.indexOf(arg0.getColumnName());
-		sofar.add(dataTuple.getData(index));
-		return;
+		sofar.push(dataTuple.getData(index));
 	}
 
 	@Override
