@@ -6,6 +6,10 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="/Users/ziweigu/Desktop/Fall 2019/CS 4321/jsqlparser/jsqlparser.jar"/>
+=======
+	<classpathentry kind="lib" path="/Users/mingzhaoliu/Dropbox/Homework/2019-2020 Fall/CS 4321/DB-Project1/jsqlparser.jar"/>
+>>>>>>> 7fc9773019f9b59cbdff5726f37e1a6a470087d9
 	<classpathentry kind="output" path="bin"/>
 </classpath>

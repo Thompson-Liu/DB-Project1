@@ -41,6 +41,8 @@ import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
+import dataStructure.Tuple;
+import dataStructure.Catalog;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -49,82 +51,73 @@ import dataStructure.BinaryTreeNode;
 public class EvaluateExpression implements ExpressionVisitor {
 	
 	private Stack<Integer> sofar;
+	private Tuple dataTuple;
+	private String[] schema;
+	
+	public EvaluateExpression(Tuple data, String tableName) {
+		sofar = new Stack<Integer>();
+		dataTuple = data;
+		schema = Catalog.getInstance().getSchema(tableName);
+	}
 	
 	@Override
 	public void visit(NullValue arg0) {
-		// TODO Auto-generated method stub
+		return;
 	}
 
 	@Override
 	public void visit(Function arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(InverseExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(JdbcParameter arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(DoubleValue arg0) {
-		// TODO Auto-generated method stub
+		return;
 	}
 
 	@Override
 	public void visit(LongValue arg0) {
-		// TODO Auto-generated method stub
-		sofar.push((int) (long)(arg0.getValue()));
-
+		sofar.push((int)(arg0.getValue()));
 	}
 
 	@Override
 	public void visit(DateValue arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(TimeValue arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(TimestampValue arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(Parenthesis arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(StringValue arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(Addition arg0) {
-		// TODO Auto-generated method stub
-		arg0.getLeftExpression();
-		arg0.getRightExpression();
-		Integer right =sofar.pop();
-		Integer left = sofar.pop();
-		sofar.add(left+right);
-		
-
+		return;
 	}
 
 	@Override
@@ -135,182 +128,161 @@ public class EvaluateExpression implements ExpressionVisitor {
 
 	@Override
 	public void visit(Multiplication arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(Subtraction arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(AndExpression arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
+		int right =sofar.pop();
+		int left = sofar.pop();
+		sofar.push((right == left && left == 1) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(OrExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(Between arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(EqualsTo arg0) {
-		// TODO Auto-generated method stub
-
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right =sofar.pop();
+		int left = sofar.pop();
+		sofar.push((left == right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(GreaterThan arg0) {
-		// TODO Auto-generated method stub
-		arg0.getLeftExpression().accept(this);;
-		arg0.getRightExpression().accept(this);;
-		Integer right =sofar.pop();
-		Integer left = sofar.pop();
-		sofar.add((left>right)?1 : 0);
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right = sofar.pop();
+		int left = sofar.pop();
+		sofar.push((left > right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(GreaterThanEquals arg0) {
-		// TODO Auto-generated method stub
-		arg0.getLeftExpression().accept(this);;
-		arg0.getRightExpression().accept(this);;
-		Integer right =sofar.pop();
-		Integer left = sofar.pop();
-		sofar.add((left>=right)?1 : 0);
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right = sofar.pop();
+		int left = sofar.pop();
+		sofar.push((left >= right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(InExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(IsNullExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(LikeExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(MinorThan arg0) {
-		// TODO Auto-generated method stub
-		arg0.getLeftExpression().accept(this);;
-		arg0.getRightExpression().accept(this);;
-		Integer right =sofar.pop();
-		Integer left = sofar.pop();
-		sofar.add((left<right)?0 : 1);
-
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right = sofar.pop();
+		int left = sofar.pop();
+		sofar.add((left < right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(MinorThanEquals arg0) {
-		// TODO Auto-generated method stub
-		arg0.getLeftExpression().accept(this);;
-		arg0.getRightExpression().accept(this);;
-		Integer right =sofar.pop();
-		Integer left = sofar.pop();
-		sofar.add((left<=right)?0 : 1);
-
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right = sofar.pop();
+		int left = sofar.pop();
+		sofar.add((left <= right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(NotEqualsTo arg0) {
-		// TODO Auto-generated method stub
-		arg0.getLeftExpression().accept(this);;
-		arg0.getRightExpression().accept(this);;
-		Integer right =sofar.pop();
-		Integer left = sofar.pop();
-		sofar.add((left==right)?1 : 0);
-
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right =sofar.pop();
+		int left = sofar.pop();
+		sofar.add((left != right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(Column arg0) {
 		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(SubSelect arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(CaseExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(WhenClause arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(ExistsExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(AllComparisonExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(AnyComparisonExpression arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(Concat arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(Matches arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(BitwiseAnd arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(BitwiseOr arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(BitwiseXor arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 }
