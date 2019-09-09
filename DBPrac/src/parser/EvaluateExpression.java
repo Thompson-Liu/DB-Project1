@@ -63,8 +63,11 @@ public class EvaluateExpression implements ExpressionVisitor {
 		
 		// Double Check
 		plainselect.getWhere().accept(this);
+		System.out.println("sofar");
+		System.out.println(sofar.toString());
 		if (sofar.size() == 0) { return dataTuple; }
 		int result= sofar.pop();
+		System.out.println(result);
 		if (result == 1)
 			return dataTuple;
 		else
