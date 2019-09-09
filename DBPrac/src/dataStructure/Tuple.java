@@ -24,10 +24,10 @@ public class Tuple {
 	}
 
 	public String printData() {
-		if (dataTuple == null) { return ""; }
-		String str= "";
+		String str = "";
+		if (dataTuple == null) { return str; }
 		for (int x : dataTuple) {
-			str+= x + " ";
+			str += (x + " ");
 		}
 		return str;
 	}

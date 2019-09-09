@@ -60,6 +60,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	}
 
 	public Tuple evaluate(PlainSelect plainselect) {
+		
+		// Double Check
 		plainselect.getWhere().accept(this);
 		if (sofar.size() == 0) { return dataTuple; }
 		int result= sofar.pop();
@@ -131,8 +133,7 @@ public class EvaluateExpression implements ExpressionVisitor {
 
 	@Override
 	public void visit(Division arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override

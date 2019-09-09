@@ -63,4 +63,9 @@ public class ScanOperator extends Operator {
 	public DataTable dump() {
 		return data;
 	}
+	
+	// Used in SelectOp if an invalid tuple is added to DataTable when reading
+	public void removeLastTuple() {
+		data.deleteLastData();
+	}
 }
