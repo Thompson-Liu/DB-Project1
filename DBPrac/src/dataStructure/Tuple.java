@@ -6,6 +6,10 @@ public class Tuple {
 
 	private ArrayList<Integer> dataTuple;
 
+	public Tuple() {
+		dataTuple = new ArrayList<Integer>();
+	}
+	
 	public Tuple(String dataInStr) {
 		String strArr[]= dataInStr.split(",");
 		dataTuple= new ArrayList<Integer>(strArr.length);
@@ -17,6 +21,10 @@ public class Tuple {
 
 	public ArrayList<Integer> getTuple() {
 		return dataTuple;
+	}
+	
+	public void addData(int data) {
+		dataTuple.add(data);
 	}
 
 	public int getData(int index) {

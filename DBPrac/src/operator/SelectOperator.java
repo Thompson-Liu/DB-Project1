@@ -9,19 +9,19 @@ import parser.EvaluateExpression;
 public class SelectOperator extends ScanOperator {
 
 	private String tableName;
-	PlainSelect select;
+	private PlainSelect plainSelect;
 	
-	public SelectOperator (String name, PlainSelect selectClause) {
+	public SelectOperator (String name, PlainSelect ps) {
 		super(name);
 		tableName = name;
-		select = selectClause;
+		plainSelect = ps;
 	}
 	
 	public Tuple getNextTuple(){
 		Tuple next;
 		while ((next = super.getNextTuple()) != null) {
 			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
-			if ((next = exprVisitor.evaluate(select)) != null) {
+			if ((next = exprVisitor.evaluate(plainSelect)) != null) {
 				return next;
 			} else {
 				super.removeLastTuple();
