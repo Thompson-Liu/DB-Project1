@@ -10,6 +10,7 @@ import net.sf.jsqlparser.expression.AnyComparisonExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
 import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.InverseExpression;
@@ -59,10 +60,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 		schema= Catalog.getInstance().getSchema(tableName);
 	}
 
-	public Tuple evaluate(PlainSelect plainselect) {
-		
-		// Double Check
-		plainselect.getWhere().accept(this);
+	public Tuple evaluate(Expression expr) {
+		expr.accept(this);
 		System.out.println("sofar");
 		System.out.println(sofar.toString());
 		if (sofar.size() == 0) { return dataTuple; }
