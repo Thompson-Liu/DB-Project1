@@ -22,14 +22,14 @@ public class SelectOperator extends ScanOperator{
 	public Tuple getNextTuple(){
 		Tuple next;
 		
-//		if ((next = this.getNextTuple()) != null) {
-//			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
-//			if ((next = exprVisitor.evaluate(exp)) != null) {
-//				return next;
-//			} else {
-//				this.removeLastTuple();
-//			}
-//		}
+		if ((next = this.getNextTuple()) != null) {
+			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
+			if ((next = exprVisitor.evaluate(exp)) != null) {
+				return next;
+			} else {
+				this.removeLastTuple();
+			}
+		}
 		return null;
 	}
 	
