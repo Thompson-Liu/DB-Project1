@@ -24,9 +24,7 @@ public class SelectOperator extends ScanOperator {
 			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
 			if ((next = exprVisitor.evaluate(exp)) != null) {
 				return next;
-			} else {
-				super.removeLastTuple();
-			}
+			} 
 		}
 		return null;
 	}

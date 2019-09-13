@@ -14,13 +14,11 @@ import java.util.ArrayList;
 public class ScanOperator extends Operator {
 
 	// Check if this will be inherited by the children class
-	private DataTable data;
 	private BufferedReader br;
 	private String tableName;
 	
 	public ScanOperator(String name) {
 		tableName = name;
-		data = new DataTable(name);
 		
 		Catalog catalog = Catalog.getInstance();
 		String dir = catalog.getDir(name);
@@ -49,9 +47,7 @@ public class ScanOperator extends Operator {
 		if (read == null) {
 			return null;
 		} else {
-			Tuple tuple = new Tuple(read);
-			data.addData(tuple.getTuple());
-			return tuple;
+			return (new Tuple(read));
 		}
 	}
 	
@@ -64,16 +60,12 @@ public class ScanOperator extends Operator {
 	}
 	
 	public DataTable dump() {
+		DataTable data = new DataTable("Output");
+		Tuple tup;
+		while ((tup = getNextTuple()) != null) {
+			data.addData(tup.getTuple());
+		}
 		return data;
-	}
-	
-	// Used in SelectOp if an invalid tuple is added to DataTable when reading
-	public void removeLastTuple() {
-		data.deleteLastData();
-	}
-	
-	public void addNewTuple(Tuple tup) {
-		data.addData(tup.getTuple());
 	}
 	
 	public String getTableName() {

@@ -43,9 +43,6 @@ public class ProjectOperator extends ScanOperator {
 				tup.addData(next.getData(index));
 			}
 		}
-		SelectOperator selectOp = (SelectOperator)childOp;
-		selectOp.removeLastTuple();
-		selectOp.addNewTuple(tup);
 		return tup;
 	}
 	
