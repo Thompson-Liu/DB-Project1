@@ -40,8 +40,10 @@ public class Interpreter {
 				schem.add("E");
 				schem.add("F");
 				cat.addSchema(tableName, schem);
+				
+				OperatorFactory opfact = new Operator
 
-				ScanOperator scanOperator= new ScanOperator(tableName);
+				scanOperator= new ScanOperator(tableName);
 				EvaluateExpression expressionVisitor= new EvaluateExpression(scanOperator.getNextTuple(),
 					fileName.getName());
 //				System.out.println("plain select is " + plainSelect.toString());

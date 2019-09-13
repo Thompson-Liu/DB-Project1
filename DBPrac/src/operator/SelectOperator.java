@@ -15,14 +15,12 @@ public class SelectOperator extends ScanOperator{
 	
 	public SelectOperator (String tableName, Expression expression) {
 		super(tableName);
-		this.tableName = tableName;
 		exp = expression;
 	}
 	
 	public Tuple getNextTuple(){
 		Tuple next;
-		
-		if ((next = this.getNextTuple()) != null) {
+		while ((next = this.getNextTuple()) != null){
 			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
 			if ((next = exprVisitor.evaluate(exp)) != null) {
 				return next;
