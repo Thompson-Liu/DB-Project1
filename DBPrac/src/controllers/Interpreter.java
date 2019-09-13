@@ -19,8 +19,6 @@ public class Interpreter {
 	private static final String queriesFile= "queries.sql";
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
 		try {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(queriesFile));
 			Statement statement;
@@ -43,16 +41,16 @@ public class Interpreter {
 
 				ScanOperator scanOperator= new ScanOperator(tableName);
 				EvaluateExpression expressionVisitor= new EvaluateExpression(scanOperator.getNextTuple(),
-					fileName.getName());
+						fileName.getName());
 				System.out.println("plain select is " + plainSelect.toString());
-				Tuple rst= expressionVisitor.evaluate(plainSelect);
+				Tuple rst= expressionVisitor.evaluate(plainSelect.getWhere());
 				if (rst != null) {
 					System.out.println(rst.printData());
 				}
 				System.out.println("there");
-//				System.out.println("select items are" + plainSelect.getSelectItems());
-//				System.out.println("from items are" + plainSelect.getFromItem());
-//				System.out.println("remaining from items" + plainSelect.getJoins());
+				//					System.out.println("select items are" + plainSelect.getSelectItems());
+				//					System.out.println("from items are" + plainSelect.getFromItem());
+				//					System.out.println("remaining from items" + plainSelect.getJoins());
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
@@ -62,3 +60,5 @@ public class Interpreter {
 	}
 
 }
+
+
