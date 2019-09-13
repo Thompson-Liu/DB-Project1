@@ -2,6 +2,7 @@ package operator;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import dataStructure.DataTable;
@@ -13,12 +14,17 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import parser.EvaluateExpression;
 import parser.EvaluateWhere;
 
-public class joinOperator extends Operator {
+public class joinOperator extends SelectOperator {
 	
 	private String tableName;
 	private DataTable joinResultTable;
 	private ArrayList<Table> joinTables;
+	private Expression joinExp;
 	
+	public joinOperator(String tableName, Expression expression) {
+		super(tableName, expression);
+		joinExp = expression;
+	}
 	
 	public DataTable getJoinTables(PlainSelect plainSelect) {
 		Table left = (Table) plainSelect.getFromItem();
@@ -31,7 +37,7 @@ public class joinOperator extends Operator {
 		return joinResultTable;
 	}
 	
-	// Take in the WHEREpreprocesed left table and fully join with the right table
+	// Take in the WHERE preprocesed left table and fully join with the right table
 	private DataTable twoTableJoin(DataTable left, DataTable right, Expression whereExp) {
 		ArrayList<String> leftSchema = left.getSchema();
 		ArrayList<String> rightSchema = right.getSchema();
@@ -58,8 +64,8 @@ public class joinOperator extends Operator {
 //		fw.createNewFile();
 //		BufferedWriter WriterFileBuffer = new BufferedWriter(fw);
 //		}
-//		catch() {
-//			System.out.
+//		catch(IOException e) {
+//			System.err.println("Marking stream returns an error");
 //		}
 	}
 	
