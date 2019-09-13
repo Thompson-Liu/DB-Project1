@@ -3,13 +3,13 @@ package operator;
 import java.io.BufferedReader;
 import dataStructure.DataTable;
 import dataStructure.Tuple;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import parser.EvaluateExpression;
 
 public class SelectOperator extends ScanOperator{
 
 	private String tableName;
+<<<<<<< HEAD
 	private DataTable data;
 	private Expression exp;
 	
@@ -17,6 +17,14 @@ public class SelectOperator extends ScanOperator{
 		super(tableName);
 		this.tableName = tableName;
 		exp = expression;
+=======
+	private PlainSelect plainSelect;
+	
+	public SelectOperator (String name, PlainSelect ps) {
+		super(name);
+		tableName = name;
+		plainSelect = ps;
+>>>>>>> parent of 7f41304... expressionvisitor
 	}
 	
 	public Tuple getNextTuple(){
@@ -24,7 +32,7 @@ public class SelectOperator extends ScanOperator{
 		
 		if ((next = this.getNextTuple()) != null) {
 			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
-			if ((next = exprVisitor.evaluate(exp)) != null) {
+			if ((next = exprVisitor.evaluate(plainSelect)) != null) {
 				return next;
 			} else {
 				this.removeLastTuple();
