@@ -9,9 +9,9 @@ public class DataTable {
 	private ArrayList<ArrayList<Integer>> data;
 	private ArrayList<String> schema;
 
-	public DataTable(String tableName, ArrayList<String> schema) {
+	public DataTable(String tableName) {
 		name= tableName;
-		this.schema = schema;
+		this.schema = new ArrayList<String>();
 		data= new ArrayList<ArrayList<Integer>>();
 	}
 
@@ -23,12 +23,20 @@ public class DataTable {
 		return data.get(index);
 	}
 	
+	public void setSchema() {
+		
+	}
+	
 	public ArrayList<String> getSchema(){
 		return schema;
 	}
 
 	public void addData(ArrayList<Integer> newData) {
 		data.add(newData);
+	}
+	
+	public void addTuple(Tuple a) {
+		data.add(a.getTuple());
 	}
 	
 	public void deleteLastData() {

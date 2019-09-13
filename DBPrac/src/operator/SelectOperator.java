@@ -7,14 +7,14 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import parser.EvaluateExpression;
 
-public class SelectOperator {
+public class SelectOperator extends ScanOperator{
 
 	private String tableName;
 	private DataTable data;
 	private Expression exp;
 	
 	public SelectOperator (String tableName, Expression expression) {
-//		super(tableName);
+		super(tableName);
 		this.tableName = tableName;
 		exp = expression;
 	}

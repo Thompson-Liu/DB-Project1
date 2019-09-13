@@ -11,7 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ScanOperator extends SelectOperator {
+public class ScanOperator{
 
 	// Check if this will be inherited by the children class
 	private DataTable data;
