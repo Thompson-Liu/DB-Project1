@@ -7,27 +7,29 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import parser.EvaluateExpression;
 
-public class SelectOperator extends ScanOperator {
+public class SelectOperator {
 
 	private String tableName;
+	private DataTable data;
 	private Expression exp;
 	
-	public SelectOperator (String name, Expression expression) {
-		super(name);
-		tableName = name;
+	public SelectOperator (String tableName, Expression expression) {
+//		super(tableName);
+		this.tableName = tableName;
 		exp = expression;
 	}
 	
 	public Tuple getNextTuple(){
 		Tuple next;
-		while ((next = super.getNextTuple()) != null) {
-			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
-			if ((next = exprVisitor.evaluate(exp)) != null) {
-				return next;
-			} else {
-				super.removeLastTuple();
-			}
-		}
+		
+//		if ((next = this.getNextTuple()) != null) {
+//			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
+//			if ((next = exprVisitor.evaluate(exp)) != null) {
+//				return next;
+//			} else {
+//				this.removeLastTuple();
+//			}
+//		}
 		return null;
 	}
 	

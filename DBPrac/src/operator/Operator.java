@@ -13,7 +13,7 @@ public abstract class Operator {
 		return;
 	}
 	
-	DataTable dump() {
-		return null;
+	void dump() {
+		return;
 	}
 }

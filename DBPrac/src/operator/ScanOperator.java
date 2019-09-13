@@ -11,7 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ScanOperator extends Operator {
+public class ScanOperator extends SelectOperator {
 
 	// Check if this will be inherited by the children class
 	private DataTable data;
@@ -28,7 +28,6 @@ public class ScanOperator extends Operator {
 		
 		try {
 			br = new BufferedReader(new FileReader(file));
-		
 			// Check this number limit
 			br.mark(0);
 		} catch (FileNotFoundException e) {

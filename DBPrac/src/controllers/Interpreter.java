@@ -34,7 +34,7 @@ public class Interpreter {
 				String tableName= fileName.getName();
 
 				Catalog cat= Catalog.getInstance();
-				cat.addDir(tableName, "/Users/ziweigu/Downloads/DB-Project1/DBPrac/db/data/Boats");
+				cat.addDir(tableName, "samples/input/db/data/Boats");
 				ArrayList<String> schem= new ArrayList<String>();
 				schem.add("D");
 				schem.add("E");
@@ -44,12 +44,12 @@ public class Interpreter {
 				ScanOperator scanOperator= new ScanOperator(tableName);
 				EvaluateExpression expressionVisitor= new EvaluateExpression(scanOperator.getNextTuple(),
 					fileName.getName());
-				System.out.println("plain select is " + plainSelect.toString());
-				Tuple rst= expressionVisitor.evaluate(plainSelect);
+//				System.out.println("plain select is " + plainSelect.toString());
+				Tuple rst= expressionVisitor.evaluate(plainSelect.getWhere());
 				if (rst != null) {
 					System.out.println(rst.printData());
 				}
-				System.out.println("there");
+//				System.out.println("there");
 //				System.out.println("select items are" + plainSelect.getSelectItems());
 //				System.out.println("from items are" + plainSelect.getFromItem());
 //				System.out.println("remaining from items" + plainSelect.getJoins());

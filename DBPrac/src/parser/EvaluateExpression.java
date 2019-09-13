@@ -62,8 +62,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 
 	public Tuple evaluate(Expression expr) {
 		expr.accept(this);
-		System.out.println("sofar");
-		System.out.println(sofar.toString());
+//		System.out.println("sofar");
+//		System.out.println(sofar.toString());
 		if (sofar.size() == 0) { return dataTuple; }
 		int result= sofar.pop();
 		System.out.println(result);

@@ -1,19 +1,30 @@
 package dataStructure;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DataTable {
 
 	private String name;
 	private ArrayList<ArrayList<Integer>> data;
+	private ArrayList<String> schema;
 
-	public DataTable(String tableName) {
+	public DataTable(String tableName, ArrayList<String> schema) {
 		name= tableName;
+		this.schema = schema;
 		data= new ArrayList<ArrayList<Integer>>();
 	}
 
 	public String getTableName() {
 		return name;
+	}
+	
+	public ArrayList<Integer> getData(int index) {
+		return data.get(index);
+	}
+	
+	public ArrayList<String> getSchema(){
+		return schema;
 	}
 
 	public void addData(ArrayList<Integer> newData) {
@@ -23,9 +34,9 @@ public class DataTable {
 	public void deleteLastData() {
 		data.remove(data.size() - 1);
 	}
-
-	public ArrayList<Integer> getData(int index) {
-		return data.get(index);
+	
+	public int cardinality() {
+		return data.size();
 	}
 
 	public void printTable(DataTable dt) {

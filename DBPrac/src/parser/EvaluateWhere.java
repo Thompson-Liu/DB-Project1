@@ -1,15 +1,19 @@
+/**
+ * Evaluate the WHERE clause that involves two tables
+ */
 package parser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Stack;
 
-//import com.sun.tools.javac.util.StringUtils;
-
+import dataStructure.Catalog;
+import dataStructure.Tuple;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
-import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
 import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.InverseExpression;
@@ -44,42 +48,43 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.select.FromItemVisitor;
-import net.sf.jsqlparser.statement.select.Join;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectVisitor;
-import net.sf.jsqlparser.statement.select.SubJoin;
 import net.sf.jsqlparser.statement.select.SubSelect;
-import net.sf.jsqlparser.statement.select.Union;
 
-// To deal with nested recursion to find the list of tables using for SELECT
-public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromItemVisitor{
+public class EvaluateWhere implements ExpressionVisitor {
+
+	private Stack<Integer> sofar;
+	private Tuple resultTuple;
+	private Tuple leftTuple;
+	private Tuple rightTuple;
+	private ArrayList<String> leftSchema;
+	private ArrayList<String> rightSchema;
+	private String leftTupleTable;
+	private String rightTupleTable;
 	
-	private ArrayList tables;
-	private Integer depth=0;   // for printing and testing purposes
-	
-	@Override
-	public void visit(PlainSelect plainSelect) {
-		plainSelect.getFromItem().accept((FromItemVisitor) this);
+
+	public EvaluateWhere(Tuple leftTuple, Tuple rightTuple, String leftTableName,String rightTableName) {
+		sofar= new Stack<Integer>();
+		this.leftTuple = leftTuple;
+		this.rightTuple = rightTuple;
+		leftSchema = Catalog.getInstance().getSchema(leftTableName);
+		rightSchema = Catalog.getInstance().getSchema(rightTableName);
+		this.leftTupleTable= leftTableName;
+		this.rightTupleTable=rightTableName;
 		
-		if (plainSelect.getJoins() != null) {
-			for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
-				Join join = (Join) joinsIt.next();
-				join.getRightItem().accept(this);
-			}
-		}
-		if (plainSelect.getWhere() != null)
-			plainSelect.getWhere().accept(this);
-
 	}
-	
-	// everytime passing in this instance it will change the ArrayList tables
-	public List getTableList(PlainSelect select) {
-		tables = new ArrayList();
-		select.accept(this);
-		return tables;
+
+	public Tuple evaluate(Expression expr) {
+		expr.accept(this);
+//		System.out.println("sofar");
+//		System.out.println(sofar.toString());
+//		System.out.println(result);
+		if(sofar.peek()==null) {
+			return null;
+		}
+		else if (sofar.pop() == 1)
+			return resultTuple;
+		else
+			return null;
 	}
 
 	@Override
@@ -92,241 +97,223 @@ public class TableNameFinder implements SelectVisitor, ExpressionVisitor, FromIt
 
 	@Override
 	public void visit(InverseExpression arg0) {
-
 	}
 
 	@Override
 	public void visit(JdbcParameter arg0) {
-
 	}
 
 	@Override
 	public void visit(DoubleValue arg0) {
-
 	}
 
 	@Override
 	public void visit(LongValue arg0) {
-
+		sofar.push((int) (arg0.getValue()));
 	}
 
 	@Override
 	public void visit(DateValue arg0) {
-
+		return;
 	}
 
 	@Override
 	public void visit(TimeValue arg0) {
+		return;
 	}
 
 	@Override
 	public void visit(TimestampValue arg0) {
-
+		return;
 	}
 
 	@Override
 	public void visit(Parenthesis arg0) {
-		
-	}
-
-
-	@Override
-	public void visit(EqualsTo arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visit(GreaterThan arg0) {
-		// TODO Auto-generated method stub
-		
-
-	}
-
-	@Override
-	public void visit(GreaterThanEquals arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visit(MinorThan arg0) {
-		// TODO Auto-generated method stub
-        System.out.println("left=" + arg0.getLeftExpression() + 
-        		"  op=" +  arg0.getStringExpression() + "  right=" + arg0.getRightExpression());
-        
-	}
-
-	@Override
-	public void visit(MinorThanEquals arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visit(NotEqualsTo arg0) {
-		// check if the arg0 is true or not
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visit(Column arg0) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void visit(StringValue arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(Addition arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(Division arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(Multiplication arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(Subtraction arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(AndExpression arg0) {
-        arg0.getLeftExpression().accept(this);
-        arg0.getRightExpression().accept(this);
-
-		
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right= sofar.pop();
+		int left= sofar.pop();
+		sofar.push((right == left && left == 1) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(OrExpression arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(Between arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
+	}
+
+	@Override
+	public void visit(EqualsTo arg0) {
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right= sofar.pop();
+		int left= sofar.pop();
+		sofar.push((left == right) ? 1 : 0);
+	}
+
+	@Override
+	public void visit(GreaterThan arg0) {
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right= sofar.pop();
+		int left= sofar.pop();
+		sofar.push((left > right) ? 1 : 0);
+	}
+
+	@Override
+	public void visit(GreaterThanEquals arg0) {
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right= sofar.pop();
+		int left= sofar.pop();
+		sofar.push((left >= right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(InExpression arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(IsNullExpression arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(LikeExpression arg0) {
-		// TODO Auto-generated method stub
+		return;
+	}
+
+	@Override
+	public void visit(MinorThan arg0) {
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right= sofar.pop();
+		int left= sofar.pop();
+		System.out.println(left);
+		System.out.println(right);
+		sofar.add((left < right) ? 1 : 0);
+	}
+
+	@Override
+	public void visit(MinorThanEquals arg0) {
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right= sofar.pop();
+		int left= sofar.pop();
+		sofar.add((left <= right) ? 1 : 0);
+	}
+
+	@Override
+	public void visit(NotEqualsTo arg0) {
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right= sofar.pop();
+		int left= sofar.pop();
+		sofar.add((left != right) ? 1 : 0);
+	}
+
+	@Override
+	public void visit(Column arg0) {
+		String colTable = arg0.getTable().getName();
+		if(colTable == this.leftTupleTable) {
+			int index= leftSchema.indexOf(arg0.getColumnName());
+			sofar.push(leftTuple.getData(index));
+		}
+		else if(colTable == this.rightTupleTable) {
+			int index= rightSchema.indexOf(arg0.getColumnName());
+			sofar.push(rightTuple.getData(index));
+		}
 		
 	}
 
 	@Override
 	public void visit(SubSelect arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(CaseExpression arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(WhenClause arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(ExistsExpression arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(AllComparisonExpression arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(AnyComparisonExpression arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(Concat arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(Matches arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(BitwiseAnd arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(BitwiseOr arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void visit(BitwiseXor arg0) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
-
-	@Override
-	public void visit(Union arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Table arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(SubJoin arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 }
