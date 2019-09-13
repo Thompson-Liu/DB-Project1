@@ -9,7 +9,6 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
@@ -40,14 +39,12 @@ public class Parser {
 				ArrayList<String> following_items = new ArrayList<String>( plainSelect.getJoins());
 				from.addAll(following_items);
 			}
-			System.out.println("from items are : " +plainSelect.getFromItem().getClass());
-			Join temp = (Join) plainSelect.getJoins().get(0);
-			System.out.println("remaining from items : "+temp.toString());
-			System.out.println("hrere");
+			System.out.println("from items are" +plainSelect.getFromItem());
+			System.out.println("remaining from items"+plainSelect.getJoins());
 			
 			// Where clause dealing
-//			TableNameFinder tableName = new TableNameFinder();
-//			List tableList = tableName.getTableList(plainSelect);
+			TableNameFinder tableName = new TableNameFinder();
+			List tableList = tableName.getTableList(plainSelect);
 //			BinaryTreeNode a = EvaluateExpression.getNode(plainSelect);
 			
 			

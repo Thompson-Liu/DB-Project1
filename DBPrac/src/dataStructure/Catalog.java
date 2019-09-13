@@ -7,7 +7,7 @@ public class Catalog {
 	
 	private static Catalog dbCatalog = null;
 	private HashMap<String, String> tableDir;
-	private HashMap<String, ArrayList<String>> tableSchema;			
+	private HashMap<String, ArrayList<String>> tableSchema;
 	
 	private Catalog() {
 		tableDir = new HashMap<String, String>();

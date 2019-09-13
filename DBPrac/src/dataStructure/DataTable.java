@@ -1,50 +1,31 @@
 package dataStructure;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DataTable {
 
 	private String name;
 	private ArrayList<ArrayList<Integer>> data;
-	private ArrayList<String> schema;
 
 	public DataTable(String tableName) {
 		name= tableName;
-		this.schema = new ArrayList<String>();
 		data= new ArrayList<ArrayList<Integer>>();
 	}
 
 	public String getTableName() {
 		return name;
 	}
-	
-	public ArrayList<Integer> getData(int index) {
-		return data.get(index);
-	}
-	
-	public void setSchema() {
-		
-	}
-	
-	public ArrayList<String> getSchema(){
-		return schema;
-	}
 
 	public void addData(ArrayList<Integer> newData) {
 		data.add(newData);
 	}
 	
-	public void addTuple(Tuple a) {
-		data.add(a.getTuple());
-	}
-	
 	public void deleteLastData() {
 		data.remove(data.size() - 1);
 	}
-	
-	public int cardinality() {
-		return data.size();
+
+	public ArrayList<Integer> getData(int index) {
+		return data.get(index);
 	}
 
 	public void printTable(DataTable dt) {

@@ -11,6 +11,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 
+
 public class ProjectOperator extends ScanOperator {
 	
 	private PlainSelect plainSelect;
@@ -42,7 +43,7 @@ public class ProjectOperator extends ScanOperator {
 				tup.addData(next.getData(index));
 			}
 		}
-		SelectOperator selectOp = childOp;
+		SelectOperator selectOp = (SelectOperator)childOp;
 		selectOp.removeLastTuple();
 		selectOp.addNewTuple(tup);
 		return tup;

@@ -4,13 +4,7 @@ import java.util.ArrayList;
 
 public class Tuple {
 
-	// tuple value
 	private ArrayList<Integer> dataTuple;
-	
-	// schema of the tuple on the table
-//	private ArrayList<String> schema;
-	// the table this tuple belongs to
-//	private String table;
 
 	public Tuple() {
 		dataTuple = new ArrayList<Integer>();
@@ -23,11 +17,6 @@ public class Tuple {
 		for (String x : strArr) {
 			dataTuple.add(Integer.parseInt(x));
 		}
-	}
-	
-	// constructor directly take in the value of tuple
-	public Tuple(ArrayList<Integer> value) {
-		dataTuple = value;
 	}
 
 	public ArrayList<Integer> getTuple() {
@@ -49,10 +38,5 @@ public class Tuple {
 			str += (x + " ");
 		}
 		return str;
-	}
-	
-	public Tuple concat(Tuple a, Tuple b) {
-		a.dataTuple.addAll(b.dataTuple);
-		return a;
 	}
 }
