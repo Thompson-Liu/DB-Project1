@@ -57,32 +57,21 @@ public class EvaluateExpression implements ExpressionVisitor {
 	private ArrayList<String> schema;
 
 	public EvaluateExpression(Tuple data, String tableName) {
-		sofar= new Stack<Integer>();
-		dataTuple= data;
-		schema= Catalog.getInstance().getSchema(tableName);
+		sofar = new Stack<Integer>();
+		dataTuple = data;
+		schema = Catalog.getInstance().getSchema(tableName);
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	public Tuple evaluate(Expression expr) {
-		expr.accept(this);
-//		System.out.println("sofar");
-//		System.out.println(sofar.toString());
-=======
-=======
->>>>>>> parent of 7f41304... expressionvisitor
-=======
->>>>>>> parent of 7f41304... expressionvisitor
 	public Tuple evaluate(PlainSelect plainselect) {
-		
+
 		// Double Check
 		plainselect.getWhere().accept(this);
 		System.out.println("sofar");
 		System.out.println(sofar.toString());
->>>>>>> parent of 7f41304... expressionvisitor
-		if (sofar.size() == 0) { return dataTuple; }
-		int result= sofar.pop();
+		if (sofar.size() == 0) {
+			return dataTuple;
+		}
+		int result = sofar.pop();
 		System.out.println(result);
 		if (result == 1)
 			return dataTuple;
@@ -169,8 +158,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(AndExpression arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
+		int right = sofar.pop();
+		int left = sofar.pop();
 		sofar.push((right == left && left == 1) ? 1 : 0);
 	}
 
@@ -188,8 +177,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(EqualsTo arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
+		int right = sofar.pop();
+		int left = sofar.pop();
 		sofar.push((left == right) ? 1 : 0);
 	}
 
@@ -197,8 +186,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(GreaterThan arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
+		int right = sofar.pop();
+		int left = sofar.pop();
 		sofar.push((left > right) ? 1 : 0);
 	}
 
@@ -206,8 +195,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(GreaterThanEquals arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
+		int right = sofar.pop();
+		int left = sofar.pop();
 		sofar.push((left >= right) ? 1 : 0);
 	}
 
@@ -230,8 +219,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(MinorThan arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
+		int right = sofar.pop();
+		int left = sofar.pop();
 		System.out.println(left);
 		System.out.println(right);
 		sofar.add((left < right) ? 1 : 0);
@@ -241,8 +230,8 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(MinorThanEquals arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
+		int right = sofar.pop();
+		int left = sofar.pop();
 		sofar.add((left <= right) ? 1 : 0);
 	}
 
@@ -250,14 +239,14 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(NotEqualsTo arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
+		int right = sofar.pop();
+		int left = sofar.pop();
 		sofar.add((left != right) ? 1 : 0);
 	}
 
 	@Override
 	public void visit(Column arg0) {
-		int index= schema.indexOf(arg0.getColumnName());
+		int index = schema.indexOf(arg0.getColumnName());
 		sofar.push(dataTuple.getData(index));
 	}
 
@@ -315,5 +304,4 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(BitwiseXor arg0) {
 		return;
 	}
-
 }
