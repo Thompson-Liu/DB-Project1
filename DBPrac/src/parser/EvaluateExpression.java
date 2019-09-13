@@ -64,11 +64,14 @@ public class EvaluateExpression implements ExpressionVisitor {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	public Tuple evaluate(Expression expr) {
 		expr.accept(this);
 //		System.out.println("sofar");
 //		System.out.println(sofar.toString());
 =======
+=======
+>>>>>>> parent of 7f41304... expressionvisitor
 =======
 >>>>>>> parent of 7f41304... expressionvisitor
 	public Tuple evaluate(PlainSelect plainselect) {

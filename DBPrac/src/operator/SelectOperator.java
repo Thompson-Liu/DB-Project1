@@ -11,6 +11,7 @@ public class SelectOperator extends ScanOperator{
 	private String tableName;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	private DataTable data;
 	private Expression exp;
 	
@@ -24,11 +25,18 @@ public class SelectOperator extends ScanOperator{
 	private PlainSelect plainSelect;
 	
 >>>>>>> parent of 7f41304... expressionvisitor
+=======
+	private PlainSelect plainSelect;
+	
+>>>>>>> parent of 7f41304... expressionvisitor
 	public SelectOperator (String name, PlainSelect ps) {
 		super(name);
 		tableName = name;
 		plainSelect = ps;
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 7f41304... expressionvisitor
+=======
 >>>>>>> parent of 7f41304... expressionvisitor
 =======
 >>>>>>> parent of 7f41304... expressionvisitor
