@@ -1,3 +1,6 @@
+/**
+ * Takes in a joined left table and right table to scan
+ */
 package operator;
 
 import java.io.BufferedWriter;
@@ -32,17 +35,6 @@ public class JoinOperator extends ScanOperator {
 		this.leftTables = leftTables;
 		this.rightTable = rightTable;
 	}
-
-//	public DataTable getJoinTables(PlainSelect plainSelect) {
-//		Table left = (Table) plainSelect.getFromItem();
-//		for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
-//			Join join = (Join) joinsIt.next();
-//			// to produced after WHERE result
-//			SelectOperator right = new SelectOperator(join.toString(), plainSelect.getWhere());
-//			joinResultTable = twoTableJoin(joinResultTable, right.dump(), plainSelect.getWhere());
-//		}
-//		return joinResultTable;
-//	}
 	
 	//  could use scan / or could also use right table directly as input
 	public Tuple getNextTuple(Tuple left) {
@@ -69,5 +61,21 @@ public class JoinOperator extends ScanOperator {
 		}
 		return data;
 	}
+	
+//	controller connect to join 
+//	Table fromLeft = (Table) select.getFromItem();
+//	if(fromLeft!=null && select.getJoins()!=null){
+//		SelectOperator selectLeft = new SelectOperator(fromLeft.getName(),select.getWhere());
+//		DataTable left = selectLeft.dump();
+//		ArrayList<String> leftTableNames = new ArrayList<String>();
+//		leftTableNames.add(left.getTableName());
+//		for (Iterator joinsIt = select.getJoins().iterator(); joinsIt.hasNext();) {
+//			Join right = (Join) joinsIt.next();
+//			// to produced after WHERE result
+//			JoinOperator join = new JoinOperator(left,select.getWhere(),leftTableNames,rig);
+//			left = join.dump();
+//		}
+//		return left;
+//	}
 
 }

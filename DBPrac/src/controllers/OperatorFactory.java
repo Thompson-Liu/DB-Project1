@@ -1,12 +1,15 @@
 package controllers;
 
-import java.util.List;
+import java.util.*;
 
+import dataStructure.DataTable;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.AllColumns;
+import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
+import operator.JoinOperator;
 import operator.Operator;
 import operator.ProjectOperator;
 import operator.ScanOperator;
@@ -34,6 +37,7 @@ public class OperatorFactory {
 			if (whereEmpty) { return new ProjectOperator(select, new ScanOperator(name), name, selectItems); }
 			else { return new ProjectOperator(select, new SelectOperator(name, whereClause), name, selectItems); }
 		}
+		
 	}
 
 }
