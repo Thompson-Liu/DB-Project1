@@ -18,6 +18,15 @@ public class Tuple {
 			dataTuple.add(Integer.parseInt(x));
 		}
 	}
+	
+	public Tuple(ArrayList<Integer> tuple) {
+		dataTuple = tuple;
+	}
+	
+	public Tuple concateTuple(Tuple b) {
+		dataTuple.addAll(b.getTuple());
+		return (new Tuple(dataTuple));
+	}
 
 	public ArrayList<Integer> getTuple() {
 		return dataTuple;

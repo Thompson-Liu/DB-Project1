@@ -1,0 +1,73 @@
+package operator;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import dataStructure.Catalog;
+import dataStructure.DataTable;
+import dataStructure.Tuple;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import parser.EvaluateExpression;
+import parser.EvaluateWhere;
+
+public class JoinOperator extends ScanOperator {
+
+	private DataTable outerTable;
+	private DataTable joinResultTable;
+	private ArrayList<Table> joinTables;
+	private ArrayList<String> leftTables;	//deep left join: outer table, composed of joined result sofar
+	private String rightTable; 				//inner table to be joined
+	private Expression joinExp;
+	private Catalog catalog;
+
+	public JoinOperator(DataTable outerTable, Expression expression,ArrayList<String> leftTables, String rightTable) {
+		super(rightTable);
+		joinExp = expression;
+		catalog = Catalog.getInstance();
+		this.leftTables = leftTables;
+		this.rightTable = rightTable;
+	}
+
+//	public DataTable getJoinTables(PlainSelect plainSelect) {
+//		Table left = (Table) plainSelect.getFromItem();
+//		for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
+//			Join join = (Join) joinsIt.next();
+//			// to produced after WHERE result
+//			SelectOperator right = new SelectOperator(join.toString(), plainSelect.getWhere());
+//			joinResultTable = twoTableJoin(joinResultTable, right.dump(), plainSelect.getWhere());
+//		}
+//		return joinResultTable;
+//	}
+	
+	//  could use scan / or could also use right table directly as input
+	public Tuple getNextTuple(Tuple left) {
+		Tuple next;
+		Tuple right;
+		while((right=super.getNextTuple())!=null) {
+			EvaluateWhere evawhere = new EvaluateWhere(left,right,leftTables, rightTable);
+			if((next=evawhere.evaluate(joinExp))!=null) {
+				return next;
+			}
+		}
+		return null;
+	}
+	
+	public DataTable dump() {
+		DataTable data = new DataTable("output");
+		for(int i=0; i<outerTable.cardinality();i++) {
+			Tuple left= new Tuple(outerTable.getData(i));
+			Tuple right;
+			while((right= this.getNextTuple())!=null) {
+				data.addData(right.getTuple());
+			}
+			super.reset();
+		}
+		return data;
+	}
+
+}

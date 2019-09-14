@@ -43,8 +43,6 @@ public class Parser {
 			System.out.println("remaining from items"+plainSelect.getJoins());
 			
 			// Where clause dealing
-			TableNameFinder tableName = new TableNameFinder();
-			List tableList = tableName.getTableList(plainSelect);
 //			BinaryTreeNode a = EvaluateExpression.getNode(plainSelect);
 			
 			

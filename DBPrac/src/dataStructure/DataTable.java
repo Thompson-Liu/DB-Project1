@@ -20,6 +20,10 @@ public class DataTable {
 		data.add(newData);
 	}
 	
+	public int cardinality() {
+		return data.size();
+	}
+	
 	public void deleteLastData() {
 		data.remove(data.size() - 1);
 	}
