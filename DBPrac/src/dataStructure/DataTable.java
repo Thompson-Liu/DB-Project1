@@ -32,7 +32,7 @@ public class DataTable {
 		return data.get(index);
 	}
 
-	public void printTable(DataTable dt) {
+	public void printTable() {
 		for (ArrayList<Integer> x: data) {
 			for (int y: x) {
 				System.out.print(y + " ");
@@ -41,7 +41,7 @@ public class DataTable {
 		}
 	}
 
-	public void printTableInfo(DataTable dt) {
+	public void printTableInfo() {
 		System.out.println("Table name: " + name);
 		
 		Catalog catalog = Catalog.getInstance();

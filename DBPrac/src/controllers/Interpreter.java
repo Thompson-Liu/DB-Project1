@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import dataStructure.Catalog;
+import dataStructure.DataTable;
 import dataStructure.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Table;
@@ -49,6 +50,8 @@ public class Interpreter {
 					System.out.println(rst.printData());
 				}
 				System.out.println("there");
+				DataTable result = scanOperator.dump();
+				result.printTable();
 				//					System.out.println("select items are" + plainSelect.getSelectItems());
 				//					System.out.println("from items are" + plainSelect.getFromItem());
 				//					System.out.println("remaining from items" + plainSelect.getJoins());
