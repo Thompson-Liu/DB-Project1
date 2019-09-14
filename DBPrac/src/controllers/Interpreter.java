@@ -32,7 +32,9 @@ public class Interpreter {
 				String tableName= fileName.getName();
 
 				Catalog cat= Catalog.getInstance();
-				cat.addDir(tableName, "/Users/ziweigu/Downloads/DB-Project1/DBPrac/db/data/Boats");
+				cat.addDir(tableName, "samples/input/db/data/Boats");
+				cat.addDir("Sailors", "samples/input/db/data/Sailors");
+				cat.addDir("Reserves", "samples/input/db/data/Reserves");
 				ArrayList<String> schem= new ArrayList<String>();
 				schem.add("D");
 				schem.add("E");
@@ -40,10 +42,9 @@ public class Interpreter {
 				cat.addSchema(tableName, schem);
 
 				ScanOperator scanOperator= new ScanOperator(tableName);
-				EvaluateExpression expressionVisitor= new EvaluateExpression(scanOperator.getNextTuple(),
-						fileName.getName());
+				EvaluateExpression expressionVisitor= new EvaluateExpression(tableName,plainSelect.getWhere());
 				System.out.println("plain select is " + plainSelect.toString());
-				Tuple rst= expressionVisitor.evaluate(plainSelect.getWhere());
+				Tuple rst= expressionVisitor.evaluate(scanOperator.getNextTuple());
 				if (rst != null) {
 					System.out.println(rst.printData());
 				}

@@ -20,9 +20,9 @@ public class SelectOperator extends ScanOperator {
 	
 	public Tuple getNextTuple(){
 		Tuple next;
+		EvaluateExpression exprVisitor = new EvaluateExpression(tableName,exp);
 		while ((next = super.getNextTuple()) != null) {
-			EvaluateExpression exprVisitor = new EvaluateExpression(next, tableName);
-			if ((next = exprVisitor.evaluate(exp)) != null) {
+			if ((next = exprVisitor.evaluate(next)) != null) {
 				return next;
 			} 
 		}

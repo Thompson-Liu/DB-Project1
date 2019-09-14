@@ -38,6 +38,7 @@ public class OperatorFactory {
 			else { return new ProjectOperator(select, new SelectOperator(name, whereClause), name, selectItems); }
 		}
 		
+		
 	}
 
 }

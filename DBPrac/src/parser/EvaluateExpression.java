@@ -53,16 +53,19 @@ public class EvaluateExpression implements ExpressionVisitor {
 	private Stack<Integer> sofar;
 	private Tuple dataTuple;
 	private ArrayList<String> schema;
+	private String tableName;		// Table name of the current tuple to be evaluated
+	private Expression expression;
 
-	public EvaluateExpression(Tuple data, String tableName) {
+	public EvaluateExpression(String tableName,Expression exp) {
 		sofar= new Stack<Integer>();
-		dataTuple= data;
 		schema= Catalog.getInstance().getSchema(tableName);
+		this.tableName=tableName;
+		expression = exp;
 	}
 
-	public Tuple evaluate(Expression expr) {
-		expr.accept(this);
-
+	public Tuple evaluate(Tuple data) {
+		this.dataTuple= data;
+		expression.accept(this);
 		if (sofar.size() == 0) { return dataTuple; }
 		int result= sofar.pop();
 		System.out.println(result);
@@ -151,9 +154,13 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(AndExpression arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
-		sofar.push((right == left && left == 1) ? 1 : 0);
+		Object right= sofar.pop();
+		Object left= sofar.pop();
+		if(right==null || left==null) {
+			sofar.push(1);
+		}
+		else {
+		sofar.push(((int)right == (int)left && (int)left == 1) ? 1 : 0);}
 	}
 
 	@Override
@@ -170,27 +177,39 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(EqualsTo arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
-		sofar.push((left == right) ? 1 : 0);
+		Object right= sofar.pop();
+		Object left= sofar.pop();
+		if(right==null || left==null) {
+			sofar.push(1);
+		}
+		else {
+		sofar.push(((int)left == (int)right) ? 1 : 0);}
 	}
 
 	@Override
 	public void visit(GreaterThan arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
-		sofar.push((left > right) ? 1 : 0);
+		Object right= sofar.pop();
+		Object left= sofar.pop();
+		if(right==null || left==null) {
+			sofar.push(1);
+		}
+		else {
+		sofar.push(((int)left > (int)right) ? 1 : 0);}
 	}
 
 	@Override
 	public void visit(GreaterThanEquals arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
-		sofar.push((left >= right) ? 1 : 0);
+		Object right= sofar.pop();
+		Object left= sofar.pop();
+		if(right==null || left==null) {
+			sofar.push(1);
+		}
+		else {
+		sofar.push(((int)left >= (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -212,35 +231,50 @@ public class EvaluateExpression implements ExpressionVisitor {
 	public void visit(MinorThan arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
-		System.out.println(left);
-		System.out.println(right);
-		sofar.add((left < right) ? 1 : 0);
+		Object right= sofar.pop();
+		Object left= sofar.pop();
+		if(right==null || left==null) {
+			sofar.push(1);
+		}
+		else {
+		sofar.add(((int)left < (int)right) ? 1 : 0);}
 	}
 
 	@Override
 	public void visit(MinorThanEquals arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
-		sofar.add((left <= right) ? 1 : 0);
+		Object right= sofar.pop();
+		Object left= sofar.pop();
+		if(right==null || left==null) {
+			sofar.push(1);
+		}
+		else {
+		sofar.add(((int)left <= (int)right) ? 1 : 0);}
 	}
 
 	@Override
 	public void visit(NotEqualsTo arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
-		sofar.add((left != right) ? 1 : 0);
+		Object right= sofar.pop();
+		Object left= sofar.pop();
+		if(right==null || left==null) {
+			sofar.push(1);
+		}
+		else {
+			sofar.add(((int)left != (int)right) ? 1 : 0);
+		}
 	}
 
 	@Override
 	public void visit(Column arg0) {
-		int index= schema.indexOf(arg0.getColumnName());
-		sofar.push(dataTuple.getData(index));
+		if(arg0.getTable().getName()!=this.tableName) {
+			sofar.push(null);
+		}else {
+			int index= schema.indexOf(arg0.getColumnName());
+			sofar.push(dataTuple.getData(index));
+		}
 	}
 
 	@Override

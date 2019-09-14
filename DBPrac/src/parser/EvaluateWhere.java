@@ -83,8 +83,8 @@ public class EvaluateWhere implements ExpressionVisitor {
 	public Tuple evaluate(Expression expr) {
 		expr.accept(this);
 		resultTuple = leftTuple.concateTuple(rightTuple);
-		if(sofar.peek()==null) {
-			return null;
+		if(sofar.size()==0) {
+			return resultTuple;
 		}
 		else if (sofar.pop() == 1)
 			return resultTuple;
@@ -273,18 +273,18 @@ public class EvaluateWhere implements ExpressionVisitor {
 	@Override
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
-		if(this.leftTupleTables.contains(colTable)) {
+		if(!this.leftTupleTables.contains(colTable)) {
+			sofar.push(null);
+		}else {
 			int index= leftSchema.indexOf(arg0.getColumnName());
 			sofar.push(leftTuple.getData(index));
 		}
-		else if(colTable == this.rightTupleTable) {
+		if(!(colTable == this.rightTupleTable)){
+			sofar.push(null);
+		}else {
 			int index= rightSchema.indexOf(arg0.getColumnName());
 			sofar.push(rightTuple.getData(index));
 		}
-		else {
-			sofar.push(null);
-		}
-		
 	}
 
 	@Override

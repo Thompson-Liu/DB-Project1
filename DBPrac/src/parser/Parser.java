@@ -39,9 +39,9 @@ public class Parser {
 				ArrayList<String> following_items = new ArrayList<String>( plainSelect.getJoins());
 				from.addAll(following_items);
 			}
-			System.out.println("from items are" +plainSelect.getFromItem());
-			System.out.println("remaining from items"+plainSelect.getJoins());
-			
+			System.out.println("from items are " +plainSelect.getFromItem());
+			System.out.println("remaining from items "+plainSelect.getJoins());
+			System.out.println("Where Clause : "+plainSelect.getWhere());
 			// Where clause dealing
 //			BinaryTreeNode a = EvaluateExpression.getNode(plainSelect);
 			

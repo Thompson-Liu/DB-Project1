@@ -18,7 +18,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import parser.EvaluateExpression;
 import parser.EvaluateWhere;
 
-public class JoinOperator extends ScanOperator {
+public class JoinOperator extends SelectOperator {
 
 	private DataTable outerTable;
 	private DataTable joinResultTable;
@@ -29,7 +29,7 @@ public class JoinOperator extends ScanOperator {
 	private Catalog catalog;
 
 	public JoinOperator(DataTable outerTable, Expression expression,ArrayList<String> leftTables, String rightTable) {
-		super(rightTable);
+		super(rightTable,expression);
 		joinExp = expression;
 		catalog = Catalog.getInstance();
 		this.leftTables = leftTables;
