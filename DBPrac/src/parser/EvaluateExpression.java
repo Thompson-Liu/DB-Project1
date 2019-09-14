@@ -68,7 +68,7 @@ public class EvaluateExpression implements ExpressionVisitor {
 		expression.accept(this);
 		if (sofar.size() == 0) { return dataTuple; }
 		int result= sofar.pop();
-		System.out.println(result);
+//		System.out.println(result);
 		if (result == 1)
 			return dataTuple;
 		else
@@ -269,7 +269,7 @@ public class EvaluateExpression implements ExpressionVisitor {
 
 	@Override
 	public void visit(Column arg0) {
-		if(arg0.getTable().getName()!=this.tableName) {
+		if(!arg0.getTable().getName().contentEquals(this.tableName)) {
 			sofar.push(null);
 		}else {
 			int index= schema.indexOf(arg0.getColumnName());

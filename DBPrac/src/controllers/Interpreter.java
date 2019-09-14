@@ -13,6 +13,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import operator.ScanOperator;
+import operator.SelectOperator;
 import parser.EvaluateExpression;
 
 public class Interpreter {
@@ -42,15 +43,16 @@ public class Interpreter {
 				schem.add("F");
 				cat.addSchema(tableName, schem);
 
-				ScanOperator scanOperator= new ScanOperator(tableName);
+				SelectOperator selectOperator= new SelectOperator(tableName,plainSelect.getWhere());
 				EvaluateExpression expressionVisitor= new EvaluateExpression(tableName,plainSelect.getWhere());
 				System.out.println("plain select is " + plainSelect.toString());
-				Tuple rst= expressionVisitor.evaluate(scanOperator.getNextTuple());
-				if (rst != null) {
-					System.out.println(rst.printData());
-				}
+				
+//				Tuple rst= expressionVisitor.evaluate(selectOperator.getNextTuple());
+//				if (rst != null) {
+//					System.out.println(rst.printData());
+//				}
 				System.out.println("there");
-				DataTable result = scanOperator.dump();
+				DataTable result = selectOperator.dump();
 				result.printTable();
 				//					System.out.println("select items are" + plainSelect.getSelectItems());
 				//					System.out.println("from items are" + plainSelect.getFromItem());

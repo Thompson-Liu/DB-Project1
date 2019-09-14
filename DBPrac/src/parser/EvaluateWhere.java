@@ -279,7 +279,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 			int index= leftSchema.indexOf(arg0.getColumnName());
 			sofar.push(leftTuple.getData(index));
 		}
-		if(!(colTable == this.rightTupleTable)){
+		if(!(colTable.equals(this.rightTupleTable))){
 			sofar.push(null);
 		}else {
 			int index= rightSchema.indexOf(arg0.getColumnName());
