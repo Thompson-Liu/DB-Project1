@@ -1,6 +1,6 @@
 package controllers;
 
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 
 import dataStructure.Catalog;
@@ -19,6 +19,7 @@ import parser.EvaluateExpression;
 public class Interpreter {
 
 	private static final String queriesFile= "queries.sql";
+	private static final String dataDir = "samples/input/db/";
 
 	public static void main(String[] args) {
 		try {
@@ -33,15 +34,9 @@ public class Interpreter {
 				Table fileName= (Table) plainSelect.getFromItem();
 				String tableName= fileName.getName();
 
-				Catalog cat= Catalog.getInstance();
-				cat.addDir(tableName, "samples/input/db/data/Boats");
-				cat.addDir("Sailors", "samples/input/db/data/Sailors");
-				cat.addDir("Reserves", "samples/input/db/data/Reserves");
-				ArrayList<String> schem= new ArrayList<String>();
-				schem.add("D");
-				schem.add("E");
-				schem.add("F");
-				cat.addSchema(tableName, schem);
+				Catalog cat= createCatalog(dataDir);
+				cat.printCatalog();
+				
 
 				SelectOperator selectOperator= new SelectOperator(tableName,plainSelect.getWhere());
 				EvaluateExpression expressionVisitor= new EvaluateExpression(tableName,plainSelect.getWhere());
@@ -63,6 +58,32 @@ public class Interpreter {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private static Catalog createCatalog(String directory) {
+		Catalog cat= Catalog.getInstance();
+		
+		try {
+		FileReader schemafw = new FileReader(dataDir+"schema.txt");
+		BufferedReader readSchema = new BufferedReader(schemafw);
+		String line;
+		while ((line = readSchema.readLine())!=null) {
+			String[] schemaLine = line.split(" ");
+			String tableName = schemaLine[0];
+			cat.addDir(tableName, dataDir+"data/" + tableName);
+			ArrayList<String> schem= new ArrayList<String>();
+			for(int i=1; i<schemaLine.length ; i++) {
+				schem.add(schemaLine[i]);
+			}
+			cat.addSchema(tableName,schem);
+		}
+		
+		readSchema.close();
+		
+		}catch(IOException e) {
+			System.err.println("Exception unable to access the directory");
+		}
+		return cat;
 	}
 
 }

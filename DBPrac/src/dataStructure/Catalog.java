@@ -36,4 +36,15 @@ public class Catalog {
 	public void addSchema(String name, ArrayList<String> schema) {
 		tableSchema.put(name, schema);
 	}
+	
+	public void printCatalog() {
+		System.out.println("Tables directorys:");
+		for(String table: tableDir.keySet()) {
+			System.out.println(table+tableDir.get(table));
+		}
+		System.out.println("Tables schemas:");
+		for(String table: tableSchema.keySet()) {
+			System.out.println(table+tableSchema.get(table).toString());
+		}
+	}
 }
