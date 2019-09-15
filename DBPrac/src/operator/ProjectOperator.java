@@ -10,23 +10,20 @@ import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
-public class ProjectOperator extends ScanOperator {
+public class ProjectOperator extends Operator {
 
 	private Operator childOp;
 	private ArrayList<SelectItem> selectColumns;
-	private String tableName;
 
-	public ProjectOperator(Operator operator, DataTable table, List<SelectItem> list) {
-		super(name);
-		tableName= name;
+	public ProjectOperator(Operator operator, List<SelectItem> list) {
 		childOp= operator;
 		selectColumns= new ArrayList<SelectItem>(list);
 	}
 
 	@Override
-	public Tuple getNextTuple() {
+	public Tuple getNextTuple(DataTable table) {
 		Tuple next= null;
-		while ((next = childOp.getNextTuple()) != null) {
+		while ((next = childOp.getNextTuple(table)) != null) {
 			Tuple tup= new Tuple();
 
 			for (SelectItem item : selectColumns) {
@@ -37,7 +34,7 @@ public class ProjectOperator extends ScanOperator {
 
 					String select = expressItem.toString();
 					String columnName = select.split("\\.")[1];
-					int index= schema.indexOf(columnName);
+					int index= table.getSchema().indexOf(columnName);
 					tup.addData(next.getData(index));
 				}
 			}
@@ -52,7 +49,12 @@ public class ProjectOperator extends ScanOperator {
 	}
 
 	@Override
-	public DataTable dump() {
-		return super.dump();
+	public DataTable dump(DataTable table) {
+		DataTable data = new DataTable("Output", new ArrayList<String>());
+		Tuple tup = new Tuple();
+		while ((tup = getNextTuple(table)) != null) {
+			data.addData(tup.getTuple());
+		}
+		return data;
 	}
 }

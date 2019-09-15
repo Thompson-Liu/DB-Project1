@@ -36,15 +36,15 @@ public class OperatorFactory {
 		List<SelectItem> selectItems= select.getSelectItems();
 		if (selectItems.get(0) instanceof AllColumns) {
 			if (whereEmpty) {
-				return new ScanOperator(name);
+				return new ScanOperator();
 			} else {
-				return new SelectOperator(name, whereClause);
+				return new SelectOperator(whereClause, new ScanOperator());
 			}
 		} else {
 			if (whereEmpty) {
-				return new ProjectOperator(new ScanOperator(name), name, selectItems);
+				return new ProjectOperator(new ScanOperator(), selectItems);
 			} else {
-				return new ProjectOperator(new SelectOperator(name, whereClause), name, selectItems);
+				return new ProjectOperator(new SelectOperator(whereClause, new ScanOperator()), selectItems);
 			}
 		}
 
@@ -53,7 +53,7 @@ public class OperatorFactory {
 //			controller connect to join 
 			Table fromLeft = (Table) plainSelect.getFromItem();
 			if(fromLeft!=null && plainSelect.getJoins()!=null){
-				SelectOperator selectLeft = new SelectOperator(fromLeft.getName(),plainSelect.getWhere());
+				SelectOperator selectLeft = new SelectOperator(plainSelect.getWhere(), new ScanOperator());
 				DataTable left = selectLeft.dump();
 				ArrayList<String> leftTableNames = new ArrayList<String>();
 				leftTableNames.add(left.getTableName());

@@ -15,13 +15,14 @@ public class ScanOperator extends Operator {
 
 	// Check if this will be inherited by the children class
 	private BufferedReader br;
-	private String tableName;
 	
-	public ScanOperator(DataTable data) {
-		tableName = data.getTableName();
+	public ScanOperator() {
 		
+	}
+	
+	public Tuple getNextTuple(DataTable table){
 		Catalog catalog = Catalog.getInstance();
-		String dir = catalog.getDir(tableName);
+		String dir = catalog.getDir(table.getTableName());
 		File file = new File(dir);
 		
 		try {
@@ -34,9 +35,7 @@ public class ScanOperator extends Operator {
 		} catch (IOException e) {
 			System.err.println("Marking stream returns an error");
 		}
-	}
-	
-	public Tuple getNextTuple(){
+		
 		String read = null;
 		try {
 			read = br.readLine();
@@ -59,16 +58,12 @@ public class ScanOperator extends Operator {
 		}
 	}
 	
-	public DataTable dump() {
+	public DataTable dump(DataTable table) {
 		DataTable data = new DataTable("Output", new ArrayList<String>());
 		Tuple tup = new Tuple();
-		while ((tup = getNextTuple()) != null) {
+		while ((tup = getNextTuple(table)) != null) {
 			data.addData(tup.getTuple());
 		}
 		return data;
-	}
-	
-	public String getTableName() {
-		return tableName;
 	}
 }

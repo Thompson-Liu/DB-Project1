@@ -11,20 +11,18 @@ import parser.EvaluateWhere;
 
 public class SelectOperator extends Operator {
 
-	private DataTable table;
 	private Expression exp;
 	private Operator childOp;
 	
-	public SelectOperator (DataTable dt, Expression expression, Operator op) {
-		table = dt;
+	public SelectOperator (Expression expression, Operator op) {
 		exp = expression;
 		childOp = op;
 	}
 	
-	public Tuple getNextTuple(){
+	public Tuple getNextTuple(DataTable table){
 		Tuple next;
 		EvaluateWhere exprVisitor = new EvaluateWhere(exp);
-		while ((next = childOp.getNextTuple()) != null) {
+		while ((next = childOp.getNextTuple(table)) != null) {
 			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), table.getSchema())) != null) {
 				return next;
 			} 
@@ -33,10 +31,15 @@ public class SelectOperator extends Operator {
 	}
 	
 	public void reset() {
-		super.reset();
+		childOp.reset();
 	}
 	
-	public DataTable dump() {
-		return super.dump();
+	public DataTable dump(DataTable table) {
+		DataTable data = new DataTable("Output", new ArrayList<String>());
+		Tuple tup = new Tuple();
+		while ((tup = getNextTuple(table)) != null) {
+			data.addData(tup.getTuple());
+		}
+		return data;
 	}
 }
