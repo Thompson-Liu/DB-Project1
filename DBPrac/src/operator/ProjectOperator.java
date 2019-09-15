@@ -21,9 +21,9 @@ public class ProjectOperator extends Operator {
 	}
 
 	@Override
-	public Tuple getNextTuple(DataTable table) {
+	public Tuple getNextTuple(String tableName) {
 		Tuple next= null;
-		while ((next = childOp.getNextTuple(table)) != null) {
+		while ((next = childOp.getNextTuple(tableName)) != null) {
 			Tuple tup= new Tuple();
 
 			for (SelectItem item : selectColumns) {
@@ -49,10 +49,10 @@ public class ProjectOperator extends Operator {
 	}
 
 	@Override
-	public DataTable dump(DataTable table) {
+	public DataTable dump(String tableName) {
 		DataTable data = new DataTable("Output", new ArrayList<String>());
 		Tuple tup = new Tuple();
-		while ((tup = getNextTuple(table)) != null) {
+		while ((tup = getNextTuple(tableName)) != null) {
 			data.addData(tup.getTuple());
 		}
 		return data;

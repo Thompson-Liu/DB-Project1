@@ -5,7 +5,7 @@ import dataStructure.DataTable;
 
 public abstract class Operator {
 
-	Tuple getNextTuple(DataTable table){
+	Tuple getNextTuple(String tableName){
 		return null;
 	}
 	
@@ -13,7 +13,7 @@ public abstract class Operator {
 		return;
 	}
 	
-	public DataTable dump(DataTable table) {
+	public DataTable dump(String tableName) {
 		return null;
 	}
 }

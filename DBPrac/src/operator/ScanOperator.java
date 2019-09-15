@@ -20,9 +20,9 @@ public class ScanOperator extends Operator {
 		
 	}
 	
-	public Tuple getNextTuple(DataTable table){
+	public Tuple getNextTuple(String tableName){
 		Catalog catalog = Catalog.getInstance();
-		String dir = catalog.getDir(table.getTableName());
+		String dir = catalog.getDir(tableName);
 		File file = new File(dir);
 		
 		try {
@@ -58,10 +58,10 @@ public class ScanOperator extends Operator {
 		}
 	}
 	
-	public DataTable dump(DataTable table) {
+	public DataTable dump(String tableName) {
 		DataTable data = new DataTable("Output", new ArrayList<String>());
 		Tuple tup = new Tuple();
-		while ((tup = getNextTuple(table)) != null) {
+		while ((tup = getNextTuple(tableName)) != null) {
 			data.addData(tup.getTuple());
 		}
 		return data;

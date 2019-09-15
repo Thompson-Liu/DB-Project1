@@ -7,9 +7,11 @@ public class Catalog {
 	
 	private static Catalog dbCatalog = null;
 	private HashMap<String, String> tableDir;
+	private HashMap<String, ArrayList<String>> schemaList;
 	
 	private Catalog() {
 		tableDir = new HashMap<String, String>();
+		schemaList = new HashMap<String, ArrayList<String>>();
 	}
 	
 	public static Catalog getInstance() {
@@ -25,6 +27,10 @@ public class Catalog {
 	
 	public void addDir(String name, String dir) {
 		tableDir.put(name, dir);
+	}
+	
+	public void addSchema(String name, ArrayList<String> schema) {
+		
 	}
 
 	

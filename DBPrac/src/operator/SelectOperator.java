@@ -19,10 +19,10 @@ public class SelectOperator extends Operator {
 		childOp = op;
 	}
 	
-	public Tuple getNextTuple(DataTable table){
+	public Tuple getNextTuple(String tableName){
 		Tuple next;
 		EvaluateWhere exprVisitor = new EvaluateWhere(exp);
-		while ((next = childOp.getNextTuple(table)) != null) {
+		while ((next = childOp.getNextTuple(tableName)) != null) {
 			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), table.getSchema())) != null) {
 				return next;
 			} 
@@ -34,10 +34,10 @@ public class SelectOperator extends Operator {
 		childOp.reset();
 	}
 	
-	public DataTable dump(DataTable table) {
+	public DataTable dump(String tableName) {
 		DataTable data = new DataTable("Output", new ArrayList<String>());
 		Tuple tup = new Tuple();
-		while ((tup = getNextTuple(table)) != null) {
+		while ((tup = getNextTuple(tableName)) != null) {
 			data.addData(tup.getTuple());
 		}
 		return data;
