@@ -61,7 +61,7 @@ public class ScanOperator extends Operator {
 	
 	public DataTable dump() {
 		DataTable data = new DataTable("Output");
-		Tuple tup;
+		Tuple tup = new Tuple();
 		while ((tup = getNextTuple()) != null) {
 			data.addData(tup.getTuple());
 		}

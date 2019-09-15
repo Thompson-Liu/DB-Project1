@@ -35,6 +35,7 @@ public class Interpreter {
 				System.out.println("Select body is " + select.getSelectBody());
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
+				
 				Table fileName= (Table) plainSelect.getFromItem();
 				String tableName= fileName.getName();
 
@@ -45,12 +46,12 @@ public class Interpreter {
 				Operator operator = opfact.generateQueryPlan(plainSelect);
 //				DataTable result = operator.dump();
 
-				SelectOperator selectOperator= new SelectOperator(tableName,plainSelect.getWhere());
-				EvaluateExpression expressionVisitor= new EvaluateExpression(tableName,plainSelect.getWhere());
-				System.out.println("plain select is " + plainSelect.toString());
-				
-				System.out.println("there");
-				DataTable result = joinTables(plainSelect);
+//				SelectOperator selectOperator= new SelectOperator(tableName,plainSelect.getWhere());
+//				EvaluateExpression expressionVisitor= new EvaluateExpression(tableName,plainSelect.getWhere());
+//				System.out.println("plain select is " + plainSelect.toString());
+//				
+//				System.out.println("there");
+				DataTable result = operator.dump();
 				result.printTable();
 			}
 		} catch (Exception e) {
@@ -83,25 +84,7 @@ public class Interpreter {
 		return cat;
 	}
 	
-	 private static DataTable joinTables(PlainSelect plainSelect) {
-//			controller connect to join 
-			Table fromLeft = (Table) plainSelect.getFromItem();
-			if(fromLeft!=null && plainSelect.getJoins()!=null){
-				SelectOperator selectLeft = new SelectOperator(fromLeft.getName(),plainSelect.getWhere());
-				DataTable left = selectLeft.dump();
-				ArrayList<String> leftTableNames = new ArrayList<String>();
-				leftTableNames.add(left.getTableName());
-				for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
-					Join right = (Join) joinsIt.next();
-					// to produced after WHERE result
-					JoinOperator join = new JoinOperator(left,plainSelect.getWhere(),leftTableNames,right.toString());
-					left = join.dump();
-					left.printTable();
-				}
-				return left;
-			}
-			return null;
-	 }
+
 
 }
 

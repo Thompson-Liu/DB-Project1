@@ -25,22 +25,28 @@ public class ProjectOperator extends ScanOperator {
 
 	@Override
 	public Tuple getNextTuple() {
-		Tuple next= childOp.getNextTuple();
-		Tuple tup= new Tuple();
+		Tuple next= null;
+		while ((next = childOp.getNextTuple()) != null) {
+			Tuple tup= new Tuple();
 
-		Catalog catalog= Catalog.getInstance();
-		ArrayList<String> schema= catalog.getSchema(tableName);
+			Catalog catalog= Catalog.getInstance();
+			ArrayList<String> schema= catalog.getSchema(tableName);
 
-		for (SelectItem item : selectColumns) {
-			if (item instanceof AllColumns) {
-				return next;
-			} else {
-				SelectExpressionItem expressItem= (SelectExpressionItem) item;
-				int index= schema.indexOf(expressItem.toString());
-				tup.addData(next.getData(index));
+			for (SelectItem item : selectColumns) {
+				if (item instanceof AllColumns) {
+					return next;
+				} else {
+					SelectExpressionItem expressItem= (SelectExpressionItem) item;
+
+					String select = expressItem.toString();
+					String columnName = select.split("\\.")[1];
+					int index= schema.indexOf(columnName);
+					tup.addData(next.getData(index));
+				}
 			}
+			return tup;
 		}
-		return tup;
+		return next;
 	}
 
 	@Override
@@ -50,6 +56,6 @@ public class ProjectOperator extends ScanOperator {
 
 	@Override
 	public DataTable dump() {
-		return childOp.dump();
+		return super.dump();
 	}
 }

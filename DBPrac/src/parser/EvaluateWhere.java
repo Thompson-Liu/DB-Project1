@@ -273,17 +273,17 @@ public class EvaluateWhere implements ExpressionVisitor {
 	@Override
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
-		if(!this.leftTupleTables.contains(colTable)) {
+		if(!this.leftTupleTables.contains(colTable) || !(colTable.equals(this.rightTupleTable))) {
 			sofar.push(null);
 		}else {
+			if (this.leftTupleTables.contains(colTable)) {
 			int index= leftSchema.indexOf(arg0.getColumnName());
 			sofar.push(leftTuple.getData(index));
-		}
-		if(!(colTable.equals(this.rightTupleTable))){
-			sofar.push(null);
-		}else {
-			int index= rightSchema.indexOf(arg0.getColumnName());
-			sofar.push(rightTuple.getData(index));
+			}
+			else {
+				int index= rightSchema.indexOf(arg0.getColumnName());
+				sofar.push(rightTuple.getData(index));
+			}
 		}
 	}
 
