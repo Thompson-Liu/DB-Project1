@@ -19,11 +19,11 @@ public class DataTable {
 	public void addData(ArrayList<Integer> newData) {
 		data.add(newData);
 	}
-	
+
 	public int cardinality() {
 		return data.size();
 	}
-	
+
 	public void deleteLastData() {
 		data.remove(data.size() - 1);
 	}
@@ -32,9 +32,15 @@ public class DataTable {
 		return data.get(index);
 	}
 
+	public void sortData(String colName) {
+		Catalog catalog= Catalog.getInstance();
+		int colIndex= catalog.getSchema(name).indexOf(colName);
+		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
+	}
+
 	public void printTable() {
-		for (ArrayList<Integer> x: data) {
-			for (int y: x) {
+		for (ArrayList<Integer> x : data) {
+			for (int y : x) {
 				System.out.print(y + " ");
 			}
 			System.out.println();
@@ -43,12 +49,12 @@ public class DataTable {
 
 	public void printTableInfo() {
 		System.out.println("Table name: " + name);
-		
-		Catalog catalog = Catalog.getInstance();
+
+		Catalog catalog= Catalog.getInstance();
 		System.out.println("Table directory: " + catalog.getDir(name));
-		
+
 		System.out.print("Table schema is: [");
-		for (String columnName: catalog.getSchema(name)) {
+		for (String columnName : catalog.getSchema(name)) {
 			System.out.print(columnName + " ");
 		}
 		System.out.print("]\n");
