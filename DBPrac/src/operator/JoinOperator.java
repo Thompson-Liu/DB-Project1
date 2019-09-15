@@ -18,40 +18,50 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import parser.EvaluateExpression;
 import parser.EvaluateWhere;
 
-public class JoinOperator extends SelectOperator {
+public class JoinOperator extends Operator {
 
-	private DataTable outerTable;
 	private DataTable joinResultTable;
 	private Operator leftOperator;
 	private Operator rightOperator;
-	private ArrayList<Table> joinTables;
-	private ArrayList<String> leftTables;	//deep left join: outer table, composed of joined result sofar
-	private String rightTable; 				//inner table to be joined
+	private DataTable leftTable;
+	private DataTable rightTable;
+//	private ArrayList<Table> joinTables;
+//	private ArrayList<String> leftTables;	//deep left join: outer table, composed of joined result sofar
+//	private String rightTable; 				//inner table to be joined
 	private Expression joinExp;
-	private Catalog catalog;
 
-	public JoinOperator(DataTable outerTable, Expression expression,ArrayList<String> leftTables, String rightTable) {
-		super(rightTable,expression);
-		joinExp = expression;
-		catalog = Catalog.getInstance();
-		this.leftTables = leftTables;
-		this.rightTable = rightTable;
+	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
+		this.joinExp=expression;
+		this.leftOperator = LeftOperator;
+		this.rightOperator = RightOperator;
+		this.leftTable = LeftOperator.dump();
+		this.rightTable = RightOperator.dump();
+//		super(rightTable,expression);
+//		joinExp = expression;
+//		catalog = Catalog.getInstance();
+//		this.leftTables = leftTables;
+//		this.rightTable = rightTable;
 	}
 	
 	//  could use scan / or could also use right table directly as input
-	public Tuple getNextTuple(Tuple left) {
+	public Tuple getNextTuple() {
 		Tuple next;
+		Tuple left;
 		Tuple right;
-		while((right=super.getNextTuple())!=null) {
-			EvaluateWhere evawhere = new EvaluateWhere(joinExp );
-			if((next=evawhere.evaluate(left,right,leftTables, rightTable))!=null) {
-				return next;
+		EvaluateWhere evawhere = new EvaluateWhere(joinExp );
+		while((left=leftOperator.getNextTuple())!=null) {
+			while((right=rightOperator.getNextTuple())!=null) {
+				if((next=evawhere.evaluate(left,right,leftTable, rightTable))!=null) {
+					return next;
+				}
 			}
+			rightOperator.reset();
 		}
 		return null;
 	}
 	
 	public DataTable dump() {
+		
 		DataTable data = new DataTable("output");
 		for(int i=0; i<outerTable.cardinality();i++) {
 			Tuple left= new Tuple(outerTable.getData(i));

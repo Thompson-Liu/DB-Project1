@@ -67,24 +67,23 @@ public class EvaluateWhere implements ExpressionVisitor {
 		this.expr=expr;
 	}
 	
-	// compute the schema for this tables sets
-	private void initSchema() {
-		for(String tableName: this.leftTupleTables) {
-			this.leftSchema.addAll(Catalog.getInstance().getSchema(tableName));
-		}
-		this.rightSchema= Catalog.getInstance().getSchema(this.rightTupleTable);
-	}
+//	// compute the schema for this tables sets
+//	private void initSchema() {
+//		for(String tableName: this.leftTupleTables) {
+//			this.leftSchema.addAll(Catalog.getInstance().getSchema(tableName));
+//		}
+//		this.rightSchema= Catalog.getInstance().getSchema(this.rightTupleTable);
+//	}
 
 	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple, 
-			ArrayList<String> leftTableNames, String rightTable) {
+			ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
 		sofar= new Stack<Integer>();
 		this.leftTuple = leftTuple;
 		this.rightTuple = rightTuple;
-		this.leftTupleTables= leftTableNames;
-		this.rightTupleTable=rightTable;
-		this.initSchema();
-		resultTuple = leftTuple.concateTuple(rightTuple);
+		this.leftSchema = leftSchema;
+		this.rightSchema = rightSchema;
 		expr.accept(this);
+		resultTuple = leftTuple.concateTuple(rightTuple);
 		if(sofar.size()==0) {
 			return resultTuple;
 		}
@@ -275,10 +274,10 @@ public class EvaluateWhere implements ExpressionVisitor {
 	@Override
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
-		if(!this.leftTupleTables.contains(colTable) || !(colTable.equals(this.rightTupleTable))) {
+		if(!this.leftSchema.contains(colTable) || !this.leftSchema.contains(colTable)) {
 			sofar.push(null);
 		}else {
-			if (this.leftTupleTables.contains(colTable)) {
+			if (this.leftSchema.contains(colTable) ) {
 			int index= leftSchema.indexOf(arg0.getColumnName());
 			sofar.push(leftTuple.getData(index));
 			}
