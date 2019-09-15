@@ -18,7 +18,6 @@ import operator.JoinOperator;
 import operator.Operator;
 import operator.ScanOperator;
 import operator.SelectOperator;
-import parser.EvaluateExpression;
 
 public class Interpreter {
 
@@ -35,22 +34,16 @@ public class Interpreter {
 				System.out.println("Select body is " + select.getSelectBody());
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
-				
+
 				Table fileName= (Table) plainSelect.getFromItem();
 				String tableName= fileName.getName();
 
 				Catalog cat= createCatalog(dataDir);
 				cat.printCatalog();
-				
+
 				OperatorFactory opfact = new OperatorFactory();
 				Operator operator = opfact.generateQueryPlan(plainSelect);
-//				DataTable result = operator.dump();
 
-//				SelectOperator selectOperator= new SelectOperator(tableName,plainSelect.getWhere());
-//				EvaluateExpression expressionVisitor= new EvaluateExpression(tableName,plainSelect.getWhere());
-//				System.out.println("plain select is " + plainSelect.toString());
-//				
-//				System.out.println("there");
 				DataTable result = operator.dump();
 				result.printTable();
 			}
@@ -60,30 +53,30 @@ public class Interpreter {
 		}
 
 	}
-	
+
 	private static Catalog createCatalog(String directory) {
 		Catalog cat= Catalog.getInstance();
 		try {
-		FileReader schemafw = new FileReader(dataDir+"schema.txt");
-		BufferedReader readSchema = new BufferedReader(schemafw);
-		String line;
-		while ((line = readSchema.readLine())!=null) {
-			String[] schemaLine = line.split(" ");
-			String tableName = schemaLine[0];
-			cat.addDir(tableName, dataDir+"data/" + tableName);
-			ArrayList<String> schem= new ArrayList<String>();
-			for(int i=1; i<schemaLine.length ; i++) {
-				schem.add(schemaLine[i]);
+			FileReader schemafw = new FileReader(dataDir+"schema.txt");
+			BufferedReader readSchema = new BufferedReader(schemafw);
+			String line;
+			while ((line = readSchema.readLine())!=null) {
+				String[] schemaLine = line.split(" ");
+				String tableName = schemaLine[0];
+				cat.addDir(tableName, dataDir+"data/" + tableName);
+				ArrayList<String> schem= new ArrayList<String>();
+				for(int i=1; i<schemaLine.length ; i++) {
+					schem.add(schemaLine[i]);
+				}
+				cat.addSchema(tableName,schem);
 			}
-			cat.addSchema(tableName,schem);
-		}
-		readSchema.close();
-		}catch(IOException e) {
+			readSchema.close();
+		} catch(IOException e) {
 			System.err.println("Exception unable to access the directory");
 		}
 		return cat;
 	}
-	
+
 
 
 }

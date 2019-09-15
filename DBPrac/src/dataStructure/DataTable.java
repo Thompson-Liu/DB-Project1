@@ -28,7 +28,7 @@ public class DataTable {
 		data.remove(data.size() - 1);
 	}
 
-	public ArrayList<Integer> getData(int index) {
+	public ArrayList<Integer> getData(String columnName) {
 		return data.get(index);
 	}
 

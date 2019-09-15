@@ -1,11 +1,13 @@
 package operator;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
+
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import parser.EvaluateExpression;
+import parser.EvaluateWhere;
 
 public class SelectOperator extends ScanOperator {
 
@@ -20,9 +22,9 @@ public class SelectOperator extends ScanOperator {
 	
 	public Tuple getNextTuple(){
 		Tuple next;
-		EvaluateExpression exprVisitor = new EvaluateExpression(tableName,exp);
+		EvaluateWhere exprVisitor = new EvaluateWhere(exp);
 		while ((next = super.getNextTuple()) != null) {
-			if ((next = exprVisitor.evaluate(next)) != null) {
+			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), tableName)) != null) {
 				return next;
 			} 
 		}
