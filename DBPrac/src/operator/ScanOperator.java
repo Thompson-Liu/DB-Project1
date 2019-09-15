@@ -17,11 +17,11 @@ public class ScanOperator extends Operator {
 	private BufferedReader br;
 	private String tableName;
 	
-	public ScanOperator(String name) {
-		tableName = name;
+	public ScanOperator(DataTable data) {
+		tableName = data.getTableName();
 		
 		Catalog catalog = Catalog.getInstance();
-		String dir = catalog.getDir(name);
+		String dir = catalog.getDir(tableName);
 		File file = new File(dir);
 		
 		try {
@@ -60,7 +60,7 @@ public class ScanOperator extends Operator {
 	}
 	
 	public DataTable dump() {
-		DataTable data = new DataTable("Output");
+		DataTable data = new DataTable("Output", new ArrayList<String>());
 		Tuple tup = new Tuple();
 		while ((tup = getNextTuple()) != null) {
 			data.addData(tup.getTuple());

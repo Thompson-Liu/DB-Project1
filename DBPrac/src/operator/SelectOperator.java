@@ -9,22 +9,23 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import parser.EvaluateWhere;
 
-public class SelectOperator extends ScanOperator {
+public class SelectOperator extends Operator {
 
-	private String tableName;
+	private DataTable table;
 	private Expression exp;
+	private Operator childOp;
 	
-	public SelectOperator (String name, Expression expression) {
-		super(name);
-		tableName = name;
+	public SelectOperator (DataTable dt, Expression expression, Operator op) {
+		table = dt;
 		exp = expression;
+		childOp = op;
 	}
 	
 	public Tuple getNextTuple(){
 		Tuple next;
 		EvaluateWhere exprVisitor = new EvaluateWhere(exp);
-		while ((next = super.getNextTuple()) != null) {
-			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), tableName)) != null) {
+		while ((next = childOp.getNextTuple()) != null) {
+			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), table.getSchema())) != null) {
 				return next;
 			} 
 		}

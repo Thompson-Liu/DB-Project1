@@ -7,11 +7,9 @@ public class Catalog {
 	
 	private static Catalog dbCatalog = null;
 	private HashMap<String, String> tableDir;
-	private HashMap<String, ArrayList<String>> tableSchema;
 	
 	private Catalog() {
 		tableDir = new HashMap<String, String>();
-		tableSchema = new HashMap<String, ArrayList<String>>();
 	}
 	
 	public static Catalog getInstance() {
@@ -25,26 +23,15 @@ public class Catalog {
 		return tableDir.get(name);
 	}
 	
-	public ArrayList<String> getSchema(String name) {
-		return tableSchema.get(name);
-	}
-	
 	public void addDir(String name, String dir) {
 		tableDir.put(name, dir);
 	}
-	
-	public void addSchema(String name, ArrayList<String> schema) {
-		tableSchema.put(name, schema);
-	}
+
 	
 	public void printCatalog() {
 		System.out.println("Tables directorys:");
 		for(String table: tableDir.keySet()) {
 			System.out.println(table+tableDir.get(table));
-		}
-		System.out.println("Tables schemas:");
-		for(String table: tableSchema.keySet()) {
-			System.out.println(table+tableSchema.get(table).toString());
 		}
 	}
 }

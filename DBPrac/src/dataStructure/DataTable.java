@@ -6,14 +6,19 @@ public class DataTable {
 
 	private String name;
 	private ArrayList<ArrayList<Integer>> data;
+	private ArrayList<String> schema;
 
-	public DataTable(String tableName) {
+	public DataTable(String tableName, ArrayList<String> schema) {
 		name= tableName;
 		data= new ArrayList<ArrayList<Integer>>();
 	}
 
 	public String getTableName() {
 		return name;
+	}
+	
+	public ArrayList<String> getSchema() {
+		return schema;
 	}
 
 	public void addData(ArrayList<Integer> newData) {
@@ -24,17 +29,12 @@ public class DataTable {
 		return data.size();
 	}
 
-	public void deleteLastData() {
-		data.remove(data.size() - 1);
-	}
-
 	public ArrayList<Integer> getData(String columnName) {
-		return data.get(index);
+		return data.get(schema.indexOf(columnName));
 	}
 
 	public void sortData(String colName) {
-		Catalog catalog= Catalog.getInstance();
-		int colIndex= catalog.getSchema(name).indexOf(colName);
+		int colIndex= schema.indexOf(colName);
 		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
 	}
 
@@ -54,7 +54,7 @@ public class DataTable {
 		System.out.println("Table directory: " + catalog.getDir(name));
 
 		System.out.print("Table schema is: [");
-		for (String columnName : catalog.getSchema(name)) {
+		for (String columnName : schema) {
 			System.out.print(columnName + " ");
 		}
 		System.out.print("]\n");

@@ -16,7 +16,7 @@ public class ProjectOperator extends ScanOperator {
 	private ArrayList<SelectItem> selectColumns;
 	private String tableName;
 
-	public ProjectOperator(Operator operator, String name, List<SelectItem> list) {
+	public ProjectOperator(Operator operator, DataTable table, List<SelectItem> list) {
 		super(name);
 		tableName= name;
 		childOp= operator;
@@ -28,9 +28,6 @@ public class ProjectOperator extends ScanOperator {
 		Tuple next= null;
 		while ((next = childOp.getNextTuple()) != null) {
 			Tuple tup= new Tuple();
-
-			Catalog catalog= Catalog.getInstance();
-			ArrayList<String> schema= catalog.getSchema(tableName);
 
 			for (SelectItem item : selectColumns) {
 				if (item instanceof AllColumns) {
