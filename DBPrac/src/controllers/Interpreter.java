@@ -34,18 +34,18 @@ public class Interpreter {
 				System.out.println("Select body is " + select.getSelectBody());
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
-
-				Table fileName= (Table) plainSelect.getFromItem();
-				String tableName= fileName.getName();
-
+				
+				String fileName= ((Table) plainSelect.getFromItem()).getAlias();
+//				String tableName= fileName.getName();
+				System.out.println("table name is " + fileName);
 				Catalog cat= createCatalog(dataDir);
 				cat.printCatalog();
 
 				OperatorFactory opfact = new OperatorFactory();
 				Operator operator = opfact.generateQueryPlan(plainSelect);
 
-				DataTable result = operator.dump();
-				result.printTable();
+				//DataTable result = operator.dump();
+				//result.printTable();
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
@@ -68,7 +68,7 @@ public class Interpreter {
 				for(int i=1; i<schemaLine.length ; i++) {
 					schem.add(schemaLine[i]);
 				}
-				cat.addSchema(tableName,schem);
+//				cat.addSchema(tableName,schem);
 			}
 			readSchema.close();
 		} catch(IOException e) {

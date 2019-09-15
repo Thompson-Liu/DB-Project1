@@ -63,8 +63,8 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private Expression expr;
 	
 
-	public EvaluateWhere(Expression expr) {
-		this.expr=expr;
+	public EvaluateWhere(Expression whereExpr) {
+		this.expr=whereExpr;
 	}
 	
 //	// compute the schema for this tables sets
