@@ -61,21 +61,5 @@ public class JoinOperator extends SelectOperator {
 		}
 		return data;
 	}
-	
-//	controller connect to join 
-//	Table fromLeft = (Table) select.getFromItem();
-//	if(fromLeft!=null && select.getJoins()!=null){
-//		SelectOperator selectLeft = new SelectOperator(fromLeft.getName(),select.getWhere());
-//		DataTable left = selectLeft.dump();
-//		ArrayList<String> leftTableNames = new ArrayList<String>();
-//		leftTableNames.add(left.getTableName());
-//		for (Iterator joinsIt = select.getJoins().iterator(); joinsIt.hasNext();) {
-//			Join right = (Join) joinsIt.next();
-//			// to produced after WHERE result
-//			JoinOperator join = new JoinOperator(left,select.getWhere(),leftTableNames,rig);
-//			left = join.dump();
-//		}
-//		return left;
-//	}
 
 }
