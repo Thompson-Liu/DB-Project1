@@ -1,3 +1,3 @@
-SELECT Sailors.c
+SELECT Sailors.A
 FROM Sailors
-WHERE Sailors.A = 1;
+WHERE Reserves.A <=3;

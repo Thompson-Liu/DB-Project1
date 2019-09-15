@@ -22,6 +22,8 @@ public class JoinOperator extends SelectOperator {
 
 	private DataTable outerTable;
 	private DataTable joinResultTable;
+	private Operator leftOperator;
+	private Operator rightOperator;
 	private ArrayList<Table> joinTables;
 	private ArrayList<String> leftTables;	//deep left join: outer table, composed of joined result sofar
 	private String rightTable; 				//inner table to be joined
@@ -41,8 +43,8 @@ public class JoinOperator extends SelectOperator {
 		Tuple next;
 		Tuple right;
 		while((right=super.getNextTuple())!=null) {
-			EvaluateWhere evawhere = new EvaluateWhere(left,right,leftTables, rightTable);
-			if((next=evawhere.evaluate(joinExp))!=null) {
+			EvaluateWhere evawhere = new EvaluateWhere(joinExp );
+			if((next=evawhere.evaluate(left,right,leftTables, rightTable))!=null) {
 				return next;
 			}
 		}
