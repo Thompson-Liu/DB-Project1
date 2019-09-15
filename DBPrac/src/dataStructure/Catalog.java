@@ -30,9 +30,12 @@ public class Catalog {
 	}
 	
 	public void addSchema(String name, ArrayList<String> schema) {
-		
+		schemaList.put(name, schema);
 	}
 
+	public ArrayList<String> getSchema(String name) {
+		return schemaList.get(name);
+	}
 	
 	public void printCatalog() {
 		System.out.println("Tables directorys:");

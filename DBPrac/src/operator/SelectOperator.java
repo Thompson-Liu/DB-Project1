@@ -3,6 +3,7 @@ package operator;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 
+import dataStructure.Catalog;
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 import net.sf.jsqlparser.expression.Expression;
@@ -23,7 +24,8 @@ public class SelectOperator extends Operator {
 		Tuple next;
 		EvaluateWhere exprVisitor = new EvaluateWhere(exp);
 		while ((next = childOp.getNextTuple(tableName)) != null) {
-			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), table.getSchema())) != null) {
+			Catalog cat = Catalog.getInstance();
+			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), cat.getSchema(tableName))) != null) {
 				return next;
 			} 
 		}

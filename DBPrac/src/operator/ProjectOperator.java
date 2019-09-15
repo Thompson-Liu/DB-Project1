@@ -34,7 +34,9 @@ public class ProjectOperator extends Operator {
 
 					String select = expressItem.toString();
 					String columnName = select.split("\\.")[1];
-					int index= table.getSchema().indexOf(columnName);
+					
+					Catalog cat = Catalog.getInstance();
+					int index= cat.getSchema(tableName).indexOf(columnName);
 					tup.addData(next.getData(index));
 				}
 			}
