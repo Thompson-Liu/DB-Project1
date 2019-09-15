@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.*;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -9,9 +10,12 @@ import dataStructure.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
+import operator.JoinOperator;
+import operator.Operator;
 import operator.ScanOperator;
 import operator.SelectOperator;
 import parser.EvaluateExpression;
@@ -37,21 +41,17 @@ public class Interpreter {
 				Catalog cat= createCatalog(dataDir);
 				cat.printCatalog();
 				
+				OperatorFactory opfact = new OperatorFactory();
+				Operator operator = opfact.generateQueryPlan(plainSelect);
+//				DataTable result = operator.dump();
 
 				SelectOperator selectOperator= new SelectOperator(tableName,plainSelect.getWhere());
 				EvaluateExpression expressionVisitor= new EvaluateExpression(tableName,plainSelect.getWhere());
 				System.out.println("plain select is " + plainSelect.toString());
 				
-//				Tuple rst= expressionVisitor.evaluate(selectOperator.getNextTuple());
-//				if (rst != null) {
-//					System.out.println(rst.printData());
-//				}
 				System.out.println("there");
-				DataTable result = selectOperator.dump();
+				DataTable result = joinTables(plainSelect);
 				result.printTable();
-				//					System.out.println("select items are" + plainSelect.getSelectItems());
-				//					System.out.println("from items are" + plainSelect.getFromItem());
-				//					System.out.println("remaining from items" + plainSelect.getJoins());
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
@@ -62,7 +62,6 @@ public class Interpreter {
 	
 	private static Catalog createCatalog(String directory) {
 		Catalog cat= Catalog.getInstance();
-		
 		try {
 		FileReader schemafw = new FileReader(dataDir+"schema.txt");
 		BufferedReader readSchema = new BufferedReader(schemafw);
@@ -77,14 +76,32 @@ public class Interpreter {
 			}
 			cat.addSchema(tableName,schem);
 		}
-		
 		readSchema.close();
-		
 		}catch(IOException e) {
 			System.err.println("Exception unable to access the directory");
 		}
 		return cat;
 	}
+	
+	 private static DataTable joinTables(PlainSelect plainSelect) {
+//			controller connect to join 
+			Table fromLeft = (Table) plainSelect.getFromItem();
+			if(fromLeft!=null && plainSelect.getJoins()!=null){
+				SelectOperator selectLeft = new SelectOperator(fromLeft.getName(),plainSelect.getWhere());
+				DataTable left = selectLeft.dump();
+				ArrayList<String> leftTableNames = new ArrayList<String>();
+				leftTableNames.add(left.getTableName());
+				for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
+					Join right = (Join) joinsIt.next();
+					// to produced after WHERE result
+					JoinOperator join = new JoinOperator(left,plainSelect.getWhere(),leftTableNames,right.toString());
+					left = join.dump();
+					left.printTable();
+				}
+				return left;
+			}
+			return null;
+	 }
 
 }
 
