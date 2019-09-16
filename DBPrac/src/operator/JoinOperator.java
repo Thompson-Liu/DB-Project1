@@ -22,6 +22,8 @@ public class JoinOperator extends Operator {
 	private Operator leftOperator;
 	private Operator rightOperator;
 	private Expression joinExp;
+	private DataTable leftTable;
+	private DataTable rightTable;
 
 	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
 		this.joinExp=expression;
@@ -30,14 +32,14 @@ public class JoinOperator extends Operator {
 	}
 	
 	//  could use scan / or could also use right table directly as input
-	public Tuple getNextTuple(DataTable leftTable, DataTable rightTable) {
+	public Tuple getNextTuple(String rightTableName) {
 		Tuple next;
 		Tuple left;
 		Tuple right;
 		EvaluateWhere evawhere = new EvaluateWhere(joinExp );
-		while((left=leftOperator.getNextTuple())!=null) {
-			while((right=rightOperator.getNextTuple())!=null) {
-				if((next=evawhere.evaluate(left,right,leftTable.getSchema(), rightTable.getSchema()))!=null) {
+		while((left=leftOperator.getNextTuple(this.leftTable.getTableName()))!=null) {
+			while((right=rightOperator.getNextTuple(rightTableName))!=null) {
+				if((next=evawhere.evaluate(left,right,leftTable.getSchema(), this.rightTable.getSchema()))!=null) {
 					return next;
 				}
 			}
@@ -46,12 +48,14 @@ public class JoinOperator extends Operator {
 		return null;
 	}
 		
-	public DataTable dump(DataTable leftTable, DataTable rightTable) {
+	public DataTable dump(String leftTableName, String rightTableName) {
+		leftTable = this.leftOperator.dump(leftTableName);
+		rightTable = this.rightOperator.dump(rightTableName);
 		ArrayList<String> ret= (ArrayList<String>) leftTable.getSchema().clone();
 		ret.addAll(rightTable.getSchema());
 		DataTable result = new DataTable("Output", ret);
 		Tuple tup = new Tuple();
-		while ((tup = getNextTuple(leftTable, rightTable)) != null) {
+		while ((tup = getNextTuple(rightTableName)) != null) {
 			result.addData(tup.getTuple());
 		}
 		
