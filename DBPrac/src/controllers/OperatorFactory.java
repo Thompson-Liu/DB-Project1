@@ -19,70 +19,38 @@ import operator.SelectOperator;
 
 public class OperatorFactory {
 
-	public Operator generateQueryPlan(PlainSelect select) {
+	public Operator generateQueryPlan(PlainSelect plainSelect) {
 
-		String name= ((Table) (select.getFromItem())).getName();
-		boolean whereEmpty;
+		Operator resultOp;
+		String fromLeft = plainSelect.getFromItem().toString();
+		Operator intOp;
 
-		// check where clause
-		Expression whereClause= select.getWhere();
-		if (whereClause == null) {
-			whereEmpty= true;
-		} else {
-			whereEmpty= false;
+		if( plainSelect.getJoins()!=null) {
+			intOp= (join(plainSelect,plainSelect.getJoins()));
+		}
+		else {
+			intOp= new SelectOperator(plainSelect.getWhere(),new ScanOperator(fromLeft));
 		}
 
-		
 		// check select clause
-		List<SelectItem> selectItems= select.getSelectItems();
+		List<SelectItem> selectItems= plainSelect.getSelectItems();
 		if (selectItems.get(0) instanceof AllColumns) {
-			if (whereEmpty) {
-				return new ScanOperator();
-			} else {
-				return new SelectOperator(whereClause, new ScanOperator());
-			}
+			return intOp;
 		} else {
-			if (whereEmpty) {
-				return new ProjectOperator(new ScanOperator(), selectItems);
-			} else {
-				return new ProjectOperator(new SelectOperator(whereClause, new ScanOperator()), selectItems);
-			}
-		}
-		
-		SelectOperator selectOp = new SelectOperator(whereClause, new ScanOperator());
-		if(select.getJoins()!=null) {
-			ProjectOperator left = new ProjectOperator(selectOp, selectItems);
-			int joinCount =1;
-			for(Iterator joinsIt = select.getJoins().iterator(); joinsIt.hasNext();) {
-				Join right = (Join) joinsIt.next();
-				JoinOperator left = new JoinOperator()
-				JoinOperator join = new JoinOperator(projectLeft,plainSelect.getWhere(),leftTableNames,right.toString());
-			}
-		}
-		
+			return new ProjectOperator(intOp, selectItems);
 
+		}
 	}
-	
-	 private static Operator joinTables(PlainSelect plainSelect) {
-//			controller connect to join 
-			Table fromLeft = (Table) plainSelect.getFromItem();
-			if(fromLeft!=null){
-				Operator leftOperator;
-//				= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft.toString()));
-				if( plainSelect.getJoins()!=null) {
-					Operator rightOperator;
-					for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
-						// to produced after WHERE result
-						System.out.print("hrerere");
-						JoinOperator join = new JoinOperator(left,plainSelect.getWhere(),leftTableNames,right.toString());
-						left = join.dump();
-						left.printTable();
-					}
-					JoinOperator join = new JoinOperator(leftOperator,rightOperator,plainSelect.getWhere());
-				}
-				
-			}
-			return null;
-	 }
+
+	private Operator join(PlainSelect plainSelect,List<Join> joins) {
+		if (joins.size()==1) {
+			Operator scanOp = new ScanOperator(joins.get(0).toString());
+			return new SelectOperator(plainSelect.getWhere(), scanOp);
+		}
+		String rightName=joins.remove(joins.size()-1).toString();
+		Expression whereExp = plainSelect.getWhere();
+		SelectOperator rightOperator = new SelectOperator(whereExp, new ScanOperator(rightName));
+		return(new JoinOperator(join(plainSelect,joins),rightOperator,whereExp));
+	}
 
 }

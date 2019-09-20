@@ -33,7 +33,9 @@ public class ParserExample {
 				System.out.println("from items are  :   " +plainSelect.getFromItem().toString());
 				System.out.println("remaining from items"+plainSelect.getJoins());
 				System.out.println("where clause is "+plainSelect.getWhere());
-				System.out.print("inside where is "+plainSelect.getWhere().toString());
+				System.out.println("inside where is "+plainSelect.getWhere().toString());
+				System.out.println("join list is :    "+plainSelect.getJoins());
+				System.out.println("join list next :    "+plainSelect.getJoins().get(0).toString());
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");

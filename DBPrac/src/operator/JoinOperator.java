@@ -6,6 +6,7 @@ package operator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.*;
 
 import dataStructure.Catalog;
@@ -25,17 +26,23 @@ public class JoinOperator extends Operator {
 	private Expression joinExp;
 
 	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
-		this.joinExp=expression;
+		joinExp=expression;
 		ArrayList<String> cur = (ArrayList<String>) LeftOperator.schema().clone();
-		this.DataTable = new DataTable(LeftOperator.getTableName()+RightOperator.getTableName(),cur.addAll(RightOperator.schema()));
-		this.leftOperator = LeftOperator;
-		this.rightOperator = RightOperator;
+		cur.addAll(RightOperator.schema());
+		currentTable = new DataTable(LeftOperator.getTableName()+RightOperator.getTableName(), cur);
+		leftOperator = LeftOperator;
+		rightOperator = RightOperator;
 	}
 	
+	public void reset() {
+		leftOperator.reset();
+		rightOperator.reset();
+	}
 	
 	public String getTableName() {
 		return currentTable.getTableName();
 	}
+	
 	// return the schema of the current table
 	public ArrayList<String> Schema(){
 		return currentTable.getSchema();
@@ -46,7 +53,7 @@ public class JoinOperator extends Operator {
 		Tuple next;
 		Tuple left;
 		Tuple right;
-		EvaluateWhere evawhere = new EvaluateWhere(joinExp );
+		EvaluateWhere evawhere = new EvaluateWhere(joinExp);
 		while((left=leftOperator.getNextTuple())!=null) {
 			while((right=rightOperator.getNextTuple())!=null) {
 				if((next=evawhere.evaluate(left,right,leftOperator.schema(), rightOperator.schema()))!=null) {
@@ -59,8 +66,8 @@ public class JoinOperator extends Operator {
 		return null;
 	}
 		
-	public DataTable dump() {
-		return this.currentTable;
+	public void dump(PrintStream ps) {
+		currentTable.printTable(ps);;
 	}
 
 }
