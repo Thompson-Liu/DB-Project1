@@ -1,5 +1,6 @@
 package operator;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class ProjectOperator extends Operator {
 
 	private Operator childOp;
 	private ArrayList<SelectItem> selectColumns;
+	private DataTable data;
 
 	public ProjectOperator(Operator operator, List<SelectItem> list) {
 		childOp= operator;
@@ -21,13 +23,14 @@ public class ProjectOperator extends Operator {
 	}
 
 	@Override
-	public Tuple getNextTuple(String tableName) {
+	public Tuple getNextTuple() {
 		Tuple next= null;
-		while ((next = childOp.getNextTuple(tableName)) != null) {
+		while ((next = childOp.getNextTuple()) != null) {
 			Tuple tup= new Tuple();
 
 			for (SelectItem item : selectColumns) {
 				if (item instanceof AllColumns) {
+					data.addData(next);
 					return next;
 				} else {
 					SelectExpressionItem expressItem= (SelectExpressionItem) item;
@@ -35,11 +38,11 @@ public class ProjectOperator extends Operator {
 					String select = expressItem.toString();
 					String columnName = select.split("\\.")[1];
 					
-					Catalog cat = Catalog.getInstance();
-					int index= cat.getSchema(tableName).indexOf(columnName);
+					int index= childOp.schema().indexOf(columnName);
 					tup.addData(next.getData(index));
 				}
 			}
+			data.addData(tup);
 			return tup;
 		}
 		return next;
@@ -51,12 +54,12 @@ public class ProjectOperator extends Operator {
 	}
 
 	@Override
-	public DataTable dump(String tableName) {
-		DataTable data = new DataTable("Output", new ArrayList<String>());
-		Tuple tup = new Tuple();
-		while ((tup = getNextTuple(tableName)) != null) {
-			data.addData(tup.getTuple());
-		}
-		return data;
+	public void dump(PrintStream ps) {
+		data.printTable(ps);
+	}
+	
+	@Override
+	public ArrayList<String> schema() {
+		return data.getSchema();
 	}
 }

@@ -1,11 +1,13 @@
 package operator;
 
 import dataStructure.Tuple;
-import dataStructure.DataTable;
+import java.io.PrintStream;
+import java.util.ArrayList;
 
+import dataStructure.DataTable;
 public abstract class Operator {
 
-	Tuple getNextTuple(String tableName){
+	Tuple getNextTuple(){
 		return null;
 	}
 	
@@ -13,7 +15,11 @@ public abstract class Operator {
 		return;
 	}
 	
-	public DataTable dump(String tableName) {
+	public void dump(PrintStream ps) {
+		return;
+	}
+	
+	public ArrayList<String> schema() {
 		return null;
 	}
 }

@@ -1,5 +1,6 @@
 package dataStructure;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class DataTable {
@@ -24,6 +25,10 @@ public class DataTable {
 	public void addData(ArrayList<Integer> newData) {
 		data.add(newData);
 	}
+	
+	public void addData(Tuple tup) {
+		data.add(tup.getTuple());
+	}
 
 	public int cardinality() {
 		return data.size();
@@ -38,12 +43,12 @@ public class DataTable {
 		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
 	}
 
-	public void printTable() {
+	public void printTable(PrintStream ps) {
 		for (ArrayList<Integer> x : data) {
 			for (int y : x) {
-				System.out.print(y + " ");
+				ps.print(y + " ");
 			}
-			System.out.println();
+			ps.println();
 		}
 	}
 

@@ -1,6 +1,7 @@
 package operator;
 
 import java.io.BufferedReader;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import dataStructure.Catalog;
@@ -14,34 +15,38 @@ public class SelectOperator extends Operator {
 
 	private Expression exp;
 	private Operator childOp;
+	private DataTable data;
 	
 	public SelectOperator (Expression expression, Operator op) {
 		exp = expression;
 		childOp = op;
 	}
 	
-	public Tuple getNextTuple(String tableName){
+	@Override
+	public Tuple getNextTuple(){
 		Tuple next;
 		EvaluateWhere exprVisitor = new EvaluateWhere(exp);
-		while ((next = childOp.getNextTuple(tableName)) != null) {
-			Catalog cat = Catalog.getInstance();
-			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), cat.getSchema(tableName))) != null) {
+		while ((next = childOp.getNextTuple()) != null) {
+			if ((next = exprVisitor.evaluate(null, next, new ArrayList<String>(), childOp.schema())) != null) {
+				data.addData(next);
 				return next;
 			} 
 		}
 		return null;
 	}
 	
+	@Override
 	public void reset() {
 		childOp.reset();
 	}
 	
-	public DataTable dump(String tableName) {
-		DataTable data = new DataTable("Output", new ArrayList<String>());
-		Tuple tup = new Tuple();
-		while ((tup = getNextTuple(tableName)) != null) {
-			data.addData(tup.getTuple());
-		}
-		return data;
+	@Override
+	public void dump(PrintStream ps) {
+		data.printTable(ps);
+	}
+	
+	@Override
+	public ArrayList<String> schema() {
+		return data.getSchema();
 	}
 }

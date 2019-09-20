@@ -9,20 +9,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class ScanOperator extends Operator {
 
 	// Check if this will be inherited by the children class
 	private BufferedReader br;
+	private DataTable data;
 	
-	public ScanOperator() {
+	public ScanOperator(DataTable dt) {
+		data = dt;
 		
-	}
-	
-	public Tuple getNextTuple(String tableName){
 		Catalog catalog = Catalog.getInstance();
-		String dir = catalog.getDir(tableName);
+		String dir = catalog.getDir(dt.getTableName());
 		File file = new File(dir);
 		
 		try {
@@ -35,7 +35,10 @@ public class ScanOperator extends Operator {
 		} catch (IOException e) {
 			System.err.println("Marking stream returns an error");
 		}
-		
+	}
+	
+	@Override
+	public Tuple getNextTuple(){
 		String read = null;
 		try {
 			read = br.readLine();
@@ -46,10 +49,13 @@ public class ScanOperator extends Operator {
 		if (read == null) {
 			return null;
 		} else {
-			return (new Tuple(read));
+			Tuple nextTuple = new Tuple(read);
+			data.addData(nextTuple);
+			return (nextTuple);
 		}
 	}
 	
+	@Override
 	public void reset() {
 		try {
 			br.reset();
@@ -58,12 +64,13 @@ public class ScanOperator extends Operator {
 		}
 	}
 	
-	public DataTable dump(String tableName) {
-		DataTable data = new DataTable("Output", new ArrayList<String>());
-		Tuple tup = new Tuple();
-		while ((tup = getNextTuple(tableName)) != null) {
-			data.addData(tup.getTuple());
-		}
-		return data;
+	@Override
+	public void dump(PrintStream ps) {
+		data.printTable(ps);
+	}
+	
+	@Override
+	public ArrayList<String> schema() {
+		return data.getSchema();
 	}
 }
