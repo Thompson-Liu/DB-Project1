@@ -17,9 +17,10 @@ public class SelectOperator extends Operator {
 	private Operator childOp;
 	private DataTable data;
 	
-	public SelectOperator (Expression expression, Operator op) {
+	public SelectOperator(Expression expression, Operator op) {
 		exp = expression;
 		childOp = op;
+		data = new DataTable(op.getTableName(), op.schema());
 	}
 	
 	@Override
@@ -48,5 +49,10 @@ public class SelectOperator extends Operator {
 	@Override
 	public ArrayList<String> schema() {
 		return data.getSchema();
+	}
+	
+	@Override
+	public String getTableName() {
+		return data.getTableName();
 	}
 }

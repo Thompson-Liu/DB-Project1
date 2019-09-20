@@ -18,13 +18,12 @@ public class ScanOperator extends Operator {
 	private BufferedReader br;
 	private DataTable data;
 	
-	public ScanOperator(DataTable dt) {
-		data = dt;
-		
+	public ScanOperator(String tableName) {
 		Catalog catalog = Catalog.getInstance();
-		String dir = catalog.getDir(dt.getTableName());
-		File file = new File(dir);
+		String dir = catalog.getDir(tableName);
+		data = new DataTable(tableName, catalog.getSchema(tableName));
 		
+		File file = new File(dir);
 		try {
 			br = new BufferedReader(new FileReader(file));
 		
@@ -72,5 +71,10 @@ public class ScanOperator extends Operator {
 	@Override
 	public ArrayList<String> schema() {
 		return data.getSchema();
+	}
+	
+	@Override
+	public String getTableName() {
+		return data.getTableName();
 	}
 }

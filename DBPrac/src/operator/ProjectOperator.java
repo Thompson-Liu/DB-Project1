@@ -20,6 +20,7 @@ public class ProjectOperator extends Operator {
 	public ProjectOperator(Operator operator, List<SelectItem> list) {
 		childOp= operator;
 		selectColumns= new ArrayList<SelectItem>(list);
+		data = new DataTable(operator.getTableName(), operator.schema());
 	}
 
 	@Override
@@ -61,5 +62,10 @@ public class ProjectOperator extends Operator {
 	@Override
 	public ArrayList<String> schema() {
 		return data.getSchema();
+	}
+	
+	@Override
+	public String getTableName() {
+		return data.getTableName();
 	}
 }

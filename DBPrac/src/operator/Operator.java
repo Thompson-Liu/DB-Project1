@@ -22,4 +22,8 @@ public abstract class Operator {
 	public ArrayList<String> schema() {
 		return null;
 	}
+	
+	public String getTableName() {
+		return null;
+	}
 }

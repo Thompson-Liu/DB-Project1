@@ -10,8 +10,8 @@ public class DataTable {
 	private ArrayList<String> schema;
 
 	public DataTable(String tableName, ArrayList<String> schema) {
-		name= tableName;
-		data= new ArrayList<ArrayList<Integer>>();
+		name = tableName;
+		data = new ArrayList<ArrayList<Integer>>();
 	}
 
 	public String getTableName() {
