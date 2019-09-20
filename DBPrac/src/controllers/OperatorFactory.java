@@ -67,7 +67,8 @@ public class OperatorFactory {
 //			controller connect to join 
 			Table fromLeft = (Table) plainSelect.getFromItem();
 			if(fromLeft!=null){
-				Operator selectLeft = new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft.toString())));
+				Operator leftOperator;
+//				= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft.toString()));
 				if( plainSelect.getJoins()!=null) {
 					Operator rightOperator;
 					for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
@@ -77,7 +78,7 @@ public class OperatorFactory {
 						left = join.dump();
 						left.printTable();
 					}
-					return left;
+					JoinOperator join = new JoinOperator(leftOperator,rightOperator,plainSelect.getWhere());
 				}
 				
 			}
