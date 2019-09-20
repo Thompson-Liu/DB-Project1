@@ -32,6 +32,7 @@ public class OperatorFactory {
 			whereEmpty= false;
 		}
 
+		
 		// check select clause
 		List<SelectItem> selectItems= select.getSelectItems();
 		if (selectItems.get(0) instanceof AllColumns) {
@@ -47,8 +48,21 @@ public class OperatorFactory {
 				return new ProjectOperator(new SelectOperator(whereClause, new ScanOperator()), selectItems);
 			}
 		}
+		
+		SelectOperator selectOp = new SelectOperator(whereClause, new ScanOperator());
+		if(select.getJoins()!=null) {
+			ProjectOperator left = new ProjectOperator(selectOp, selectItems);
+			int joinCount =1;
+			for(Iterator joinsIt = select.getJoins().iterator(); joinsIt.hasNext();) {
+				Join right = (Join) joinsIt.next();
+				JoinOperator left = new JoinOperator()
+				JoinOperator join = new JoinOperator(projectLeft,plainSelect.getWhere(),leftTableNames,right.toString());
+			}
+		}
+		
 
 	}
+	
 	 private static DataTable joinTables(PlainSelect plainSelect) {
 //			controller connect to join 
 			Table fromLeft = (Table) plainSelect.getFromItem();

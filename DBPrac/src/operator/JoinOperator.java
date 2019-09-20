@@ -19,11 +19,10 @@ import parser.EvaluateWhere;
 
 public class JoinOperator extends Operator {
 
+	private DataTable currentTable;
 	private Operator leftOperator;
 	private Operator rightOperator;
 	private Expression joinExp;
-	private DataTable leftTable;
-	private DataTable rightTable;
 
 	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
 		this.joinExp=expression;
@@ -31,15 +30,21 @@ public class JoinOperator extends Operator {
 		this.rightOperator = RightOperator;
 	}
 	
-	//  could use scan / or could also use right table directly as input
-	public Tuple getNextTuple(String rightTableName) {
+	// return the schema of the current table
+	public ArrayList<String> getSchema(){
+		return currentTable.getSchema();
+	}
+	
+	//  could use scan or could also use right table directly as input
+	public Tuple getNextTuple() {
 		Tuple next;
 		Tuple left;
 		Tuple right;
 		EvaluateWhere evawhere = new EvaluateWhere(joinExp );
 		while((left=leftOperator.getNextTuple(this.leftTable.getTableName()))!=null) {
-			while((right=rightOperator.getNextTuple(rightTableName))!=null) {
-				if((next=evawhere.evaluate(left,right,leftTable.getSchema(), this.rightTable.getSchema()))!=null) {
+			while((right=rightOperator.getNextTuple())!=null) {
+				if((next=evawhere.evaluate(left,right,leftOperator.getSchema(), this.rightTable.getSchema()))!=null) {
+					currentTable.addData(next);
 					return next;
 				}
 			}
@@ -48,18 +53,8 @@ public class JoinOperator extends Operator {
 		return null;
 	}
 		
-	public DataTable dump(String leftTableName, String rightTableName) {
-		leftTable = this.leftOperator.dump(leftTableName);
-		rightTable = this.rightOperator.dump(rightTableName);
-		ArrayList<String> ret= (ArrayList<String>) leftTable.getSchema().clone();
-		ret.addAll(rightTable.getSchema());
-		DataTable result = new DataTable("Output", ret);
-		Tuple tup = new Tuple();
-		while ((tup = getNextTuple(rightTableName)) != null) {
-			result.addData(tup.getTuple());
-		}
-		
-		return result;
+	public DataTable dump() {
+		return this.currentTable;
 	}
 
 }
