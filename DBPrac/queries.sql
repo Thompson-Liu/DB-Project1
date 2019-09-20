@@ -1,3 +1,3 @@
 SELECT S.A
-FROM Sailors AS S
+FROM Sailors
 WHERE Reserves.A <=3;

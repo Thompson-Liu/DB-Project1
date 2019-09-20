@@ -30,9 +30,10 @@ public class ParserExample {
 				PlainSelect plainSelect = (PlainSelect)selectBody;
 				SelectExpressionItem astrick = (SelectExpressionItem)(plainSelect.getSelectItems().get(0));
 				System.out.println("select items are" + astrick.toString());
-				System.out.println("from items are" +plainSelect.getFromItem());
+				System.out.println("from items are  :   " +plainSelect.getFromItem().toString());
 				System.out.println("remaining from items"+plainSelect.getJoins());
 				System.out.println("where clause is "+plainSelect.getWhere());
+				System.out.print("inside where is "+plainSelect.getWhere().toString());
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");

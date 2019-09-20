@@ -63,23 +63,23 @@ public class OperatorFactory {
 
 	}
 	
-	 private static DataTable joinTables(PlainSelect plainSelect) {
+	 private static Operator joinTables(PlainSelect plainSelect) {
 //			controller connect to join 
 			Table fromLeft = (Table) plainSelect.getFromItem();
-			if(fromLeft!=null && plainSelect.getJoins()!=null){
-				SelectOperator selectLeft = new SelectOperator(plainSelect.getWhere(), new ScanOperator());
-				DataTable left = selectLeft.dump();
-				ArrayList<String> leftTableNames = new ArrayList<String>();
-				leftTableNames.add(left.getTableName());
-				for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
-					Join right = (Join) joinsIt.next();
-					// to produced after WHERE result
-					System.out.print("hrerere");
-					JoinOperator join = new JoinOperator(left,plainSelect.getWhere(),leftTableNames,right.toString());
-					left = join.dump();
-					left.printTable();
+			if(fromLeft!=null){
+				Operator selectLeft = new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft.toString())));
+				if( plainSelect.getJoins()!=null) {
+					Operator rightOperator;
+					for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
+						// to produced after WHERE result
+						System.out.print("hrerere");
+						JoinOperator join = new JoinOperator(left,plainSelect.getWhere(),leftTableNames,right.toString());
+						left = join.dump();
+						left.printTable();
+					}
+					return left;
 				}
-				return left;
+				
 			}
 			return null;
 	 }

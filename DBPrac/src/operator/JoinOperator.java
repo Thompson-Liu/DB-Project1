@@ -26,12 +26,18 @@ public class JoinOperator extends Operator {
 
 	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
 		this.joinExp=expression;
+		ArrayList<String> cur = (ArrayList<String>) LeftOperator.schema().clone();
+		this.DataTable = new DataTable(LeftOperator.getTableName()+RightOperator.getTableName(),cur.addAll(RightOperator.schema()));
 		this.leftOperator = LeftOperator;
 		this.rightOperator = RightOperator;
 	}
 	
+	
+	public String getTableName() {
+		return currentTable.getTableName();
+	}
 	// return the schema of the current table
-	public ArrayList<String> getSchema(){
+	public ArrayList<String> Schema(){
 		return currentTable.getSchema();
 	}
 	
@@ -41,9 +47,9 @@ public class JoinOperator extends Operator {
 		Tuple left;
 		Tuple right;
 		EvaluateWhere evawhere = new EvaluateWhere(joinExp );
-		while((left=leftOperator.getNextTuple(this.leftTable.getTableName()))!=null) {
+		while((left=leftOperator.getNextTuple())!=null) {
 			while((right=rightOperator.getNextTuple())!=null) {
-				if((next=evawhere.evaluate(left,right,leftOperator.getSchema(), this.rightTable.getSchema()))!=null) {
+				if((next=evawhere.evaluate(left,right,leftOperator.schema(), rightOperator.schema()))!=null) {
 					currentTable.addData(next);
 					return next;
 				}
