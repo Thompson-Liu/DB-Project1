@@ -58,32 +58,44 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private Tuple rightTuple;
 	private ArrayList<String> leftSchema = new ArrayList<String>();
 	private ArrayList<String> rightSchema = new ArrayList<String>();
-	private ArrayList<String> leftTupleTables;
-	private String rightTupleTable;
+	private String leftTableNames;
+	private String rightTableNames;
 	private Expression expr;
-	
 
-	public EvaluateWhere(Expression whereExpr) {
+
+	public EvaluateWhere(Expression whereExpr, 
+			ArrayList<String> leftSchema, ArrayList<String> rightSchema, String leftTables,String rightTables) {
 		this.expr=whereExpr;
+		this.leftSchema = leftSchema;
+		this.rightSchema = rightSchema;
+		leftTableNames = leftTables;
+		rightTableNames=rightTables;
 	}
-	
-//	// compute the schema for this tables sets
-//	private void initSchema() {
-//		for(String tableName: this.leftTupleTables) {
-//			this.leftSchema.addAll(Catalog.getInstance().getSchema(tableName));
-//		}
-//		this.rightSchema= Catalog.getInstance().getSchema(this.rightTupleTable);
-//	}
 
-	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple, 
-			ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
+	//	// compute the schema for this tables sets
+	//	private void initSchema() {
+	//		for(String tableName: this.leftTupleTables) {
+	//			this.leftSchema.addAll(Catalog.getInstance().getSchema(tableName));
+	//		}
+	//		this.rightSchema= Catalog.getInstance().getSchema(this.rightTupleTable);
+	//	}
+	
+
+	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple) {
 		sofar= new Stack<Integer>();
 		this.leftTuple = leftTuple;
 		this.rightTuple = rightTuple;
-		this.leftSchema = leftSchema;
-		this.rightSchema = rightSchema;
-		expr.accept(this);
-		resultTuple = leftTuple.concateTuple(rightTuple);
+		if(expr==null) {
+			sofar.add(1);
+		}else {
+			expr.accept(this);
+		}
+		if (leftTuple != null) {
+			resultTuple = leftTuple.concateTuple(rightTuple);
+		} else {
+			resultTuple = rightTuple;
+		}
+
 		if(sofar.size()==0) {
 			return resultTuple;
 		}
@@ -192,7 +204,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(right==null || left==null) {
 			sofar.push(1);
 		}else {
-		sofar.push(((int)left == (int)right) ? 1 : 0);}
+			sofar.push(((int)left == (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -204,7 +216,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(right==null || left==null) {
 			sofar.push(1);
 		}else {
-		sofar.push(((int)left > (int)right) ? 1 : 0);}
+			sofar.push(((int)left > (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -216,7 +228,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(right==null || left==null) {
 			sofar.push(1);
 		}else {
-		sofar.push(((int)left >= (int) right) ? 1 : 0);}
+			sofar.push(((int)left >= (int) right) ? 1 : 0);}
 	}
 
 	@Override
@@ -243,7 +255,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(left==null || right==null) {
 			sofar.push(1);
 		}else {
-		sofar.push(((int)left < (int)right) ? 1 : 0);}
+			sofar.push(((int)left < (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -255,7 +267,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(left==null || right ==null) {
 			sofar.push(1);
 		}else {
-		sofar.add(((int)left <= (int)right) ? 1 : 0);}
+			sofar.add(((int)left <= (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -268,22 +280,39 @@ public class EvaluateWhere implements ExpressionVisitor {
 			sofar.push(1);
 		}
 		else {
-		sofar.push(((int)left != (int)right) ? 1 : 0);}
+			sofar.push(((int)left != (int)right) ? 1 : 0);}
 	}
 
+	/**
+	 * @param   column expression
+	 * @return void
+	 * 
+	 */
 	@Override
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
-		if(!this.leftSchema.contains(colTable) || !this.leftSchema.contains(colTable)) {
+		
+		if(!leftTableNames.contains(colTable) && !rightTableNames.contains(colTable)) {
 			sofar.push(null);
 		}else {
-			if (this.leftSchema.contains(colTable) ) {
-			int index= leftSchema.indexOf(arg0.getColumnName());
-			sofar.push(leftTuple.getData(index));
+			String colName=arg0.getColumnName();
+			if (leftTableNames.contains(colTable) ) {
+				if(leftSchema.contains(colName)) {
+					int index= leftSchema.indexOf(colName);
+					sofar.push(leftTuple.getData(index));
+				}
+				else {
+					sofar.push(null);
+				}
 			}
-			else {
-				int index= rightSchema.indexOf(arg0.getColumnName());
-				sofar.push(rightTuple.getData(index));
+			else  {
+				if(rightSchema.contains(colName)) {
+					int index= rightSchema.indexOf(arg0.getColumnName());
+					sofar.push(rightTuple.getData(index));
+				}
+				else {
+					sofar.push(null);
+				}
 			}
 		}
 	}

@@ -1,51 +1,40 @@
 package operator;
 
+import java.io.PrintStream;
+
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 
 public class DuplicateEliminationOperator extends Operator {
 
 	private DataTable sortedBuffer;
-	private int ptr;
+	int ptr;
 
 	public DuplicateEliminationOperator(SortOperator operator) {
 		// TODO Auto-generated constructor stub
-		sortedBuffer= operator.dump();
+		DataTable tmpTable= operator.getData();
+		sortedBuffer= new DataTable("", operator.schema());
+		int i= -1;
+		while (i < tmpTable.cardinality()) {
+			if (i > 0) {
+				while (tmpTable.getRow(i) == tmpTable.getRow(i - 1)) {
+					i+= 1;
+				}
+			}
+			sortedBuffer.addData(tmpTable.getRow(i));
+			i+= 1;
+		}
 	}
 
 	@Override
 	public Tuple getNextTuple() {
 		ptr+= 1;
-		if (ptr < sortedBuffer.cardinality()) {
-			if (ptr > 0) {
-				while (sortedBuffer.getData(ptr) == sortedBuffer.getData(ptr - 1)) {
-					ptr+= 1;
-				}
-			}
-			return new Tuple(sortedBuffer.getData(ptr));
-		}
+		if (ptr < sortedBuffer.cardinality()) return new Tuple(sortedBuffer.getRow(ptr));
 		return null;
 	}
 
 	@Override
-	public void reset() {
-		ptr= -1;
+	public void dump(PrintStream ps) {
+		sortedBuffer.printTable(ps);
 	}
-
-	@Override
-	public DataTable dump() {
-		DataTable newTable= new DataTable("");
-		ptr= -1;
-		while (ptr < sortedBuffer.cardinality()) {
-			if (ptr > 0) {
-				while (sortedBuffer.getData(ptr) == sortedBuffer.getData(ptr - 1)) {
-					ptr+= 1;
-				}
-			}
-			newTable.addData(sortedBuffer.getData(ptr));
-			ptr+= 1;
-		}
-		return newTable;
-	}
-
 }
