@@ -292,7 +292,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
 		
-		if(!leftTableNames.contains(colTable) || !rightTableNames.contains(colTable)) {
+		if(!leftTableNames.contains(colTable) && !rightTableNames.contains(colTable)) {
 			sofar.push(null);
 		}else {
 			String colName=arg0.getColumnName();
@@ -306,7 +306,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 				}
 			}
 			else  {
-				if(leftSchema.contains(colName)) {
+				if(rightSchema.contains(colName)) {
 					int index= rightSchema.indexOf(arg0.getColumnName());
 					sofar.push(rightTuple.getData(index));
 				}
