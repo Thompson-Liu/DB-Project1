@@ -1,6 +1,7 @@
 package operator;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import dataStructure.DataTable;
@@ -13,9 +14,11 @@ public class SortOperator extends Operator {
 
 	public SortOperator(Operator childOp, List<String> colList) {
 		ptr= -1;
-		buffer= childOp.getData();
+		buffer= new DataTable( childOp.getTableName(),childOp.schema());
+		buffer.setFullTable(childOp.getData().getFullTable());
+//		buffer.addData(childOp.getData().);
 //		System.out.println(buffer.cardinality());
-		buffer.printTableInfo();
+//		buffer.printTableInfo();
 //		System.out.println(childOp.schema());
 		if (colList == null) {
 			buffer.sortData(buffer.getSchema());
@@ -30,6 +33,11 @@ public class SortOperator extends Operator {
 		if (ptr < buffer.cardinality()) return new Tuple(buffer.getRow(ptr));
 		return null;
 
+	}
+	
+	@Override
+	public ArrayList<String> schema() {
+		return buffer.getSchema();
 	}
 
 	@Override

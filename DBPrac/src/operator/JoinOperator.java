@@ -41,8 +41,9 @@ public class JoinOperator extends Operator {
 		return currentTable.getTableName();
 	}
 
+	@Override
 	// return the schema of the current table
-	public ArrayList<String> Schema() {
+	public ArrayList<String> schema() {
 		return currentTable.getSchema();
 	}
 
@@ -53,7 +54,7 @@ public class JoinOperator extends Operator {
 		boolean flag= true;
 		Tuple right;
 		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(),
-			rightOperator.schema(), leftOperator.getTableName(), rightOperator.getTableName());
+			rightOperator.schema());
 
 		while (flag) {
 			if (resetFlag) {

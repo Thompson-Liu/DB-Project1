@@ -60,6 +60,8 @@ public class OperatorFactory {
 
 	private Operator join(PlainSelect plainSelect, List<Join> joins) {
 		if (joins.size() == 1) {
+			System.out.println("Notiveeeeeeeeee   :  "+joins.get(0).getRightItem().toString());
+			
 			Operator scanOp= new ScanOperator(joins.get(0).toString());
 			return new SelectOperator(plainSelect.getWhere(), scanOp);
 		}

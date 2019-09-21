@@ -32,7 +32,6 @@ public class Interpreter {
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
 
-				String fileName= ((Table) plainSelect.getFromItem()).getAlias();
 //				System.out.println("table name is " + fileName);
 				Catalog cat= createCatalog(dataDir);
 //				cat.printCatalog();

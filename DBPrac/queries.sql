@@ -1,8 +1,8 @@
 -- SELECT *
 -- FROM Sailors;
-SELECT *
-FROM Sailors
-WHERE Sailors.A>3 AND Sailors.b<1000 AND 1<3;
+-- SELECT *
+-- FROM Sailors
+-- WHERE Sailors.A>3 AND Sailors.b<1000 AND 1<3;
 -- SELECT Country.C
 -- FROM Country;
 -- SELECT *
@@ -31,4 +31,4 @@ WHERE Sailors.A>3 AND Sailors.b<1000 AND 1<3;
 -- FROM Sailors
 -- ORDER BY Sailors.B;
 SELECT DISTINCT Reserves.H
-FROM Reserves;
+FROM Reserves, Sailors;

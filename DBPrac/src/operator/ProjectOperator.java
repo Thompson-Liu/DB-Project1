@@ -20,9 +20,10 @@ public class ProjectOperator extends Operator {
 		selectColumns= new ArrayList<String>(list.size());
 		for (SelectItem item : list) {
 			SelectExpressionItem expressItem= (SelectExpressionItem) item;
-			String select= expressItem.toString();
-			String columnName= select.split("\\.")[1];
-			selectColumns.add(columnName);
+//			String select= expressItem.toString();
+//			String columnName= select.split("\\.")[1];
+//			selectColumns.add(columnName);
+			selectColumns.add(expressItem.toString());
 		}
 
 		this.data= new DataTable(operator.getTableName(), selectColumns);
@@ -42,8 +43,7 @@ public class ProjectOperator extends Operator {
 //					data.addData(next);
 //					return next;
 //				} else {
-
-				int index= childOp.schema().indexOf(item);
+				int index= childOp.schema().indexOf(item.toString());
 				tup.addData(next.getData(index));
 //				}
 			}
@@ -72,8 +72,7 @@ public class ProjectOperator extends Operator {
 
 	@Override
 	public ArrayList<String> schema() {
-		// can't do data.schema(), which returns null
-		return selectColumns;
+		return this.data.getSchema();
 	}
 
 	@Override
