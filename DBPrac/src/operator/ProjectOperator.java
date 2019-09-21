@@ -1,26 +1,33 @@
 package operator;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
-import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 public class ProjectOperator extends Operator {
 
 	private Operator childOp;
-	private ArrayList<SelectItem> selectColumns;
+	private ArrayList<String> selectColumns;
 	private DataTable data;
 
 	public ProjectOperator(Operator operator, List<SelectItem> list) {
 		childOp= operator;
-		selectColumns= new ArrayList<SelectItem>(list);
-		data= new DataTable(operator.getTableName(), operator.schema());
+		selectColumns= new ArrayList<String>(list.size());
+		for (SelectItem item : list) {
+			SelectExpressionItem expressItem= (SelectExpressionItem) item;
+			String select= expressItem.toString();
+			String columnName= select.split("\\.")[1];
+			selectColumns.add(columnName);
+		}
+
+		this.data= new DataTable(operator.getTableName(), selectColumns);
+//		System.out.println("schema is " + data.getSchema());
+
 	}
 
 	@Override
@@ -28,21 +35,17 @@ public class ProjectOperator extends Operator {
 		Tuple next= null;
 		while ((next= childOp.getNextTuple()) != null) {
 			Tuple tup= new Tuple();
-			ArrayList<String> columns = new ArrayList<String>();
+			ArrayList<String> columns= new ArrayList<String>();
 
-			for (SelectItem item : selectColumns) {
-				if (item instanceof AllColumns) {
-					data.addData(next);
-					return next;
-				} else {
-					SelectExpressionItem expressItem= (SelectExpressionItem) item;
+			for (String item : selectColumns) {
+//				if (item instanceof AllColumns) {
+//					data.addData(next);
+//					return next;
+//				} else {
 
-					String select= expressItem.toString();
-					String columnName= select.split("\\.")[1];
-
-					int index= childOp.schema().indexOf(columnName);
-					tup.addData(next.getData(index));
-				}
+				int index= childOp.schema().indexOf(item);
+				tup.addData(next.getData(index));
+//				}
 			}
 			data.addData(tup);
 			data.setSchema(columns);
@@ -59,15 +62,18 @@ public class ProjectOperator extends Operator {
 	@Override
 	public void dump(PrintStream ps, boolean print) {
 		Tuple tup;
-		while((tup = getNextTuple()) != null) {
+		while ((tup= getNextTuple()) != null) {
 
 		}
-		if (print) { data.printTable(ps); }
+		if (print) {
+			data.printTable(ps);
+		}
 	}
 
 	@Override
 	public ArrayList<String> schema() {
-		return data.getSchema();
+		// can't do data.schema(), which returns null
+		return selectColumns;
 	}
 
 	@Override

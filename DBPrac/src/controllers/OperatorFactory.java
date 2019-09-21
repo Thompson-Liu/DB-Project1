@@ -49,10 +49,11 @@ public class OperatorFactory {
 			return (d == null) ? intOp : new DuplicateEliminationOperator((SortOperator) intOp);
 		}
 		if (d != null) {
-			List<String> orderByList= new ArrayList<String>(intOp.schema());
-			intOp= new SortOperator(intOp, orderByList);
+			System.out.println("Now, schema is" + intOp.schema());
+			intOp= new SortOperator(intOp, null);
+			System.out.println("Next, schema is" + intOp.schema());
 			return new DuplicateEliminationOperator((SortOperator) intOp);
-			
+
 		}
 		return intOp;
 	}

@@ -24,9 +24,9 @@ public class DataTable {
 	public ArrayList<String> getSchema() {
 		return schema;
 	}
-	
+
 	public void setSchema(ArrayList<String> changeSchema) {
-		schema = new ArrayList<String>();
+		schema= new ArrayList<String>();
 		schema.addAll(changeSchema);
 	}
 
@@ -56,6 +56,7 @@ public class DataTable {
 			public int compare(ArrayList<Integer> arr1, ArrayList<Integer> arr2) {
 				int result= 0;
 				int ptr= 0;
+//				System.out.println(colList);
 				while (ptr < colList.size() && result == 0) {
 					result= arr1.get(schema.indexOf(colList.get(ptr))) - arr2.get(schema.indexOf(colList.get(ptr)));
 					ptr+= 1;
@@ -63,6 +64,7 @@ public class DataTable {
 				return result;
 			}
 		};
+//		System.out.println("col lst is " + colList);
 		data.sort(myComparator);
 //		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
 	}

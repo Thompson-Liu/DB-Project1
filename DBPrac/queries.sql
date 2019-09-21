@@ -30,5 +30,5 @@ WHERE Sailors.A>3 AND Sailors.b<1000 AND 1<3;
 -- SELECT *
 -- FROM Sailors
 -- ORDER BY Sailors.B;
--- SELECT DISTINCT Reserves.G
--- FROM Reserves;
+SELECT DISTINCT Reserves.H
+FROM Reserves;
