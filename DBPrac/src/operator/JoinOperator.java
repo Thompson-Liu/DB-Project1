@@ -24,6 +24,9 @@ public class JoinOperator extends Operator {
 	private Operator leftOperator;
 	private Operator rightOperator;
 	private Expression joinExp;
+	private boolean resetFlag = true;
+	private Tuple left;
+
 
 	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
 		joinExp=expression;
@@ -33,40 +36,70 @@ public class JoinOperator extends Operator {
 		leftOperator = LeftOperator;
 		rightOperator = RightOperator;
 	}
-	
+
 	public void reset() {
 		leftOperator.reset();
 		rightOperator.reset();
 	}
-	
+
 	public String getTableName() {
 		return currentTable.getTableName();
 	}
-	
+
 	// return the schema of the current table
 	public ArrayList<String> Schema(){
 		return currentTable.getSchema();
 	}
-	
+
 	//  could use scan or could also use right table directly as input
 	public Tuple getNextTuple() {
-		Tuple next;
-		Tuple left;
+		Tuple next = null;
+		boolean flag = true;
 		Tuple right;
 		EvaluateWhere evawhere = new EvaluateWhere(joinExp);
-		while((left=leftOperator.getNextTuple())!=null) {
-			while((right=rightOperator.getNextTuple())!=null) {
-				if((next=evawhere.evaluate(left,right,leftOperator.schema(), rightOperator.schema()))!=null) {
-					currentTable.addData(next);
-					return next;
+		
+		while (flag) {
+			if(resetFlag) {
+				while ((left = leftOperator.getNextTuple()) != null) {
+					while((right = rightOperator.getNextTuple()) != null) {
+						if((next = evawhere.evaluate(left,right,leftOperator.schema(), rightOperator.schema())) != null) {
+							currentTable.addData(next);
+							resetFlag = false;
+							return next;
+						}
+					}
 				}
+				flag = false;
+			} else {
+				while((right=rightOperator.getNextTuple())!=null) {
+					if((next=evawhere.evaluate(left,right,leftOperator.schema(), rightOperator.schema()))!=null) {
+						currentTable.addData(next);
+						return next;
+					}
+				}
+				rightOperator.reset();
+				resetFlag = true;
 			}
-			rightOperator.reset();
 		}
 		return null;
+
+		//		while(!resetFlag && (left=leftOperator.getNextTuple())!=null) {
+		//			while((right=rightOperator.getNextTuple())!=null) {
+		//				if((next=evawhere.evaluate(left,right,leftOperator.schema(), rightOperator.schema()))!=null) {
+		//					currentTable.addData(next);
+		//					return next;
+		//				}
+		//			}
+		//			rightOperator.reset();
+		//			resetFlag = true;
+		//		}
 	}
-		
+
 	public void dump(PrintStream ps) {
+		Tuple next;
+		while((next=getNextTuple())!=null) {
+
+		}
 		currentTable.printTable(ps);;
 	}
 

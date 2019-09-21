@@ -59,21 +59,21 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private ArrayList<String> leftSchema = new ArrayList<String>();
 	private ArrayList<String> rightSchema = new ArrayList<String>();
 	private ArrayList<String> leftTupleTables;
-	private String rightTupleTable;
+	private ArrayList<String> rightTupleTable;
 	private Expression expr;
-	
+
 
 	public EvaluateWhere(Expression whereExpr) {
 		this.expr=whereExpr;
 	}
-	
-//	// compute the schema for this tables sets
-//	private void initSchema() {
-//		for(String tableName: this.leftTupleTables) {
-//			this.leftSchema.addAll(Catalog.getInstance().getSchema(tableName));
-//		}
-//		this.rightSchema= Catalog.getInstance().getSchema(this.rightTupleTable);
-//	}
+
+	//	// compute the schema for this tables sets
+	//	private void initSchema() {
+	//		for(String tableName: this.leftTupleTables) {
+	//			this.leftSchema.addAll(Catalog.getInstance().getSchema(tableName));
+	//		}
+	//		this.rightSchema= Catalog.getInstance().getSchema(this.rightTupleTable);
+	//	}
 
 	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple, 
 			ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
@@ -82,13 +82,17 @@ public class EvaluateWhere implements ExpressionVisitor {
 		this.rightTuple = rightTuple;
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
-		expr.accept(this);
+		if(expr==null) {
+			sofar.add(1);
+		}else {
+			expr.accept(this);
+		}
 		if (leftTuple != null) {
 			resultTuple = leftTuple.concateTuple(rightTuple);
 		} else {
 			resultTuple = rightTuple;
 		}
-		
+
 		if(sofar.size()==0) {
 			return resultTuple;
 		}
@@ -197,7 +201,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(right==null || left==null) {
 			sofar.push(1);
 		}else {
-		sofar.push(((int)left == (int)right) ? 1 : 0);}
+			sofar.push(((int)left == (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -209,7 +213,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(right==null || left==null) {
 			sofar.push(1);
 		}else {
-		sofar.push(((int)left > (int)right) ? 1 : 0);}
+			sofar.push(((int)left > (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -221,7 +225,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(right==null || left==null) {
 			sofar.push(1);
 		}else {
-		sofar.push(((int)left >= (int) right) ? 1 : 0);}
+			sofar.push(((int)left >= (int) right) ? 1 : 0);}
 	}
 
 	@Override
@@ -248,7 +252,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(left==null || right==null) {
 			sofar.push(1);
 		}else {
-		sofar.push(((int)left < (int)right) ? 1 : 0);}
+			sofar.push(((int)left < (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -260,7 +264,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		if(left==null || right ==null) {
 			sofar.push(1);
 		}else {
-		sofar.add(((int)left <= (int)right) ? 1 : 0);}
+			sofar.add(((int)left <= (int)right) ? 1 : 0);}
 	}
 
 	@Override
@@ -273,18 +277,24 @@ public class EvaluateWhere implements ExpressionVisitor {
 			sofar.push(1);
 		}
 		else {
-		sofar.push(((int)left != (int)right) ? 1 : 0);}
+			sofar.push(((int)left != (int)right) ? 1 : 0);}
 	}
 
+	/**
+	 * @param   column expression
+	 * @return void
+	 * 
+	 */
 	@Override
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
-		if(!this.leftSchema.contains(colTable) || !this.leftSchema.contains(colTable)) {
+		
+		if(!leftTableNames.contains(colTable) || !rightSchema.contains(colTable)) {
 			sofar.push(null);
 		}else {
 			if (this.leftSchema.contains(colTable) ) {
-			int index= leftSchema.indexOf(arg0.getColumnName());
-			sofar.push(leftTuple.getData(index));
+				int index= leftSchema.indexOf(arg0.getColumnName());
+				sofar.push(leftTuple.getData(index));
 			}
 			else {
 				int index= rightSchema.indexOf(arg0.getColumnName());

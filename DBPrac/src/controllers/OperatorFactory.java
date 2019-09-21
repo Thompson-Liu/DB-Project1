@@ -24,13 +24,15 @@ public class OperatorFactory {
 		Operator resultOp;
 		String fromLeft = plainSelect.getFromItem().toString();
 		Operator intOp;
-
+		Operator leftOp = new SelectOperator(plainSelect.getWhere(),new ScanOperator(fromLeft));
+		
 		if(plainSelect.getJoins() != null) {
-			intOp= (join(plainSelect,plainSelect.getJoins()));
+			intOp= new JoinOperator(leftOp,join(plainSelect,plainSelect.getJoins()),plainSelect.getWhere());
+		}else {
+			intOp= leftOp;
+
 		}
-		else {
-			intOp= new SelectOperator(plainSelect.getWhere(),new ScanOperator(fromLeft));
-		}
+
 
 		// check select clause
 		List<SelectItem> selectItems= plainSelect.getSelectItems();
