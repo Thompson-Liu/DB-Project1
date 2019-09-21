@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-SELECT DISTINCT S.A
-FROM Sailors S
-ORDER BY S.B
-WHERE Reserves.A <=3;
-=======
 -- SELECT *
 -- FROM Sailors;
 -- SELECT Sailors.A
@@ -22,4 +16,3 @@ WHERE Sailors.A = Reserves.G;
 -- SELECT *
 -- FROM Sailors
 -- ORDER BY Sailors.B;
->>>>>>> 88f8ccc9570a72aac926d5c6efd35fac983d8698
