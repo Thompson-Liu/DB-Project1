@@ -32,7 +32,7 @@ public class JoinOperator extends Operator {
 		joinExp=expression;
 		ArrayList<String> cur = (ArrayList<String>) LeftOperator.schema().clone();
 		cur.addAll(RightOperator.schema());
-		currentTable = new DataTable(LeftOperator.getTableName()+RightOperator.getTableName(), cur);
+		currentTable = new DataTable(LeftOperator.getTableName()+" "+RightOperator.getTableName(), cur);
 		leftOperator = LeftOperator;
 		rightOperator = RightOperator;
 	}
@@ -56,13 +56,14 @@ public class JoinOperator extends Operator {
 		Tuple next = null;
 		boolean flag = true;
 		Tuple right;
-		EvaluateWhere evawhere = new EvaluateWhere(joinExp);
+		EvaluateWhere evawhere = new EvaluateWhere(joinExp,leftOperator.schema(), 
+				rightOperator.schema(),leftOperator.getTableName(),rightOperator.getTableName());
 		
 		while (flag) {
 			if(resetFlag) {
 				while ((left = leftOperator.getNextTuple()) != null) {
 					while((right = rightOperator.getNextTuple()) != null) {
-						if((next = evawhere.evaluate(left,right,leftOperator.schema(), rightOperator.schema())) != null) {
+						if((next = evawhere.evaluate(left,right)) != null) {
 							currentTable.addData(next);
 							resetFlag = false;
 							return next;
@@ -72,7 +73,7 @@ public class JoinOperator extends Operator {
 				flag = false;
 			} else {
 				while((right=rightOperator.getNextTuple())!=null) {
-					if((next=evawhere.evaluate(left,right,leftOperator.schema(), rightOperator.schema()))!=null) {
+					if((next=evawhere.evaluate(left,right))!=null) {
 						currentTable.addData(next);
 						return next;
 					}
@@ -94,6 +95,7 @@ public class JoinOperator extends Operator {
 		//			resetFlag = true;
 		//		}
 	}
+	
 
 	public void dump(PrintStream ps) {
 		Tuple next;

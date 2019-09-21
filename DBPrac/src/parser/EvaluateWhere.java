@@ -58,13 +58,18 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private Tuple rightTuple;
 	private ArrayList<String> leftSchema = new ArrayList<String>();
 	private ArrayList<String> rightSchema = new ArrayList<String>();
-	private ArrayList<String> leftTupleTables;
-	private ArrayList<String> rightTupleTable;
+	private String leftTableNames;
+	private String rightTableNames;
 	private Expression expr;
 
 
-	public EvaluateWhere(Expression whereExpr) {
+	public EvaluateWhere(Expression whereExpr, 
+			ArrayList<String> leftSchema, ArrayList<String> rightSchema, String leftTables,String rightTables) {
 		this.expr=whereExpr;
+		this.leftSchema = leftSchema;
+		this.rightSchema = rightSchema;
+		leftTableNames = leftTables;
+		rightTableNames=rightTables;
 	}
 
 	//	// compute the schema for this tables sets
@@ -74,14 +79,12 @@ public class EvaluateWhere implements ExpressionVisitor {
 	//		}
 	//		this.rightSchema= Catalog.getInstance().getSchema(this.rightTupleTable);
 	//	}
+	
 
-	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple, 
-			ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
+	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple) {
 		sofar= new Stack<Integer>();
 		this.leftTuple = leftTuple;
 		this.rightTuple = rightTuple;
-		this.leftSchema = leftSchema;
-		this.rightSchema = rightSchema;
 		if(expr==null) {
 			sofar.add(1);
 		}else {
@@ -289,16 +292,27 @@ public class EvaluateWhere implements ExpressionVisitor {
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
 		
-		if(!leftTableNames.contains(colTable) || !rightSchema.contains(colTable)) {
+		if(!leftTableNames.contains(colTable) || !rightTableNames.contains(colTable)) {
 			sofar.push(null);
 		}else {
-			if (this.leftSchema.contains(colTable) ) {
-				int index= leftSchema.indexOf(arg0.getColumnName());
-				sofar.push(leftTuple.getData(index));
+			String colName=arg0.getColumnName();
+			if (leftTableNames.contains(colTable) ) {
+				if(leftSchema.contains(colName)) {
+					int index= leftSchema.indexOf(colName);
+					sofar.push(leftTuple.getData(index));
+				}
+				else {
+					sofar.push(null);
+				}
 			}
-			else {
-				int index= rightSchema.indexOf(arg0.getColumnName());
-				sofar.push(rightTuple.getData(index));
+			else  {
+				if(leftSchema.contains(colName)) {
+					int index= rightSchema.indexOf(arg0.getColumnName());
+					sofar.push(rightTuple.getData(index));
+				}
+				else {
+					sofar.push(null);
+				}
 			}
 		}
 	}
