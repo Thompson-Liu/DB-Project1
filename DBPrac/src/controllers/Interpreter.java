@@ -18,7 +18,7 @@ import operator.Operator;
 public class Interpreter {
 
 	private static final String queriesFile= "queries.sql";
-	private static final String dataDir= "samples/input/db/";
+	private static final String dataDir= "samples/input/dbTest/";
 	private HashMap<String, String> aliasMap;
 
 	public static void main(String[] args) {

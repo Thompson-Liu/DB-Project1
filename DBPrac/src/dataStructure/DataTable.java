@@ -67,6 +67,10 @@ public class DataTable {
 //		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
 	}
 
+	/**
+	 * 
+	 * @param ps
+	 */
 	public void printTable(PrintStream ps) {
 		for (ArrayList<Integer> x : data) {
 			for (int y : x) {

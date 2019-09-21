@@ -1,5 +1,11 @@
 /**
- * Evaluate the WHERE clause that involves two tables
+ * Evaluate the WHERE clause that involves two tables, keep a stack structure that evaluate the expression tree
+ *            AND                             
+ * 		   /       \        
+ * 	       <      exp2
+ *       /   \
+ *     1     2
+ * 
  */
 package parser;
 
@@ -195,6 +201,14 @@ public class EvaluateWhere implements ExpressionVisitor {
 		return;
 	}
 
+	/**
+	 * @param arg0   EqualTo expression composed of leftExp and rightExp
+	 * @return value  0 left != right;   
+	 * 				1  if left == right  or should ignore this expression, 
+	 * 								since these evaluation does not apply to these two tuple
+	 * e.g.  tuple1 from tableA, tuple2 from tableB, with expression C.x==2 
+	 *  	push[1] to the stack [sofar], since left will give null expression
+	 */
 	@Override
 	public void visit(EqualsTo arg0) {
 		arg0.getLeftExpression().accept(this);
