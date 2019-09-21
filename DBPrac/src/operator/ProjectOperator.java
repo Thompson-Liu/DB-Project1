@@ -56,6 +56,10 @@ public class ProjectOperator extends Operator {
 
 	@Override
 	public void dump(PrintStream ps) {
+		Tuple tup;
+		while((tup = getNextTuple()) != null) {
+			
+		}
 		data.printTable(ps);
 	}
 	

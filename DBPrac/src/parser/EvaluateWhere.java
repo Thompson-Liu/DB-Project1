@@ -83,7 +83,12 @@ public class EvaluateWhere implements ExpressionVisitor {
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		expr.accept(this);
-		resultTuple = leftTuple.concateTuple(rightTuple);
+		if (leftTuple != null) {
+			resultTuple = leftTuple.concateTuple(rightTuple);
+		} else {
+			resultTuple = rightTuple;
+		}
+		
 		if(sofar.size()==0) {
 			return resultTuple;
 		}

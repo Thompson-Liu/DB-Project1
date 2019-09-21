@@ -65,6 +65,10 @@ public class ScanOperator extends Operator {
 	
 	@Override
 	public void dump(PrintStream ps) {
+		Tuple next;
+		while ((next = getNextTuple()) != null) {
+			
+		}
 		data.printTable(ps);
 	}
 	

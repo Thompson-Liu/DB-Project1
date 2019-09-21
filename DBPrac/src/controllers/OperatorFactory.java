@@ -25,7 +25,7 @@ public class OperatorFactory {
 		String fromLeft = plainSelect.getFromItem().toString();
 		Operator intOp;
 
-		if( plainSelect.getJoins()!=null) {
+		if(plainSelect.getJoins() != null) {
 			intOp= (join(plainSelect,plainSelect.getJoins()));
 		}
 		else {

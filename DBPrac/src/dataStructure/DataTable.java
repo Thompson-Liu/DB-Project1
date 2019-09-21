@@ -12,6 +12,7 @@ public class DataTable {
 	public DataTable(String tableName, ArrayList<String> schema) {
 		name = tableName;
 		data = new ArrayList<ArrayList<Integer>>();
+		this.schema = schema;
 	}
 
 	public String getTableName() {
