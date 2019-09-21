@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
@@ -66,12 +67,10 @@ public class ScanOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		Tuple next;
-		while ((next= getNextTuple()) != null) {
-
-		}
-		data.printTable(ps);
+		while ((next= getNextTuple()) != null) {}
+		if (print) { data.printTable(ps); }
 	}
 
 	@Override
@@ -86,6 +85,7 @@ public class ScanOperator extends Operator {
 
 	@Override
 	public DataTable getData() {
+		dump(System.out, false);
 		return data;
 	}
 }

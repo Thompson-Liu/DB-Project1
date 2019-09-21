@@ -3,6 +3,7 @@
  */
 package operator;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
@@ -82,16 +83,17 @@ public class JoinOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		Tuple next;
 		while ((next= getNextTuple()) != null) {
 
 		}
-		currentTable.printTable(ps);
+		if (print) { currentTable.printTable(ps); }
 	}
 
 	@Override
 	public DataTable getData() {
+		dump(System.out, false);
 		return currentTable;
 	}
 }

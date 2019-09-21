@@ -34,7 +34,13 @@ public class DuplicateEliminationOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		sortedBuffer.printTable(ps);
 	}
+	
+//	@Override
+//	public void getData() {
+//		return
+//		
+//	}
 }

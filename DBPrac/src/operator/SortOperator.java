@@ -1,5 +1,4 @@
 package operator;
-
 import java.io.PrintStream;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class SortOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		buffer.printTable(ps);
 	}
 

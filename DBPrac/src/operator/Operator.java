@@ -1,5 +1,6 @@
 package operator;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ public abstract class Operator {
 		return;
 	}
 
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		return;
 	}
 

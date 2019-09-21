@@ -40,13 +40,19 @@ public class OperatorFactory {
 		}
 		Distinct d= plainSelect.getDistinct();
 		List<OrderByElement> tmpList= plainSelect.getOrderByElements();
-		if (d != null || tmpList.size() != 0) {
+		if (tmpList != null) {
 			List<String> orderByList= new ArrayList<String>(tmpList.size());
 			for (OrderByElement x : tmpList) {
 				orderByList.add(x.toString().substring(x.toString().indexOf('.') + 1));
 			}
 			intOp= new SortOperator(intOp, orderByList);
 			return (d == null) ? intOp : new DuplicateEliminationOperator((SortOperator) intOp);
+		}
+		if (d != null) {
+			List<String> orderByList= new ArrayList<String>(intOp.schema());
+			intOp= new SortOperator(intOp, orderByList);
+			return new DuplicateEliminationOperator((SortOperator) intOp);
+			
 		}
 		return intOp;
 	}
