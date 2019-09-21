@@ -1,5 +1,6 @@
 package operator;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
@@ -40,12 +41,12 @@ public class SelectOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		Tuple tup;
 		while ((tup= getNextTuple()) != null) {
 
 		}
-		data.printTable(ps);
+		if (print) { data.printTable(ps); }
 	}
 
 	@Override
@@ -60,6 +61,7 @@ public class SelectOperator extends Operator {
 
 	@Override
 	public DataTable getData() {
+		dump(System.out, false);
 		return data;
 	}
 }

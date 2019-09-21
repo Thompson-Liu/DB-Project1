@@ -39,7 +39,7 @@ public class Interpreter {
 
 				OperatorFactory opfactory= new OperatorFactory();
 				Operator op= opfactory.generateQueryPlan(plainSelect);
-				op.dump(System.out);
+				op.dump(System.out, true);
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
