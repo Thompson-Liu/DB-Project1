@@ -55,5 +55,10 @@ public class SortOperator extends Operator {
 		// dump not needed because buffer is initialized upon construction
 		return buffer;
 	}
+	
+	@Override
+	public String getTableName() {
+		return buffer.getTableName();
+	}
 
 }

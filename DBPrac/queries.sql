@@ -1,8 +1,8 @@
--- SELECT *
--- FROM Sailors;
--- SELECT *
--- FROM Sailors
--- WHERE Sailors.A>3 AND Sailors.b<1000 AND 1<3;
+SELECT *
+FROM Sailors;
+SELECT *
+FROM Sailors
+WHERE Sailors.A>3 AND Sailors.b<1000 AND 1<3;
 -- SELECT Country.C
 -- FROM Country;
 -- SELECT *
@@ -12,8 +12,8 @@
 -- SELECT Country.N
 -- FROM Country
 -- WHERE Country.C<2 AND Country.A;
--- SELECT Sailors.A
--- FROM Sailors;
+SELECT Sailors.A
+FROM Sailors;
 -- SELECT S.A
 -- FROM Sailors S;
 -- SELECT *
