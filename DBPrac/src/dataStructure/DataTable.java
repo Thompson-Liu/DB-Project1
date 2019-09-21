@@ -24,6 +24,11 @@ public class DataTable {
 	public ArrayList<String> getSchema() {
 		return schema;
 	}
+	
+	public void setSchema(ArrayList<String> changeSchema) {
+		schema = new ArrayList<String>();
+		schema.addAll(changeSchema);
+	}
 
 	public void addData(ArrayList<Integer> newData) {
 		data.add(newData);
