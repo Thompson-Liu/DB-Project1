@@ -17,8 +17,10 @@ public class ScanOperator extends Operator {
 	// Check if this will be inherited by the children class
 	private BufferedReader br;
 	private DataTable data;
+	private String tableName;
 
 	public ScanOperator(String tableName) {
+		this.tableName= tableName;
 		Catalog catalog= Catalog.getInstance();
 		String dir= catalog.getDir(tableName);
 		data= new DataTable(tableName, catalog.getSchema(tableName));
@@ -26,13 +28,8 @@ public class ScanOperator extends Operator {
 		File file= new File(dir);
 		try {
 			br= new BufferedReader(new FileReader(file));
-
-			// Check this number limit
-			br.mark(0);
 		} catch (FileNotFoundException e) {
 			System.err.println("Data directory " + dir + " is not found");
-		} catch (IOException e) {
-			System.err.println("Marking stream returns an error");
 		}
 	}
 
@@ -56,15 +53,24 @@ public class ScanOperator extends Operator {
 
 	@Override
 	public void reset() {
+		Catalog catalog= Catalog.getInstance();
+		String dir= catalog.getDir(tableName);
+		data= new DataTable(tableName, catalog.getSchema(tableName));
+
+		File file= new File(dir);
 		try {
-			br.reset();
-		} catch (IOException e) {
-			System.err.println("Reset to the previous mark failed");
+			br= new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e) {
+			System.err.println("Data directory " + dir + " is not found");
 		}
 	}
 
 	@Override
 	public void dump(PrintStream ps) {
+		Tuple next;
+		while ((next= getNextTuple()) != null) {
+
+		}
 		data.printTable(ps);
 	}
 

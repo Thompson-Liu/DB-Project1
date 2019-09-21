@@ -17,12 +17,14 @@ public class JoinOperator extends Operator {
 	private Operator leftOperator;
 	private Operator rightOperator;
 	private Expression joinExp;
+	private boolean resetFlag= true;
+	private Tuple left;
 
 	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
 		joinExp= expression;
 		ArrayList<String> cur= (ArrayList<String>) LeftOperator.schema().clone();
 		cur.addAll(RightOperator.schema());
-		currentTable= new DataTable(LeftOperator.getTableName() + RightOperator.getTableName(), cur);
+		currentTable= new DataTable(LeftOperator.getTableName() + " " + RightOperator.getTableName(), cur);
 		leftOperator= LeftOperator;
 		rightOperator= RightOperator;
 	}
@@ -46,26 +48,46 @@ public class JoinOperator extends Operator {
 	// could use scan or could also use right table directly as input
 	@Override
 	public Tuple getNextTuple() {
-		Tuple next;
-		Tuple left;
+		Tuple next= null;
+		boolean flag= true;
 		Tuple right;
-		EvaluateWhere evawhere= new EvaluateWhere(joinExp);
-		while ((left= leftOperator.getNextTuple()) != null) {
-			while ((right= rightOperator.getNextTuple()) != null) {
-				if ((next= evawhere.evaluate(left, right, leftOperator.schema(), rightOperator.schema())) != null) {
-					currentTable.addData(next);
-					return next;
+		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(),
+			rightOperator.schema(), leftOperator.getTableName(), rightOperator.getTableName());
+
+		while (flag) {
+			if (resetFlag) {
+				while ((left= leftOperator.getNextTuple()) != null) {
+					while ((right= rightOperator.getNextTuple()) != null) {
+						if ((next= evawhere.evaluate(left, right)) != null) {
+							currentTable.addData(next);
+							resetFlag= false;
+							return next;
+						}
+					}
 				}
+				flag= false;
+			} else {
+				while ((right= rightOperator.getNextTuple()) != null) {
+					if ((next= evawhere.evaluate(left, right)) != null) {
+						currentTable.addData(next);
+						return next;
+					}
+				}
+				rightOperator.reset();
+				resetFlag= true;
 			}
-			rightOperator.reset();
 		}
 		return null;
+
 	}
 
 	@Override
 	public void dump(PrintStream ps) {
+		Tuple next;
+		while ((next= getNextTuple()) != null) {
+
+		}
 		currentTable.printTable(ps);
-		;
 	}
 
 	@Override

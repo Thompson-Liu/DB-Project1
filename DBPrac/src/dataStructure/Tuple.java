@@ -24,8 +24,9 @@ public class Tuple {
 	}
 	
 	public Tuple concateTuple(Tuple b) {
-		dataTuple.addAll(b.getTuple());
-		return (new Tuple(dataTuple));
+		ArrayList<Integer> result = (ArrayList<Integer>) dataTuple.clone();
+		result.addAll(b.getTuple());
+		return (new Tuple(result));
 	}
 
 	public ArrayList<Integer> getTuple() {

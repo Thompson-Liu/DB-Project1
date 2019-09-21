@@ -26,24 +26,20 @@ public class Interpreter {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(queriesFile));
 			Statement statement;
 			while ((statement= parser.Statement()) != null) {
-				System.out.println("Read statement: " + statement);
+//				System.out.println("Read statement: " + statement);
 				Select select= (Select) statement;
-				System.out.println("Select body is " + select.getSelectBody());
+//				System.out.println("Select body is " + select.getSelectBody());
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
 
 				String fileName= ((Table) plainSelect.getFromItem()).getAlias();
-//				String tableName= fileName.getName();
-				System.out.println("table name is " + fileName);
+//				System.out.println("table name is " + fileName);
 				Catalog cat= createCatalog(dataDir);
-				cat.printCatalog();
+//				cat.printCatalog();
 
-				OperatorFactory opfact= new OperatorFactory();
-				Operator operator= opfact.generateQueryPlan(plainSelect);
-				// Check if the query contains aliases
-
-				// DataTable result = operator.dump();
-				// result.printTable();
+				OperatorFactory opfactory= new OperatorFactory();
+				Operator op= opfactory.generateQueryPlan(plainSelect);
+				op.dump(System.out);
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
@@ -66,7 +62,7 @@ public class Interpreter {
 				for (int i= 1; i < schemaLine.length; i++ ) {
 					schem.add(schemaLine[i]);
 				}
-//				cat.addSchema(tableName,schem);
+				cat.addSchema(tableName, schem);
 			}
 			readSchema.close();
 		} catch (IOException e) {
@@ -74,5 +70,4 @@ public class Interpreter {
 		}
 		return cat;
 	}
-
 }
