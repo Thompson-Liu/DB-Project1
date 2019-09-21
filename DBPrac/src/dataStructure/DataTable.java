@@ -2,6 +2,8 @@ package dataStructure;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class DataTable {
 
@@ -10,14 +12,14 @@ public class DataTable {
 	private ArrayList<String> schema;
 
 	public DataTable(String tableName, ArrayList<String> schema) {
-		name = tableName;
-		data = new ArrayList<ArrayList<Integer>>();
+		name= tableName;
+		data= new ArrayList<ArrayList<Integer>>();
 	}
 
 	public String getTableName() {
 		return name;
 	}
-	
+
 	public ArrayList<String> getSchema() {
 		return schema;
 	}
@@ -25,7 +27,7 @@ public class DataTable {
 	public void addData(ArrayList<Integer> newData) {
 		data.add(newData);
 	}
-	
+
 	public void addData(Tuple tup) {
 		data.add(tup.getTuple());
 	}
@@ -38,9 +40,25 @@ public class DataTable {
 		return data.get(schema.indexOf(columnName));
 	}
 
-	public void sortData(String colName) {
-		int colIndex= schema.indexOf(colName);
-		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
+	public ArrayList<Integer> getRow(int r) {
+		return data.get(r);
+	}
+
+	public void sortData(List<String> colList) {
+		Comparator<ArrayList<Integer>> myComparator= new Comparator<ArrayList<Integer>>() {
+			@Override
+			public int compare(ArrayList<Integer> arr1, ArrayList<Integer> arr2) {
+				int result= 0;
+				int ptr= 0;
+				while (ptr < colList.size() && result == 0) {
+					result= arr1.get(schema.indexOf(colList.get(ptr))) - arr2.get(schema.indexOf(colList.get(ptr)));
+					ptr+= 1;
+				}
+				return result;
+			}
+		};
+		data.sort(myComparator);
+//		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
 	}
 
 	public void printTable(PrintStream ps) {

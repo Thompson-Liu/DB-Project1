@@ -1,5 +1,8 @@
 package operator;
 
+import java.io.PrintStream;
+import java.util.List;
+
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 
@@ -8,16 +11,16 @@ public class SortOperator extends Operator {
 	private DataTable buffer;
 	private int ptr;
 
-	public SortOperator(Operator childOp, String colName) {
+	public SortOperator(Operator childOp, List<String> colList) {
 		ptr= -1;
-		buffer= childOp.dump();
-		buffer.sortData(colName);
+		buffer= childOp.getData();
+		buffer.sortData(colList);
 	}
 
 	@Override
 	public Tuple getNextTuple() {
 		ptr+= 1;
-		if (ptr < buffer.cardinality()) return new Tuple(buffer.getData(ptr));
+		if (ptr < buffer.cardinality()) return new Tuple(buffer.getRow(ptr));
 		return null;
 
 	}
@@ -28,8 +31,8 @@ public class SortOperator extends Operator {
 	}
 
 	@Override
-	public DataTable dump() {
-		return buffer;
+	public void dump(PrintStream ps) {
+		buffer.printTable(ps);
 	}
 
 }

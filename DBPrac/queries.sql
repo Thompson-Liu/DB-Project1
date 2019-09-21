@@ -1,3 +1,4 @@
-SELECT S.A
-FROM Sailors
+SELECT DISTINCT S.A
+FROM Sailors S
+ORDER BY S.B
 WHERE Reserves.A <=3;

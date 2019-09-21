@@ -1,28 +1,25 @@
 package controllers;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dataStructure.Catalog;
-import dataStructure.DataTable;
-import dataStructure.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
-import operator.JoinOperator;
 import operator.Operator;
-import operator.ScanOperator;
-import operator.SelectOperator;
 
 public class Interpreter {
 
 	private static final String queriesFile= "queries.sql";
-	private static final String dataDir = "samples/input/db/";
+	private static final String dataDir= "samples/input/db/";
+	private HashMap<String, String> aliasMap;
 
 	public static void main(String[] args) {
 		try {
@@ -34,18 +31,19 @@ public class Interpreter {
 				System.out.println("Select body is " + select.getSelectBody());
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
-				
+
 				String fileName= ((Table) plainSelect.getFromItem()).getAlias();
 //				String tableName= fileName.getName();
 				System.out.println("table name is " + fileName);
 				Catalog cat= createCatalog(dataDir);
 				cat.printCatalog();
 
-				OperatorFactory opfact = new OperatorFactory();
-				Operator operator = opfact.generateQueryPlan(plainSelect);
+				OperatorFactory opfact= new OperatorFactory();
+				Operator operator= opfact.generateQueryPlan(plainSelect);
+				// Check if the query contains aliases
 
-				//DataTable result = operator.dump();
-				//result.printTable();
+				// DataTable result = operator.dump();
+				// result.printTable();
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
@@ -57,28 +55,24 @@ public class Interpreter {
 	private static Catalog createCatalog(String directory) {
 		Catalog cat= Catalog.getInstance();
 		try {
-			FileReader schemafw = new FileReader(dataDir+"schema.txt");
-			BufferedReader readSchema = new BufferedReader(schemafw);
+			FileReader schemafw= new FileReader(dataDir + "schema.txt");
+			BufferedReader readSchema= new BufferedReader(schemafw);
 			String line;
-			while ((line = readSchema.readLine())!=null) {
-				String[] schemaLine = line.split(" ");
-				String tableName = schemaLine[0];
-				cat.addDir(tableName, dataDir+"data/" + tableName);
+			while ((line= readSchema.readLine()) != null) {
+				String[] schemaLine= line.split(" ");
+				String tableName= schemaLine[0];
+				cat.addDir(tableName, dataDir + "data/" + tableName);
 				ArrayList<String> schem= new ArrayList<String>();
-				for(int i=1; i<schemaLine.length ; i++) {
+				for (int i= 1; i < schemaLine.length; i++ ) {
 					schem.add(schemaLine[i]);
 				}
 //				cat.addSchema(tableName,schem);
 			}
 			readSchema.close();
-		} catch(IOException e) {
+		} catch (IOException e) {
 			System.err.println("Exception unable to access the directory");
 		}
 		return cat;
 	}
 
-
-
 }
-
-
