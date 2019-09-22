@@ -26,17 +26,17 @@ public class OperatorFactory {
 		// alias ->tableName
 		// (key: tableName,  value: alias) 
 		HashMap<String,String> tableAlias = new HashMap<String,String>();
-		boolean hasFromAlias=false;
+		String aliasName="";
 
 		String fromLeft= plainSelect.getFromItem().toString();
 		
 		if(plainSelect.getFromItem().getAlias()!=null) {
 			tableAlias.put(plainSelect.getFromItem().toString(),
 					plainSelect.getFromItem().getAlias().toString());
-			hasFromAlias=true;
+			aliasName=plainSelect.getFromItem().getAlias().toString();
 		}
 		Operator intOp;
-		Operator leftOp= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft,hasFromAlias),tableAlias);
+		Operator leftOp= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft,aliasName),tableAlias);
 
 		if (plainSelect.getJoins() != null) {
 			intOp= new JoinOperator(leftOp, join(plainSelect, plainSelect.getJoins(),tableAlias), plainSelect.getWhere(),tableAlias);
@@ -73,10 +73,10 @@ public class OperatorFactory {
 			Join res=joins.get(0);
 			Operator scanOp;
 			if(res.getRightItem().getAlias()!=null) {
-				scanOp= new ScanOperator(res.getRightItem().toString(),true);
+				scanOp= new ScanOperator(res.getRightItem().toString(),res.getRightItem().getAlias().toString());
 			}
 			else {
-				scanOp= new ScanOperator(res.getRightItem().toString(),false);
+				scanOp= new ScanOperator(res.getRightItem().toString(),"");
 			}
 			
 			return new SelectOperator(plainSelect.getWhere(), scanOp,tableAlias);
@@ -86,9 +86,9 @@ public class OperatorFactory {
 		Operator rightOp;
 		if(rightJoin.getRightItem().getAlias()!=null) {
 			tableAlias.put(rightJoin.getRightItem().toString(),rightJoin.getRightItem().getAlias());
-			rightOp = new ScanOperator(rightJoin.toString(),true);
+			rightOp = new ScanOperator(rightJoin.toString(),rightJoin.getRightItem().getAlias().toString());
 		}else {
-			rightOp = new ScanOperator(rightJoin.toString(),false);
+			rightOp = new ScanOperator(rightJoin.toString(),"");
 		}
 		SelectOperator rightOperator= new SelectOperator(whereExp, rightOp,tableAlias);
 		return (new JoinOperator(join(plainSelect, joins,tableAlias), rightOperator, whereExp,tableAlias));

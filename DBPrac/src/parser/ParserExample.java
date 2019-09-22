@@ -2,6 +2,7 @@ package parser;
 
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
@@ -24,6 +25,15 @@ public class ParserExample {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(queriesFile));
 			Statement statement;
 			while ((statement= parser.Statement()) != null) {
+				
+				
+				
+				String a= "ab  AS cd";
+//				String[] b=a.trim().split(" AS ");
+				String b =a.replace("AS "+"cd","").trim();
+				System.out.println("+++++++  Hello world!"+b);
+				
+				
 				System.out.println("Read statement: " + statement);
 				Select select= (Select) statement;
 				System.out.println("Select body is " + select.getSelectBody());

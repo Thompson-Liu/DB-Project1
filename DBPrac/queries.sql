@@ -1,3 +1,5 @@
+SELECT *
+FROM Country;
 -- SELECT *
 -- FROM Sailors;
 -- SELECT *
@@ -33,10 +35,10 @@
 -- SELECT A.A
 -- FROM Sailors A, Sailors B
 -- WHERE A.A<3;
-SELECT A.A, B.B, R.H
-FROM Sailors A, Sailors B, Reserves R
-WHERE A.A<3 AND A.A = B.G
-ORDER BY B.B;
+-- SELECT A.A, B.B, R.H
+-- FROM Sailors A, Sailors B, Reserves R
+-- WHERE A.A<3 AND A.A = B.G
+-- ORDER BY B.B;
 -- SELECT DISTINCT Reserves.H
 -- FROM Reserves, Sailors;
 

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import dataStructure.Catalog;
@@ -29,15 +30,14 @@ public class ScanOperator extends Operator {
 	 * 								e.g. hasAlias if tableName= "Sailors AS S"
 	 * @param hasAlias
 	 */
-	public ScanOperator(String tableName,boolean hasAlias) {
+	public ScanOperator(String tableName,String aliasName) {
 		this.tableName= tableName;
 		this.dirName=tableName;
 		Catalog catalog= Catalog.getInstance();
-		if(hasAlias) {
-			String[] comNames= tableName.split(" AS ");
-			dirName=comNames[0];
+		if(aliasName !="") {
+			dirName = tableName.replace("AS "+aliasName,"").trim();
 			// if there's alias, always using alias name as the index for columns
-			tableName = comNames[1];
+			tableName = aliasName;
 		}
 		String dir= catalog.getDir(dirName);
 		ArrayList<String> schema = catalog.getSchema(dirName);

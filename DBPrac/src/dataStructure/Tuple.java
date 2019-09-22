@@ -11,7 +11,7 @@ public class Tuple {
 	}
 	
 	public Tuple(String dataInStr) {
-		String strArr[]= dataInStr.split(",");
+		String strArr[]= dataInStr.trim().split("\\s*,\\s*");
 		dataTuple= new ArrayList<Integer>(strArr.length);
 
 		for (String x : strArr) {

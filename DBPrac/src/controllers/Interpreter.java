@@ -54,7 +54,7 @@ public class Interpreter {
 			BufferedReader readSchema= new BufferedReader(schemafw);
 			String line;
 			while ((line= readSchema.readLine()) != null) {
-				String[] schemaLine= line.split(" ");
+				String[] schemaLine= line.trim().split("\\s+");
 				String tableName= schemaLine[0];
 				cat.addDir(tableName, dataDir + "data/" + tableName);
 				ArrayList<String> schem= new ArrayList<String>();

@@ -30,7 +30,7 @@ public class ProjectOperator extends Operator {
 			}else {
 				SelectExpressionItem expressItem= (SelectExpressionItem) item;
 				String tableColCom=item.toString();
-				String[] tableCol = tableColCom.split("\\.");
+				String[] tableCol = tableColCom.trim().split("\\s*,\\s*");
 				String column= tableCol[1];
 				String tableName = tableCol[0];
 				
