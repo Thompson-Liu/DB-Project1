@@ -24,7 +24,12 @@ public class ScanOperator extends Operator {
 		this.tableName= tableName;
 		Catalog catalog= Catalog.getInstance();
 		String dir= catalog.getDir(tableName);
-		data= new DataTable(tableName, catalog.getSchema(tableName));
+		ArrayList<String> schema = catalog.getSchema(tableName);
+		ArrayList<String> newSchema = (ArrayList<String>) schema.clone();
+		for(int i=0;i<schema.size();i++ ) {
+			newSchema.set(i, tableName+"."+schema.get(i));
+		}
+		data= new DataTable(tableName,newSchema);
 
 		File file= new File(dir);
 		try {
@@ -56,7 +61,12 @@ public class ScanOperator extends Operator {
 	public void reset() {
 		Catalog catalog= Catalog.getInstance();
 		String dir= catalog.getDir(tableName);
-		data= new DataTable(tableName, catalog.getSchema(tableName));
+		ArrayList<String> schema = catalog.getSchema(tableName);
+		ArrayList<String> newSchema = (ArrayList<String>) schema.clone();
+		for(int i=0;i<schema.size();i++ ) {
+			newSchema.set(i, tableName+"."+schema.get(i));
+		}
+		data= new DataTable(tableName, newSchema);
 
 		File file= new File(dir);
 		try {

@@ -1,5 +1,11 @@
 /**
- * Evaluate the WHERE clause that involves two tables
+ * Evaluate the WHERE clause that involves two tables, keep a stack structure that evaluate the expression tree
+ *            AND                             
+ * 		   /       \        
+ * 	       <      exp2
+ *       /   \
+ *     1     2
+ * 
  */
 package parser;
 
@@ -58,18 +64,18 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private Tuple rightTuple;
 	private ArrayList<String> leftSchema = new ArrayList<String>();
 	private ArrayList<String> rightSchema = new ArrayList<String>();
-	private String leftTableNames;
-	private String rightTableNames;
+//	private String leftTableNames;
+//	private String rightTableNames;
 	private Expression expr;
 
 
 	public EvaluateWhere(Expression whereExpr, 
-			ArrayList<String> leftSchema, ArrayList<String> rightSchema, String leftTables,String rightTables) {
+			ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
 		this.expr=whereExpr;
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
-		leftTableNames = leftTables;
-		rightTableNames=rightTables;
+//		leftTableNames = leftTables;
+//		rightTableNames=rightTables;
 	}
 
 	//	// compute the schema for this tables sets
@@ -91,7 +97,8 @@ public class EvaluateWhere implements ExpressionVisitor {
 			expr.accept(this);
 		}
 		if (leftTuple != null) {
-			resultTuple = leftTuple.concateTuple(rightTuple);
+			resultTuple = leftTuple;
+			resultTuple.concateTuple(rightTuple);
 		} else {
 			resultTuple = rightTuple;
 		}
@@ -195,6 +202,14 @@ public class EvaluateWhere implements ExpressionVisitor {
 		return;
 	}
 
+	/**
+	 * @param arg0   EqualTo expression composed of leftExp and rightExp
+	 * @return value  0 left != right;   
+	 * 				1  if left == right  or should ignore this expression, 
+	 * 								since these evaluation does not apply to these two tuple
+	 * e.g.  tuple1 from tableA, tuple2 from tableB, with expression C.x==2 
+	 *  	push[1] to the stack [sofar], since left will give null expression
+	 */
 	@Override
 	public void visit(EqualsTo arg0) {
 		arg0.getLeftExpression().accept(this);
@@ -291,28 +306,19 @@ public class EvaluateWhere implements ExpressionVisitor {
 	@Override
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
+		String colName = arg0.getColumnName();
+		String colInfo = colTable+"."+colName;      // the new name of the column  e.g. Sailor.A
 		
-		if(!leftTableNames.contains(colTable) && !rightTableNames.contains(colTable)) {
+		if(!leftSchema.contains(colInfo) && !rightSchema.contains(colInfo)) {
 			sofar.push(null);
 		}else {
-			String colName=arg0.getColumnName();
-			if (leftTableNames.contains(colTable) ) {
-				if(leftSchema.contains(colName)) {
-					int index= leftSchema.indexOf(colName);
+			if (leftSchema.contains(colInfo) ) {
+					int index= leftSchema.indexOf(colInfo);
 					sofar.push(leftTuple.getData(index));
-				}
-				else {
-					sofar.push(null);
-				}
 			}
 			else  {
-				if(rightSchema.contains(colName)) {
-					int index= rightSchema.indexOf(arg0.getColumnName());
+					int index= rightSchema.indexOf(colInfo);
 					sofar.push(rightTuple.getData(index));
-				}
-				else {
-					sofar.push(null);
-				}
 			}
 		}
 	}

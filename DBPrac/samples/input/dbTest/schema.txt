@@ -1,0 +1,6 @@
+Sailors A B C
+Boats D E F
+Reserves G H
+Country C N id
+City C M cityid
+Company A D cid J

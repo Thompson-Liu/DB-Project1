@@ -18,7 +18,8 @@ public class DuplicateEliminationOperator extends Operator {
 		int i= 0;
 		while (i < tmpTable.cardinality()) {
 			if (i > 0) {
-				while (Arrays.equals(tmpTable.getRow(i), tmpTable.getRow(i - 1))) {
+				while (Arrays.equals(tmpTable.getRow(i).stream().mapToLong(i::i).toArray(),
+					Arrays.stream(tmpTable.getRow(i - 1)).mapToLong(i -> i).toArray())) {
 					i+= 1;
 				}
 			}

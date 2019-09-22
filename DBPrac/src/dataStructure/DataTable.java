@@ -20,14 +20,30 @@ public class DataTable {
 	public String getTableName() {
 		return name;
 	}
+	
+	/**
+	 * 
+	 * @return the full data Table's data
+	 */
+	public ArrayList<ArrayList<Integer>> getFullTable(){
+		return ((ArrayList<ArrayList<Integer>>) data.clone());
+	}
+	
+	/**
+	 * 
+	 * @param d set the full datatable's data to d
+	 */
+	public void setFullTable(ArrayList<ArrayList<Integer>> d) {
+		this.data=d;
+	}
+		
 
 	public ArrayList<String> getSchema() {
 		return schema;
 	}
 
 	public void setSchema(ArrayList<String> changeSchema) {
-		schema= new ArrayList<String>();
-		schema.addAll(changeSchema);
+		this.schema= changeSchema;
 	}
 
 	public void addData(ArrayList<Integer> newData) {
@@ -70,6 +86,10 @@ public class DataTable {
 //		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
 	}
 
+	/**
+	 * 
+	 * @param ps
+	 */
 	public void printTable(PrintStream ps) {
 		for (ArrayList<Integer> x : data) {
 			for (int y : x) {

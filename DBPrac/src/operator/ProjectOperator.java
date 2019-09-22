@@ -6,6 +6,7 @@ import java.util.List;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
+import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
@@ -19,10 +20,13 @@ public class ProjectOperator extends Operator {
 		childOp= operator;
 		selectColumns= new ArrayList<String>(list.size());
 		for (SelectItem item : list) {
-			SelectExpressionItem expressItem= (SelectExpressionItem) item;
-			String select= expressItem.toString();
-			String columnName= select.split("\\.")[1];
-			selectColumns.add(columnName);
+			// consider the case of Select A.S, B.W, *
+			if (item instanceof AllColumns) {
+				selectColumns.add("*");
+			}else {
+				SelectExpressionItem expressItem= (SelectExpressionItem) item;
+				selectColumns.add(expressItem.toString());
+			}
 		}
 
 		this.data= new DataTable(operator.getTableName(), selectColumns);
@@ -38,14 +42,12 @@ public class ProjectOperator extends Operator {
 			ArrayList<String> columns= new ArrayList<String>();
 
 			for (String item : selectColumns) {
-//				if (item instanceof AllColumns) {
-//					data.addData(next);
-//					return next;
-//				} else {
-
-				int index= childOp.schema().indexOf(item);
+				if (item=="*") {
+					tup=tup.concateTuple(next); 
+				} else {
+				int index= childOp.schema().indexOf(item.toString());
 				tup.addData(next.getData(index));
-//				}
+				}
 			}
 			data.addData(tup);
 			data.setSchema(columns);
@@ -72,8 +74,7 @@ public class ProjectOperator extends Operator {
 
 	@Override
 	public ArrayList<String> schema() {
-		// can't do data.schema(), which returns null
-		return selectColumns;
+		return this.data.getSchema();
 	}
 
 	@Override

@@ -49,9 +49,7 @@ public class OperatorFactory {
 			return (d == null) ? intOp : new DuplicateEliminationOperator((SortOperator) intOp);
 		}
 		if (d != null) {
-//			System.out.println("Now, schema is" + intOp.schema());
 			intOp= new SortOperator(intOp, null);
-//			System.out.println("Next, schema is" + intOp.schema());
 			return new DuplicateEliminationOperator((SortOperator) intOp);
 
 		}
@@ -60,6 +58,7 @@ public class OperatorFactory {
 
 	private Operator join(PlainSelect plainSelect, List<Join> joins) {
 		if (joins.size() == 1) {
+
 			Operator scanOp= new ScanOperator(joins.get(0).toString());
 			return new SelectOperator(plainSelect.getWhere(), scanOp);
 		}
