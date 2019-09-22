@@ -43,7 +43,7 @@ public class OperatorFactory {
 		if (tmpList != null) {
 			List<String> orderByList= new ArrayList<String>(tmpList.size());
 			for (OrderByElement x : tmpList) {
-				orderByList.add(x.toString().substring(x.toString().indexOf('.') + 1));
+				orderByList.add(x.toString());   //.substring(x.toString().indexOf('.') + 1));
 			}
 			intOp= new SortOperator(intOp, orderByList);
 			return (d == null) ? intOp : new DuplicateEliminationOperator((SortOperator) intOp);

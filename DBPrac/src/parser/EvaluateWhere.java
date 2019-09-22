@@ -69,23 +69,14 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private Expression expr;
 
 
-	public EvaluateWhere(Expression whereExpr, 
-			ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
+	public EvaluateWhere(Expression whereExpr, ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
 		this.expr=whereExpr;
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
-//		leftTableNames = leftTables;
-//		rightTableNames=rightTables;
+
 	}
 
-	//	// compute the schema for this tables sets
-	//	private void initSchema() {
-	//		for(String tableName: this.leftTupleTables) {
-	//			this.leftSchema.addAll(Catalog.getInstance().getSchema(tableName));
-	//		}
-	//		this.rightSchema= Catalog.getInstance().getSchema(this.rightTupleTable);
-	//	}
-	
+
 
 	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple) {
 		sofar= new Stack<Integer>();
@@ -98,7 +89,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		}
 		if (leftTuple != null) {
 			resultTuple = leftTuple;
-			resultTuple.concateTuple(rightTuple);
+			resultTuple=resultTuple.concateTuple(rightTuple);
 		} else {
 			resultTuple = rightTuple;
 		}

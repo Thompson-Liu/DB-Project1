@@ -12,8 +12,8 @@
 -- SELECT Country.N
 -- FROM Country
 -- WHERE Country.C<2 AND Country.A;
-SELECT Sailors.A, Sailors.C, Sailors.B, *
-FROM Sailors;
+-- SELECT Sailors.A, Sailors.C, Sailors.B, *
+-- FROM Sailors;
 -- SELECT S.A
 -- FROM Sailors S;
 -- SELECT *
@@ -27,8 +27,8 @@ FROM Sailors;
 -- WHERE S1.A < S2.A;
 -- SELECT DISTINCT R.G
 -- FROM Reserves R;
--- SELECT *
--- FROM Sailors
--- ORDER BY Sailors.B;
+SELECT *
+FROM Sailors
+ORDER BY Sailors.B;
 -- SELECT DISTINCT Reserves.H
 -- FROM Reserves, Sailors;
