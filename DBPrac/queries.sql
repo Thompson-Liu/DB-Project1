@@ -1,5 +1,5 @@
-SELECT *
-FROM Country;
+-- SELECT *
+-- FROM Country      C;
 -- SELECT *
 -- FROM Sailors;
 -- SELECT *
@@ -59,4 +59,7 @@ FROM Country;
 --   WHERE C.population>500000
 --   GROUP BY C.countrycode) AS TEMP
 -- ON CO.code = TEMP.countryCode;
+
+SELECT DISTINCT Reserves.H
+FROM Reserves;
  

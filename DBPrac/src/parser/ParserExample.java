@@ -27,13 +27,6 @@ public class ParserExample {
 			while ((statement= parser.Statement()) != null) {
 				
 				
-				
-				String a= "ab  AS cd";
-//				String[] b=a.trim().split(" AS ");
-				String b =a.replace("AS "+"cd","").trim();
-				System.out.println("+++++++  Hello world!"+b);
-				
-				
 				System.out.println("Read statement: " + statement);
 				Select select= (Select) statement;
 				System.out.println("Select body is " + select.getSelectBody());
