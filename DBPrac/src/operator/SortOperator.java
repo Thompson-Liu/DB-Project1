@@ -21,9 +21,9 @@ public class SortOperator extends Operator {
 //		buffer.printTableInfo();
 //		System.out.println(childOp.schema());
 		if (colList == null) {
-			buffer.sortData(buffer.getSchema());
+			buffer.sortData(childOp.schema(), childOp.schema());
 		} else {
-			buffer.sortData(colList);
+			buffer.sortData(colList, childOp.schema());
 		}
 	}
 

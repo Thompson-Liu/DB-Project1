@@ -66,7 +66,7 @@ public class DataTable {
 		return data.get(r);
 	}
 
-	public void sortData(List<String> colList) {
+	public void sortData(List<String> colList, ArrayList<String> colSchema) {
 		Comparator<ArrayList<Integer>> myComparator= new Comparator<ArrayList<Integer>>() {
 			@Override
 			public int compare(ArrayList<Integer> arr1, ArrayList<Integer> arr2) {
@@ -74,7 +74,8 @@ public class DataTable {
 				int ptr= 0;
 //				System.out.println(colList);
 				while (ptr < colList.size() && result == 0) {
-					result= arr1.get(schema.indexOf(colList.get(ptr))) - arr2.get(schema.indexOf(colList.get(ptr)));
+					result= arr1.get(colSchema.indexOf(colList.get(ptr))) -
+						arr2.get(colSchema.indexOf(colList.get(ptr)));
 					ptr+= 1;
 				}
 				return result;
