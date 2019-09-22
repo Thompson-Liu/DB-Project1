@@ -37,7 +37,8 @@ public class ProjectOperator extends Operator {
 					SelectExpressionItem expressItem= (SelectExpressionItem) item;
 
 					String select= expressItem.toString();
-					String columnName= select.split("\\.")[1];
+					String[] columnNameList = select.split("\\.");
+					String columnName = (columnNameList.length > 1) ? columnNameList[1] : columnNameList[0];
 
 					int index= childOp.schema().indexOf(columnName);
 					tup.addData(next.getData(index));
