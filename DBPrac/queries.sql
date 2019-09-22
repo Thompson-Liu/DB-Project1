@@ -27,8 +27,20 @@
 -- WHERE S1.A < S2.A;
 -- SELECT DISTINCT R.G
 -- FROM Reserves R;
-SELECT *
-FROM Sailors
-ORDER BY Sailors.B;
+-- SELECT *
+-- FROM Sailors A, Sailors B
+
+SELECT A.A
+FROM Sailors A, Sailors B
+WHERE A.A<3;
 -- SELECT DISTINCT Reserves.H
 -- FROM Reserves, Sailors;
+
+
+
+
+-- SELECT TEMP.countrycode
+-- FROM (SELECT CL.countrycode as countryCode, MAX( COUNT(CL.language))AS count
+--   FROM CountryLanguage AS CL
+--   GROUP BY CL.countrycode)AS TEMP
+-- WHERE TEMP.countrycode=CL.countrycode;

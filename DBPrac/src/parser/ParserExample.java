@@ -30,9 +30,9 @@ public class ParserExample {
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
 				Distinct astrick= plainSelect.getDistinct();
-				System.out.println("alias is     :     "+plainSelect.getFromItem().getAlias());
+				System.out.println("select items are     :     "+plainSelect.getSelectItems().get(0).toString());
 
-				System.out.println("join alias  are   ::: :" );
+				System.out.println("join alias  are   ::: :"+plainSelect.getJoins() );
 //				System.out.println("select items are" + astrick.toString());
 //				System.out.println("***from items are  :   " + plainSelect.getFromItem().toString());
 ////				System.out.println("remaining from items" + plainSelect.getJoins());

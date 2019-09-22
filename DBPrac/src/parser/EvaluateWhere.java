@@ -10,6 +10,7 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 import dataStructure.Catalog;
@@ -64,16 +65,18 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private Tuple rightTuple;
 	private ArrayList<String> leftSchema = new ArrayList<String>();
 	private ArrayList<String> rightSchema = new ArrayList<String>();
+	private HashMap<String,String> tableAlias;
 //	private String leftTableNames;
 //	private String rightTableNames;
 	private Expression expr;
 
 
-	public EvaluateWhere(Expression whereExpr, ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
+	public EvaluateWhere(Expression whereExpr, ArrayList<String> leftSchema, 
+			ArrayList<String> rightSchema,HashMap<String,String> tableAlias) {
 		this.expr=whereExpr;
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
-
+		this.tableAlias = tableAlias;
 	}
 
 
@@ -297,6 +300,12 @@ public class EvaluateWhere implements ExpressionVisitor {
 	@Override
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
+		
+		//always using Alias as indexing
+		if(tableAlias.containsKey(colTable)) {
+			colTable=tableAlias.get(colTable);
+		}
+		
 		String colName = arg0.getColumnName();
 		String colInfo = colTable+"."+colName;      // the new name of the column  e.g. Sailor.A
 		

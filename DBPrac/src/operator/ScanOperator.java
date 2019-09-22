@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dataStructure.Catalog;
 import dataStructure.DataTable;
@@ -18,13 +19,28 @@ public class ScanOperator extends Operator {
 	// Check if this will be inherited by the children class
 	private BufferedReader br;
 	private DataTable data;
-	private String tableName;
-
-	public ScanOperator(String tableName) {
+	private String tableName;  //if there is Alias then use Alias, otherwise use TableName
+	private String dirName;   // only the name of the table, 
+							//to get the directory and schema from the catalog
+	
+	/**
+	 * 
+	 * @param tableName,hasAlias    hasAlias is true if the tableName contains alias
+	 * 								e.g. hasAlias if tableName= "Sailors AS S"
+	 * @param hasAlias
+	 */
+	public ScanOperator(String tableName,boolean hasAlias) {
 		this.tableName= tableName;
+		this.dirName=tableName;
 		Catalog catalog= Catalog.getInstance();
-		String dir= catalog.getDir(tableName);
-		ArrayList<String> schema = catalog.getSchema(tableName);
+		if(hasAlias) {
+			String[] comNames= tableName.split(" AS ");
+			dirName=comNames[0];
+			// if there's alias, always using alias name as the index for columns
+			tableName = comNames[1];
+		}
+		String dir= catalog.getDir(dirName);
+		ArrayList<String> schema = catalog.getSchema(dirName);
 		ArrayList<String> newSchema = (ArrayList<String>) schema.clone();
 		for(int i=0;i<schema.size();i++ ) {
 			newSchema.set(i, tableName+"."+schema.get(i));
@@ -60,8 +76,8 @@ public class ScanOperator extends Operator {
 	@Override
 	public void reset() {
 		Catalog catalog= Catalog.getInstance();
-		String dir= catalog.getDir(tableName);
-		ArrayList<String> schema = catalog.getSchema(tableName);
+		String dir= catalog.getDir(dirName);
+		ArrayList<String> schema = catalog.getSchema(dirName);
 		ArrayList<String> newSchema = (ArrayList<String>) schema.clone();
 		for(int i=0;i<schema.size();i++ ) {
 			newSchema.set(i, tableName+"."+schema.get(i));

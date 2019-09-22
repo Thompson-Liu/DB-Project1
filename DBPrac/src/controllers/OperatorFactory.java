@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sf.jsqlparser.expression.Expression;
@@ -21,13 +22,24 @@ import operator.SortOperator;
 public class OperatorFactory {
 
 	public Operator generateQueryPlan(PlainSelect plainSelect) {
+		
+		// alias ->tableName
+		// (key: tableName,  value: alias) 
+		HashMap<String,String> tableAlias = new HashMap<String,String>();
+		boolean hasFromAlias=false;
 
 		String fromLeft= plainSelect.getFromItem().toString();
+		
+		if(plainSelect.getFromItem().getAlias()!=null) {
+			tableAlias.put(plainSelect.getFromItem().toString(),
+					plainSelect.getFromItem().getAlias().toString());
+			hasFromAlias=true;
+		}
 		Operator intOp;
-		Operator leftOp= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft));
+		Operator leftOp= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft,hasFromAlias),tableAlias);
 
 		if (plainSelect.getJoins() != null) {
-			intOp= new JoinOperator(leftOp, join(plainSelect, plainSelect.getJoins()), plainSelect.getWhere());
+			intOp= new JoinOperator(leftOp, join(plainSelect, plainSelect.getJoins(),tableAlias), plainSelect.getWhere(),tableAlias);
 		} else {
 			intOp= leftOp;
 
@@ -36,7 +48,7 @@ public class OperatorFactory {
 		// check select clause
 		List<SelectItem> selectItems= plainSelect.getSelectItems();
 		if (!(selectItems.get(0) instanceof AllColumns)) {
-			intOp= new ProjectOperator(intOp, selectItems);
+			intOp= new ProjectOperator(intOp, selectItems,tableAlias);
 		}
 		Distinct d= plainSelect.getDistinct();
 		List<OrderByElement> tmpList= plainSelect.getOrderByElements();
@@ -56,16 +68,30 @@ public class OperatorFactory {
 		return intOp;
 	}
 
-	private Operator join(PlainSelect plainSelect, List<Join> joins) {
+	private Operator join(PlainSelect plainSelect, List<Join> joins,HashMap<String,String> tableAlias) {
 		if (joins.size() == 1) {
+			Join res=joins.get(0);
+			Operator scanOp;
+			if(res.getRightItem().getAlias()!=null) {
+				scanOp= new ScanOperator(res.getRightItem().toString(),true);
+			}
+			else {
+				scanOp= new ScanOperator(res.getRightItem().toString(),false);
+			}
 			
-			Operator scanOp= new ScanOperator(joins.get(0).toString());
-			return new SelectOperator(plainSelect.getWhere(), scanOp);
+			return new SelectOperator(plainSelect.getWhere(), scanOp,tableAlias);
 		}
-		String rightName= joins.remove(joins.size() - 1).toString();
+		Join rightJoin= joins.remove(joins.size() - 1);
 		Expression whereExp= plainSelect.getWhere();
-		SelectOperator rightOperator= new SelectOperator(whereExp, new ScanOperator(rightName));
-		return (new JoinOperator(join(plainSelect, joins), rightOperator, whereExp));
+		Operator rightOp;
+		if(rightJoin.getRightItem().getAlias()!=null) {
+			tableAlias.put(rightJoin.getRightItem().toString(),rightJoin.getRightItem().getAlias());
+			rightOp = new ScanOperator(rightJoin.toString(),true);
+		}else {
+			rightOp = new ScanOperator(rightJoin.toString(),false);
+		}
+		SelectOperator rightOperator= new SelectOperator(whereExp, rightOp,tableAlias);
+		return (new JoinOperator(join(plainSelect, joins,tableAlias), rightOperator, whereExp,tableAlias));
 	}
 
 }

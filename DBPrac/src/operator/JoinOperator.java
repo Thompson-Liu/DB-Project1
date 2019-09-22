@@ -6,6 +6,7 @@ package operator;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
@@ -20,14 +21,17 @@ public class JoinOperator extends Operator {
 	private Expression joinExp;
 	private boolean resetFlag= true;
 	private Tuple left;
+	private HashMap<String,String> tableAlias;
 
-	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
+	public JoinOperator(Operator LeftOperator, Operator RightOperator, 
+			Expression expression,HashMap<String,String> tableAlias) {
 		joinExp= expression;
 		ArrayList<String> cur= (ArrayList<String>) LeftOperator.schema().clone();
 		cur.addAll(RightOperator.schema());
 		currentTable= new DataTable(LeftOperator.getTableName() + " " + RightOperator.getTableName(), cur);
 		leftOperator= LeftOperator;
 		rightOperator= RightOperator;
+		this.tableAlias=tableAlias;
 	}
 
 	@Override
@@ -54,7 +58,7 @@ public class JoinOperator extends Operator {
 		boolean flag= true;
 		Tuple right;
 		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(),
-			rightOperator.schema());
+			rightOperator.schema(),tableAlias);
 
 		while (flag) {
 			if (resetFlag) {
