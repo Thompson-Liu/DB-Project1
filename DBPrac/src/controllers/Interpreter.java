@@ -18,7 +18,7 @@ import operator.Operator;
 public class Interpreter {
 
 	private static final String queriesFile= "queries.sql";
-	private static final String dataDir= "samples/input/db/";
+	private static final String dataDir= "samples/input/dbTest/";
 	private HashMap<String, String> aliasMap;
 
 	public static void main(String[] args) {
@@ -32,14 +32,13 @@ public class Interpreter {
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
 
-				String fileName= ((Table) plainSelect.getFromItem()).getAlias();
 //				System.out.println("table name is " + fileName);
 				Catalog cat= createCatalog(dataDir);
 //				cat.printCatalog();
 
 				OperatorFactory opfactory= new OperatorFactory();
 				Operator op= opfactory.generateQueryPlan(plainSelect);
-				op.dump(System.out);
+				op.dump(System.out, true);
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred during parsing");
@@ -55,7 +54,7 @@ public class Interpreter {
 			BufferedReader readSchema= new BufferedReader(schemafw);
 			String line;
 			while ((line= readSchema.readLine()) != null) {
-				String[] schemaLine= line.split(" ");
+				String[] schemaLine= line.trim().split("\\s+");
 				String tableName= schemaLine[0];
 				cat.addDir(tableName, dataDir + "data/" + tableName);
 				ArrayList<String> schem= new ArrayList<String>();

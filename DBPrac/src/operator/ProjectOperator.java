@@ -2,24 +2,49 @@ package operator;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 import net.sf.jsqlparser.statement.select.AllColumns;
+import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 public class ProjectOperator extends Operator {
 
 	private Operator childOp;
-	private ArrayList<SelectItem> selectColumns;
+	private ArrayList<String> selectColumns;
 	private DataTable data;
+	private HashMap<String,String> tableAlias;
 
-	public ProjectOperator(Operator operator, List<SelectItem> list) {
+	public ProjectOperator(Operator operator, List<SelectItem> list, HashMap<String,String> tableAlias) {
 		childOp= operator;
-		selectColumns= new ArrayList<SelectItem>(list);
-		data= new DataTable(operator.getTableName(), operator.schema());
+		selectColumns= new ArrayList<String>(list.size());
+		
+		for (SelectItem item : list) {
+			// consider the case of Select A.S, B.W, *
+			if (item instanceof AllColumns) {
+				selectColumns.addAll(operator.schema());
+			}else {
+				SelectExpressionItem expressItem= (SelectExpressionItem) item;
+				String tableColCom=item.toString();
+				String[] tableCol = tableColCom.trim().split("\\s*,\\s*");
+				String column= tableCol[1];
+				String tableName = tableCol[0];
+				
+				// if the name has corresponding alias, 
+				// then change the projection table name to 
+				if(tableAlias.containsKey(tableName)) {
+					tableName = tableAlias.get(tableName);
+				}
+				selectColumns.add(tableName+"."+column);
+			}
+		}
+
+		this.data= new DataTable(operator.getTableName(), selectColumns);
+
 	}
 
 	@Override
@@ -27,22 +52,15 @@ public class ProjectOperator extends Operator {
 		Tuple next= null;
 		while ((next= childOp.getNextTuple()) != null) {
 			Tuple tup= new Tuple();
-			ArrayList<String> columns = new ArrayList<String>();
+			ArrayList<String> columns= new ArrayList<String>();
 
-			for (SelectItem item : selectColumns) {
-				if (item instanceof AllColumns) {
-					data.addData(next);
-					return next;
-				} else {
-					SelectExpressionItem expressItem= (SelectExpressionItem) item;
-
-					String select= expressItem.toString();
-					String[] columnNameList = select.split("\\.");
-					String columnName = (columnNameList.length > 1) ? columnNameList[1] : columnNameList[0];
-
-					int index= childOp.schema().indexOf(columnName);
-					tup.addData(next.getData(index));
-				}
+			for (String item : selectColumns) {
+//				if (item=="*") {
+//					tup=tup.concateTuple(next); 
+//				} else {
+				int index= childOp.schema().indexOf(item.toString());
+				tup.addData(next.getData(index));
+//				}
 			}
 			data.addData(tup);
 			data.setSchema(columns);
@@ -57,17 +75,19 @@ public class ProjectOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		Tuple tup;
-		while((tup = getNextTuple()) != null) {
-			
+		while ((tup= getNextTuple()) != null) {
+
 		}
-		data.printTable(ps);
+		if (print) {
+			data.printTable(ps);
+		}
 	}
 
 	@Override
 	public ArrayList<String> schema() {
-		return data.getSchema();
+		return this.data.getSchema();
 	}
 
 	@Override
@@ -77,6 +97,7 @@ public class ProjectOperator extends Operator {
 
 	@Override
 	public DataTable getData() {
+		dump(System.out, false);
 		return data;
 	}
 }

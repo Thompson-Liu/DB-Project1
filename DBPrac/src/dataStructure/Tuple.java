@@ -11,7 +11,7 @@ public class Tuple {
 	}
 	
 	public Tuple(String dataInStr) {
-		String strArr[]= dataInStr.split(",");
+		String strArr[]= dataInStr.trim().split("\\s*,\\s*");
 		dataTuple= new ArrayList<Integer>(strArr.length);
 
 		for (String x : strArr) {
@@ -23,6 +23,11 @@ public class Tuple {
 		dataTuple = tuple;
 	}
 	
+	/**
+	 * 
+	 * @param b  tuple to be added 
+	 * @return  a new tuple with b added to current tuple
+	 */
 	public Tuple concateTuple(Tuple b) {
 		ArrayList<Integer> result = (ArrayList<Integer>) dataTuple.clone();
 		result.addAll(b.getTuple());

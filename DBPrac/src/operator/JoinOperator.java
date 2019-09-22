@@ -3,8 +3,10 @@
  */
 package operator;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
@@ -19,14 +21,17 @@ public class JoinOperator extends Operator {
 	private Expression joinExp;
 	private boolean resetFlag= true;
 	private Tuple left;
+	private HashMap<String,String> tableAlias;
 
-	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
+	public JoinOperator(Operator LeftOperator, Operator RightOperator, 
+			Expression expression,HashMap<String,String> tableAlias) {
 		joinExp= expression;
 		ArrayList<String> cur= (ArrayList<String>) LeftOperator.schema().clone();
 		cur.addAll(RightOperator.schema());
 		currentTable= new DataTable(LeftOperator.getTableName() + " " + RightOperator.getTableName(), cur);
 		leftOperator= LeftOperator;
 		rightOperator= RightOperator;
+		this.tableAlias=tableAlias;
 	}
 
 	@Override
@@ -40,8 +45,9 @@ public class JoinOperator extends Operator {
 		return currentTable.getTableName();
 	}
 
+	@Override
 	// return the schema of the current table
-	public ArrayList<String> Schema() {
+	public ArrayList<String> schema() {
 		return currentTable.getSchema();
 	}
 
@@ -52,7 +58,7 @@ public class JoinOperator extends Operator {
 		boolean flag= true;
 		Tuple right;
 		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(),
-			rightOperator.schema(), leftOperator.getTableName(), rightOperator.getTableName());
+			rightOperator.schema(),tableAlias);
 
 		while (flag) {
 			if (resetFlag) {
@@ -82,16 +88,17 @@ public class JoinOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		Tuple next;
 		while ((next= getNextTuple()) != null) {
 
 		}
-		currentTable.printTable(ps);
+		if (print) { currentTable.printTable(ps); }
 	}
 
 	@Override
 	public DataTable getData() {
+		dump(System.out, false);
 		return currentTable;
 	}
 }

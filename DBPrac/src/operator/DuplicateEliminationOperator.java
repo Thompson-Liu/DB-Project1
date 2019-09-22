@@ -1,6 +1,7 @@
 package operator;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
@@ -14,10 +15,11 @@ public class DuplicateEliminationOperator extends Operator {
 		// TODO Auto-generated constructor stub
 		DataTable tmpTable= operator.getData();
 		sortedBuffer= new DataTable("", operator.schema());
-		int i= -1;
+		int i= 0;
 		while (i < tmpTable.cardinality()) {
 			if (i > 0) {
 				while (tmpTable.getRow(i) == tmpTable.getRow(i - 1)) {
+					System.out.println("detect a duplicate row");
 					i+= 1;
 				}
 			}
@@ -34,7 +36,29 @@ public class DuplicateEliminationOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps) {
+	public void dump(PrintStream ps, boolean print) {
 		sortedBuffer.printTable(ps);
 	}
+
+	@Override
+	public ArrayList<String> schema() {
+		return sortedBuffer.getSchema();
+	}
+
+	@Override
+	public void reset() {
+		ptr= -1;
+	}
+
+	@Override
+	public String getTableName() {
+		return sortedBuffer.getTableName();
+	}
+
+	@Override
+	public DataTable getData() {
+		dump(System.out, false);
+		return sortedBuffer;
+	}
+
 }
