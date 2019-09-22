@@ -30,17 +30,31 @@
 -- SELECT *
 -- FROM Sailors A, Sailors B
 
-SELECT A.A
-FROM Sailors A, Sailors B
-WHERE A.A<3;
+-- SELECT A.A
+-- FROM Sailors A, Sailors B
+-- WHERE A.A<3;
+SELECT A.A, B.B, R.H
+FROM Sailors A, Sailors B, Reserves R
+WHERE A.A<3 AND A.A = B.G
+ORDER BY B.B;
 -- SELECT DISTINCT Reserves.H
 -- FROM Reserves, Sailors;
 
 
 
-
--- SELECT TEMP.countrycode
--- FROM (SELECT CL.countrycode as countryCode, MAX( COUNT(CL.language))AS count
+-- Piazza Question
+-- SELECT  TEMP.maxper, TEMP.countryCode
+-- FROM (SELECT CL.countrycode as countryCode, MAX(CL.Percentage)AS maxper
 --   FROM CountryLanguage AS CL
---   GROUP BY CL.countrycode)AS TEMP
--- WHERE TEMP.countrycode=CL.countrycode;
+--   GROUP BY CL.countrycode)AS TEMP, CountryLanguage
+-- WHERE TEMP.countrycode=CountryLanguage.countrycode AND TEMP.maxper = CountryLanguage.Percentage;
+
+-- Q4
+-- SELECT CO.name, TEMP.count
+-- FROM Country CO LEFT JOIN(
+--   SELECT C.countrycode, COUNT(*) AS count
+--   FROM City C
+--   WHERE C.population>500000
+--   GROUP BY C.countrycode) AS TEMP
+-- ON CO.code = TEMP.countryCode;
+ 

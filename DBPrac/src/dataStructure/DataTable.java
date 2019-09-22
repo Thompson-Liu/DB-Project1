@@ -17,6 +17,10 @@ public class DataTable {
 		this.schema= schema;
 	}
 
+	/**
+	 * 
+	 * @return the name of the table
+	 */
 	public String getTableName() {
 		return name;
 	}
