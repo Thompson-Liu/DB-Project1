@@ -49,9 +49,9 @@ public class OperatorFactory {
 			return (d == null) ? intOp : new DuplicateEliminationOperator((SortOperator) intOp);
 		}
 		if (d != null) {
-			System.out.println("Now, schema is" + intOp.schema());
+//			System.out.println("Now, schema is" + intOp.schema());
 			intOp= new SortOperator(intOp, null);
-			System.out.println("Next, schema is" + intOp.schema());
+//			System.out.println("Next, schema is" + intOp.schema());
 			return new DuplicateEliminationOperator((SortOperator) intOp);
 
 		}

@@ -1,6 +1,7 @@
 package operator;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
@@ -17,7 +18,7 @@ public class DuplicateEliminationOperator extends Operator {
 		int i= 0;
 		while (i < tmpTable.cardinality()) {
 			if (i > 0) {
-				while (tmpTable.getRow(i) == tmpTable.getRow(i - 1)) {
+				while (Arrays.equals(tmpTable.getRow(i), tmpTable.getRow(i - 1))) {
 					i+= 1;
 				}
 			}

@@ -15,12 +15,12 @@ public class SortOperator extends Operator {
 		ptr= -1;
 		buffer= childOp.getData();
 //		System.out.println(buffer.cardinality());
-		buffer.printTableInfo();
+//		buffer.printTableInfo();
 //		System.out.println(childOp.schema());
 		if (colList == null) {
-			buffer.sortData(buffer.getSchema());
+			buffer.sortData(childOp.schema(), childOp.schema());
 		} else {
-			buffer.sortData(colList);
+			buffer.sortData(colList, childOp.schema());
 		}
 	}
 
