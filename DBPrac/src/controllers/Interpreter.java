@@ -17,7 +17,7 @@ import operator.Operator;
 
 public class Interpreter {
 
-	private static final String queriesFile= "queries.sql";
+	private static final String queriesFile= "db_test.sql";
 	private static final String dataDir= "samples/input/dbTest/";
 	private HashMap<String, String> aliasMap;
 
@@ -28,7 +28,8 @@ public class Interpreter {
 			while ((statement= parser.Statement()) != null) {
 //				System.out.println("Read statement: " + statement);
 				Select select= (Select) statement;
-//				System.out.println("Select body is " + select.getSelectBody());
+				
+				System.out.println("Select body is " + select.getSelectBody());
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
 
@@ -41,8 +42,8 @@ public class Interpreter {
 				op.dump(System.out, true);
 			}
 		} catch (Exception e) {
-			System.err.println("Exception occurred during parsing");
-			e.printStackTrace();
+			System.err.println("Exception occurred hhhhhhhhh during parsing");
+//			e.printStackTrace();
 		}
 
 	}

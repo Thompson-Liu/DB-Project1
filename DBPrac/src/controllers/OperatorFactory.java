@@ -29,11 +29,13 @@ public class OperatorFactory {
 		String aliasName= "";
 
 		String fromLeft= plainSelect.getFromItem().toString();
+		
+		if(plainSelect.getFromItem().getAlias()!=null) {
+			String tempAlias = plainSelect.getFromItem().getAlias().toString();
+			String tempTable= plainSelect.getFromItem().toString().replace("AS "+tempAlias,"").trim();
+			tableAlias.put(tempTable,tempAlias);
+			aliasName=plainSelect.getFromItem().getAlias().toString();
 
-		if (plainSelect.getFromItem().getAlias() != null) {
-			tableAlias.put(plainSelect.getFromItem().toString(),
-				plainSelect.getFromItem().getAlias().toString());
-			aliasName= plainSelect.getFromItem().getAlias().toString();
 		}
 		Operator intOp;
 		Operator leftOp= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft, aliasName), tableAlias);
@@ -73,10 +75,14 @@ public class OperatorFactory {
 		if (joins.size() == 1) {
 			Join res= joins.get(0);
 			Operator scanOp;
-			if (res.getRightItem().getAlias() != null) {
-				scanOp= new ScanOperator(res.getRightItem().toString(), res.getRightItem().getAlias().toString());
-			} else {
-				scanOp= new ScanOperator(res.getRightItem().toString(), "");
+			if(res.getRightItem().getAlias()!=null) {
+				String tempAlias = res.getRightItem().getAlias().toString();
+				String tempTable= res.getRightItem().toString().replace("AS "+tempAlias,"").trim();
+				tableAlias.put(tempTable,tempAlias);
+				scanOp= new ScanOperator(res.getRightItem().toString(),tempAlias);
+			}
+			else {
+				scanOp= new ScanOperator(res.getRightItem().toString(),"");
 			}
 
 			return new SelectOperator(plainSelect.getWhere(), scanOp, tableAlias);
@@ -84,11 +90,13 @@ public class OperatorFactory {
 		Join rightJoin= joins.remove(joins.size() - 1);
 		Expression whereExp= plainSelect.getWhere();
 		Operator rightOp;
-		if (rightJoin.getRightItem().getAlias() != null) {
-			tableAlias.put(rightJoin.getRightItem().toString(), rightJoin.getRightItem().getAlias());
-			rightOp= new ScanOperator(rightJoin.toString(), rightJoin.getRightItem().getAlias().toString());
-		} else {
-			rightOp= new ScanOperator(rightJoin.toString(), "");
+		if(rightJoin.getRightItem().getAlias()!=null) {
+			String tempAlias = rightJoin.getRightItem().getAlias().toString();
+			String tempTable= rightJoin.getRightItem().toString().replace("AS "+tempAlias,"").trim();
+			tableAlias.put(tempTable,tempAlias);
+						rightOp = new ScanOperator(tempTable,tempAlias);
+		}else {
+			rightOp = new ScanOperator(rightJoin.toString(),"");
 		}
 		SelectOperator rightOperator= new SelectOperator(whereExp, rightOp, tableAlias);
 		return (new JoinOperator(join(plainSelect, joins, tableAlias), rightOperator, whereExp, tableAlias));
