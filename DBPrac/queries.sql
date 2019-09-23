@@ -1,3 +1,4 @@
+
 SELECT DISTINCT Reserves.H
 FROM Reserves
 -- SELECT * FROM Reserves ORDER BY Reserves.H
@@ -63,4 +64,7 @@ FROM Reserves
 --   WHERE C.population>500000
 --   GROUP BY C.countrycode) AS TEMP
 -- ON CO.code = TEMP.countryCode;
+
+SELECT DISTINCT Reserves.H
+FROM Reserves;
  
