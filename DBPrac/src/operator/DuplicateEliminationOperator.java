@@ -14,11 +14,16 @@ public class DuplicateEliminationOperator extends Operator {
 	public DuplicateEliminationOperator(SortOperator operator) {
 		// TODO Auto-generated constructor stub
 		DataTable tmpTable= operator.getData();
+		System.out.println(tmpTable.getRow(1));
 		sortedBuffer= new DataTable("", operator.schema());
 		int i= 0;
 		while (i < tmpTable.cardinality()) {
+			System.out.println("entered");
 			if (i > 0) {
-				while (tmpTable.getRow(i) == tmpTable.getRow(i - 1)) {
+				System.out.println("i > 0");
+				System.out.println(tmpTable.getRow(i));
+				System.out.println(tmpTable.getRow(i - 1));
+				while (tmpTable.getRow(i).equals(tmpTable.getRow(i - 1))) {
 					System.out.println("detect a duplicate row");
 					i+= 1;
 				}
@@ -57,7 +62,6 @@ public class DuplicateEliminationOperator extends Operator {
 
 	@Override
 	public DataTable getData() {
-		dump(System.out, false);
 		return sortedBuffer;
 	}
 

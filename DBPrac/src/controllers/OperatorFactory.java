@@ -22,11 +22,11 @@ import operator.SortOperator;
 public class OperatorFactory {
 
 	public Operator generateQueryPlan(PlainSelect plainSelect) {
-		
+
 		// alias ->tableName
-		// (key: tableName,  value: alias) 
-		HashMap<String,String> tableAlias = new HashMap<String,String>();
-		String aliasName="";
+		// (key: tableName, value: alias)
+		HashMap<String, String> tableAlias= new HashMap<String, String>();
+		String aliasName= "";
 
 		String fromLeft= plainSelect.getFromItem().toString();
 		
@@ -35,12 +35,14 @@ public class OperatorFactory {
 			String tempTable= plainSelect.getFromItem().toString().replace("AS "+tempAlias,"").trim();
 			tableAlias.put(tempTable,tempAlias);
 			aliasName=plainSelect.getFromItem().getAlias().toString();
+
 		}
 		Operator intOp;
-		Operator leftOp= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft,aliasName),tableAlias);
+		Operator leftOp= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft, aliasName), tableAlias);
 
 		if (plainSelect.getJoins() != null) {
-			intOp= new JoinOperator(leftOp, join(plainSelect, plainSelect.getJoins(),tableAlias), plainSelect.getWhere(),tableAlias);
+			intOp= new JoinOperator(leftOp, join(plainSelect, plainSelect.getJoins(), tableAlias),
+				plainSelect.getWhere(), tableAlias);
 		} else {
 			intOp= leftOp;
 
@@ -49,14 +51,14 @@ public class OperatorFactory {
 		// check select clause
 		List<SelectItem> selectItems= plainSelect.getSelectItems();
 		if (!(selectItems.get(0) instanceof AllColumns)) {
-			intOp= new ProjectOperator(intOp, selectItems,tableAlias);
+			intOp= new ProjectOperator(intOp, selectItems, tableAlias);
 		}
 		Distinct d= plainSelect.getDistinct();
 		List<OrderByElement> tmpList= plainSelect.getOrderByElements();
 		if (tmpList != null) {
 			List<String> orderByList= new ArrayList<String>(tmpList.size());
 			for (OrderByElement x : tmpList) {
-				orderByList.add(x.toString());   //.substring(x.toString().indexOf('.') + 1));
+				orderByList.add(x.toString());   // .substring(x.toString().indexOf('.') + 1));
 			}
 			intOp= new SortOperator(intOp, orderByList);
 			return (d == null) ? intOp : new DuplicateEliminationOperator((SortOperator) intOp);
@@ -69,9 +71,9 @@ public class OperatorFactory {
 		return intOp;
 	}
 
-	private Operator join(PlainSelect plainSelect, List<Join> joins,HashMap<String,String> tableAlias) {
+	private Operator join(PlainSelect plainSelect, List<Join> joins, HashMap<String, String> tableAlias) {
 		if (joins.size() == 1) {
-			Join res=joins.get(0);
+			Join res= joins.get(0);
 			Operator scanOp;
 			if(res.getRightItem().getAlias()!=null) {
 				String tempAlias = res.getRightItem().getAlias().toString();
@@ -82,8 +84,8 @@ public class OperatorFactory {
 			else {
 				scanOp= new ScanOperator(res.getRightItem().toString(),"");
 			}
-			
-			return new SelectOperator(plainSelect.getWhere(), scanOp,tableAlias);
+
+			return new SelectOperator(plainSelect.getWhere(), scanOp, tableAlias);
 		}
 		Join rightJoin= joins.remove(joins.size() - 1);
 		Expression whereExp= plainSelect.getWhere();
@@ -96,8 +98,8 @@ public class OperatorFactory {
 		}else {
 			rightOp = new ScanOperator(rightJoin.toString(),"");
 		}
-		SelectOperator rightOperator= new SelectOperator(whereExp, rightOp,tableAlias);
-		return (new JoinOperator(join(plainSelect, joins,tableAlias), rightOperator, whereExp,tableAlias));
+		SelectOperator rightOperator= new SelectOperator(whereExp, rightOp, tableAlias);
+		return (new JoinOperator(join(plainSelect, joins, tableAlias), rightOperator, whereExp, tableAlias));
 	}
 
 }
