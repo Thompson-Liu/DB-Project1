@@ -65,6 +65,3 @@ FROM Reserves
 --   GROUP BY C.countrycode) AS TEMP
 -- ON CO.code = TEMP.countryCode;
 
-SELECT DISTINCT Reserves.H
-FROM Reserves;
- 
