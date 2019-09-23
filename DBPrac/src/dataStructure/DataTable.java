@@ -11,6 +11,11 @@ public class DataTable {
 	private ArrayList<ArrayList<Integer>> data;
 	private ArrayList<String> schema;
 
+	/**
+	 * 
+	 * @param tableName
+	 * @param schema
+	 */
 	public DataTable(String tableName, ArrayList<String> schema) {
 		name= tableName;
 		data= new ArrayList<ArrayList<Integer>>();
@@ -76,7 +81,6 @@ public class DataTable {
 			public int compare(ArrayList<Integer> arr1, ArrayList<Integer> arr2) {
 				int result= 0;
 				int ptr= 0;
-//				System.out.println(colList);
 				while (ptr < colList.size() && result == 0) {
 					result= arr1.get(colSchema.indexOf(colList.get(ptr))) -
 						arr2.get(colSchema.indexOf(colList.get(ptr)));
@@ -85,9 +89,7 @@ public class DataTable {
 				return result;
 			}
 		};
-//		System.out.println("col lst is " + colList);
 		data.sort(myComparator);
-//		data.sort((l1, l2) -> l1.get(colIndex).compareTo(l2.get(colIndex)));
 	}
 
 	/**
@@ -96,9 +98,10 @@ public class DataTable {
 	 */
 	public void printTable(PrintStream ps) {
 		for (ArrayList<Integer> x : data) {
-			for (int y : x) {
-				ps.print(y + " ");
+			for (int i = 0; i < x.size() - 1; ++i) {
+				ps.print(x.get(i) + ",");
 			}
+			ps.print(x.get(x.size() - 1));
 			ps.println();
 		}
 	}
