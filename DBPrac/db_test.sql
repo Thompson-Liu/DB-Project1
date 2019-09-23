@@ -76,24 +76,32 @@
 -- FROM Sailors AS S, Boats AS B
 -- WHERE S.A=3;
 
---16. alias using keyword AS
-SELECT S.A, B.D
-FROM Sailors AS S, Boats B
-WHERE S.A=3;
+-- --16. alias using keyword AS
+-- SELECT S.A, B.D
+-- FROM Sailors AS S, Boats B
+-- WHERE S.A=3;
 
---17. alias self-join
-SELECT *
-FROM Sailors S, Sailors S2;
+-- --17. alias self-join
+-- SELECT *
+-- FROM Sailors S, Sailors S2;
 
---18. outputing same columns twice 
-SELECT B.D, B.D
-FROM Sailors AS S, Boats B
-WHERE S.A=3;
+-- --18. outputing same columns twice 
+-- SELECT B.D, B.D
+-- FROM Sailors AS S, Boats B
+-- WHERE S.A=3;
 
---19. outputing same columns twice
-SELECT S.A, S.Q
-FROM Sailors AS S, Boats B
-WHERE S.A=3;
+-- --19. outputing same columns twice
+-- SELECT S.A, S.Q
+-- FROM Sailors AS S, Boats B
+-- WHERE S.A=3;
+
+--20. DISTINCT
+-- SELECT DISTINCT Reserves.H
+-- FROM Reserves;
+
+SELECT R.G
+FROM Reserves R
+ORDER BY R.G
 
 
 

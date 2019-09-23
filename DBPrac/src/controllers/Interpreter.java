@@ -43,7 +43,7 @@ public class Interpreter {
 			}
 		} catch (Exception e) {
 			System.err.println("Exception occurred hhhhhhhhh during parsing");
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 
 	}

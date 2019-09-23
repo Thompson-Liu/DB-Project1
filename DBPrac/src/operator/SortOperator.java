@@ -54,7 +54,7 @@ public class SortOperator extends Operator {
 	@Override
 	public DataTable getData() {
 		// dump not needed because buffer is initialized upon construction
-		buffer.printTable(System.out);
+//		buffer.printTable(System.out);
 		return buffer;
 	}
 
