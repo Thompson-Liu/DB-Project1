@@ -113,6 +113,8 @@ public class DataTable {
 				return result;
 			}
 		};
+		System.out.println(colList);
+		System.out.println(colSchema);
 		data.sort(myComparator);
 	}
 

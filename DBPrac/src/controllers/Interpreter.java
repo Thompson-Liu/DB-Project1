@@ -26,12 +26,13 @@ public class Interpreter {
 		int queryCounter = 1;
 
 		try {
-			CCJSqlParser parser= new CCJSqlParser(new FileReader(queriesFile));
+			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
 			Statement statement;
 			while ((statement= parser.Statement()) != null) {
 				try {
 					Select select= (Select) statement;
 
+					//别忘了comment掉system.out.print
 					System.out.println("Select body is " + select.getSelectBody());
 					SelectBody selectBody= select.getSelectBody();
 					PlainSelect plainSelect= (PlainSelect) selectBody;
@@ -55,6 +56,7 @@ public class Interpreter {
 		}
 		catch(FileNotFoundException fileNotFound) {
 			System.err.println("The query file directory does not exist");
+			System.err.println(queriesFile);
 		}
 		catch (ParseException parseException) {
 			System.err.println("Exception occured during parsing");

@@ -1,4 +1,10 @@
 Sailors A B C
 Boats D E F
+Schedule A G K
 Reserves G H
 Country I J K
+City C M cityid
+Company A D cid J
+Events eee aaa X date place I
+Nature O C T
+
