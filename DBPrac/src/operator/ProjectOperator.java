@@ -8,7 +8,6 @@ import java.util.List;
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 import net.sf.jsqlparser.statement.select.AllColumns;
-import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
@@ -17,29 +16,29 @@ public class ProjectOperator extends Operator {
 	private Operator childOp;
 	private ArrayList<String> selectColumns;
 	private DataTable data;
-	private HashMap<String,String> tableAlias;
+	private HashMap<String, String> tableAlias;
 
-	public ProjectOperator(Operator operator, List<SelectItem> list, HashMap<String,String> tableAlias) {
+	public ProjectOperator(Operator operator, List<SelectItem> list, HashMap<String, String> tableAlias) {
 		childOp= operator;
 		selectColumns= new ArrayList<String>(list.size());
-		
+
 		for (SelectItem item : list) {
 			// consider the case of Select A.S, B.W, *
 			if (item instanceof AllColumns) {
 				selectColumns.addAll(operator.schema());
-			}else {
+			} else {
 				SelectExpressionItem expressItem= (SelectExpressionItem) item;
-				String tableColCom=item.toString();
-				String[] tableCol = tableColCom.trim().split("\\.");
+				String tableColCom= item.toString();
+				String[] tableCol= tableColCom.trim().split("\\.");
 				String column= tableCol[1];
-				String tableName = tableCol[0];
-				
-				// if the name has corresponding alias, 
-				// then change the projection table name to 
-				if(tableAlias.containsKey(tableName)) {
-					tableName = tableAlias.get(tableName);
+				String tableName= tableCol[0];
+
+				// if the name has corresponding alias,
+				// then change the projection table name to
+				if (tableAlias.containsKey(tableName)) {
+					tableName= tableAlias.get(tableName);
 				}
-				selectColumns.add(tableName+"."+column);
+				selectColumns.add(tableName + "." + column);
 			}
 		}
 
