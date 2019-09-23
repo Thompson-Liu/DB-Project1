@@ -22,14 +22,13 @@ public class ScanOperator extends Operator {
 	private DataTable data;
 	private String tableName;  //if there is Alias then use Alias, otherwise use TableName
 	private String dirName;   // only the name of the table, 
-	//to get the directory and schema from the catalog
-
+							//to get the directory and schema from the catalog
+	
 	/**
-	 * Constructor that instantiates a ScanOperator object
 	 * 
-	 * @param tableName         The name of the data read by the ScanOperator
-	 * @param hasAlias		    hasAlias is true if the tableName contains alias
-	 * 							e.g. hasAlias if tableName= "Sailors AS S"
+	 * @param tableName,hasAlias    hasAlias is true if the tableName contains alias
+	 * 								e.g. hasAlias if tableName= "Sailors AS S"
+	 * @param hasAlias
 	 */
 	public ScanOperator(String tableName,String aliasName) {
 		this.tableName= tableName;
@@ -56,9 +55,7 @@ public class ScanOperator extends Operator {
 		}
 	}
 
-	/**
-	 * @return Returns the next tuple read from the data
-	 */
+	@Override
 	public Tuple getNextTuple() {
 		String read= null;
 		try {
@@ -79,6 +76,7 @@ public class ScanOperator extends Operator {
 	/**
 	 * reset read stream to re-read the data
 	 */
+	@Override
 	public void reset() {
 		Catalog catalog= Catalog.getInstance();
 		String dir= catalog.getDir(dirName);
@@ -97,35 +95,24 @@ public class ScanOperator extends Operator {
 		}
 	}
 
-	/**
-	 * Prints the data read by operator to the PrintStream [ps]
-	 * 
-	 * @param ps      The print stream that the output will be printed to
-	 * @param print   boolean decides whether the data will actually be printed 
-	 */
+	@Override
 	public void dump(PrintStream ps, boolean print) {
 		Tuple next;
 		while ((next= getNextTuple()) != null) {}
 		if (print) { data.printTable(ps); }
 	}
 
-	/**
-	 * @return the schema of the data table that is read by the operator
-	 */
+	@Override
 	public ArrayList<String> schema() {
 		return data.getSchema();
 	}
 
-	/**
-	 * @return the table name from where the operator reads the data
-	 */
+	@Override
 	public String getTableName() {
 		return data.getTableName();
 	}
 
-	/** 
-	 * @return the data read by the operator in DataTable data structure
-	 */
+	@Override
 	public DataTable getData() {
 		dump(System.out, false);
 		return data;

@@ -18,12 +18,12 @@ public class DuplicateEliminationOperator extends Operator {
 		int i= 0;
 		while (i < tmpTable.cardinality()) {
 			if (i > 0) {
-				while (tmpTable.getRow(i).equals(tmpTable.getRow(i - 1))) {
+				while (i <tmpTable.cardinality()&&tmpTable.getRow(i).equals(tmpTable.getRow(i - 1))) {
 					i+= 1;
 				}
+				sortedBuffer.addData(tmpTable.getRow(i));
+				i+= 1;
 			}
-			sortedBuffer.addData(tmpTable.getRow(i));
-			i+= 1;
 		}
 	}
 

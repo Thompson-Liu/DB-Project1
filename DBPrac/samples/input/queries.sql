@@ -1,124 +1,103 @@
--- testing JOIN
---1.
--- SELECT *
--- FROM Sailors, Boats;
 
--- -- --2. seq
--- SELECT *
--- FROM Boats, Sailors;
-
--- --3. join
--- SELECT Nature.O
--- FROM Nature, Sailors
--- WHERE Sailors.A=Nature.O;
-
--- --3. 3join
--- SELECT *
--- FROM Sailors, Boats, Reserves;
-
--- --4. 4join
--- SELECT *
--- FROM Sailors, Boats, Reserves, Schedule;
-
--- --5. output with where
--- SELECT Sailors.A
--- FROM Sailors, Boats
--- WHERE Sailors.A=Boats.E;
-
--- --6. 2output
--- SELECT Sailors.A, Boats.E
--- FROM Sailors, Boats
--- WHERE Sailors.A=Boats.E;
-
--- --7. 3output
--- SELECT Sailors.A, Boats.E, Sailors.C
--- FROM Sailors, Boats
--- WHERE Sailors.A=Boats.E;
-
--- --8. sequence of select
--- SELECT Sailors.C, Sailors.A, Boats.E
--- FROM Sailors, Boats
--- -- WHERE Sailors.A=Boats.E;
-
--- -- --9. ALIAS
--- -- -- testing where with numbers
--- -- SELECT *
--- -- FROM Sailors S, Boats
--- -- WHERE Sailors.A>=2;
-
--- --10. alias but not in select or where
--- SELECT Sailors.A
--- FROM Sailors S, Boats
--- WHERE Sailors.S<1;
-
--- --11. alias and regular in where
--- SELECT Sailors.A
--- FROM Sailors S, Boats
--- WHERE Sailors.S=2 AND 3>1;
-
--- --12. alias only in where
--- SELECT Sailors.A
--- FROM Sailors S, Boats
--- WHERE S.A=3;
-
--- --13. alias only in SELECT
--- SELECT S.A
--- FROM Sailors S, Boats
--- WHERE Sailors.A=3;
-
--- --14. alias only in both
--- SELECT S.A
--- FROM Sailors S, Boats
--- WHERE S.A=3;
-
--- --15. alias using keyword AS
--- SELECT S.A
--- FROM Sailors AS S, Boats AS B
--- WHERE S.A=3;
-
--- --16. alias using keyword AS
--- SELECT S.A, B.D
--- FROM Sailors AS S, Boats B
--- WHERE S.A=3;
-
--- --17. alias self-join
--- SELECT *
--- FROM Sailors S, Sailors S2;
-
--- --18. outputing same columns twice 
--- SELECT B.D, B.D
--- FROM Sailors AS S, Boats B
--- WHERE S.A=3;
-
--- --19. outputing same columns twice
--- SELECT S.A, S.Q
--- FROM Sailors AS S, Boats B
--- WHERE S.A=3;
-
---20. DISTINCT
 -- SELECT DISTINCT Reserves.H
--- FROM Reserves;
-
-SELECT R.G
-FROM Reserves R
-ORDER BY R.H;
-
-SELECT R.G
-FROM Reserves R
-ORDER BY R.G;
-
-
-
-
--- -- Invalid Query not breaking the whole program test
--- SELECT *
--- FROM Sailors, Sailors
+-- FROM Reserves
+-- SELECT * FROM Reserves ORDER BY Reserves.H
 
 -- SELECT *
--- FROM Sailors S, Sailors
+-- FROM Country;
+-- SELECT *
+-- FROM Sailors;
+-- SELECT *
+-- FROM Sailors
+-- WHERE Sailors.A>3 AND Sailors.b<1000 AND 1>3;
+-- SELECT Country.C
+-- FROM Country;
+-- SELECT *
+-- FROM City;
+-- SELECT City.cityid
+-- FROM City;
+-- SELECT Country.N
+-- FROM Country
+-- WHERE Country.C<2 AND Country.A;
+-- SELECT Sailors.A, Sailors.C, Sailors.B, *
+-- FROM Sailors;
+-- SELECT S.A
+-- FROM Sailors S;
+-- SELECT *
+-- FROM Sailors S
+-- WHERE S.A < 3;
+-- SELECT *
+-- FROM Sailors, Reserves
+-- WHERE Sailors.A = Reserves.G;
+-- SELECT *
+-- FROM Sailors S1, Sailors S2
+-- WHERE S1.A < S2.A;
+-- SELECT DISTINCT R.G
+-- FROM Reserves R;
+-- SELECT *
+-- FROM Sailors A, Sailors B
 
--- SELECT Reserves.A
--- FROM Sailors S, Boats
+-- SELECT A.A
+-- FROM Sailors A, Sailors B
+-- WHERE A.A<3;
+-- SELECT A.A, B.B, R.H
+-- FROM Sailors A, Sailors B, Reserves R
+-- WHERE A.A<3 AND A.A = B.G
+-- ORDER BY B.B;
+-- SELECT DISTINCT Reserves.H
+-- FROM Reserves, Sailors;
 
+
+
+-- Piazza Question
+-- SELECT  TEMP.maxper, TEMP.countryCode
+-- FROM (SELECT CL.countrycode as countryCode, MAX(CL.Percentage)AS maxper
+--   FROM CountryLanguage AS CL
+--   GROUP BY CL.countrycode)AS TEMP, CountryLanguage
+-- WHERE TEMP.countrycode=CountryLanguage.countrycode AND TEMP.maxper = CountryLanguage.Percentage;
+
+-- Q4
+-- SELECT CO.name, TEMP.count
+-- FROM Country CO LEFT JOIN(
+--   SELECT C.countrycode, COUNT(*) AS count
+--   FROM City C
+--   WHERE C.population>500000
+--   GROUP BY C.countrycode) AS TEMP
+-- ON CO.code = TEMP.countryCode;
+
+
+-- SELECT *
+-- FROM Schedule, Country
+-- WHERE Schedule.A > Country.J
+-- ORDER BY Schedule.A
+
+-- SELECT distinct Sailors.A
+-- FROM Sailors, Boats
+-- WHERE Sailors.A = Sailors.A
+-- ORDER BY Sailors.A
+
+SELECT b.E, Sailors.A
+FROM Boats b, Reserves r, Sailors
+WHERE Boats.F > Reserves.G AND Sailors.A = 7
+
+SELECT DISTINCT Reserves.H
+FROM Boats, Reserves
+WHERE Boats.E <> Reserves.G
+ORDER BY Reserves.H
+
+SELECT DISTINCT Boats.D
+FROM Reserves, Boats
+WHERE Reserves.H < 102
+
+SELECT DISTINCT Country.I
+FROM Country
+WHERE Country.J >= 32
+
+SELECT DISTINCT Sailors.A
+FROM Sailors, Reserves
+WHERE 0 <= 0
+
+SELECT *
+FROM City
 
 

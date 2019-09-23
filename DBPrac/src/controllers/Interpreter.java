@@ -50,7 +50,7 @@ public class Interpreter {
 				catch (Exception e) {
 					System.err.println("Exception occurred during executing the query number " + Integer.toString(queryCounter));
 					queryCounter++;
-					//			e.printStackTrace();
+								e.printStackTrace();
 				}
 			}
 		}
@@ -63,7 +63,11 @@ public class Interpreter {
 		}
 	}
 
-
+	/** Construct catalog from directory
+	 * 
+	 * @param directory  directory to find the schema file
+	 * @return   the schema
+	 */
 	private static Catalog createCatalog(String directory) {
 		Catalog cat= Catalog.getInstance();
 		try {

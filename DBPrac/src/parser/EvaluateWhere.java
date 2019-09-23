@@ -1,11 +1,11 @@
 /**
- * Evaluate the WHERE clause that involves two tables, keep a stack structure that evaluate the expression tree
+ *  Evaluate the WHERE clause that involves two tables, keep a stack structure that evaluate the expression tree
  *            AND                             
- * 		   /       \        
+ * 		    /     \        
  * 	       <      exp2
- *       /   \
- *     1     2
- * 
+ *       /  \
+ *      1    2
+ *  
  */
 package parser;
 
