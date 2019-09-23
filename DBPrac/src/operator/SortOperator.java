@@ -14,13 +14,14 @@ public class SortOperator extends Operator {
 
 	public SortOperator(Operator childOp, List<String> colList) {
 		ptr= -1;
-		buffer= new DataTable( childOp.getTableName(),childOp.schema());
+		buffer= new DataTable(childOp.getTableName(), childOp.schema());
 		buffer.setFullTable(childOp.getData().getFullTable());
 //		buffer.addData(childOp.getData().);
 //		System.out.println(buffer.cardinality());
 //		buffer.printTableInfo();
 //		System.out.println(childOp.schema());
 		if (colList == null) {
+			System.out.println(childOp.schema());
 			buffer.sortData(childOp.schema(), childOp.schema());
 		} else {
 			buffer.sortData(colList, childOp.schema());
@@ -34,7 +35,7 @@ public class SortOperator extends Operator {
 		return null;
 
 	}
-	
+
 	@Override
 	public ArrayList<String> schema() {
 		return buffer.getSchema();
@@ -53,9 +54,10 @@ public class SortOperator extends Operator {
 	@Override
 	public DataTable getData() {
 		// dump not needed because buffer is initialized upon construction
+		buffer.printTable(System.out);
 		return buffer;
 	}
-	
+
 	@Override
 	public String getTableName() {
 		return buffer.getTableName();

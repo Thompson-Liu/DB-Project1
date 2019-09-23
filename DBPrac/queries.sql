@@ -1,5 +1,9 @@
-SELECT *
-FROM Country;
+SELECT DISTINCT Reserves.H
+FROM Reserves
+-- SELECT * FROM Reserves ORDER BY Reserves.H
+
+-- SELECT *
+-- FROM Country;
 -- SELECT *
 -- FROM Sailors;
 -- SELECT *
