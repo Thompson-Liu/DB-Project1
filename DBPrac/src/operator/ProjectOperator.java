@@ -52,7 +52,6 @@ public class ProjectOperator extends Operator {
 		Tuple next= null;
 		while ((next= childOp.getNextTuple()) != null) {
 			Tuple tup= new Tuple();
-			ArrayList<String> columns= new ArrayList<String>();
 
 			for (String item : selectColumns) {
 				
@@ -60,7 +59,7 @@ public class ProjectOperator extends Operator {
 				tup.addData(next.getData(index));
 			}
 			data.addData(tup);
-			data.setSchema(columns);
+			data.setSchema(selectColumns);
 			return tup;
 		}
 		return next;

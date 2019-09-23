@@ -16,12 +16,7 @@ public class SortOperator extends Operator {
 		ptr= -1;
 		buffer= new DataTable(childOp.getTableName(), childOp.schema());
 		buffer.setFullTable(childOp.getData().getFullTable());
-//		buffer.addData(childOp.getData().);
-//		System.out.println(buffer.cardinality());
-//		buffer.printTableInfo();
-//		System.out.println(childOp.schema());
 		if (colList == null) {
-			System.out.println(childOp.schema());
 			buffer.sortData(childOp.schema(), childOp.schema());
 		} else {
 			buffer.sortData(colList, childOp.schema());
