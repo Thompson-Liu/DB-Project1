@@ -67,11 +67,10 @@ public class JoinOperator extends Operator {
 		return currentTable.getSchema();
 	}
 
-	/** for every left tuple loop through every right tuple, 
-	 * until finding a valid tuple or no more tuple to add
+	/** for every left tuple loop through every right tuple, until finding a valid tuple or no more tuple to add
+	 * reset to next left tuple when one tuple is done permutating right table
 	 * @return Returns the next tuple read from the data
 	 */
-	// could use scan or could also use right table directly as input
 	@Override
 	public Tuple getNextTuple() {
 		Tuple next= null;
@@ -117,7 +116,6 @@ public class JoinOperator extends Operator {
 	public void dump(PrintStream ps, boolean print) {
 		Tuple next;
 		while ((next= getNextTuple()) != null) {
-
 		}
 		if (print) { currentTable.printTable(ps); }
 	}
