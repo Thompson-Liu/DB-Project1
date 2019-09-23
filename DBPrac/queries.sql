@@ -1,6 +1,6 @@
 
-SELECT DISTINCT Reserves.H
-FROM Reserves
+-- SELECT DISTINCT Reserves.H
+-- FROM Reserves
 -- SELECT * FROM Reserves ORDER BY Reserves.H
 
 -- SELECT *
@@ -64,4 +64,37 @@ FROM Reserves
 --   WHERE C.population>500000
 --   GROUP BY C.countrycode) AS TEMP
 -- ON CO.code = TEMP.countryCode;
+
+
+SELECT *
+FROM Schedule, Country
+WHERE Schedule.A > Country.J
+
+-- SELECT *
+-- FROM Sailors, Boats
+-- WHERE Sailors.A = Sailors.A
+
+-- SELECT b.E
+-- FROM Boats b, Reserves r
+-- WHERE Boats.F > Reserves.G
+
+-- SELECT Reserves.H
+-- FROM Boats, Reserves 
+-- WHERE Boats.E <> Reserves.G
+
+-- SELECT Boats.D
+-- FROM Reserves, Boats
+-- WHERE Reserves.H < 102
+
+-- SELECT Country.I 
+-- FROM Country
+-- WHERE Country.J >= 32 
+
+-- SELECT Sailors.A
+-- FROM Sailors, Reserves
+-- WHERE 0 <= 0
+
+-- SELECT *
+-- FROM City
+
 
