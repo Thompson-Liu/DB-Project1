@@ -22,7 +22,7 @@ public class ProjectOperator extends Operator {
 	public ProjectOperator(Operator operator, List<SelectItem> list, HashMap<String,String> tableAlias) {
 		childOp= operator;
 		selectColumns= new ArrayList<String>(list.size());
-		
+		this.tableAlias=tableAlias;
 		for (SelectItem item : list) {
 			// consider the case of Select A.S, B.W, *
 			if (item instanceof AllColumns) {
@@ -36,8 +36,8 @@ public class ProjectOperator extends Operator {
 				
 				// if the name has corresponding alias, 
 				// then change the projection table name to 
-				if(tableAlias.containsKey(tableName)) {
-					tableName = tableAlias.get(tableName);
+				if(this.tableAlias.containsKey(tableName)) {
+					tableName = this.tableAlias.get(tableName);
 				}
 				selectColumns.add(tableName+"."+column);
 			}
@@ -55,12 +55,9 @@ public class ProjectOperator extends Operator {
 			ArrayList<String> columns= new ArrayList<String>();
 
 			for (String item : selectColumns) {
-//				if (item=="*") {
-//					tup=tup.concateTuple(next); 
-//				} else {
+				
 				int index= childOp.schema().indexOf(item.toString());
 				tup.addData(next.getData(index));
-//				}
 			}
 			data.addData(tup);
 			data.setSchema(columns);

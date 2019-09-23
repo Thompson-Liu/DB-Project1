@@ -31,8 +31,9 @@ public class OperatorFactory {
 		String fromLeft= plainSelect.getFromItem().toString();
 		
 		if(plainSelect.getFromItem().getAlias()!=null) {
-			tableAlias.put(plainSelect.getFromItem().toString(),
-					plainSelect.getFromItem().getAlias().toString());
+			String tempAlias = plainSelect.getFromItem().getAlias().toString();
+			String tempTable= plainSelect.getFromItem().toString().replace("AS "+tempAlias,"").trim();
+			tableAlias.put(tempTable,tempAlias);
 			aliasName=plainSelect.getFromItem().getAlias().toString();
 		}
 		Operator intOp;
@@ -73,7 +74,10 @@ public class OperatorFactory {
 			Join res=joins.get(0);
 			Operator scanOp;
 			if(res.getRightItem().getAlias()!=null) {
-				scanOp= new ScanOperator(res.getRightItem().toString(),res.getRightItem().getAlias().toString());
+				String tempAlias = res.getRightItem().getAlias().toString();
+				String tempTable= res.getRightItem().toString().replace("AS "+tempAlias,"").trim();
+				tableAlias.put(tempTable,tempAlias);
+				scanOp= new ScanOperator(res.getRightItem().toString(),tempAlias);
 			}
 			else {
 				scanOp= new ScanOperator(res.getRightItem().toString(),"");
@@ -85,8 +89,10 @@ public class OperatorFactory {
 		Expression whereExp= plainSelect.getWhere();
 		Operator rightOp;
 		if(rightJoin.getRightItem().getAlias()!=null) {
-			tableAlias.put(rightJoin.getRightItem().toString(),rightJoin.getRightItem().getAlias());
-			rightOp = new ScanOperator(rightJoin.toString(),rightJoin.getRightItem().getAlias().toString());
+			String tempAlias = rightJoin.getRightItem().getAlias().toString();
+			String tempTable= rightJoin.getRightItem().toString().replace("AS "+tempAlias,"").trim();
+			tableAlias.put(tempTable,tempAlias);
+						rightOp = new ScanOperator(tempTable,tempAlias);
 		}else {
 			rightOp = new ScanOperator(rightJoin.toString(),"");
 		}
