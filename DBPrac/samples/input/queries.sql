@@ -101,8 +101,11 @@
 
 SELECT R.G
 FROM Reserves R
-ORDER BY R.G
+ORDER BY R.H;
 
+SELECT R.G
+FROM Reserves R
+ORDER BY R.G;
 
 
 
