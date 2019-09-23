@@ -130,7 +130,8 @@ public class DataTable {
 	}
 
 	/** Print the table information, which are the name of the able, the directory of the table, and the
-	 * schema of the table. */
+	 * schema of the table. 
+	 * */
 	public void printTableInfo() {
 		System.out.println("Table name: " + name);
 
