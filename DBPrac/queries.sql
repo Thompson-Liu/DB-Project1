@@ -68,7 +68,16 @@
 
 SELECT *
 FROM Schedule, Country
-WHERE Schedule.A > Country.J
+WHERE Schedule.A > Country.J;
+
+SELECT DISTINCT Sailors.A
+FROM Sailors S, Boats B;
+
+SELECT C.C, City.M, CO.I, Sailors.A
+FROM City C, Country CO, Sailors S
+WHERE City.C=Sailors.A AND S.A=CO.I AND 2>1
+ORDER BY C.C, Sailors.A, CO.I;
+
 
 -- SELECT *
 -- FROM Sailors, Boats
