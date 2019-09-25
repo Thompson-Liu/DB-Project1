@@ -1,10 +1,27 @@
-/**
+/** logic detailed explain:
+ * 
  *  Evaluate the WHERE clause that involves two tables, keep a stack structure that evaluate the expression tree
- *            AND                             
- * 		    /     \        
- * 	       <      exp2
- *       /  \
- *      1    2
+ *  
+ *  In the logic for evaluate where, we keep a stack structure of integer [sofar], that accumulate the result, 
+ *  as we only have AND between conditions, we will push the number value if it were longvalue or int from column expression
+ *  and push them to the stack [sofar], and when hiting the binary comparison, the number values will be pop out LIFO, and push
+ *  the boolean of comparing result.
+ *  
+ *  This evaluateWhere can take in all the condition in where clause even when evaluating a single table, since
+ *  it will push null to the stack if the table column does not match with the tuple's schema. When the binary expression
+ *  of compare pop out null value it will push [1] which represents true to the stack [sofar]. This way each time
+ *  we can input all the where clause and this evaluate visitor will be able to handle it
+ *  
+ *  For example, in the below join condition we have (T1.A<T2.B AND T3.C=3), we will perform deep-left join and 
+ *  first evaluate SELECT T3.C and pass the whole where clause. Since tuple of T3, does not match with T1.A or T2.B,
+ *  it will push null to the stack when visit them, and during binary operation of (<), left and right expressions are null,
+ *  so it will push [1] true to the stack. This will not affect the evaluation of (3=T3.C), which is what we want to evaluate.
+ *  
+ *              AND                             
+ * 		     /       \        
+ * 	       <           =
+ *       /  \         /  \
+ *    T1.A  T2.B     3    T3.C
  *  
  */
 package parser;
@@ -177,6 +194,9 @@ public class EvaluateWhere implements ExpressionVisitor {
 		return;
 	}
 
+	/** Add 1 to the stack [sofar] if true, add 0 if false
+	 * @param arg0 the andExpression to evaluate
+	 */
 	@Override
 	public void visit(AndExpression arg0) {
 		arg0.getLeftExpression().accept(this);
@@ -198,10 +218,11 @@ public class EvaluateWhere implements ExpressionVisitor {
 
 	/**
 	 * @param arg0   EqualTo expression composed of leftExp and rightExp
-	 * @return value  0 left != right;   
-	 * 				1  if left == right  or should ignore this expression, 
-	 * 								since these evaluation does not apply to these two tuple
-	 * e.g.  tuple1 from tableA, tuple2 from tableB, with expression C.x==2 
+	 * @return void push 0 to stack [sofar] if left != right;   
+	 * 				     1  if left == right  or should ignore this expression, 
+	 * 				     since these evaluation does not apply to these two tuple
+	 *                   (i.e. the tuple does not belong to this schema)
+	 * e.g.  tuple1 from tableA, tuple2 from tableB; with the expression: tableC.x==2 
 	 *  	push[1] to the stack [sofar], since left will give null expression
 	 */
 	@Override
@@ -216,6 +237,9 @@ public class EvaluateWhere implements ExpressionVisitor {
 			sofar.push(((int)left == (int)right) ? 1 : 0);}
 	}
 
+	/** act similar to equalsTo
+	 * @param arg0   GreaterThan expression
+	 */
 	@Override
 	public void visit(GreaterThan arg0) {
 		arg0.getLeftExpression().accept(this);
@@ -292,7 +316,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 			sofar.push(((int)left != (int)right) ? 1 : 0);}
 	}
 
-	/**
+	/** push the 
 	 * @param   column expression
 	 * @return void
 	 * 
