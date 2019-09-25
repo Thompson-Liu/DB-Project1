@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * data structure to save the dataTable content as arraylist, and table name, schema
+ *
+ */
 public class DataTable {
 
 	private String name;

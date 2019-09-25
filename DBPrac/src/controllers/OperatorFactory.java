@@ -19,12 +19,19 @@ import operator.ScanOperator;
 import operator.SelectOperator;
 import operator.SortOperator;
 
+/** produce the operator tree structure
+ * takes in the plainselect
+ *
+ */
 public class OperatorFactory {
 
 	/** Generate query plan of operator tree based on the plainSelect clause
+	 * perform select first, then join, the project. If the query contains an Order By, sort operator 
+	 * will be the root, followed by the rest of the plan. If the query contains Distinct, it will be 
+	 * the root.   
 	 * 
 	 * @param plainSelect
-	 * @return
+	 * @return operator
 	 */
 	public Operator generateQueryPlan(PlainSelect plainSelect) {
 
@@ -76,7 +83,9 @@ public class OperatorFactory {
 		return intOp;
 	}
 
-	/** helper function to iterate 
+	/** helper function to iterate the joining tree
+	 *   perform left-deep join, add the right most branch as select each time
+	 *   start with the inner most join
 	 * 
 	 * @param plainSelect
 	 * @param joins

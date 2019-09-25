@@ -74,6 +74,10 @@ import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
+/**
+ *  Using expressionVisitor to parse the expression and evaluate, return true if a valid tuple, false otherwise
+ *
+ */
 public class EvaluateWhere implements ExpressionVisitor {
 
 	private Stack<Integer> sofar;
@@ -83,8 +87,6 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private ArrayList<String> leftSchema = new ArrayList<String>();
 	private ArrayList<String> rightSchema = new ArrayList<String>();
 	private HashMap<String,String> tableAlias;
-//	private String leftTableNames;
-//	private String rightTableNames;
 	private Expression expr;
 
 
@@ -316,10 +318,11 @@ public class EvaluateWhere implements ExpressionVisitor {
 			sofar.push(((int)left != (int)right) ? 1 : 0);}
 	}
 
-	/** push the 
+	/** first check if the tuple's schema contains the evaluate condition_column
+	 *  if doesn't push null to the stack [sofar]
+	 *  if does push the value corresponds to the condition_column
 	 * @param   column expression
 	 * @return void
-	 * 
 	 */
 	@Override
 	public void visit(Column arg0) {
