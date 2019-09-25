@@ -1,8 +1,25 @@
 
 -- SELECT DISTINCT Reserves.H
 -- FROM Reserves
--- SELECT * FROM Reserves ORDER BY Reserves.H
+SELECT DISTINCT S.A 
+FROM Sailors S, Boats B
+WHERE S.A < 2
 
+
+-- SELECT R.G
+-- FROM Reserves R
+-- ORDER BY R.G
+-- SELECT * FROM Reserves ORDER BY Reserves.H
+-- SELECT DISTINCT R.H
+-- FROM Reserves R
+-- WHERE R.G=1
+-- SELECT * 
+-- FROM Sailors S
+-- ORDER BY S.B, S.C, S.A
+-- SELECT DISTINCT S.C
+-- FROM Sailors S
+-- WHERE S.B>100
+-- ORDER BY S.C
 -- SELECT *
 -- FROM Country;
 -- SELECT *

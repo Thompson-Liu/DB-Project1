@@ -10,7 +10,10 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import dataStructure.Catalog;
 import net.sf.jsqlparser.parser.CCJSqlParser;
+<<<<<<< HEAD
+=======
 import net.sf.jsqlparser.parser.ParseException;
+>>>>>>> 7af36e51c6650ec7e4789223a7e00c307619de17
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
@@ -19,6 +22,13 @@ import operator.Operator;
 
 public class Interpreter {
 
+<<<<<<< HEAD
+	private static final String queriesFile= "queries.sql";
+	private static final String dataDir= "samples/input/dbTest/";
+	private HashMap<String, String> aliasMap;
+
+=======
+>>>>>>> 7af36e51c6650ec7e4789223a7e00c307619de17
 	public static void main(String[] args) {
 		String queriesFile = args[0] + "/queries.sql";
 		String dataDir = args[0] + "/db";
@@ -29,6 +39,14 @@ public class Interpreter {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
 			Statement statement;
 			while ((statement= parser.Statement()) != null) {
+<<<<<<< HEAD
+//				System.out.println("Read statement: " + statement);
+				Select select= (Select) statement;
+
+				System.out.println("Select body is " + select.getSelectBody());
+				SelectBody selectBody= select.getSelectBody();
+				PlainSelect plainSelect= (PlainSelect) selectBody;
+=======
 				try {
 					Select select= (Select) statement;
 
@@ -40,6 +58,7 @@ public class Interpreter {
 
 					OperatorFactory opfactory= new OperatorFactory();
 					Operator op= opfactory.generateQueryPlan(plainSelect);
+>>>>>>> 7af36e51c6650ec7e4789223a7e00c307619de17
 
 					File file = new File(outputDir + "/query" + Integer.toString(queryCounter)); 
 					PrintStream ps = new PrintStream(new FileOutputStream(file));
