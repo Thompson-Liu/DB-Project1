@@ -21,6 +21,11 @@ import operator.SortOperator;
 
 public class OperatorFactory {
 
+	/** Generate query plan of operator tree based on the plainSelect clause
+	 * 
+	 * @param plainSelect
+	 * @return
+	 */
 	public Operator generateQueryPlan(PlainSelect plainSelect) {
 
 		// alias ->tableName
@@ -58,7 +63,7 @@ public class OperatorFactory {
 		if (tmpList != null) {
 			List<String> orderByList= new ArrayList<String>(tmpList.size());
 			for (OrderByElement x : tmpList) {
-				orderByList.add(x.toString());   // .substring(x.toString().indexOf('.') + 1));
+				orderByList.add(x.toString());  
 			}
 			intOp= new SortOperator(intOp, orderByList);
 			return (d == null) ? intOp : new DuplicateEliminationOperator((SortOperator) intOp);
@@ -71,6 +76,13 @@ public class OperatorFactory {
 		return intOp;
 	}
 
+	/** helper function to iterate 
+	 * 
+	 * @param plainSelect
+	 * @param joins
+	 * @param tableAlias
+	 * @return
+	 */
 	private Operator join(PlainSelect plainSelect, List<Join> joins, HashMap<String, String> tableAlias) {
 		if (joins.size() == 1) {
 			Join res= joins.get(0);

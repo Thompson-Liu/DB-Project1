@@ -73,6 +73,9 @@ public class ScanOperator extends Operator {
 		}
 	}
 
+	/**
+	 * reset read stream to re-read the data
+	 */
 	@Override
 	public void reset() {
 		Catalog catalog= Catalog.getInstance();
