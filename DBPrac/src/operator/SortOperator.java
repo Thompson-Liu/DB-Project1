@@ -7,6 +7,7 @@ import java.util.List;
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 
+/** the class for the sort operator that sorts the data another operator generates. */
 public class SortOperator extends Operator {
 
 	private DataTable buffer;
