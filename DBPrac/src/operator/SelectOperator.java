@@ -9,6 +9,7 @@ import dataStructure.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
 
+/** the class for the select operator */
 public class SelectOperator extends Operator {
 
 	private Expression exp;

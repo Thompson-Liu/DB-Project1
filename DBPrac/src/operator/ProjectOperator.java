@@ -11,6 +11,7 @@ import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
+/** the class for the project operator */
 public class ProjectOperator extends Operator {
 
 	private Operator childOp;

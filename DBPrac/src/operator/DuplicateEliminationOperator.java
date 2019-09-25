@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 
+/** the class for the duplicate elimination operator that removes duplicates tuples from the data
+ * its child operator generates. */
 public class DuplicateEliminationOperator extends Operator {
 
 	private DataTable sortedBuffer;
