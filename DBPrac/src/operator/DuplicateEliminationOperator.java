@@ -11,6 +11,8 @@ public class DuplicateEliminationOperator extends Operator {
 	private DataTable sortedBuffer;
 	int ptr;
 
+	/** @param operator operator is the child operator, which has to be a SortOperator because the
+	 * precondition requires that the data be sorted first. */
 	public DuplicateEliminationOperator(SortOperator operator) {
 		// TODO Auto-generated constructor stub
 		DataTable tmpTable= operator.getData();
@@ -29,6 +31,7 @@ public class DuplicateEliminationOperator extends Operator {
 		}
 	}
 
+	/** @return the next tuple in the buffer after duplicates are removed */
 	@Override
 	public Tuple getNextTuple() {
 		ptr+= 1;
@@ -41,6 +44,7 @@ public class DuplicateEliminationOperator extends Operator {
 		sortedBuffer.printTable(ps);
 	}
 
+	/** @return the schema of the data table after duplicates are removed. */
 	@Override
 	public ArrayList<String> schema() {
 		return sortedBuffer.getSchema();
@@ -51,11 +55,13 @@ public class DuplicateEliminationOperator extends Operator {
 		ptr= -1;
 	}
 
+	/** @return the name of the buffer data table */
 	@Override
 	public String getTableName() {
 		return sortedBuffer.getTableName();
 	}
 
+	/** @return the data in the buffer after duplicates are removed */
 	@Override
 	public DataTable getData() {
 		return sortedBuffer;
