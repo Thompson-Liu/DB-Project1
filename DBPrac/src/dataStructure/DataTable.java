@@ -97,7 +97,8 @@ public class DataTable {
 	/** Sort the data in the data table in place
 	 * 
 	 * @param colList: A list of columns to order by, sortData will first sort data by the first element
-	 * in colList, if there is a tie, it will then sort data by the second element, etc.
+	 * in colList, if there is a tie, it will then sort data by the second element, then by the third,
+	 * etc.
 	 * @param colSchema: the schema of the current data table */
 	public void sortData(List<String> colList, ArrayList<String> colSchema) {
 		Comparator<ArrayList<Integer>> myComparator= new Comparator<ArrayList<Integer>>() {
@@ -113,8 +114,6 @@ public class DataTable {
 				return result;
 			}
 		};
-		System.out.println(colList);
-		System.out.println(colSchema);
 		data.sort(myComparator);
 	}
 
@@ -132,8 +131,7 @@ public class DataTable {
 	}
 
 	/** Print the table information, which are the name of the able, the directory of the table, and the
-	 * schema of the table. 
-	 * */
+	 * schema of the table. */
 	public void printTableInfo() {
 		System.out.println("Table name: " + name);
 
