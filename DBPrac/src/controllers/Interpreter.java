@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import dataStructure.Catalog;
 import net.sf.jsqlparser.parser.CCJSqlParser;
-import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
@@ -17,7 +16,7 @@ import operator.Operator;
 
 public class Interpreter {
 
-	private static final String queriesFile= "db_test.sql";
+	private static final String queriesFile= "queries.sql";
 	private static final String dataDir= "samples/input/dbTest/";
 	private HashMap<String, String> aliasMap;
 
@@ -28,7 +27,7 @@ public class Interpreter {
 			while ((statement= parser.Statement()) != null) {
 //				System.out.println("Read statement: " + statement);
 				Select select= (Select) statement;
-				
+
 				System.out.println("Select body is " + select.getSelectBody());
 				SelectBody selectBody= select.getSelectBody();
 				PlainSelect plainSelect= (PlainSelect) selectBody;
