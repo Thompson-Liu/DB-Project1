@@ -43,7 +43,7 @@ public class Interpreter {
 
 					File file = new File(outputDir + "/query" + Integer.toString(queryCounter)); 
 					PrintStream ps = new PrintStream(new FileOutputStream(file));
-					op.dump(ps, true);
+					op.dump(System.out, true);
 
 					queryCounter++;
 				}

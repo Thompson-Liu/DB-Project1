@@ -76,28 +76,39 @@
 -- WHERE Sailors.A = Sailors.A
 -- ORDER BY Sailors.A
 
-SELECT b.E, Sailors.A
-FROM Boats b, Reserves r, Sailors
-WHERE Boats.F > Reserves.G AND Sailors.A = 7
 
-SELECT DISTINCT Reserves.H
-FROM Boats, Reserves
-WHERE Boats.E <> Reserves.G
-ORDER BY Reserves.H
+SELECT DISTINCT S.A, B.D
+FROM Sailors S, Boats B
+WHERE S.A<2
+ORDER BY  S.A, S.C,S.B;
 
-SELECT DISTINCT Boats.D
-FROM Reserves, Boats
-WHERE Reserves.H < 102
+SELECT DISTINCT S.A
+FROM Sailors S, Boats B
+WHERE S.A<2
+；
 
-SELECT DISTINCT Country.I
-FROM Country
-WHERE Country.J >= 32
+-- SELECT b.E, Sailors.A
+-- FROM Boats b, Reserves r, Sailors
+-- WHERE Boats.F > Reserves.G AND Sailors.A = 7
 
-SELECT DISTINCT Sailors.A
-FROM Sailors, Reserves
-WHERE 0 <= 0
+-- SELECT DISTINCT Reserves.H
+-- FROM Boats, Reserves
+-- WHERE Boats.E <> Reserves.G
+-- ORDER BY Reserves.H
 
-SELECT *
-FROM City
+-- SELECT DISTINCT Boats.D
+-- FROM Reserves, Boats
+-- WHERE Reserves.H < 102
+
+-- SELECT DISTINCT Country.I
+-- FROM Country
+-- WHERE Country.J >= 32
+
+-- SELECT DISTINCT Sailors.A
+-- FROM Sailors, Reserves
+-- WHERE 0 <= 0
+
+-- SELECT *
+-- FROM City
 
 
