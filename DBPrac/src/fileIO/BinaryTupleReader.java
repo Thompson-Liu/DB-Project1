@@ -21,7 +21,7 @@ public class BinaryTupleReader implements TupleReader {
 			FileChannel fc= fin.getChannel();
 			ByteBuffer buffer= ByteBuffer.allocate(1024);
 			try {
-				fin.close();
+//				fin.close();
 				fc.read(buffer);
 				// Get meta-data
 				int numAttr= buffer.getInt(0);

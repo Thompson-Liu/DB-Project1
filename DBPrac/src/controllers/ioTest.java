@@ -9,6 +9,7 @@ public class ioTest {
 		BinaryTupleReader tr= new BinaryTupleReader(
 			"/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/input/db/data/Boats");
 		System.out.println(tr.readData());
+		System.out.println(tr.readData().get(2).printData());
 
 	}
 
