@@ -3,6 +3,9 @@ package dataStructure;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ *  track the schema with the table directory and the column_num and column_name
+ */
 public class Catalog {
 	
 	private static Catalog dbCatalog = null;

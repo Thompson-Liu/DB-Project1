@@ -1,7 +1,11 @@
 package parser;
 import java.util.*;
 import java.io.*;
-
+/**
+ * Generating large size data table 
+ * to test our implementation
+ *
+ */
 public class GeneratingTests {
 	
 	static String fileName ="Natural";

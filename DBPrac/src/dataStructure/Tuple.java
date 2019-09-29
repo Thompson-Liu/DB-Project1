@@ -2,6 +2,9 @@ package dataStructure;
 
 import java.util.ArrayList;
 
+/**
+ * data structure representing each row in the table
+ */
 public class Tuple {
 
 	private ArrayList<Integer> dataTuple;
