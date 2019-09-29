@@ -12,7 +12,7 @@ import dataStructure.Tuple;
 
 public class BinaryTupleWriter implements TupleWriter{
 	
-	private ArrayList<ArrayList<Integer>> data;
+	private ArrayList<Tuple> data;
 	private ByteBuffer buffer;
 	private FileChannel fc ;
 
@@ -32,7 +32,7 @@ public class BinaryTupleWriter implements TupleWriter{
 	}
 	
 	@Override 
-	public void writeTuple(ArrayList<ArrayList<Integer>> data) {
+	public void writeTuple(ArrayList<Tuple> data) {
 		this.data=data;
 	}
 	
@@ -41,10 +41,10 @@ public class BinaryTupleWriter implements TupleWriter{
 	public void dump() {
 		
 		int m = data.size();
-		int n = data.get(0).size();
+		int n = data.get(0).getTuple().size();
 		for (int i=0; i<m; ++i) {
 			for(int j=0;j<n;j++) {
-				buffer.putInt( data.get(i).get(j) );
+				buffer.putInt( data.get(i).getData(j) );
 			}
 		}
 		buffer.flip();
