@@ -1,17 +1,15 @@
 package fileIO;
 
+import java.util.ArrayList;
+
 import dataStructure.Tuple;
 
 interface TupleReader {
 
-	public Tuple readNextTuple(String name);
+	public ArrayList<Tuple> readData();
 
 	public void close();
 
 	public void reset();
-
-//	public TupleReader() {
-//		// TODO Auto-generated constructor stub
-//	}
 
 }
