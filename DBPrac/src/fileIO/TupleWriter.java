@@ -6,7 +6,7 @@ import dataStructure.Tuple;
 
 interface TupleWriter {
 
-	public void writeTuple(ArrayList<ArrayList<Integer>> data);
+	public void writeTuple(ArrayList<Tuple> data);
 		
 	public void dump();
 	
