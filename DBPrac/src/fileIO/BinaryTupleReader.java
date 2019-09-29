@@ -5,29 +5,35 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import dataStructure.Tuple;
 
 public class BinaryTupleReader implements TupleReader {
+	private ArrayList<Tuple> resource;
 
-	public BinaryTupleReader() {
+	public BinaryTupleReader(String fileName) {
 		// TODO Auto-generated constructor stub
-
-	}
-
-	@Override
-	public Tuple readNextTuple(String fileName) {
-		FileInputStream fin;
+		resource= new ArrayList<Tuple>();
 		try {
-			fin= new FileInputStream(fileName);
+			FileInputStream fin= new FileInputStream(fileName);
 			FileChannel fc= fin.getChannel();
 			ByteBuffer buffer= ByteBuffer.allocate(1024);
 			try {
+				fin.close();
 				fc.read(buffer);
-				for (int i= 0; i < 1000; i+= 1) {
-					System.out.println(buffer.getInt(i));
+				// Get meta-data
+				int numAttr= buffer.getInt(0);
+				int numRows= buffer.getInt(1);
+				Integer[] currTuple= new Integer[numAttr];
+				for (int i= 2; i < numRows; i+= 1) {
+					int pos= (i - 2) % numAttr;
+					currTuple[pos]= buffer.getInt(i);
+					if (pos == numAttr - 1) {
+						resource.add(new Tuple(new ArrayList<Integer>(Arrays.asList(currTuple))));
+					}
 				}
-				return new Tuple();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -36,8 +42,11 @@ public class BinaryTupleReader implements TupleReader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new Tuple();
+	}
 
+	@Override
+	public ArrayList<Tuple> readData() {
+		return resource;
 	}
 
 	@Override
