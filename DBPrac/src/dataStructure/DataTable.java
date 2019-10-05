@@ -82,7 +82,7 @@ public class DataTable {
 		return data.size();
 	}
 
-	/** Get only one column of data from the data table
+	/** Get only one element from a column of the data table
 	 * 
 	 * @param columnName the name of the column
 	 * @return the data only under one column of the datatable */
