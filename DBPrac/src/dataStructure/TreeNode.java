@@ -3,54 +3,36 @@ package dataStructure;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.NullValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import operator.Operator;
 import java.util.*;
+import logicalOperators.LogicalOperator;
 
 public class TreeNode {
-	private Operator Operator;
+	private LogicalOperator operator;
 	private ArrayList<TreeNode> children;
-	private Expression condition;
 	
-	public TreeNode(Operator op) {
-		this.Operator = op;
-		this.condition = new NullValue();
-		this.children = new ArrayList<TreeNode>();
-	}
-	public TreeNode(Operator op,Expression expr) {
-		this.Operator=op;
-		this.condition = expr;
-		this.children=new ArrayList<TreeNode> ();
+	public TreeNode(LogicalOperator op) {
+		operator = op;
+		children = new ArrayList<TreeNode>();
 	}
 	
-	public TreeNode (Operator op,Expression expr,ArrayList<TreeNode> children) {
-		this.Operator =op;
-		this.condition = expr;
+	public TreeNode (LogicalOperator op, ArrayList<TreeNode> children) {
+		this.operator =op;
 		this.children=children;
 	}
 	
 	public ArrayList<TreeNode> getChildren(){
-		return this.children;
+		return children;
 	}
 	
 	public void addChild(TreeNode tn) {
-		this.children.add(tn);
+		children.add(tn);
 	}
-	
-	public void setCondition(Expression  expr) {
-		this.condition=expr;
-	}
-	
-	public void addCondition(Expression cond) {
-		this.condition = new AndExpression(this.condition,cond);
-	}
-	
+
 	public void printOpTree() {
-		System.out.print(this.Operator.toString());
+		System.out.print(operator.toString());
 		for (TreeNode op:children) {
 			System.out.println(op.toString());
 			op.printOpTree();
-		}
-		
+		}	
 	}
-
 }
