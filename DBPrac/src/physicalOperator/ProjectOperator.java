@@ -1,4 +1,4 @@
-package operator;
+package physicalOperator;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

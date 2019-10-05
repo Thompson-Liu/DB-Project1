@@ -11,19 +11,19 @@ import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
-import operator.DuplicateEliminationOperator;
-import operator.JoinOperator;
-import operator.Operator;
-import operator.ProjectOperator;
-import operator.ScanOperator;
-import operator.SelectOperator;
-import operator.SortOperator;
+import logicalOperators.DuplicateEliminationLogOp;
+import logicalOperators.JoinLogOp;
+import logicalOperators.LogicalOperator;
+import logicalOperators.ProjectLogOp;
+import logicalOperators.ScanLogOp;
+import logicalOperators.SelectLogOp;
+import logicalOperators.SortLogOp;
 
 /** produce the operator tree structure
  * takes in the plainselect
  *
  */
-public class OperatorFactory {
+public class LogicalOperatorFactory {
 
 	/** Generate query plan of operator tree based on the plainSelect clause
 	 * perform select first, then join, the project. If the query contains an Order By, sort operator 
@@ -46,14 +46,14 @@ public class OperatorFactory {
 			String tempAlias = plainSelect.getFromItem().getAlias().toString();
 			String tempTable= plainSelect.getFromItem().toString().replace("AS "+tempAlias,"").trim();
 			tableAlias.put(tempTable,tempAlias);
-			aliasName=plainSelect.getFromItem().getAlias().toString();
+			aliasName = plainSelect.getFromItem().getAlias().toString();
 
 		}
-		LogicalOperator intLOp;
-		LogicalOperator leftLOp= new SelectLogicalOperator(plainSelect.getWhere(), new ScanOperator(fromLeft, aliasName), tableAlias);
+		LogicalOperator intOp;
+		LogicalOperator leftOp = new SelectLogOp(plainSelect.getWhere(), new ScanLogOp(fromLeft, aliasName), tableAlias);
 
 		if (plainSelect.getJoins() != null) {
-			intOp= new JoinOperator(leftOp, join(plainSelect, plainSelect.getJoins(), tableAlias),
+			intOp = new JoinLogOp(leftOp, join(plainSelect, plainSelect.getJoins(), tableAlias),
 				plainSelect.getWhere(), tableAlias);
 		} else {
 			intOp= leftOp;
@@ -63,7 +63,7 @@ public class OperatorFactory {
 		// check select clause
 		List<SelectItem> selectItems= plainSelect.getSelectItems();
 		if (!(selectItems.get(0) instanceof AllColumns)) {
-			intOp= new ProjectOperator(intOp, selectItems, tableAlias);
+			intOp= new ProjectLogOp(intOp, selectItems, tableAlias);
 		}
 		Distinct d= plainSelect.getDistinct();
 		List<OrderByElement> tmpList= plainSelect.getOrderByElements();
@@ -72,12 +72,12 @@ public class OperatorFactory {
 			for (OrderByElement x : tmpList) {
 				orderByList.add(x.toString());  
 			}
-			intOp= new SortOperator(intOp, orderByList);
-			return (d == null) ? intOp : new DuplicateEliminationOperator((SortOperator) intOp);
+			intOp= new SortLogOp(intOp, orderByList);
+			return (d == null) ? intOp : new DuplicateEliminationLogOp((SortLogOp) intOp);
 		}
 		if (d != null) {
-			intOp= new SortOperator(intOp, null);
-			return new DuplicateEliminationOperator((SortOperator) intOp);
+			intOp= new SortLogOp(intOp, null);
+			return new DuplicateEliminationLogOp((SortLogOp) intOp);
 
 		}
 		return intOp;
@@ -92,35 +92,35 @@ public class OperatorFactory {
 	 * @param tableAlias
 	 * @return
 	 */
-	private Operator join(PlainSelect plainSelect, List<Join> joins, HashMap<String, String> tableAlias) {
+	private LogicalOperator join(PlainSelect plainSelect, List<Join> joins, HashMap<String, String> tableAlias) {
 		if (joins.size() == 1) {
 			Join res= joins.get(0);
-			Operator scanOp;
+			LogicalOperator scanOp;
 			if(res.getRightItem().getAlias()!=null) {
 				String tempAlias = res.getRightItem().getAlias().toString();
 				String tempTable= res.getRightItem().toString().replace("AS "+tempAlias,"").trim();
 				tableAlias.put(tempTable,tempAlias);
-				scanOp= new ScanOperator(res.getRightItem().toString(),tempAlias);
+				scanOp= new ScanLogOp(res.getRightItem().toString(),tempAlias);
 			}
 			else {
-				scanOp= new ScanOperator(res.getRightItem().toString(),"");
+				scanOp= new ScanLogOp(res.getRightItem().toString(),"");
 			}
 
-			return new SelectOperator(plainSelect.getWhere(), scanOp, tableAlias);
+			return new SelectLogOp(plainSelect.getWhere(), scanOp, tableAlias);
 		}
 		Join rightJoin= joins.remove(joins.size() - 1);
 		Expression whereExp= plainSelect.getWhere();
-		Operator rightOp;
+		LogicalOperator rightOp;
 		if(rightJoin.getRightItem().getAlias()!=null) {
 			String tempAlias = rightJoin.getRightItem().getAlias().toString();
 			String tempTable= rightJoin.getRightItem().toString().replace("AS "+tempAlias,"").trim();
 			tableAlias.put(tempTable,tempAlias);
-						rightOp = new ScanOperator(tempTable,tempAlias);
+						rightOp = new ScanLogOp(tempTable,tempAlias);
 		}else {
-			rightOp = new ScanOperator(rightJoin.toString(),"");
+			rightOp = new ScanLogOp(rightJoin.toString(),"");
 		}
-		SelectOperator rightOperator= new SelectOperator(whereExp, rightOp, tableAlias);
-		return (new JoinOperator(join(plainSelect, joins, tableAlias), rightOperator, whereExp, tableAlias));
+		SelectLogOp rightOperator= new SelectLogOp(whereExp, rightOp, tableAlias);
+		return (new JoinLogOp(join(plainSelect, joins, tableAlias), rightOperator, whereExp, tableAlias));
 	}
 
 }

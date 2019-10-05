@@ -1,7 +1,7 @@
 /**
  * Takes in a joined left table and right table to scan
  */
-package operator;
+package physicalOperator;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

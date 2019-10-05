@@ -17,7 +17,7 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
-import operator.Operator;
+import physicalOperator.Operator;
 /** The top level class of our code, which read inputs queries, tables and produce output data
  *
  */
