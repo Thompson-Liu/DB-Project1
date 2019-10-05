@@ -33,7 +33,7 @@ public class OperatorFactory {
 	 * @param plainSelect
 	 * @return operator
 	 */
-	public Operator generateQueryPlan(PlainSelect plainSelect) {
+	public LogicalOperator generateQueryPlan(PlainSelect plainSelect) {
 
 		// alias ->tableName
 		// (key: tableName, value: alias)
@@ -49,8 +49,8 @@ public class OperatorFactory {
 			aliasName=plainSelect.getFromItem().getAlias().toString();
 
 		}
-		Operator intOp;
-		Operator leftOp= new SelectOperator(plainSelect.getWhere(), new ScanOperator(fromLeft, aliasName), tableAlias);
+		LogicalOperator intLOp;
+		LogicalOperator leftLOp= new SelectLogicalOperator(plainSelect.getWhere(), new ScanOperator(fromLeft, aliasName), tableAlias);
 
 		if (plainSelect.getJoins() != null) {
 			intOp= new JoinOperator(leftOp, join(plainSelect, plainSelect.getJoins(), tableAlias),

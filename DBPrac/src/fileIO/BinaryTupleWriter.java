@@ -50,17 +50,23 @@ public class BinaryTupleWriter implements TupleWriter{
 		try {
 		int m = data.size();
 		int n=data.get(0).size();
-		for (int i=0; i<3; i++) {
+		ByteBuffer buffer2 = ByteBuffer.allocate( 1024 );
+
+		for (int i=0; i<2; i++) {
 			for(int j=0;j<1;j++) {
-				buffer.putInt(writePos, data.get(i).get(j));
+				System.out.println(data.get(i).get(j));
+				
+				buffer.putInt(2);
 				writePos++;
+				buffer.flip();
+				
 			}
 		}
-//		buffer.putInt((int)23);
-		buffer.putChar('c');
-		buffer.flip();
+//		buffer.putInt(0,23);
+//		buffer.putChar('c');
+		fc.write( buffer);
+
 		
-			fc.write( buffer);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.err.print("BinaryTupleWriter dump fails: "+e);
