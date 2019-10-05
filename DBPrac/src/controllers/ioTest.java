@@ -1,6 +1,7 @@
 package controllers;
 
 import fileIO.BinaryTupleReader;
+import fileIO.BinaryTupleWriter;
 
 public class ioTest {
 
@@ -11,6 +12,9 @@ public class ioTest {
 		System.out.println(tr.readData());
 		System.out.println(tr.readData().get(2).printData());
 
+		BinaryTupleWriter tw= new BinaryTupleWriter("/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/output/result");
+		tw.writeTuple(tr.readData());
+		tw.dump();
 	}
 
 }
