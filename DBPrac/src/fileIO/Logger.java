@@ -6,5 +6,17 @@ package fileIO;
  */
 public class Logger {
 	
+	private static Logger log = null;
+	
+	private Logger() {
+		
+	}
+
+	public static Logger getInstance() {
+		if (log == null) {
+			log = new Logger();
+		}
+		return log;
+	}
 
 }

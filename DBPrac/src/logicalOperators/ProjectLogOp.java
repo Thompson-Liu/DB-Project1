@@ -11,7 +11,6 @@ public class ProjectLogOp extends LogicalOperator{
 	private HashMap<String, String> tableAlias;
 	private List<SelectItem> projItems;
 	
-	
 	public ProjectLogOp(LogicalOperator op, List<SelectItem> items, HashMap<String, String> alias) {
 		childOp = op;
 		projItems = items;
