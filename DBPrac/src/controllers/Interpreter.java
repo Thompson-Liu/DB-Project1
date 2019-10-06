@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import Operators.LogicalOperatorFactory;
 import Operators.OperatorFactory;
+import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
+import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
@@ -42,10 +45,13 @@ public class Interpreter {
 					PlainSelect plainSelect= (PlainSelect) selectBody;
 					Catalog cat= createCatalog(dataDir);
 
-					OperatorFactory opfactory= new OperatorFactory();
-					Operator op= opfactory.generateQueryPlan(plainSelect);
+					LogicalOperatorFactory opfactory= new LogicalOperatorFactory();
+					LogicalOperator logOp= opfactory.generateQueryPlan(plainSelect);
+					Operator op= PhysicalPlanBuilder.generatePlan(logOp);
 
 					File file = new File(outputDir + "/query" + Integer.toString(queryCounter)); 
+					
+					
 					PrintStream ps = new PrintStream(new FileOutputStream(file));
 					op.dump(ps, true);
 
