@@ -42,20 +42,32 @@ public class BinaryTupleWriter implements TupleWriter {
 			int numRowPage= (int) Math.floor((4096-8)/(numAttr*4));
 			int numPages = (int) Math.ceil(numRows/numRowPage);
 			System.out.println(numRowPage);
+			System.out.println(numPages);
+			System.out.println(numRows);
 			for (int k=0;k<numPages;k++) {
-				buffer.putInt(numRows);
+				
 				buffer.putInt(numAttr);
+				buffer.putInt(Math.min(numRows,numRowPage));
+				int counter = 8;
 				for (int i= 0; i < Math.min(numRows,numRowPage); i++ ) {
 					for (int j= 0; j < numAttr; j++ ) {
-						System.out.println(k*numRowPage+i);
-						buffer.putInt(data.get(k*numRowPage+i).get(j));
+						
+						buffer.putInt(counter,data.get(k*numRowPage+i).get(j));
+						counter+=4;
 					}
 				}
 				
-				numRows-=numRowPage;
+				while(counter<4096) {
+					buffer.putInt(0);
+					counter+=4;
+				}
+				
 				
 				buffer.flip();
 				fc.write(buffer);
+				numRows-=numRowPage;
+				buffer.clear();
+				
 			}
 			
 
