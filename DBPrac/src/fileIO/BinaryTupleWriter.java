@@ -22,7 +22,6 @@ public class BinaryTupleWriter implements TupleWriter {
 			this.fc= fout.getChannel();
 			data= new ArrayList<ArrayList<Integer>>();
 
-			// Double check the size
 			this.buffer= ByteBuffer.allocate(4096);
 		} catch (Exception e) {
 			System.err.print("BinaryTupleWrite initialize fail.");
@@ -38,20 +37,27 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 		int writePos= buffer.position();           // index write to the file
 		try {
-			int m= data.size();
-			int n= data.get(0).size();
-//		System.out.println(m);
-//		System.out.println(n);
-
-			for (int i= 0; i < m; i++ ) {
-				for (int j= 0; j < n; j++ ) {
-					System.out.println(data.get(i).get(j));
-					buffer.putInt(data.get(i).get(j));
-					writePos+= 1;
+			int numRows= data.size();
+			int numAttr= data.get(0).size();
+			int numRowPage= (int) Math.floor((4096-8)/(numAttr*4));
+			int numPages = (int) Math.ceil(numRows/numRowPage);
+			System.out.println(numRowPage);
+			for (int k=0;k<numPages;k++) {
+				buffer.putInt(numRows);
+				buffer.putInt(numAttr);
+				for (int i= 0; i < Math.min(numRows,numRowPage); i++ ) {
+					for (int j= 0; j < numAttr; j++ ) {
+						System.out.println(k*numRowPage+i);
+						buffer.putInt(data.get(k*numRowPage+i).get(j));
+					}
 				}
+				
+				numRows-=numRowPage;
+				
+				buffer.flip();
+				fc.write(buffer);
 			}
-			buffer.flip();
-			fc.write(buffer);
+			
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

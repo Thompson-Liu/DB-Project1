@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.Distinct;
@@ -50,7 +51,7 @@ public class OperatorFactory {
 
 		}
 		LogicalOperator intLOp;
-		LogicalOperator leftLOp= new SelectLogicalOperator(plainSelect.getWhere(), new ScanLogOp(fromLeft, aliasName), tableAlias);
+		LogicalOperator leftLOp= new SelectLogOp(plainSelect.getWhere(), new ScanLogOp(fromLeft, aliasName), tableAlias);
 
 		if (plainSelect.getJoins() != null) {
 			intOp= new JoinOperator(leftOp, join(plainSelect, plainSelect.getJoins(), tableAlias),
