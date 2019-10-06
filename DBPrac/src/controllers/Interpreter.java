@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import Operators.OperatorFactory;
+import Operators.LogicalOperatorFactory;
+import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
@@ -18,6 +19,9 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import physicalOperator.Operator;
+import fileIO.BinaryTupleWriter;
+import logicalOperators.LogicalOperator;
+
 /** The top level class of our code, which read inputs queries, tables and produce output data
  *
  */
@@ -33,28 +37,27 @@ public class Interpreter {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
 			Statement statement;
 			while ((statement= parser.Statement()) != null) {
-
 				try {
 					Select select= (Select) statement;
-
-//					System.out.println("Select body is " + select.getSelectBody());
 					SelectBody selectBody= select.getSelectBody();
 					PlainSelect plainSelect= (PlainSelect) selectBody;
 					Catalog cat= createCatalog(dataDir);
 
-					OperatorFactory opfactory= new OperatorFactory();
-					Operator op= opfactory.generateQueryPlan(plainSelect);
+					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
+					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
+					
+					PhysicalPlanBuilder planBuilder = new PhysicalPlanBuilder();
+					Operator op = planBuilder.generatePlan(logOp);
 
-					File file = new File(outputDir + "/query" + Integer.toString(queryCounter)); 
-					PrintStream ps = new PrintStream(new FileOutputStream(file));
-					op.dump(ps, true);
+					BinaryTupleWriter writer = new BinaryTupleWriter(outputDir + "/query" + Integer.toString(queryCounter)); 
+					op.dump(writer);
 
 					queryCounter++;
 				}
 				catch (Exception e) {
 					System.err.println("Exception occurred during executing the query number " + Integer.toString(queryCounter));
 					queryCounter++;
-								e.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 		}

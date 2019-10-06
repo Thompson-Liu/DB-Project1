@@ -2,6 +2,8 @@ package logicalOperators;
 
 import java.util.List;
 
+import Operators.PhysicalPlanBuilder;
+
 public class SortLogOp extends LogicalOperator {
 	
 	private LogicalOperator childOp;
@@ -18,5 +20,9 @@ public class SortLogOp extends LogicalOperator {
 	
 	public List<String> getColumns() {
 		return colList;
+	}
+	
+	public void accept(PhysicalPlanBuilder planBuilder) {
+		planBuilder.visit(this);
 	}
 }

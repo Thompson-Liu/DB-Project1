@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
+import fileIO.BinaryTupleWriter;
 
 /** the abstract class that all operator classes extend. */
 public abstract class Operator {
@@ -16,14 +17,6 @@ public abstract class Operator {
 
 	/** reset read stream to re-read the data */
 	void reset() {
-		return;
-	}
-
-	/** Prints the data read by operator to the PrintStream [ps]
-	 * 
-	 * @param ps The print stream that the output will be printed to
-	 * @param print boolean decides whether the data will actually be printed */
-	public void dump(PrintStream ps, boolean print) {
 		return;
 	}
 
@@ -40,5 +33,10 @@ public abstract class Operator {
 	/** @return the data read by the operator in DataTable data structure */
 	public DataTable getData() {
 		return null;
+	}
+
+	public void dump(BinaryTupleWriter writer) {
+		// TODO Auto-generated method stub
+		
 	}
 }
