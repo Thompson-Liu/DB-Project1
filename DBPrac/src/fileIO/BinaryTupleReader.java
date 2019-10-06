@@ -27,7 +27,10 @@ public class BinaryTupleReader implements TupleReader {
 				int numAttr= buffer.getInt(0);
 				int numRows= buffer.getInt(1);
 				Integer[] currTuple= new Integer[numAttr];
-				for (int i= 2; i < numRows; i+= 1) {
+				for (int i= 9; i < numRows; i+= 1) {
+					for(int j=0;j<numAttr;j++) {
+						
+					}
 					int pos= (i - 2) % numAttr;
 					currTuple[pos]= buffer.getInt(i);
 					if (pos == numAttr - 1) {
