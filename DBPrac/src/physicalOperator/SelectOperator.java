@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
+import fileIO.BinaryTupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
 
@@ -55,14 +56,10 @@ public class SelectOperator extends Operator {
 	 * @param ps The print stream that the output will be printed to
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
-	public void dump(PrintStream ps, boolean print) {
-		Tuple tup;
-		while ((tup= getNextTuple()) != null) {
-
-		}
-		if (print) {
-			data.printTable(ps);
-		}
+	public void dump(BinaryTupleWriter writer) {
+		writer.writeTable(data.toArrayList());
+		writer.dump();
+		writer.close();
 	}
 
 	/** @return the schema of the data table that is read by the operator */
@@ -80,7 +77,6 @@ public class SelectOperator extends Operator {
 	/** @return the data read by the operator in DataTable data structure */
 	@Override
 	public DataTable getData() {
-		dump(System.out, false);
 		return data;
 	}
 }

@@ -3,6 +3,7 @@ package logicalOperators;
 import java.util.HashMap;
 import java.util.List;
 
+import Operators.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 public class ProjectLogOp extends LogicalOperator{
@@ -27,6 +28,10 @@ public class ProjectLogOp extends LogicalOperator{
 	
 	public HashMap<String, String>getAlias() {
 		return tableAlias;
+	}
+	
+	public void accept(PhysicalPlanBuilder planBuilder) {
+		planBuilder.visit(this);
 	}
 
 }

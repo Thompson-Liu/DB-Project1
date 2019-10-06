@@ -148,4 +148,12 @@ public class DataTable {
 		}
 		System.out.print("]\n");
 	}
+	
+	public ArrayList<Tuple> toArrayList() {
+		ArrayList<Tuple> dataList = new ArrayList<Tuple>();
+		for (int i = 0; i < cardinality(); ++i) {
+			dataList.add(new Tuple(getRow(i)));
+		}
+		return dataList;
+	}
 }

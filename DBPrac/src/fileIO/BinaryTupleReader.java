@@ -19,14 +19,10 @@ public class BinaryTupleReader implements TupleReader {
 		try {
 			FileInputStream fin= new FileInputStream(fileName);
 			FileChannel fc= fin.getChannel();
-			int count = 0;
-//			while (count <= 4096) {
-				
-//			}
-			
+
+			ByteBuffer buffer= ByteBuffer.allocate(4096);
 			try {
 //				fin.close();
-				ByteBuffer buffer= ByteBuffer.allocate(4096);
 				fc.read(buffer);
 				// Get meta-data
 				int numAttr= buffer.getInt(0);
@@ -34,6 +30,8 @@ public class BinaryTupleReader implements TupleReader {
 				
 				int numPages = (int) Math.ceil((numRows * numAttr * 4) / (4096 - 8));
 				int maxRows = (int) Math.floor((4096 - 8) / 4 / numAttr);
+				System.out.println(numPages);
+				System.out.println(numRows);
 				
 				for (int k =0 ; k<numPages;k++) {
 					
@@ -46,8 +44,9 @@ public class BinaryTupleReader implements TupleReader {
 //					int pos= (i - 2) % numAttr;
 //					currTuple[pos]= buffer.getInt(i);
 //					if (pos == numAttr - 1) {
-					numRows-=maxRows;
+//					numRows-=maxRows;
 					System.out.println(i);
+
 						resource.add(new Tuple(new ArrayList<Integer>(Arrays.asList(currTuple))));
 //					}
 				}

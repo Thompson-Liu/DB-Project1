@@ -1,5 +1,7 @@
 package logicalOperators;
 
+import Operators.PhysicalPlanBuilder;
+
 public class ScanLogOp extends LogicalOperator {
 	
 	private String tableName;
@@ -20,6 +22,10 @@ public class ScanLogOp extends LogicalOperator {
 	
 	public String getAliasName() {
 		return aliasName;
+	}
+	
+	public void accept(PhysicalPlanBuilder planBuilder) {
+		planBuilder.visit(this);
 	}
 
 }

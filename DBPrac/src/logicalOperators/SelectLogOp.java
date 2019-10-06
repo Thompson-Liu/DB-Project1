@@ -1,6 +1,8 @@
 package logicalOperators;
 
 import java.util.HashMap;
+
+import Operators.PhysicalPlanBuilder;
 import net.sf.jsqlparser.expression.Expression;
 import physicalOperator.Operator;
 
@@ -26,5 +28,9 @@ public class SelectLogOp extends LogicalOperator {
 	
 	public HashMap<String, String> getAlias() {
 		return tableAlias;
+	}
+	
+	public void accept(PhysicalPlanBuilder planBuilder) {
+		planBuilder.visit(this);
 	}
 }

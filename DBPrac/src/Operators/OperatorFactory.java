@@ -11,13 +11,13 @@ import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
-import operator.DuplicateEliminationOperator;
-import operator.JoinOperator;
-import operator.Operator;
-import operator.ProjectOperator;
-import operator.ScanOperator;
-import operator.SelectOperator;
-import operator.SortOperator;
+import physicalOperator.DuplicateEliminationOperator;
+import physicalOperator.JoinOperator;
+import physicalOperator.Operator;
+import physicalOperator.ProjectOperator;
+import physicalOperator.ScanOperator;
+import physicalOperator.SelectOperator;
+import physicalOperator.SortOperator;
 
 /** produce the operator tree structure
  * takes in the plainselect

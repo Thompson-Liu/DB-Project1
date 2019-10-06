@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
+import fileIO.BinaryTupleWriter;
 
 /** the class for the duplicate elimination operator that removes duplicates tuples from the data
  * its child operator generates. */
@@ -42,8 +43,10 @@ public class DuplicateEliminationOperator extends Operator {
 	}
 
 	@Override
-	public void dump(PrintStream ps, boolean print) {
-		sortedBuffer.printTable(ps);
+	public void dump(BinaryTupleWriter writer) {
+		writer.writeTable(sortedBuffer.toArrayList());
+		writer.dump();
+		writer.close();
 	}
 
 	/** @return the schema of the data table after duplicates are removed. */

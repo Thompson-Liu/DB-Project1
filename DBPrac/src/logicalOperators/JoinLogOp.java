@@ -2,6 +2,7 @@ package logicalOperators;
 
 import java.util.HashMap;
 
+import Operators.PhysicalPlanBuilder;
 import net.sf.jsqlparser.expression.Expression;
 
 public class JoinLogOp extends LogicalOperator{
@@ -39,5 +40,9 @@ public class JoinLogOp extends LogicalOperator{
 	
 	public Expression getJoinExpression() {
 		return joinExp;
+	}
+	
+	public void accept(PhysicalPlanBuilder planBuilder) {
+		planBuilder.visit(this);
 	}
 }
