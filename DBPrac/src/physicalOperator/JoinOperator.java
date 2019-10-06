@@ -114,6 +114,12 @@ public class JoinOperator extends Operator {
 	/** @return the data read by the operator in DataTable data structure */
 	@Override
 	public DataTable getData() {
+		Tuple t;
+		while ((t = getNextTuple()) != null) {
+			currentTable.addData(t);
+		}
+		
+		reset();
 		return currentTable;
 	}
 }

@@ -46,7 +46,7 @@ public class ScanOperator extends Operator {
 		data = new DataTable(tableName, newSchema);
 	
 		reader = new BinaryTupleReader(dir);
-		for (Tuple  t: reader.readData()) {
+		for (Tuple t: reader.readData()) {
 			data.addData(t);
 		}
 	}
@@ -63,22 +63,6 @@ public class ScanOperator extends Operator {
 	@Override
 	public void reset() {
 		tupleCounter = 0;
-		
-//		Catalog catalog= Catalog.getInstance();
-//		String dir= catalog.getDir(dirName);
-//		ArrayList<String> schema= catalog.getSchema(dirName);
-//		ArrayList<String> newSchema= (ArrayList<String>) schema.clone();
-//		for (int i= 0; i < schema.size(); i++ ) {
-//			newSchema.set(i, tableName + "." + schema.get(i));
-//		}
-//		data= new DataTable(tableName, newSchema);
-//
-//		File file= new File(dir);
-//		try {
-//			br= new BufferedReader(new FileReader(file));
-//		} catch (FileNotFoundException e) {
-//			System.err.println("Data directory " + dir + " is not found");
-//		}
 	}
 
 	@Override
