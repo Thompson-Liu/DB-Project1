@@ -10,10 +10,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 import Operators.LogicalOperatorFactory;
-<<<<<<< HEAD
-=======
-import Operators.OperatorFactory;
->>>>>>> a085ef66a244c471ba02a71f45b97cf1b518cc54
 import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
 import logicalOperators.LogicalOperator;
