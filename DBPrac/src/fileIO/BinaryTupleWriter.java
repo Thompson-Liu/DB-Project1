@@ -18,7 +18,7 @@ public class BinaryTupleWriter implements TupleWriter {
 		FileOutputStream fout;
 		try {
 
-			fout= new FileOutputStream(name + ".txt");
+			fout= new FileOutputStream(name);
 			this.fc= fout.getChannel();
 			data= new ArrayList<ArrayList<Integer>>();
 
@@ -31,7 +31,7 @@ public class BinaryTupleWriter implements TupleWriter {
 
 	@Override
 	public void writeTable(ArrayList<Tuple> dataTable) {
-		if(dataTable==null) {
+		if(dataTable==null || dataTable.size() == 0) {
 			return;
 		}
 		for (Tuple tup : dataTable) {

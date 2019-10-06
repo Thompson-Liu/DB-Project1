@@ -51,9 +51,6 @@ public class ProjectOperator extends Operator {
 		}
 
 		this.data= new DataTable(operator.getTableName(), selectColumns);
-		for (Tuple t: childOp.getData().toArrayList()) {
-			data.addData(t);
-		}
 	}
 
 	/** @return Returns the next tuple read from the data */
@@ -109,7 +106,7 @@ public class ProjectOperator extends Operator {
 	public DataTable getData() {
 		Tuple t;
 		while ((t = getNextTuple()) != null) {
-			data.addData(t);
+
 		}
 		reset();
 		return data;

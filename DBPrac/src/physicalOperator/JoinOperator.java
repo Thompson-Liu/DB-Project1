@@ -20,7 +20,7 @@ public class JoinOperator extends Operator {
 	private Operator leftOperator;
 	private Operator rightOperator;
 	private Expression joinExp;
-	private boolean resetFlag= true;
+	private static boolean  resetFlag= true;
 	private Tuple left;
 	private HashMap<String, String> tableAlias;
 
@@ -76,18 +76,23 @@ public class JoinOperator extends Operator {
 		while (flag) {
 			if (resetFlag) {
 				while ((left= leftOperator.getNextTuple()) != null) {
+
 					while ((right= rightOperator.getNextTuple()) != null) {
+						
 						if ((next= evawhere.evaluate(left, right)) != null) {
 							currentTable.addData(next);
 							resetFlag= false;
 							return next;
 						}
 					}
+					rightOperator.reset();
 				}
 				flag= false;
 			} else {
 				while ((right= rightOperator.getNextTuple()) != null) {
+					
 					if ((next= evawhere.evaluate(left, right)) != null) {
+						
 						currentTable.addData(next);
 						return next;
 					}
@@ -106,7 +111,7 @@ public class JoinOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(BinaryTupleWriter writer) {
-		writer.writeTable(currentTable.toArrayList());
+		writer.writeTable(getData().toArrayList());
 		writer.dump();
 		writer.close();
 	}
@@ -116,7 +121,8 @@ public class JoinOperator extends Operator {
 	public DataTable getData() {
 		Tuple t;
 		while ((t = getNextTuple()) != null) {
-			currentTable.addData(t);
+//			System.out.println(t.printData());
+			
 		}
 		
 		reset();

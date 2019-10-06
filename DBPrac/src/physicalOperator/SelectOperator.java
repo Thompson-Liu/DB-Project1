@@ -39,9 +39,11 @@ public class SelectOperator extends Operator {
 		while ((next= childOp.getNextTuple()) != null) {
 			if ((next= exprVisitor.evaluate(null, next)) != null) {
 				data.addData(next);
+
 				return next;
 			}
 		}
+		
 		return null;
 	}
 
@@ -79,7 +81,6 @@ public class SelectOperator extends Operator {
 	public DataTable getData() {
 		Tuple t;
 		while ((t = getNextTuple()) != null) {
-			data.addData(t);
 		}
 		reset();
 		return data;
