@@ -1,8 +1,6 @@
 package dataStructure;
 
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.NullValue;
-import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+
 import java.util.*;
 import logicalOperators.LogicalOperator;
 

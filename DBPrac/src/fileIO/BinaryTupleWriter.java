@@ -41,16 +41,10 @@ public class BinaryTupleWriter implements TupleWriter{
 			ArrayList<Integer> a = tup.getTuple();
 			data.add(tup.getTuple());
 		}
-	}
-	
-	
-	@Override
-	public void dump() {
 		int writePos = buffer.position();           // index write to the file
 		try {
 		int m = data.size();
 		int n=data.get(0).size();
-		ByteBuffer buffer2 = ByteBuffer.allocate( 1024 );
 
 		for (int i=0; i<2; i++) {
 			for(int j=0;j<1;j++) {
@@ -60,11 +54,9 @@ public class BinaryTupleWriter implements TupleWriter{
 				writePos++;
 				buffer.flip();
 				
+				fc.write( buffer);
 			}
 		}
-//		buffer.putInt(0,23);
-//		buffer.putChar('c');
-		fc.write( buffer);
 
 		
 		} catch (IOException e) {
@@ -73,5 +65,12 @@ public class BinaryTupleWriter implements TupleWriter{
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void dump() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
