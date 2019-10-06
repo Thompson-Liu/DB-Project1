@@ -63,11 +63,11 @@ public class ReadableTupleWriter implements TupleWriter{
 				
 			}
 		}
-		fc.wr    
+//		fc.write();    
 //		.write( buffer);
 
 		
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.err.print("BinaryTupleWriter dump fails: "+e);
 			e.printStackTrace();

@@ -40,18 +40,18 @@ public class BinaryTupleWriter implements TupleWriter {
 		try {
 			int m= data.size();
 			int n= data.get(0).size();
+//		System.out.println(m);
+//		System.out.println(n);
 
-			for (int i= 0; i < 2; i++ ) {
-				for (int j= 0; j < 1; j++ ) {
+			for (int i= 0; i < m; i++ ) {
+				for (int j= 0; j < n; j++ ) {
 					System.out.println(data.get(i).get(j));
-
-					buffer.putInt(2);
-					writePos++ ;
-					buffer.flip();
-
-					fc.write(buffer);
+					buffer.putInt(data.get(i).get(j));
+					writePos+= 1;
 				}
 			}
+			buffer.flip();
+			fc.write(buffer);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
