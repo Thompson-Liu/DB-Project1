@@ -19,7 +19,7 @@ public class BinaryTupleReader implements TupleReader {
 		try {
 			FileInputStream fin= new FileInputStream(fileName);
 			FileChannel fc= fin.getChannel();
-			ByteBuffer buffer= ByteBuffer.allocate(1024);
+			ByteBuffer buffer= ByteBuffer.allocate(4096);
 			try {
 //				fin.close();
 				fc.read(buffer);
@@ -27,7 +27,7 @@ public class BinaryTupleReader implements TupleReader {
 				int numAttr= buffer.getInt(0);
 				int numRows= buffer.getInt(1);
 				Integer[] currTuple= new Integer[numAttr];
-				for (int i= 2; i < numRows; i+= 1) {
+				for (int i= 8; i < numRows; i+= 4) {
 					int pos= (i - 2) % numAttr;
 					currTuple[pos]= buffer.getInt(i);
 					if (pos == numAttr - 1) {

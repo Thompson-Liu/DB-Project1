@@ -10,8 +10,13 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 import Operators.LogicalOperatorFactory;
+<<<<<<< HEAD
+=======
+import Operators.OperatorFactory;
+>>>>>>> a085ef66a244c471ba02a71f45b97cf1b518cc54
 import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
+import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
@@ -43,6 +48,7 @@ public class Interpreter {
 					PlainSelect plainSelect= (PlainSelect) selectBody;
 					Catalog cat= createCatalog(dataDir);
 
+<<<<<<< HEAD
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
 					
@@ -51,6 +57,17 @@ public class Interpreter {
 
 					BinaryTupleWriter writer = new BinaryTupleWriter(outputDir + "/query" + Integer.toString(queryCounter)); 
 					op.dump(writer);
+=======
+					LogicalOperatorFactory opfactory= new LogicalOperatorFactory();
+					LogicalOperator logOp= opfactory.generateQueryPlan(plainSelect);
+					Operator op= PhysicalPlanBuilder.generatePlan(logOp);
+
+					File file = new File(outputDir + "/query" + Integer.toString(queryCounter)); 
+					
+					
+					PrintStream ps = new PrintStream(new FileOutputStream(file));
+					op.dump(ps, true);
+>>>>>>> a085ef66a244c471ba02a71f45b97cf1b518cc54
 
 					queryCounter++;
 				}
