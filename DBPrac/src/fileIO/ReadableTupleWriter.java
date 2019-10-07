@@ -1,5 +1,6 @@
 package fileIO;
 
+import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.Buffer;
@@ -15,26 +16,20 @@ public class ReadableTupleWriter implements TupleWriter{
 	
 	
 	private ArrayList<ArrayList<Integer>> data;
-	private IntBuffer buffer;
-	private FileChannel fc ;
+	private BufferedOutputStream buffer;
+	private FileOutputStream fout;
 
 	
 	public ReadableTupleWriter(String name) {
-		// TODO Auto-generated constructor stub
-		FileOutputStream fout;
-		try {
-
-		fout = new FileOutputStream( name+".txt" );
-		this.fc= fout.getChannel();
-		data = new ArrayList<ArrayList<Integer>>();
-		
-		// Double check the size
-		this.buffer = IntBuffer.allocate( 256 );
-		} 
-		catch (Exception e) {
-			System.err.print("BinaryTupleWrite initialize fail.");
-			e.printStackTrace();
-		}
+			
+			try {
+				fout= new FileOutputStream(name);
+				data= new ArrayList<ArrayList<Integer>>();
+				buffer = new BufferedOutputStream(fout);
+			} catch (Exception e) {
+				System.err.print(" Readable Tuple Write initialize fail. ");
+				e.printStackTrace();
+			}
 	}
 	
 	@Override 
@@ -48,30 +43,35 @@ public class ReadableTupleWriter implements TupleWriter{
 	
 	@Override
 	public void dump() {
-		int writePos = buffer.position();           // index write to the file
 		try {
-		int m = data.size();
-		int n=data.get(0).size();
-
-		for (int i=0; i<m; i++) {
-			for(int j=0;j<n;j++) {
-				System.out.println(data.get(i).get(j));
-				
-				buffer.put(data.get(i).get(j)) ; 
-				writePos++;
-				buffer.flip();
-				
+			
+			for (ArrayList<Integer> x : data) {
+				for (int i= 0; i < x.size() - 1; i++) {
+					String out = x.get(i) + ",";
+					buffer.write(out.getBytes());
+				}
+				String out = Integer.toString(x.get(x.size() - 1));
+				buffer.write(out.getBytes());
+				String newLine = "\n";
+				buffer.write(newLine.getBytes());
 			}
-		}
-//		fc.write();    
-//		.write( buffer);
-
-		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.err.print("BinaryTupleWriter dump fails: "+e);
+			
+		} catch (IOException e) {
+			System.err.print("BinaryTupleWriter dump fails: " + e);
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void close() {
+		try {
+			fout.close();
+			buffer.close();
+		} catch (IOException e) {
+			System.err.println("Fail to close Readable Tuple Writer. ");
+			e.printStackTrace();
+		}
+		
 	}
 
 

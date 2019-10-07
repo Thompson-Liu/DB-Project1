@@ -80,12 +80,15 @@ public class JoinOperator extends Operator {
 					while ((right= rightOperator.getNextTuple()) != null) {
 						
 						if ((next= evawhere.evaluate(left, right)) != null) {
+							
 							currentTable.addData(next);
 							resetFlag= false;
 							return next;
 						}
 					}
+					
 					rightOperator.reset();
+					
 				}
 				flag= false;
 			} else {

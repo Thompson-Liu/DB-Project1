@@ -13,9 +13,10 @@ public class BinaryTupleWriter implements TupleWriter {
 	private ArrayList<ArrayList<Integer>> data;
 	private ByteBuffer buffer;
 	private FileChannel fc;
+	private FileOutputStream fout;
 
 	public BinaryTupleWriter(String name) {
-		FileOutputStream fout;
+		
 		try {
 
 			fout= new FileOutputStream(name);
@@ -38,6 +39,10 @@ public class BinaryTupleWriter implements TupleWriter {
 			ArrayList<Integer> a= tup.getTuple();
 			data.add(tup.getTuple());
 		}
+	}
+
+	@Override
+	public void dump() {
 		int writePos= buffer.position();           // index write to the file
 		try {
 			int numRows= data.size();
@@ -72,25 +77,23 @@ public class BinaryTupleWriter implements TupleWriter {
 				buffer.clear();
 				
 			}
-		
-			
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.err.print("BinaryTupleWriter dump fails: " + e);
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void dump() {
-		// TODO Auto-generated method stub
 
 	}
 	
 	@Override
 	public void close() {
-	
+		try {
+			fc.close();
+			fout.close();
+		} catch (IOException e) {
+			System.err.print("Fail to close Binary tuple writer. ");
+			e.printStackTrace();
+		}
 	}
 
 }
