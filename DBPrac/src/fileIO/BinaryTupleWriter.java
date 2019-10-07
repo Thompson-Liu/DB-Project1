@@ -33,6 +33,7 @@ public class BinaryTupleWriter implements TupleWriter {
 	@Override
 	public void writeTable(ArrayList<Tuple> dataTable) {
 		for (Tuple tup : dataTable) {
+			System.out.println(tup.printData());
 			ArrayList<Integer> a= tup.getTuple();
 			data.add(tup.getTuple());
 		}
@@ -49,13 +50,10 @@ public class BinaryTupleWriter implements TupleWriter {
 			int numAttr= data.get(0).size();
 			int numRowPage= (int) Math.floor((4096-8)/(numAttr*4));
 			int numPages =  (int) Math.ceil(1.0*numRows/numRowPage);
-			System.out.println(numRowPage);
-			System.out.println(numPages);
-			System.out.println(numRows);
 			for (int k=0;k<numPages;k++) {
-				
 				buffer.putInt(numAttr);
 				buffer.putInt(Math.min(numRows,numRowPage));
+				
 				int counter = 8;
 				for (int i= 0; i < Math.min(numRows,numRowPage); i++ ) {
 					for (int j= 0; j < numAttr; j++ ) {
