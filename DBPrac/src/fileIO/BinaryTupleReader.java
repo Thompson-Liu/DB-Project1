@@ -29,7 +29,6 @@ public class BinaryTupleReader implements TupleReader {
 				int numRows= buffer.getInt(4);
 				int rowPerPage= (int) Math.floor((4096 - 8) / (4 * numAttr));
 
-				int counter=0;
 				while (numRows != 0) {
 					for (int i= 0; i <  numRows; i+= 1) {
 						Integer[] currTuple= new Integer[numAttr];
@@ -37,8 +36,6 @@ public class BinaryTupleReader implements TupleReader {
 							currTuple[j]= buffer.getInt(i * numAttr * 4 + 8 + j * 4);
 						}
 						resource.add(new Tuple(new ArrayList<Integer>(Arrays.asList(currTuple))));
-						counter++;
-			
 					}
 					
 					
@@ -47,7 +44,7 @@ public class BinaryTupleReader implements TupleReader {
 					fc.read(buffer);
 					numRows = buffer.getInt(4);
 				}
-				System.out.println("counter is " + counter);
+				System.out.println("reading  :   " + fileName);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

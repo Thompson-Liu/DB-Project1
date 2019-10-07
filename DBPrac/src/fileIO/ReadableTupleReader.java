@@ -22,28 +22,18 @@ public class ReadableTupleReader implements TupleReader {
 
 			ByteBuffer buffer= ByteBuffer.allocate(4096);
 			try {
-				//				fin.close();
 				fc.read(buffer);
 				// Get meta-data
 				int numAttr= buffer.getInt(0);
 				int numRows= buffer.getInt(4);
 				int rowPerPage= (int) Math.floor((4096 - 8) / (4 * numAttr));
-//				System.out.println("row per page is " + rowPerPage);
-//				System.out.println("number of pages is " + numPages);
-//				System.out.println("number of rows is " + numRows);
-				int counter=0;
 				while (numRows != 0) {
-//					System.out.println("number of rows is " + numRows);
 					for (int i= 0; i <  numRows; i+= 1) {
 						Integer[] currTuple= new Integer[numAttr];
 						for (int j= 0; j < numAttr; j++ ) {
 							currTuple[j]= buffer.getInt(i * numAttr * 4 + 8 + j * 4);
 						}
-//						System.out.println(currTuple[2]);
 						resource.add(new Tuple(new ArrayList<Integer>(Arrays.asList(currTuple))));
-						counter++;
-//						System.out.println("row number is " + i);
-			
 					}
 					
 					
@@ -52,9 +42,8 @@ public class ReadableTupleReader implements TupleReader {
 					fc.read(buffer);
 					numRows = buffer.getInt(4);
 				}
-				System.out.println("counter is " + counter);
+				System.out.println("reading" + "   "+fileName);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
