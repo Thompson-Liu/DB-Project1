@@ -32,9 +32,6 @@ public class BinaryTupleWriter implements TupleWriter {
 
 	@Override
 	public void writeTable(ArrayList<Tuple> dataTable) {
-		if(dataTable==null || dataTable.size() == 0) {
-			return;
-		}
 		for (Tuple tup : dataTable) {
 			ArrayList<Integer> a= tup.getTuple();
 			data.add(tup.getTuple());
@@ -43,6 +40,9 @@ public class BinaryTupleWriter implements TupleWriter {
 
 	@Override
 	public void dump() {
+		if(data==null || data.size() == 0) {
+			return;
+		}
 		int writePos= buffer.position();           // index write to the file
 		try {
 			int numRows= data.size();
