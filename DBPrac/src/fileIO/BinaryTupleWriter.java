@@ -33,7 +33,6 @@ public class BinaryTupleWriter implements TupleWriter {
 	@Override
 	public void writeTable(ArrayList<Tuple> dataTable) {
 		for (Tuple tup : dataTable) {
-			System.out.println(tup.printData());
 			ArrayList<Integer> a= tup.getTuple();
 			data.add(tup.getTuple());
 		}

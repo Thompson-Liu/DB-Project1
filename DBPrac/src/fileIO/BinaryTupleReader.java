@@ -44,7 +44,6 @@ public class BinaryTupleReader implements TupleReader {
 					fc.read(buffer);
 					numRows = buffer.getInt(4);
 				}
-				System.out.println("reading  :   " + fileName);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

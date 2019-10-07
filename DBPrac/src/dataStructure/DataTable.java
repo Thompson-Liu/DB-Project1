@@ -130,7 +130,6 @@ public class DataTable {
 			}
 		};
 		data.sort(myComparator);
-		System.out.println("just to check sort");
 	}
 
 	/** Print the data stored in the datatable, seperated by coma to the printstream

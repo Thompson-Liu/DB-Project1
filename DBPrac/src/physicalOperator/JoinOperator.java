@@ -147,7 +147,6 @@ public class JoinOperator extends Operator {
 				resetFlag= true;
 			}
 		}
-		System.out.println("yeahhhhhh done !!!!!!!!!!!!!!!!");
 		return null;
 	}
 
