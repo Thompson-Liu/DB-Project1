@@ -1,11 +1,5 @@
 package physicalOperator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 import dataStructure.Catalog;
@@ -43,26 +37,24 @@ public class ScanOperator extends Operator {
 		for (int i= 0; i < schema.size(); i++ ) {
 			newSchema.set(i, tableName + "." + schema.get(i));
 		}
-		data = new DataTable(tableName, newSchema);
-	
-		reader = new BinaryTupleReader(dir);
-		for (Tuple t: reader.readData()) {
+		data= new DataTable(tableName, newSchema);
+
+		reader= new BinaryTupleReader();
+		for (Tuple t : reader.readData(dir)) {
 			data.addData(t);
 		}
 	}
 
 	@Override
 	public Tuple getNextTuple() {
-		if (tupleCounter >= data.cardinality()) {
-			return null;
-		}
-		return new Tuple(data.getRow(tupleCounter++));
+		if (tupleCounter >= data.cardinality()) { return null; }
+		return new Tuple(data.getRow(tupleCounter++ ));
 	}
 
 	/** reset read stream to re-read the data */
 	@Override
 	public void reset() {
-		tupleCounter = 0;
+		tupleCounter= 0;
 	}
 
 	@Override
