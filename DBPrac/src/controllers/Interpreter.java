@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
+import fileIO.BinaryTupleWriter;
+import fileIO.Logger;
 import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
@@ -18,18 +20,22 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import physicalOperator.Operator;
-import fileIO.BinaryTupleWriter;
 
-/** The top level class of our code, which read inputs queries, tables and produce output data
- *
- */
+/** The top level class of our code, which read inputs queries, tables and produce output data */
 public class Interpreter {
 
 	public static void main(String[] args) {
-		String queriesFile = args[0] + "/queries.sql";
-		String dataDir = args[0] + "/db";
-		String outputDir = args[1];
-		int queryCounter = 1;
+		String queriesFile= args[0] + "/queries.sql";
+		String dataDir= args[0] + "/db";
+		String outputDir= args[1];
+		int queryCounter= 1;
+		// Test logger
+		Logger log= Logger.getInstance();
+		try {
+			log.dumpMessage("Running interpretor...");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		try {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
@@ -43,36 +49,34 @@ public class Interpreter {
 
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
-					
-					PhysicalPlanBuilder planBuilder = new PhysicalPlanBuilder();
-					Operator op = planBuilder.generatePlan(logOp);
 
-					BinaryTupleWriter writer = new BinaryTupleWriter(outputDir + "/query" + Integer.toString(queryCounter)); 
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder();
+					Operator op= planBuilder.generatePlan(logOp);
+
+					BinaryTupleWriter writer= new BinaryTupleWriter(
+						outputDir + "/query" + Integer.toString(queryCounter));
 					op.dump(writer);
 
-					queryCounter++;
-				}
-				catch (Exception e) {
-					System.err.println("Exception occurred during executing the query number " + Integer.toString(queryCounter));
-					queryCounter++;
+					queryCounter++ ;
+				} catch (Exception e) {
+					System.err.println(
+						"Exception occurred during executing the query number " + Integer.toString(queryCounter));
+					queryCounter++ ;
 					e.printStackTrace();
 				}
 			}
-		}
-		catch(FileNotFoundException fileNotFound) {
+		} catch (FileNotFoundException fileNotFound) {
 			System.err.println("The query file directory does not exist");
 			System.err.println(queriesFile);
-		}
-		catch (ParseException parseException) {
+		} catch (ParseException parseException) {
 			System.err.println("Exception occured during parsing");
 		}
 	}
 
 	/** Construct catalog from directory
 	 * 
-	 * @param directory  directory to find the schema file
-	 * @return   the schema
-	 */
+	 * @param directory directory to find the schema file
+	 * @return the schema */
 	private static Catalog createCatalog(String directory) {
 		Catalog cat= Catalog.getInstance();
 		try {

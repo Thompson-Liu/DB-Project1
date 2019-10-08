@@ -13,9 +13,13 @@ import dataStructure.Tuple;
 public class ReadableTupleReader implements TupleReader {
 	private ArrayList<Tuple> resource;
 
-	public ReadableTupleReader(String fileName) {
+	public ReadableTupleReader() {
 		// TODO Auto-generated constructor stub
 		resource= new ArrayList<Tuple>();
+	}
+
+	@Override
+	public ArrayList<Tuple> readData(String fileName) {
 		try {
 			FileInputStream fin= new FileInputStream(fileName);
 			FileChannel fc= fin.getChannel();
@@ -26,34 +30,32 @@ public class ReadableTupleReader implements TupleReader {
 				// Get meta-data
 				int numAttr= buffer.getInt(0);
 				int numRows= buffer.getInt(4);
-				int rowPerPage= (int) Math.floor((4096 - 8) / (4 * numAttr));
+//				int rowPerPage= (int) Math.floor((4096 - 8) / (4 * numAttr));
 				while (numRows != 0) {
-					for (int i= 0; i <  numRows; i+= 1) {
+					for (int i= 0; i < numRows; i+= 1) {
 						Integer[] currTuple= new Integer[numAttr];
 						for (int j= 0; j < numAttr; j++ ) {
 							currTuple[j]= buffer.getInt(i * numAttr * 4 + 8 + j * 4);
 						}
 						resource.add(new Tuple(new ArrayList<Integer>(Arrays.asList(currTuple))));
 					}
-					
-					
-					buffer.clear();		
-					buffer.putInt(4,0);
+					buffer.clear();
+					buffer.putInt(4, 0);
 					fc.read(buffer);
-					numRows = buffer.getInt(4);
+					numRows= buffer.getInt(4);
 				}
-				System.out.println("reading" + "   "+fileName);
+				System.out.println("reading" + "   " + fileName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				fin.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public ArrayList<Tuple> readData() {
 		return resource;
 	}
 
@@ -63,8 +65,7 @@ public class ReadableTupleReader implements TupleReader {
 
 	@Override
 	public void reset() {
-		
-
+		resource= new ArrayList<Tuple>();
 	}
 
 }
