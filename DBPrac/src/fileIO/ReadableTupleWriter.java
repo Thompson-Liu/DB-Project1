@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import dataStructure.Tuple;
 
 public class ReadableTupleWriter implements TupleWriter{
-
-	
 	
 	private ArrayList<ArrayList<Integer>> data;
 	private IntBuffer buffer;
