@@ -17,8 +17,6 @@ import physicalOperator.SortOperator;
 
 public class PhysicalPlanBuilder {
 
-	static Operator immLeftOp;
-	static Operator immRightOp;
 	static Operator immOp;
 	
 	public PhysicalPlanBuilder() {
