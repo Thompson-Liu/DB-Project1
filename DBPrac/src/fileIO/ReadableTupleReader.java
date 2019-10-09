@@ -1,7 +1,11 @@
 package fileIO;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -12,6 +16,8 @@ import dataStructure.Tuple;
 
 public class ReadableTupleReader implements TupleReader {
 	private ArrayList<Tuple> resource;
+	private BufferedReader buffer;
+	
 
 	public ReadableTupleReader() {
 		// TODO Auto-generated constructor stub
@@ -21,35 +27,22 @@ public class ReadableTupleReader implements TupleReader {
 	@Override
 	public ArrayList<Tuple> readData(String fileName) {
 		try {
-			FileInputStream fin= new FileInputStream(fileName);
-			FileChannel fc= fin.getChannel();
-
-			ByteBuffer buffer= ByteBuffer.allocate(4096);
+			
+			buffer= new BufferedReader(new FileReader(fileName));
 			try {
-				fc.read(buffer);
-				// Get meta-data
-				int numAttr= buffer.getInt(0);
-				int numRows= buffer.getInt(4);
-//				int rowPerPage= (int) Math.floor((4096 - 8) / (4 * numAttr));
-				while (numRows != 0) {
-					for (int i= 0; i < numRows; i+= 1) {
-						Integer[] currTuple= new Integer[numAttr];
-						for (int j= 0; j < numAttr; j++ ) {
-							currTuple[j]= buffer.getInt(i * numAttr * 4 + 8 + j * 4);
-						}
-						resource.add(new Tuple(new ArrayList<Integer>(Arrays.asList(currTuple))));
-					}
-					buffer.clear();
-					buffer.putInt(4, 0);
-					fc.read(buffer);
-					numRows= buffer.getInt(4);
+				String read= null;
+				try {
+					read= buffer.readLine();
+				} catch (IOException e) {
+					System.err.println("An error occured during reading from file");
 				}
-				System.out.println("reading" + "   " + fileName);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				fin.close();
+
+				while (read != null) {
+					Tuple nextTuple= new Tuple(read);
+					resource.add(nextTuple);
+					read= buffer.readLine();
+				}
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -61,6 +54,11 @@ public class ReadableTupleReader implements TupleReader {
 
 	@Override
 	public void close() {
+		try {
+			buffer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

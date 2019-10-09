@@ -38,6 +38,9 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 
+	/**
+	 * write back the data
+	 */
 	@Override
 	public void dump() {
 		if (data == null || data.size() == 0) { return; }
@@ -78,6 +81,7 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 
 	}
+
 
 	@Override
 	public void close() {
