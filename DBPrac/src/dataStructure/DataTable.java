@@ -36,7 +36,8 @@ public class DataTable {
 	 * 
 	 * @return the full data Table's data */
 	public ArrayList<ArrayList<Integer>> getFullTable() {
-		return ((ArrayList<ArrayList<Integer>>) data.clone());
+		return data;
+//				((ArrayList<ArrayList<Integer>>) data.clone());
 	}
 
 	/** Change the datatable's data into another 2D arrayList given by the input
@@ -105,14 +106,24 @@ public class DataTable {
 	 * etc.
 	 * @param colSchema: the schema of the current data table */
 	public void sortData(List<String> colList, ArrayList<String> colSchema) {
+		// the new order of sorted data
+		ArrayList<String> newOrder = new ArrayList<String>();
+		for(String priorityCol : colList) {
+			newOrder.add(priorityCol);
+		}
+		for(String col:colSchema) {
+			if(!colList.contains(col)) {
+				newOrder.add(col);
+			}
+		}
 		Comparator<ArrayList<Integer>> myComparator= new Comparator<ArrayList<Integer>>() {
 			@Override
 			public int compare(ArrayList<Integer> arr1, ArrayList<Integer> arr2) {
 				int result= 0;
 				int ptr= 0;
-				while (ptr < colList.size() && result == 0) {
-					result= arr1.get(colSchema.indexOf(colList.get(ptr))) -
-						arr2.get(colSchema.indexOf(colList.get(ptr)));
+				while (ptr < newOrder.size() && result == 0) {
+					result= arr1.get(colSchema.indexOf(newOrder.get(ptr))) -
+						arr2.get(colSchema.indexOf(newOrder.get(ptr)));
 					ptr+= 1;
 				}
 				return result;

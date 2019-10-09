@@ -244,18 +244,18 @@ public class ConditionSeperator implements ExpressionVisitor {
 		String colName = arg0.getColumnName();
 		String colInfo = colTable+"."+colName;      // the new name of the column  e.g. Sailor.A
 		
-		if(!this.tableScehmas.contains(colInfo) ) {
-			sofar.push(null);
-		}else {
-			if (leftSchema.contains(colInfo) ) {
-					int index= leftSchema.indexOf(colInfo);
-					sofar.push(leftTuple.getData(index));
-			}
-			else  {
-					int index= rightSchema.indexOf(colInfo);
-					sofar.push(rightTuple.getData(index));
-			}
-		}
+//		if(!this.tableScehmas.contains(colInfo) ) {
+//			sofar.push(null);
+//		}else {
+//			if (leftSchema.contains(colInfo) ) {
+//					int index= leftSchema.indexOf(colInfo);
+//					sofar.push(leftTuple.getData(index));
+//			}
+//			else  {
+//					int index= rightSchema.indexOf(colInfo);
+//					sofar.push(rightTuple.getData(index));
+//			}
+//		}
 		
 		
 		

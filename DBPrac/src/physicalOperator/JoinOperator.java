@@ -23,6 +23,7 @@ public class JoinOperator extends Operator {
 	private static boolean  resetFlag= true;
 	private Tuple left;
 	private HashMap<String, String> tableAlias;
+	private int ptr;
 
 	/** Constructor to create JOIN operator
 	 * 
@@ -39,13 +40,18 @@ public class JoinOperator extends Operator {
 		leftOperator= LeftOperator;
 		rightOperator= RightOperator;
 		this.tableAlias= tableAlias;
+		
+		//build the table with the operator construction
+		buildTable();
+		
 	}
 
 	/** reset both left operator and right operator to start from beginning */
 	@Override
 	public void reset() {
-		leftOperator.reset();
-		rightOperator.reset();
+		ptr=-1;
+//		leftOperator.reset();
+//		rightOperator.reset();
 	}
 
 	/** @return the table name from where the operator reads the data */
@@ -61,24 +67,64 @@ public class JoinOperator extends Operator {
 		return currentTable.getSchema();
 	}
 
+
+	@Override
+	public Tuple getNextTuple() {
+		ptr+= 1;
+		if (ptr < currentTable.cardinality()) return new Tuple(currentTable.getRow(ptr));
+		return null;
+//		Tuple next= null;
+//		boolean flag= true;
+//		Tuple right;
+//		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(),
+//			rightOperator.schema(), tableAlias);
+//		while (flag) {
+//			if (resetFlag) {
+//				while ((left= leftOperator.getNextTuple()) != null) {
+//					while ((right= rightOperator.getNextTuple()) != null) {
+//						
+//						if ((next= evawhere.evaluate(left, right)) != null) {
+////							System.out.println(next.printData());
+////							System.out.println("left is   " + left.printData());
+////							System.out.println("right is   " + right.printData());
+//							currentTable.addData(next);
+//							resetFlag= false;
+//							return next;}}
+//					rightOperator.reset();
+//				}
+//				flag= false;
+//			} else {
+//				while ((right= rightOperator.getNextTuple()) != null) {
+//					if ((next= evawhere.evaluate(left, right)) != null) {
+//						currentTable.addData(next);
+//						return next;}}
+//				rightOperator.reset();
+//				resetFlag= true;}
+//		}
+//		return null;
+
+	}
+	
+	
 	/** for every left tuple loop through every right tuple, until finding a valid tuple or no more
 	 * tuple to add reset to next left tuple when one tuple is done permutating right table
 	 * 
 	 * @return Returns the next tuple read from the data */
-	@Override
-	public Tuple getNextTuple() {
+	private void buildTable() {
+		Tuple t;
+		while ((t = HelperBuildTuple()) != null) {
+		}
+	}
+	public Tuple HelperBuildTuple() {
 		Tuple next= null;
 		boolean flag= true;
 		Tuple right;
 		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(),
 			rightOperator.schema(), tableAlias);
-
 		while (flag) {
 			if (resetFlag) {
 				while ((left= leftOperator.getNextTuple()) != null) {
-
 					while ((right= rightOperator.getNextTuple()) != null) {
-						
 						if ((next= evawhere.evaluate(left, right)) != null) {
 							currentTable.addData(next);
 							resetFlag= false;
@@ -103,8 +149,8 @@ public class JoinOperator extends Operator {
 			}
 		}
 		return null;
-
 	}
+
 
 	/** Prints the data read by operator to the PrintStream [ps]
 	 * 
@@ -122,7 +168,6 @@ public class JoinOperator extends Operator {
 	public DataTable getData() {
 		Tuple t;
 		while ((t = getNextTuple()) != null) {
-//			System.out.println(t.printData());
 			
 		}
 		
