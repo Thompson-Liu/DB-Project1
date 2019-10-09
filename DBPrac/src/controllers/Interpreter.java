@@ -55,8 +55,10 @@ public class Interpreter {
 
 					BinaryTupleWriter writer= new BinaryTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
-					System.currentTimeMillis();
+					long time1 = System.currentTimeMillis();
 					op.dump(writer);
+					long time2 = System.currentTimeMillis();
+					long diffTime = time2-time1;
 
 					queryCounter++ ;
 				} catch (Exception e) {

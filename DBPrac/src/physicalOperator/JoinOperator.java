@@ -128,7 +128,7 @@ public class JoinOperator extends Operator {
 						if ((next= evawhere.evaluate(left, right)) != null) {
 							currentTable.addData(next);
 							resetFlag= false;
-							System.out.println(next.printData());
+//							System.out.println(next.printData());
 							return next;
 						}
 					}
@@ -140,7 +140,7 @@ public class JoinOperator extends Operator {
 					
 					if ((next= evawhere.evaluate(left, right)) != null) {
 						currentTable.addData(next);
-						System.out.println(next.printData());
+//						System.out.println(next.printData());
 						return next;
 					}
 				}
