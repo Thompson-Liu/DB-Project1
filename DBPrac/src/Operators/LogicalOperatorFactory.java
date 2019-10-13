@@ -72,7 +72,7 @@ public class LogicalOperatorFactory {
 			for (OrderByElement x : tmpList) {
 				orderByList.add(x.toString());  
 			}
-			intOp= new SortLogOp(intOp, orderByList);
+			intOp = (orderByList!=null) ?  new SortLogOp(intOp, orderByList) : intOp;
 			return (d == null) ? intOp : new DuplicateEliminationLogOp((SortLogOp) intOp);
 		}
 		if (d != null) {

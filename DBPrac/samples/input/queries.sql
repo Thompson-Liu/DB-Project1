@@ -1,5 +1,7 @@
 SELECT *
-FROM Sailors;
+FROM Sailors
+-- ORDER BY Sailors.A;      -- changed a little bit should be without ORDER BY
+
 -- SELECT Sailors.A
 -- FROM Sailors;
 -- SELECT Boats.F, Boats.D

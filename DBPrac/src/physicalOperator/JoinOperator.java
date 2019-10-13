@@ -73,36 +73,6 @@ public class JoinOperator extends Operator {
 		ptr+= 1;
 		if (ptr < currentTable.cardinality()) return new Tuple(currentTable.getRow(ptr));
 		return null;
-//		Tuple next= null;
-//		boolean flag= true;
-//		Tuple right;
-//		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(),
-//			rightOperator.schema(), tableAlias);
-//		while (flag) {
-//			if (resetFlag) {
-//				while ((left= leftOperator.getNextTuple()) != null) {
-//					while ((right= rightOperator.getNextTuple()) != null) {
-//						
-//						if ((next= evawhere.evaluate(left, right)) != null) {
-////							System.out.println(next.printData());
-////							System.out.println("left is   " + left.printData());
-////							System.out.println("right is   " + right.printData());
-//							currentTable.addData(next);
-//							resetFlag= false;
-//							return next;}}
-//					rightOperator.reset();
-//				}
-//				flag= false;
-//			} else {
-//				while ((right= rightOperator.getNextTuple()) != null) {
-//					if ((next= evawhere.evaluate(left, right)) != null) {
-//						currentTable.addData(next);
-//						return next;}}
-//				rightOperator.reset();
-//				resetFlag= true;}
-//		}
-//		return null;
-
 	}
 	
 	
@@ -128,7 +98,6 @@ public class JoinOperator extends Operator {
 						if ((next= evawhere.evaluate(left, right)) != null) {
 							currentTable.addData(next);
 							resetFlag= false;
-//							System.out.println(next.printData());
 							return next;
 						}
 					}
@@ -140,7 +109,6 @@ public class JoinOperator extends Operator {
 					
 					if ((next= evawhere.evaluate(left, right)) != null) {
 						currentTable.addData(next);
-//						System.out.println(next.printData());
 						return next;
 					}
 				}
