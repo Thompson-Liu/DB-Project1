@@ -29,13 +29,6 @@ public class Interpreter {
 		String dataDir= args[0] + "/db";
 		String outputDir= args[1];
 		int queryCounter= 1;
-		// Test logger
-		Logger log= Logger.getInstance();
-		try {
-			log.dumpMessage("Running interpretor...");
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 
 		try {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
@@ -57,8 +50,22 @@ public class Interpreter {
 						outputDir + "/query" + Integer.toString(queryCounter));
 					long time1 = System.currentTimeMillis();
 					op.dump(writer);
+					
+					// Test logger
+					Logger log= Logger.getInstance();
+					try {
+						log.dumpMessage("Running queries..."+Integer.toString(queryCounter));
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					
 					long time2 = System.currentTimeMillis();
 					long diffTime = time2-time1;
+					try {
+						log.dumpMessage("\n"+ "Execution time : "+Long.toString(diffTime));
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 
 					queryCounter++ ;
 				} catch (Exception e) {
