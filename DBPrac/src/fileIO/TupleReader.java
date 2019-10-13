@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import dataStructure.Tuple;
 
-interface TupleReader {
+public interface TupleReader {
 
 	public ArrayList<Tuple> readData(String fileName);
 

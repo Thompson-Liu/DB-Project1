@@ -6,7 +6,7 @@ import java.util.List;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
-import fileIO.BinaryTupleWriter;
+import fileIO.*;
 
 /** the class for the sort operator that sorts the data another operator generates. */
 public class SortOperator extends Operator {
@@ -47,7 +47,7 @@ public class SortOperator extends Operator {
 	}
 
 	@Override
-	public void dump(BinaryTupleWriter writer) {
+	public void dump(TupleWriter writer) {
 		writer.writeTable(buffer.toArrayList());
 		writer.dump();
 		writer.close();

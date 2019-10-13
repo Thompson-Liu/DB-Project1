@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
-import fileIO.BinaryTupleWriter;
+import fileIO.*;
 
 /** the abstract class that all operator classes extend. */
 public abstract class Operator {
@@ -35,7 +35,7 @@ public abstract class Operator {
 		return null;
 	}
 
-	public void dump(BinaryTupleWriter writer) {
+	public void dump(TupleWriter writer) {
 		// TODO Auto-generated method stub
 		
 	}

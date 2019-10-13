@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import dataStructure.Tuple;
 
-interface TupleWriter {
+public interface TupleWriter {
 
 	public void writeTable(ArrayList<Tuple> data);
 		

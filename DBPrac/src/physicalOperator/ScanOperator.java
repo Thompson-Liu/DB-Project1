@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import dataStructure.Catalog;
 import dataStructure.DataTable;
 import dataStructure.Tuple;
-import fileIO.BinaryTupleReader;
-import fileIO.BinaryTupleWriter;
+import fileIO.*;
 
 /** the class for the scan operator that scans and reads input data tables. */
 public class ScanOperator extends Operator {
@@ -58,7 +57,7 @@ public class ScanOperator extends Operator {
 	}
 
 	@Override
-	public void dump(BinaryTupleWriter writer) {
+	public void dump(TupleWriter writer) {
 		writer.writeTable(data.toArrayList());
 		writer.dump();
 		writer.close();

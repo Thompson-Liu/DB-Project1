@@ -63,7 +63,7 @@ public class ReadableTupleWriter implements TupleWriter{
 	@Override
 	public void close() {
 		try {
-			fout.close();
+//			fout.close();
 			buffer.close();
 		} catch (IOException e) {
 			System.err.println("Fail to close Readable Tuple Writer. ");

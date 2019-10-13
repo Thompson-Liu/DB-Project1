@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 import dataStructure.DataTable;
 import dataStructure.Tuple;
-import fileIO.BinaryTupleWriter;
+import fileIO.*;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
 
@@ -157,7 +157,7 @@ public class JoinOperator extends Operator {
 	 * @param ps The print stream that the output will be printed to
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
-	public void dump(BinaryTupleWriter writer) {
+	public void dump(TupleWriter writer) {
 		writer.writeTable(getData().toArrayList());
 		writer.dump();
 		writer.close();
