@@ -15,13 +15,12 @@ import java.util.Arrays;
 import dataStructure.Tuple;
 
 public class ReadableTupleReader implements TupleReader {
-	private ArrayList<Tuple> resource;
 	private BufferedReader buffer;
-	
+	private String fileName;
 
 	public ReadableTupleReader(String fileName) {
 		// TODO Auto-generated constructor stub
-		resource= new ArrayList<Tuple>();
+		this.fileName=fileName;
 		try {
 			buffer= new BufferedReader(new FileReader(fileName));
 		} catch (FileNotFoundException e) {
@@ -32,7 +31,7 @@ public class ReadableTupleReader implements TupleReader {
 
 	@Override
 	public ArrayList<Tuple> readData() {
-		
+		ArrayList<Tuple> resource = new ArrayList<Tuple>();
 			try {
 				String read= null;
 				try {
@@ -50,6 +49,7 @@ public class ReadableTupleReader implements TupleReader {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		reset();
 		return resource;
 	}
 
@@ -64,7 +64,17 @@ public class ReadableTupleReader implements TupleReader {
 
 	@Override
 	public void reset() {
-		resource= new ArrayList<Tuple>();
+		try {
+			buffer= new BufferedReader(new FileReader(fileName));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Tuple readNextTuple() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
