@@ -35,7 +35,7 @@ public class ioTest {
 		}
 		ReadableTupleWriter rTW= new ReadableTupleWriter("re");
 
-		rTW.writeTable(rTR.readData());
+		rTW.addTable(rTR.readData());
 		rTW.dump();
 		// Test logger
 		try {

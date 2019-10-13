@@ -31,13 +31,13 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 
-	/**
-	 * add another table to the current file 
-	 */
-	@Override
-	public void appendTable() {
-		//allocate new pages if necessary
-	}
+//	/**
+//	 * write another table to the current file 
+//	 */
+//	@Override
+//	public void writeTable() {
+//		//allocate new pages if necessary
+//	}
 	
 	@Override
 	public void addTable(ArrayList<Tuple> dataTable) {

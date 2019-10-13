@@ -61,6 +61,7 @@ public class BinaryTupleReader implements TupleReader {
 					buffer.putInt(4, 0);
 					fc.read(buffer);
 					numRows= buffer.getInt(4);
+					curRow=0;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

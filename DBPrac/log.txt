@@ -41,3 +41,18 @@ Execution time : 6
 Running queries...1
 
 Execution time : 13
+Running queries...1
+
+Execution time : 10
+Running queries...1
+
+Execution time : 12
+Running queries...1
+
+Execution time : 16
+Running queries...1
+
+Execution time : 18
+Running queries...1
+
+Execution time : 15

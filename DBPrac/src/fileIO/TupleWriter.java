@@ -12,11 +12,11 @@ public interface TupleWriter {
 	 */
 	public void addTable(ArrayList<Tuple> data);
 		
-	/**
-	 * write tuple to the file
-	 * @param data arrayList of tuple
-	 */
-	public void writeTuple(ArrayList<Tuple> data);
+//	/**
+//	 * write tuple to the file
+//	 * @param data arrayList of tuple
+//	 */
+//	public void writeTuple(ArrayList<Tuple> data);
 	
 	
 	public void dump();

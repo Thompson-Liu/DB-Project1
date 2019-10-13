@@ -80,7 +80,7 @@ public class ExternalSortOperator extends Operator {
 	
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.writeTable(fullData.toArrayList());
+		writer.addTable(fullData.toArrayList());
 		writer.dump();
 		writer.close();
 	}

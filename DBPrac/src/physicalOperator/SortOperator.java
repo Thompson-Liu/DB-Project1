@@ -49,7 +49,7 @@ public class SortOperator extends Operator {
 
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.writeTable(buffer.toArrayList());
+		writer.addTable(buffer.toArrayList());
 		writer.dump();
 		writer.close();
 	}

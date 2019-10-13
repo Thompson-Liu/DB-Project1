@@ -38,8 +38,8 @@ public class ScanOperator extends Operator {
 		}
 		data= new DataTable(tableName, newSchema);
 
-		reader= new BinaryTupleReader();
-		for (Tuple t : reader.readData(dir)) {
+		reader= new BinaryTupleReader(dir);
+		for (Tuple t : reader.readData()) {
 			data.addData(t);
 		}
 	}
@@ -50,6 +50,11 @@ public class ScanOperator extends Operator {
 		return new Tuple(data.getRow(tupleCounter++ ));
 	}
 
+	
+//	public DataTable getNextPage() {
+//		
+//	}
+
 	/** reset read stream to re-read the data */
 	@Override
 	public void reset() {
@@ -58,7 +63,7 @@ public class ScanOperator extends Operator {
 
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.writeTable(data.toArrayList());
+		writer.addTable(data.toArrayList());
 		writer.dump();
 		writer.close();
 	}

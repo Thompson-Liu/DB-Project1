@@ -31,7 +31,7 @@ public class ReadableTupleWriter implements TupleWriter{
 	}
 	
 	@Override 
-	public void writeTable(ArrayList<Tuple> dataTable) {
+	public void addTable(ArrayList<Tuple> dataTable) {
 		for (Tuple tup : dataTable) {
 			ArrayList<Integer> a = tup.getTuple();
 			data.add(tup.getTuple());
