@@ -6,7 +6,9 @@ import dataStructure.Tuple;
 
 public interface TupleReader {
 
-	public ArrayList<Tuple> readData(String fileName);
+	public ArrayList<Tuple> readData();
+	
+	public Tuple readNextTuple();
 
 	public void close();
 

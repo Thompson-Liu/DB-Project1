@@ -19,16 +19,20 @@ public class ReadableTupleReader implements TupleReader {
 	private BufferedReader buffer;
 	
 
-	public ReadableTupleReader() {
+	public ReadableTupleReader(String fileName) {
 		// TODO Auto-generated constructor stub
 		resource= new ArrayList<Tuple>();
+		try {
+			buffer= new BufferedReader(new FileReader(fileName));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+			
 	}
 
 	@Override
-	public ArrayList<Tuple> readData(String fileName) {
-		try {
-			
-			buffer= new BufferedReader(new FileReader(fileName));
+	public ArrayList<Tuple> readData() {
+		
 			try {
 				String read= null;
 				try {
@@ -46,9 +50,6 @@ public class ReadableTupleReader implements TupleReader {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 		return resource;
 	}
 

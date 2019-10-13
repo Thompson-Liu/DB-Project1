@@ -12,11 +12,13 @@ import fileIO.*;
 /** the class for the sort operator that sorts the data another operator generates. */
 public class ExternalSortOperator extends Operator {
 
-	private DataTable buffer;
-	private ArrayList<DataTable> bufferTables;
+	private DataTable fullData;
+//	private ArrayList<DataTable> bufferTables;
+	private TupleWriter writeInt;
+	private int bufferSize;
+	private String dataFile;        
 	private ArrayList<String> schema;
 	private int ptr;
-	private int bufferSize;
 	private boolean useBinary = false;// format of intermediate result
 	private int pass = 0;   // the current order of pass
 
@@ -26,15 +28,26 @@ public class ExternalSortOperator extends Operator {
 		ptr= -1;
 		this.bufferSize=bufferSize;
 		this.schema = childOp.schema();
-		buffer= new DataTable(childOp.getTableName(), childOp.schema());
-		buffer.setFullTable(childOp.getData().getFullTable());
-		if (colList == null) {
-			buffer.sortData(colList, schema);
-		} else {
-			buffer.sortData(colList, schema);
+		// the operator contains a small dataset that fit to main memory
+		if(childOp.getFile()==null) {
+			fullData = new DataTable(childOp.getTableName(), childOp.schema());
+			fullData.setFullTable(childOp.getData().getFullTable());
+			if (colList == null) {
+				fullData.sortData(colList, schema);
+			} else {
+				fullData.sortData(colList, schema);
+			}
 		}
+		else {
+			
+		}
+		
 	}
 	
+	
+	private void process() {
+		writeInt
+	}
 
 	/** @return the next tuple in the sorted buffer datatable */
 	@Override
@@ -67,7 +80,7 @@ public class ExternalSortOperator extends Operator {
 	
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.writeTable(buffer.toArrayList());
+		writer.writeTable(fullData.toArrayList());
 		writer.dump();
 		writer.close();
 	}

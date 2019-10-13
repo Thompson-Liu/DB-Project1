@@ -14,8 +14,16 @@ public abstract class Operator {
 	Tuple getNextTuple() {
 		return null;
 	}
+	
+	/**
+	 * @return the name of the file containing the result of this operator
+	 *         null if the dataset small and fit in to main memory
+	 */
+	public String getFile() {
+		return null;
+	}
 
-	/** reset read stream to re-read the data */
+	/** reset read streams to re-read the data */
 	void reset() {
 		return;
 	}

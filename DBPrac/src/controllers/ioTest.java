@@ -24,7 +24,7 @@ public class ioTest {
 //		tw.writeTable(tr.readData());
 //		tw.dump();
 
-		ReadableTupleReader rTR= new ReadableTupleReader();
+		ReadableTupleReader rTR= new ReadableTupleReader("/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/input/db/data/Boats");
 //		System.out.println(rTR.readData());
 		// Test logger
 		Logger log= Logger.getInstance();
@@ -35,7 +35,7 @@ public class ioTest {
 		}
 		ReadableTupleWriter rTW= new ReadableTupleWriter("re");
 
-		rTW.writeTable(rTR.readData("/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/input/db/data/Boats"));
+		rTW.writeTable(rTR.readData());
 		rTW.dump();
 		// Test logger
 		try {

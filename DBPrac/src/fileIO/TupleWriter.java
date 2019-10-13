@@ -6,8 +6,19 @@ import dataStructure.Tuple;
 
 public interface TupleWriter {
 
-	public void writeTable(ArrayList<Tuple> data);
+	/**
+	 * add table to the buffer
+	 * @param data arraylist of Tuple
+	 */
+	public void addTable(ArrayList<Tuple> data);
 		
+	/**
+	 * write tuple to the file
+	 * @param data arrayList of tuple
+	 */
+	public void writeTuple(ArrayList<Tuple> data);
+	
+	
 	public void dump();
 	public void close();
 	

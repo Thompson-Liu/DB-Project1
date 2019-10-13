@@ -37,7 +37,6 @@ public class DataTable {
 	 * @return the full data Table's data */
 	public ArrayList<ArrayList<Integer>> getFullTable() {
 		return data;
-//				((ArrayList<ArrayList<Integer>>) data.clone());
 	}
 
 	/** Change the datatable's data into another 2D arrayList given by the input

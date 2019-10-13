@@ -14,6 +14,7 @@ public class BinaryTupleWriter implements TupleWriter {
 	private ByteBuffer buffer;
 	private FileChannel fc;
 	private FileOutputStream fout;
+	private int counter;   //keep counting the position of current page
 
 	public BinaryTupleWriter(String name) {
 
@@ -30,8 +31,16 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 
+	/**
+	 * add another table to the current file 
+	 */
 	@Override
-	public void writeTable(ArrayList<Tuple> dataTable) {
+	public void appendTable() {
+		//allocate new pages if necessary
+	}
+	
+	@Override
+	public void addTable(ArrayList<Tuple> dataTable) {
 		for (Tuple tup : dataTable) {
 			ArrayList<Integer> a= tup.getTuple();
 			data.add(tup.getTuple());
@@ -54,7 +63,7 @@ public class BinaryTupleWriter implements TupleWriter {
 				buffer.putInt(numAttr);
 				buffer.putInt(Math.min(numRows, numRowPage));
 
-				int counter= 8;
+				counter= 8;
 				for (int i= 0; i < Math.min(numRows, numRowPage); i++ ) {
 					for (int j= 0; j < numAttr; j++ ) {
 
