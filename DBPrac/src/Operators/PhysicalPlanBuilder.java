@@ -1,5 +1,10 @@
 package Operators;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import logicalOperators.DuplicateEliminationLogOp;
 import logicalOperators.JoinLogOp;
 import logicalOperators.LogicalOperator;
@@ -7,6 +12,7 @@ import logicalOperators.ProjectLogOp;
 import logicalOperators.ScanLogOp;
 import logicalOperators.SelectLogOp;
 import logicalOperators.SortLogOp;
+import physicalOperator.BNLJ;
 import physicalOperator.DuplicateEliminationOperator;
 import physicalOperator.JoinOperator;
 import physicalOperator.Operator;
@@ -18,9 +24,48 @@ import physicalOperator.SortOperator;
 public class PhysicalPlanBuilder {
 
 	static Operator immOp;
+	private  BufferedReader buffer;
+	private int[] join;
+	private int[] sort;
 	
-	public PhysicalPlanBuilder() {
+	public PhysicalPlanBuilder(String filePath) {
+		try {
+			buffer = new BufferedReader(new FileReader(filePath));
+		} catch (FileNotFoundException e) {
+			System.err.println("Cannot locate the file" + filePath);
+		}
+		join = readConfig();
+		sort = readConfig();
+		assert(sort[0] == 0 || (sort[0] == 1 && sort[1] >= 3));
+		
+		try {
+			buffer.close();
+		} catch (IOException e) {
+			System.err.println("Error during closing the buffer.");
+		}
+	}
+	
+	private int[] readConfig() {
+		String nextLine;
+		int argList[] = null;
+		try {
+			nextLine = buffer.readLine();
+			String[] args = nextLine.split(" ");
+			if (args.length == 0) {
+				argList = new int[] { 0 };
+			} else {
+				assert(args.length == 2);
 
+				argList = new int[2];
+				for (int i = 0; i < argList.length; i++) {
+					int argInt = Integer.parseInt(args[i]);
+					argList[i] = argInt;
+				}
+			}
+		} catch(IOException e) {
+			System.err.println("An error occured during reading from file");
+		} 
+		return argList;
 	}
 	
 	public Operator generatePlan(LogicalOperator lop) {
@@ -59,8 +104,20 @@ public class PhysicalPlanBuilder {
 		joinLogOp.getChildren()[1].accept(this);
 		Operator rightChildOp = immOp;
 		
-		immOp = new JoinOperator(leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
-				joinLogOp.getAlias());
+		switch (join[0]) {
+		case 0:
+			immOp = new JoinOperator(leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
+					joinLogOp.getAlias());
+			break;
+		case 1:
+			immOp = new BNLJ(join[1],leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
+					joinLogOp.getAlias());
+			break;
+		case 2:
+			// to be implemented after SMJ
+			break;
+		}
+		
 	}
 
 }

@@ -43,6 +43,7 @@ public class Interpreter {
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
 
+					// need to pass in the name of the config file path 
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder();
 					Operator op= planBuilder.generatePlan(logOp);
 
