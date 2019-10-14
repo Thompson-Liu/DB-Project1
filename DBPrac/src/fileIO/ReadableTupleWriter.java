@@ -34,7 +34,7 @@ public class ReadableTupleWriter implements TupleWriter{
 	public void addTable(ArrayList<Tuple> dataTable) {
 		for (Tuple tup : dataTable) {
 			ArrayList<Integer> a = tup.getTuple();
-			data.add(tup.getTuple());
+			data.add(a);
 		}
 	}
 	
@@ -69,6 +69,18 @@ public class ReadableTupleWriter implements TupleWriter{
 			System.err.println("Fail to close Readable Tuple Writer. ");
 			e.printStackTrace();
 		}
+		
+	}
+
+	@Override
+	public void addTuple(Tuple tup) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
 		
 	}
 

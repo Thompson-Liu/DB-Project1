@@ -76,5 +76,11 @@ public class ReadableTupleReader implements TupleReader {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
+	public ArrayList<Tuple> readNextPage(){
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

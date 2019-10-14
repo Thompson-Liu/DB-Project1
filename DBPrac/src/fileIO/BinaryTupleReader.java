@@ -46,6 +46,7 @@ public class BinaryTupleReader implements TupleReader {
 	@Override
 	public Tuple readNextTuple() {
 		if (numRows==0) {
+			reset();
 			return null;
 		}
 		else {
@@ -70,6 +71,33 @@ public class BinaryTupleReader implements TupleReader {
 		}
 	}
 
+//	@Override
+//	public ArrayList<Tuple> readNextPage(){
+//		if(numRows!=0) {
+//			try {
+//				ArrayList<Tuple> resource= new ArrayList<Tuple>();
+//				for(int i=0;i<numRows ;i++) {
+//					if(numRows!=0) {
+//						Integer[] temp= new Integer[numAttr];
+//						for (int j= 0; j < numAttr; j++ ) {
+//							temp[j]= buffer.getInt(i * numAttr * 4 + 8 + j * 4);
+//						}
+//					}
+//
+//				}
+//				// change to next page if current row is the last row
+//				buffer.clear();
+//				buffer.putInt(4, 0);
+//				fc.read(buffer);
+//				numRows= buffer.getInt(4);
+//				return resource;
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return null;
+//	}
+
 	/**
 	 *  read whole data of tuples from the file
 	 */
@@ -81,19 +109,6 @@ public class BinaryTupleReader implements TupleReader {
 			while ((cur=readNextTuple())!=null) {
 				resource.add(cur);
 			}
-//			while (numRows != 0) {
-//				for (int i= 0; i < numRows; i+= 1) {
-//					Integer[] currTuple= new Integer[numAttr];
-//					for (int j= 0; j < numAttr; j++ ) {
-//						currTuple[j]= buffer.getInt(i * numAttr * 4 + 8 + j * 4);
-//					}
-//					resource.add(new Tuple(new ArrayList<Integer>(Arrays.asList(currTuple))));
-//				}
-//				buffer.clear();
-//				buffer.putInt(4, 0);
-//				fc.read(buffer);
-//				numRows= buffer.getInt(4);
-//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

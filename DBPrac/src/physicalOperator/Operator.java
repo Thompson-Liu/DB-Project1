@@ -42,6 +42,11 @@ public abstract class Operator {
 	public DataTable getData() {
 		return null;
 	}
+	
+	/** @return the data on the next page of the file */
+	public DataTable getNextPage() {
+		return null;
+	}
 
 	public void dump(TupleWriter writer) {
 		// TODO Auto-generated method stub

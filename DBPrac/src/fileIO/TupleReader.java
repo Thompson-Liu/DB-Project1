@@ -9,6 +9,8 @@ public interface TupleReader {
 	public ArrayList<Tuple> readData();
 	
 	public Tuple readNextTuple();
+	
+//	public ArrayList<Tuple> readNextPage();
 
 	public void close();
 
