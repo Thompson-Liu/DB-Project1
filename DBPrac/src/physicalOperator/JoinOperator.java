@@ -1,5 +1,5 @@
-/**
- * Takes in a joined left table and right table to scan
+/** in-memory join :   fetched all the data from left and right operators 
+ *  and join them in memory
  */
 package physicalOperator;
 
