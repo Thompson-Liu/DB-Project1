@@ -6,6 +6,7 @@ import java.util.HashMap;
 import dataStructure.Buffer;
 import dataStructure.DataTable;
 import dataStructure.Tuple;
+import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
 
@@ -124,6 +125,12 @@ public class BNLJ extends Operator {
 		}
 		return null;
 	} 
+	
+	@Override 
+	public void dump(TupleWriter writer) {
+		writer.write(getData().toArrayList());
+		writer.close();
+	}
 
 	@Override
 	public void reset() {
@@ -139,10 +146,12 @@ public class BNLJ extends Operator {
 		return data.getSchema();
 	}
 
+	@Override
 	public String getTableName() {
 		return data.getTableName();
 	}
 
+	@Override
 	public DataTable getData() {
 		Tuple t;
 		while ((t = getNextTuple()) != null) {
