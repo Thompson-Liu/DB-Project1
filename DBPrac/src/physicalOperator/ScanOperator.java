@@ -53,8 +53,7 @@ public class ScanOperator extends Operator {
 
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.addTable(getData().toArrayList());
-		writer.dump();
+		writer.write(getData().toArrayList());
 		writer.close();
 	}
 

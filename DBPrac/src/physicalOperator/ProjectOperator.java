@@ -84,8 +84,7 @@ public class ProjectOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.addTable(getData().toArrayList());
-		writer.dump();
+		writer.write(getData().toArrayList());
 		writer.close();
 	}
 

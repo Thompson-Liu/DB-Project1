@@ -44,8 +44,7 @@ public class DuplicateEliminationOperator extends Operator {
 
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.addTable(sortedBuffer.toArrayList());
-		writer.dump();
+		writer.write(sortedBuffer.toArrayList());
 		writer.close();
 	}
 
