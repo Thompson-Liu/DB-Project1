@@ -23,9 +23,10 @@ public class ExternalSortOperator extends Operator {
 	private int tuplesPage;        // number of tuples per page
 	private String dataFile;    
 	private ArrayList<String> schema;
-	private ArrayList<String> sortOrder;
+	private ArrayList<String> sortCol;
 	private int runs;   			// number of files in each pass
 	private int ptr;
+	private ArrayList<Tuple> curTable;
 	private boolean useBinary = false;// format of intermediate result
 	private int pass = 0;   // the current order of pass
 
@@ -35,17 +36,9 @@ public class ExternalSortOperator extends Operator {
 		ptr= -1;
 		this.bufferSize=bufferSize;
 		this.schema = childOp.schema();
-		ArrayList<String> sortCol = (ArrayList<String>) colList;
+		sortCol = (ArrayList<String>) colList;
 		tuplesPage = (int) Math.floor(1.0*(4096)/(4.0*(schema.size())));
-		sortOrder = new ArrayList<String>();
-		for(String priorityCol : colList) {
-			sortOrder.add(priorityCol);
-		}
-		for(String col: this.schema) {
-			if(!colList.contains(col)) {
-				sortOrder.add(col);
-			}
-		}
+	
 		initialRun(childOp);
 
 
@@ -72,24 +65,21 @@ public class ExternalSortOperator extends Operator {
 		Tuple cur;
 		while ((cur=childOp.getNextTuple())!=null){
 			if(sofar>=fanin) {
-				TupleWriter write = new BinaryTupleWriter("/tempDir/"+Integer.toString(runs));
+				tuplesWriter = new BinaryTupleWriter("/tempDir/"+Integer.toString(runs));
+				tuplesWriter.write(curTable);
+				curTable= new ArrayList<Tuple>();
 				runs++;
 				sofar=0;
 			}
+			curTable.add(cur);
+			sofar++;
 		}
 		
 
 	}
 
 	private void ExternalSort(String tempDir) {
-		int fanin;
-		if (pass==0){
-
-
-		}
-		else {
-			fanin = (bufferSize-1)*tuplesPage;
-		}
+		int fanin = (bufferSize-1)*tuplesPage;
 		for(int i=0;i<fanin;i++) {
 			Tuple tup;
 			tup = tuplesReader.readNextTuple();
@@ -153,39 +143,4 @@ public class ExternalSortOperator extends Operator {
 		return buffer.getTableName();
 	}
 
-
-	/**
-	 *  Sort a set of tuples by firstly primary order, then follows the sequence of schema
-	 * @param dataTuples
-	 * @param primary
-	 * @param schema
-	 * @return
-	 */
-	public ArrayList<ArrayList<Integer>> sortData(ArrayList<ArrayList<Integer>> dataTuples,List<String> primary, ArrayList<String> schema) {
-		// the new order of sorted data
-		ArrayList<String> newOrder = new ArrayList<String>();
-		for(String priorityCol : primary) {
-			newOrder.add(priorityCol);
-		}
-		for(String col:schema) {
-			if(!primary.contains(col)) {
-				newOrder.add(col);
-			}
-		}
-		Comparator<ArrayList<Integer>> myComparator= new Comparator<ArrayList<Integer>>() {
-			@Override
-			public int compare(ArrayList<Integer> arr1, ArrayList<Integer> arr2) {
-				int result= 0;
-				int ptr= 0;
-				while (ptr < newOrder.size() && result == 0) {
-					result= arr1.get(schema.indexOf(newOrder.get(ptr))) -
-							arr2.get(schema.indexOf(newOrder.get(ptr)));
-					ptr+= 1;
-				}
-				return result;
-			}
-		};
-		dataTuples.sort(myComparator);
-		return dataTuples;
-	}
 }
