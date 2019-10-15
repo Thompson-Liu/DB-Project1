@@ -38,6 +38,11 @@ public class BinaryTupleReader implements TupleReader {
 			e.printStackTrace();
 		}
 	}
+	
+	public int getNumAttr() {
+		return numAttr;
+		
+	}
 
 	/**
 	 * read the next tuple

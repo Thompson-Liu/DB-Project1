@@ -6,17 +6,15 @@ import java.util.HashMap;
 import dataStructure.Buffer;
 import dataStructure.DataTable;
 import dataStructure.Tuple;
-import fileIO.BinaryTupleReader;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
 
 public class BNLJ extends Operator {
 
-	private BinaryTupleReader reader;
 	private static Buffer buffer;
 	private int numOuters;
-	private Operator leftOp;
-	private Operator rightOp;
+	private Operator outerOp;
+	private Operator innerOp;
 	private Expression joinCond;
 	private DataTable data;
 	private HashMap<String, String> alias;
@@ -28,29 +26,27 @@ public class BNLJ extends Operator {
 	private EvaluateWhere eval;
 
 
-	public BNLJ(int numPages, Operator left, Operator right, 
+	public BNLJ(int numPages, Operator outer, Operator inner, 
 			Expression joinExp, HashMap<String, String> tableAlias) {
 		
-		// is there a way to know how many attributes?
-		numOuters = numPages * 4096;
+		numOuters = (int) Math.ceil(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
 		buffer = new Buffer(numOuters);
 
-		leftOp = left;
-		rightOp = right;
+		outerOp = outer;
+		innerOp = inner;
 		joinCond = joinExp;
-		ArrayList<String> cur= new ArrayList<String>(leftOp.schema());
-		cur.addAll(rightOp.schema());
-		data = new DataTable(leftOp.getTableName() + " " + rightOp.getTableName(), cur);
+		ArrayList<String> cur= new ArrayList<String>(outer.schema());
+		cur.addAll(inner.schema());
+		data = new DataTable(outer.getTableName() + " " + inner.getTableName(), cur);
 		alias = tableAlias;
 		
-		eval = new EvaluateWhere(joinCond, leftOp.schema(), rightOp.schema(), alias);
-
+		eval = new EvaluateWhere(joinCond, innerOp.schema(), outerOp.schema(), alias);
 	}
 
 	private void populateBuffer() {
 		buffer.clear();
-		Tuple tup = leftOp.getNextTuple();
-		while(!buffer.overflow() && tup != null) {
+		Tuple tup;
+		while(!buffer.overflow() && (tup = outerOp.getNextTuple()) != null) {
 			buffer.addData(tup);
 		}
 	}
@@ -74,7 +70,7 @@ public class BNLJ extends Operator {
 
 				// if need to get another tuple from inner S
 				if (tupState) {
-					while ((innerTup = rightOp.getNextTuple()) != null) {
+					while ((innerTup = innerOp.getNextTuple()) != null) {
 						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
 								data.addData(next);
@@ -85,7 +81,7 @@ public class BNLJ extends Operator {
 						} 
 						bufTupState = 0;
 					}
-					rightOp.reset();
+					innerOp.reset();
 				} else {
 					while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 						if ((next = eval.evaluate(outerTup, innerTup)) != null) {
@@ -102,7 +98,7 @@ public class BNLJ extends Operator {
 			
 			else {
 				if (tupState) {
-					while ((innerTup = rightOp.getNextTuple()) != null) {
+					while ((innerTup = innerOp.getNextTuple()) != null) {
 						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
 								data.addData(next);
@@ -112,7 +108,7 @@ public class BNLJ extends Operator {
 						} 
 						bufTupState = 0;
 					}
-					rightOp.reset();
+					innerOp.reset();
 					bufState = true;
 				} else {
 					while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
@@ -134,8 +130,8 @@ public class BNLJ extends Operator {
 		bufState = true;
 		tupState = true;
 		bufTupState = 0;
-		reader.reset();
-		rightOp.reset();
+		innerOp.reset();
+		outerOp.reset();
 	}
 
 	@Override
