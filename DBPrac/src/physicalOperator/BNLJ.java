@@ -29,7 +29,7 @@ public class BNLJ extends Operator {
 	public BNLJ(int numPages, Operator outer, Operator inner, 
 			Expression joinExp, HashMap<String, String> tableAlias) {
 		
-		numOuters = (int) Math.ceil(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
+		numOuters = (int) Math.floor(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
 		buffer = new Buffer(numOuters);
 
 		outerOp = outer;

@@ -29,7 +29,6 @@ public class ReadableTupleReader implements TupleReader {
 			
 	}
 
-	@Override
 	public ArrayList<Tuple> readData() {
 		ArrayList<Tuple> resource = new ArrayList<Tuple>();
 			try {

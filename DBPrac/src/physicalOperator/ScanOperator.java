@@ -13,7 +13,6 @@ public class ScanOperator extends Operator {
 	// Check if this will be inherited by the children class
 	private BinaryTupleReader reader;
 	private DataTable data;
-	private int tupleCounter;
 	private String tableName;  // if there is Alias then use Alias, otherwise use TableName
 	private String dirName;   // only the name of the table,
 						      // to get the directory and schema from the catalog
@@ -39,31 +38,22 @@ public class ScanOperator extends Operator {
 		data= new DataTable(tableName, newSchema);
 
 		reader= new BinaryTupleReader(dir);
-		for (Tuple t : reader.readData()) {
-			data.addData(t);
-		}
 	}
 
 	@Override
 	public Tuple getNextTuple() {
-		if (tupleCounter >= data.cardinality()) { return null; }
-		return new Tuple(data.getRow(tupleCounter++ ));
+		return reader.readNextTuple();
 	}
-
-	
-//	public DataTable getNextPage() {
-//		
-//	}
 
 	/** reset read stream to re-read the data */
 	@Override
 	public void reset() {
-		tupleCounter= 0;
+		reader.reset();
 	}
 
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.addTable(data.toArrayList());
+		writer.addTable(getData().toArrayList());
 		writer.dump();
 		writer.close();
 	}
@@ -80,6 +70,11 @@ public class ScanOperator extends Operator {
 
 	@Override
 	public DataTable getData() {
+		Tuple t;
+		while ((t = getNextTuple()) != null) {
+			
+		}
+		reset();
 		return data;
 	}
 }
