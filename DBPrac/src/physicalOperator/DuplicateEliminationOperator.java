@@ -1,8 +1,6 @@
 package physicalOperator;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
-
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 import fileIO.*;

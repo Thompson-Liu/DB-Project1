@@ -39,7 +39,7 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 
-	private void writeNextTuple(Tuple tup) {
+	public void writeNextTuple(Tuple tup) {
 		numAttr = tup.getTuple().size();
 		numRowPage = (int) Math.floor((4096 - 8) * 1.0 / (numAttr * 4));
 		if (curRow <= numRowPage - 1) {
@@ -49,6 +49,7 @@ public class BinaryTupleWriter implements TupleWriter {
 			writeNextPage();
 			buffer = ByteBuffer.allocate(4096);
 			pageData = new ArrayList<Tuple>();
+			pageData.add(tup);
 		}
 	}
 
@@ -75,7 +76,7 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 
-	public void write(ArrayList<Tuple> data) {
+ 	public void write(ArrayList<Tuple> data) {
 		for (Tuple tuple: data) {
 			writeNextTuple(tuple);
 		}
