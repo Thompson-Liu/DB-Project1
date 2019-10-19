@@ -19,7 +19,6 @@ public class ReadableTupleWriter implements TupleWriter{
 
 	
 	public ReadableTupleWriter(String name) {
-			
 			try {
 				fout= new FileOutputStream(name);
 				data= new ArrayList<ArrayList<Integer>>();
@@ -30,7 +29,6 @@ public class ReadableTupleWriter implements TupleWriter{
 			}
 	}
 	
-	@Override 
 	public void addTable(ArrayList<Tuple> dataTable) {
 		for (Tuple tup : dataTable) {
 			ArrayList<Integer> a = tup.getTuple();
@@ -39,8 +37,7 @@ public class ReadableTupleWriter implements TupleWriter{
 	}
 	
 	
-	@Override
-	public void dump() {
+	public void write() {
 		try {
 			
 			for (ArrayList<Integer> x : data) {
@@ -73,7 +70,7 @@ public class ReadableTupleWriter implements TupleWriter{
 	}
 
 	@Override
-	public void addTuple(Tuple tup) {
+	public void write(ArrayList<Tuple> data) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -83,6 +80,4 @@ public class ReadableTupleWriter implements TupleWriter{
 		// TODO Auto-generated method stub
 		
 	}
-
-
 }

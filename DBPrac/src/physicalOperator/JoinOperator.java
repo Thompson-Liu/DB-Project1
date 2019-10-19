@@ -3,10 +3,8 @@
  */
 package physicalOperator;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import dataStructure.DataTable;
 import dataStructure.Tuple;
 import fileIO.*;
@@ -20,7 +18,7 @@ public class JoinOperator extends Operator {
 	private Operator leftOperator;
 	private Operator rightOperator;
 	private Expression joinExp;
-	private static boolean  resetFlag= true;
+	private static boolean resetFlag= true;
 	private Tuple left;
 	private HashMap<String, String> tableAlias;
 	private int ptr;
