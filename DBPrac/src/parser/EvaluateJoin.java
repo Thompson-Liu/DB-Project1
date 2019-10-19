@@ -1,5 +1,5 @@
 /**
- * Evaluate Join condition of the attributes for joining tuples
+ * Extract the attributes for sorting the left child and sorting the right child
  */
 package parser;
 
@@ -56,7 +56,8 @@ public class EvaluateJoin implements ExpressionVisitor {
 	private ArrayList<String> leftSchema;
 	private ArrayList<String> rightSchema;
 	private HashMap<String,String> tableAlias;
-	private ArrayList<String> joiningAttributes;
+	private ArrayList<String> joinAttributesLeft;
+	private ArrayList<String> joinAttributesRight;
 	private Expression expr;
 
 
@@ -91,6 +92,22 @@ public class EvaluateJoin implements ExpressionVisitor {
 			return resultTuple;
 		else
 			return null;
+	}
+	
+	/**
+	 * 
+	 * @return the joining attributes given tableA, tableB
+	 */
+	public ArrayList<String> getJoinAttributesLeft(){
+		return joinAttributesLeft;
+	}
+	
+	/**
+	 * 
+	 * @return the joining attributes given tableA, tableB
+	 */
+	public ArrayList<String> getJoinAttributesRight(){
+		return joinAttributesRight;
 	}
 	
 	@Override
