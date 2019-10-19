@@ -96,6 +96,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.tableAlias = tableAlias;
+		
 	}
 
 

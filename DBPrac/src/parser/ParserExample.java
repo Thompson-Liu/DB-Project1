@@ -3,6 +3,7 @@ package parser;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParser;
@@ -42,6 +43,7 @@ public class ParserExample {
 ////				System.out.println("remaining from items" + plainSelect.getJoins());
 ////				Expression a = AdditiveExpression();
 				System.out.println("-----where clause is  :  " + plainSelect.getWhere());
+				EvaluateWhere eva = new EvaluateWhere(plainSelect.getWhere(),new ArrayList<String>(),new ArrayList<String>(),new HashMap<String,String>())  ;
 				System.out.println("Class of where clause is  :   "+(plainSelect.getWhere() instanceof EqualsTo));
 //				System.out.println("inside where is   :    " + plainSelect.getWhere().toString());
 //				System.out.println("join list is :    " + plainSelect.getJoins());

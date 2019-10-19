@@ -53,8 +53,8 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 public class EvaluateJoin implements ExpressionVisitor {
 
 
-	private ArrayList<String> leftSchema;
-	private ArrayList<String> rightSchema;
+	private String leftTableName;
+	private String rightTableName;
 	private HashMap<String,String> tableAlias;
 	private ArrayList<String> joinAttributesLeft;
 	private ArrayList<String> joinAttributesRight;
@@ -63,41 +63,26 @@ public class EvaluateJoin implements ExpressionVisitor {
 
 	public EvaluateJoin(Expression whereExpr, String leftTableName, 
 			String rightTableName,HashMap<String,String> tableAlias) {
-		this.leftSchema = new ArrayList<String>();
-		this.rightSchema = new ArrayList<String>();
+		joinAttributesLeft = new ArrayList<String> ();
+		joinAttributesRight = new ArrayList<String> ();
+		
+		// change the leftTableName to its alias if exist
+		if(tableAlias.containsKey(leftTableName)) {
+			leftTableName=tableAlias.get(leftTableName);}
+		this.leftTableName = leftTableName;
+		// change the rightTableName to its alias if exist
+		if(tableAlias.containsKey(rightTableName)) {
+			rightTableName=tableAlias.get(rightTableName);}
+		this.rightTableName = rightTableName;
+		
 		this.expr=whereExpr;
-		this.leftSchema = leftSchema;
-		this.rightSchema = rightSchema;
 		this.tableAlias = tableAlias;
-		check();
-	}
-	
-	public ArrayList<String> evaluate(Expression whereExpr) {
-		joiningAttributes = new ArrayList<String>();
-		if(expr==null) {
-			sofar.add(1);
-		}else {
-			expr.accept(this);
-		}
-		if (leftTuple != null) {
-			resultTuple = leftTuple;
-			resultTuple=resultTuple.concateTuple(rightTuple);
-		} else {
-			resultTuple = rightTuple;
-		}
-
-		if(sofar.size()==0) {
-			return resultTuple;
-		}
-		else if (sofar.pop() == 1)
-			return resultTuple;
-		else
-			return null;
+		this.expr.accept(this);
 	}
 	
 	/**
 	 * 
-	 * @return the joining attributes given tableA, tableB
+	 * @return the joining attributes given leftTable, rightTable
 	 */
 	public ArrayList<String> getJoinAttributesLeft(){
 		return joinAttributesLeft;
@@ -109,15 +94,6 @@ public class EvaluateJoin implements ExpressionVisitor {
 	 */
 	public ArrayList<String> getJoinAttributesRight(){
 		return joinAttributesRight;
-	}
-	
-	/**
-	 *  Helper function to check whether attributes belongs to both tables
-	 */
-	private void check(String a, String b) {
-		
-		
-		for(String )
 	}
 	
 	@Override
@@ -200,6 +176,9 @@ public class EvaluateJoin implements ExpressionVisitor {
 	public void visit(Between arg0) {
 	}
 
+	/**
+	 * add the attributes to lists of leftAttributes and rightAttributes
+	 */
 	@Override
 	public void visit(EqualsTo arg0) {
 		Expression left= arg0.getLeftExpression();
@@ -208,6 +187,24 @@ public class EvaluateJoin implements ExpressionVisitor {
 			Column Col1 = (Column) left;
 			Column Col2 = (Column) right;
 			
+			String Col1Table = Col1.getTable().getName();
+			// change the leftTableName to its alias if exist
+			if(tableAlias.containsKey(Col1Table)) {
+				Col1Table =tableAlias.get(Col1Table);}
+			String Col2Table = Col2.getTable().getName();
+			if(tableAlias.containsKey(Col2Table)) {
+				Col2Table =tableAlias.get(Col2Table);}
+			
+			boolean order = (Col1Table==this.leftTableName) && Col2Table==this.rightTableName;
+			boolean inverse = (Col1Table==this.rightTableName) && Col2Table==this.leftTableName;
+			if(order) {
+				this.joinAttributesLeft.add(Col1.getColumnName());
+				this.joinAttributesRight.add(Col2.getColumnName());
+			}
+			else if (inverse) {
+				this.joinAttributesLeft.add(Col2.getColumnName());
+				this.joinAttributesRight.add(Col1.getColumnName());
+			}
 		}
 
 	}
