@@ -24,9 +24,11 @@ public interface TupleReader {
 
 	public void reset();
 	
-//	/**
-//	 * delete this file of tupleReader
-//	 */
-//	public void deleteFile();
+	/**
+	 *  Reset to a pointer where the next tuple is the index-th row of the whole table
+	 * @param index
+	 */
+	public void reset(int index);
+	
 
 }
