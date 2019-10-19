@@ -18,9 +18,8 @@ public class ExternalSortOperator extends Operator {
 
 	private PriorityQueue<Tuple> intermediateTable;    //  keep track of current 
 	private Operator childOp;
-	private HashMap<Tuple, TupleReader> tupleToReader;
-	private TupleReader currentReader;
-	private int totalPass;  					// total number of runs needed
+	private TupleReader sortedReader;
+	private int totalPass;  					// total number of passes needed
 	private Buffer memoryBuffer;
 	private int bufferSize;
 	private int tuplesPage;        // number of tuples per page
@@ -28,35 +27,36 @@ public class ExternalSortOperator extends Operator {
 	private ArrayList<String> schema;
 	private ArrayList<String> colList;
 	private int runs ;   			// number of files in each pass
-	private int ptr;
-	private ArrayList<Tuple> curTable;
-//	private boolean useBinary = false;			// format of intermediate result
+	//	private boolean useBinary = false;			// format of intermediate result
 	private int pass = 0;   // the current order of pass
 
 	/** @param childOp childOp is the child operator, e.g. ProjectOperator or SelectOperator
 	 *  @param colList colList is the list of column names to sort data by */
 	public ExternalSortOperator(Operator childOp, List<String> colList,int bufferSize ,String tempDir) {
-		ptr= -1;
-		runs=0;
 		this.childOp = childOp;
 		this.bufferSize=bufferSize;
 		this.schema = childOp.schema();
 		this.colList =(ArrayList<String>) colList;
-		
+		this.runs=
 		tuplesPage = (int) Math.floor(1.0*(4096)/(4.0*(schema.size())));
 		memoryBuffer = new Buffer(tuplesPage);
-		// pass0
-		initialRun();
-		//这里需要算一下
-		totalPass=0;
-		// calculate the total number of runs needed
-		currentReader = new BinaryTupleReader("/tempDir/"+"externalIntermediate"+Integer.toString(totalPass)+"1");
-		ExternalSort();
+		// pass0  and get the total number of files stored
+		int totalFiles= initialRun();
+		runs = totalFiles;
+		//这里需要算一下👇
+		// calculate the total number of passes needed
+		Double div = Math.ceil(runs/bufferSize);
+		totalPass = (int) Math.ceil(Math.log(div)/Math.log(1.0*(bufferSize-1)));
+		for(int curPass=1;curPass<totalPass;curPass++) {
+			int nextRuns = ExternalSort(curPass,runs);
+			runs = nextRuns;
+		}
+		sortedReader = new BinaryTupleReader("/tempDir/"+"externalIntermediate"+Integer.toString(totalPass)+"1");
 
 	}
 
 	// pass0
-	private void initialRun() {
+	private int initialRun() {
 		this.runs=0;
 		Tuple cur;
 		while ((cur=childOp.getNextTuple())!=null){
@@ -69,120 +69,107 @@ public class ExternalSortOperator extends Operator {
 			}
 			memoryBuffer.addData(cur);
 		}
+		// have a return value to make sure this variable consistent throughout the algo
+		return this.runs;
 	}
 
 
-	private void ExternalSort() {
-		// the new order of sorted data
-		ArrayList<String> newOrder = new ArrayList<String>();
-		// need to calculate the number of runs
-		for(String priorityCol : colList) {
-			newOrder.add(priorityCol);
+	/**
+	 * 
+	 * @param pathnum the i-th order of pass of this externalSort
+	 * @runs runs   the number of runs for this pass
+	 */
+	private int ExternalSort(int passnum,int runs) {
+		//the number of merges needed for this pass
+		int mergenum = (int) Math.ceil(1.0*runs/(this.bufferSize-1));
+		int startTable=0;
+		for(int i=0;i<mergenum;i++){
+			int endTable = Math.min(startTable+bufferSize, runs);
+			merge(startTable,endTable,i);
+			startTable = endTable;
 		}
-		for(String col:schema) {
-			if(!colList.contains(col)) {
-				newOrder.add(col);
-			}
-		}
-		TupleReader minTupleReader;
-		Tuple minTuple;
-		while(runs>1) {
-			int loops = (int) Math.ceil(1.0 * totalRuns / (bufferSize - 1));
-			int lastRun = totalRuns % (bufferSize - 1);
-			runs=0;
-
-			for(int i=0;i<loops;i++) {
-				int fanin = Math.min(runs,(bufferSize-1));
-			}
-		}
-
+		return mergenum;
 	}
 
 	/**
 	 *  merge one of the runs from current pass
-	 * @param runs     the number of runs in this merge
+	 * @param runRuns   the number of runs in this merge
 	 * @param currentRun   the order of runs for this merge (currentRun-th run)
+	 * @param numMerge	the order of merge in current pass
 	 */
-	private void merge(ArrayList<Integer> runs, int currentRun) {
+	private void merge(int firstTable, int endTable,int numMerge) {
 		List<TupleReader> readerList = new ArrayList<TupleReader>();
-		List<Tuple> tupleList= new ArrayList<Tuple>();
-		
+		HashMap<Tuple, TupleReader> tupleToReader =  new HashMap<Tuple, TupleReader>();
 		// read previous sorted result
-		for(int i : runs) {
+		for(int i= firstTable;i<=endTable ;i++) {
 			BinaryTupleReader tupleRead = new BinaryTupleReader("/tempDir/"+"externalIntermediate"+Integer.toString(pass-1)+Integer.toString(i));
 			readerList.add(tupleRead) ;
-			tupleList.add(tupleRead.readNextTuple());
+			// hashmap will not overwrite even for tuple with same value as long as the tuples are coming from different tupleReaders, which is the property 
+			tupleToReader.put(tupleRead.readNextTuple(),tupleRead);
 		}
-		
+
+		BinaryTupleWriter tupleWrite = new BinaryTupleWriter("/tempDir/"+"externalIntermediate"+Integer.toString(pass)+Integer.toString(numMerge));
 		intermediateTable = new PriorityQueue(new TupleComparator(this.colList,this.schema));
-		for(int i=0;i< runs-1; i++) {
-			if(tup==null) {
-				break;
-			}else {
-				intermediateTable.add(tup);
+		Tuple next;
+		Tuple curnext;
+		TupleReader curReader;
+		// pulling tuple-wise of the first of runs of previous sorted table
+		while((next=intermediateTable.poll())!=null) {
+			tupleWrite.addNextTuple(next);
+			curReader = tupleToReader.get(next);
+			tupleToReader.remove(next);
+			if((curnext=curReader.readNextTuple())!=null) {
+				intermediateTable.add(curnext);
+				tupleToReader.put(curnext, curReader);
 			}
 		}
+	}
 
-		for (int i = 0; i < fanin - 2; ++i) {
-			int result = compare(tupleList.get(i), tupleList.get(i + 1));
-			reusl
+	/** @return the next tuple in the sorted TupleReader
+	 * */
+	@Override
+	public Tuple getNextTuple() {
+		Tuple tup=sortedReader.readNextTuple();
+		return tup;
+	}
+
+	/** @return the schema of the data table that is sorted by the operator */
+	@Override
+	public ArrayList<String> schema() {
+		return schema;
+	}
+
+	// 1. 需要double check 
+	@Override
+	public void reset() {
+		sortedReader.reset();
+	}
+
+
+	// 2. 看dump到哪里 write the [temp] directory file to dump dir [output]
+	@Override
+	public void dump(TupleWriter writer) {
+		Tuple tup;
+		while((tup=sortedReader.readNextTuple())!=null) {
+			writer.addNextTuple(tup);
 		}
+		writer.dump();
+		writer.close();
 	}
-}
 
-
-
-
-
-/** @return the next tuple in the sorted buffer datatable */
-@Override
-public Tuple getNextTuple() {
-	ptr+= 1;
-	Tuple tup=tuplesReader.readNextTuple();
-	//		if (ptr < buffer.cardinality()) return new Tuple(buffer.getRow(ptr));
-	return tup;
-}
-
-/** @return the schema of the data table that is sorted by the operator */
-@Override
-public ArrayList<String> schema() {
-	return schema;
-}
-
-//需要想一下怎么implement
-@Override
-public void reset() {
-
-	ptr= -1;
-}
-
-/**
- *  dump the intermediate sorting result
- * @param writer
- */
-private void dumpIntermediate(TupleWriter writer, String tempDir) {
-	if(useBinary) {
-		//			writer = (tempDir+"tableName+pass")
+	//3. 需要改架构：比如让 binaryTupleReader 可以return table
+	/** @return the datable after sorting */
+	@Override
+	public DataTable getData() {
+		DataTable temp = new DataTable(dataFile, schema);
+		return temp;
+//		return sortedReader.;
 	}
-}
 
-@Override
-public void dump(TupleWriter writer) {
-	writer.addTable(fullData.toArrayList());
-	writer.dump();
-	writer.close();
-}
-
-/** @return the datable after sorting */
-@Override
-public DataTable getData() {
-	return buffer;
-}
-
-/** @return the name of the table being sorted */
-@Override
-public String getTableName() {
-	return buffer.getTableName();
-}
+	/** @return the name of the table being sorted */
+	@Override
+	public String getTableName() {
+		return childOp.getTableName();
+	}
 
 }

@@ -39,7 +39,8 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 
-	public void writeNextTuple(Tuple tup) {
+	@Override
+	public void addNextTuple(Tuple tup) {
 		numAttr = tup.getTuple().size();
 		numRowPage = (int) Math.floor((4096 - 8) * 1.0 / (numAttr * 4));
 		if (curRow <= numRowPage - 1) {
@@ -78,7 +79,7 @@ public class BinaryTupleWriter implements TupleWriter {
 
  	public void write(ArrayList<Tuple> data) {
 		for (Tuple tuple: data) {
-			writeNextTuple(tuple);
+			addNextTuple(tuple);
 		}
 		if (pageData.size() > 0) {
 			writeNextPage();
@@ -96,6 +97,40 @@ public class BinaryTupleWriter implements TupleWriter {
 			System.err.print("BinaryTupleWrite initialize fail.");
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void dump() {
+		if (pageData == null || pageData.size() == 0) { return; }
+		try {
+			int numRows= pageData.size();
+			int numPages= (int) Math.ceil(1.0 * numRows / numRowPage);
+			int counter;
+			for (int k= 0; k < numPages; k++ ) {
+				buffer.putInt(numAttr);
+				buffer.putInt(Math.min(numRows, numRowPage));
+				counter= 8;
+				for (int i= 0; i < Math.min(numRows, numRowPage); i++ ) {
+					for (int j= 0; j < numAttr; j++ ) {
+
+						buffer.putInt(pageData.get(k * numRowPage + i).getTuple().get(j));
+						counter+= 4;
+					}
+				}
+				while (counter < 4096) {
+					buffer.putInt(0);
+					counter+= 4;
+				}
+				buffer.flip();
+				fc.write(buffer);
+				// no need
+				pageData= new ArrayList<Tuple>();
+			}
+		} catch (IOException e) {
+			System.err.print("BinaryTupleWriter dump fails: " + e);
+			e.printStackTrace();
+		}
+
 	}
 	
 	@Override
@@ -183,7 +218,6 @@ public class BinaryTupleWriter implements TupleWriter {
 //				data= new ArrayList<ArrayList<Integer>>();
 //			}
 //		} catch (IOException e) {
-//			// TODO Auto-generated catch block
 //			System.err.print("BinaryTupleWriter dump fails: " + e);
 //			e.printStackTrace();
 //		}
