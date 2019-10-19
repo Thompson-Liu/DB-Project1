@@ -61,14 +61,15 @@ public class EvaluateJoin implements ExpressionVisitor {
 	private Expression expr;
 
 
-	public EvaluateJoin(Expression whereExpr, ArrayList<String> leftSchema, 
-			ArrayList<String> rightSchema,HashMap<String,String> tableAlias) {
+	public EvaluateJoin(Expression whereExpr, String leftTableName, 
+			String rightTableName,HashMap<String,String> tableAlias) {
 		this.leftSchema = new ArrayList<String>();
 		this.rightSchema = new ArrayList<String>();
 		this.expr=whereExpr;
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.tableAlias = tableAlias;
+		check();
 	}
 	
 	public ArrayList<String> evaluate(Expression whereExpr) {
@@ -108,6 +109,15 @@ public class EvaluateJoin implements ExpressionVisitor {
 	 */
 	public ArrayList<String> getJoinAttributesRight(){
 		return joinAttributesRight;
+	}
+	
+	/**
+	 *  Helper function to check whether attributes belongs to both tables
+	 */
+	private void check(String a, String b) {
+		
+		
+		for(String )
 	}
 	
 	@Override
@@ -177,30 +187,28 @@ public class EvaluateJoin implements ExpressionVisitor {
 
 	@Override
 	public void visit(AndExpression arg0) {
-		// TODO Auto-generated method stub
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-		int right= sofar.pop();
-		int left= sofar.pop();
-		sofar.push((right == left && left == 1) ? 1 : 0);
 
 	}
 
 	@Override
 	public void visit(OrExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Between arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(EqualsTo arg0) {
-		// TODO Auto-generated method stub
+		Expression left= arg0.getLeftExpression();
+		Expression right = arg0.getRightExpression();
+		if((left instanceof Column) && (right instanceof Column)) {
+			Column Col1 = (Column) left;
+			Column Col2 = (Column) right;
+			
+		}
 
 	}
 
@@ -224,14 +232,11 @@ public class EvaluateJoin implements ExpressionVisitor {
 
 	@Override
 	public void visit(IsNullExpression arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(LikeExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -242,86 +247,58 @@ public class EvaluateJoin implements ExpressionVisitor {
 
 	@Override
 	public void visit(MinorThanEquals arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(NotEqualsTo arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Column arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(SubSelect arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(CaseExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(WhenClause arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(ExistsExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(AllComparisonExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(AnyComparisonExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Concat arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Matches arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(BitwiseAnd arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(BitwiseOr arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(BitwiseXor arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

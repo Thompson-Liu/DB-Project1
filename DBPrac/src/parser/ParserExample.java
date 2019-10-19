@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Distinct;
@@ -18,7 +19,7 @@ import net.sf.jsqlparser.statement.select.SelectBody;
  * @author Lucja Kot */
 public class ParserExample {
 
-	private static final String queriesFile= "queries.sql";
+	private static final String queriesFile= "/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/input/queries.sql";
 
 	public static void main(String[] args) {
 		try {
@@ -40,7 +41,8 @@ public class ParserExample {
 //				System.out.println("***from items are  :   " + plainSelect.getFromItem().toString());
 ////				System.out.println("remaining from items" + plainSelect.getJoins());
 ////				Expression a = AdditiveExpression();
-//				System.out.println("-----where clause is  :  " + plainSelect.getWhere());
+				System.out.println("-----where clause is  :  " + plainSelect.getWhere());
+				System.out.println("Class of where clause is  :   "+(plainSelect.getWhere() instanceof EqualsTo));
 //				System.out.println("inside where is   :    " + plainSelect.getWhere().toString());
 //				System.out.println("join list is :    " + plainSelect.getJoins());
 //				System.out.println("join list next :    " + plainSelect.getJoins().get(0).toString());

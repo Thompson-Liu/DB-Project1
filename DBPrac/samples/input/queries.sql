@@ -1,5 +1,6 @@
 SELECT *
 FROM Sailors
+WHERE Sailors.B = Sailors.C;
 -- ORDER BY Sailors.A;      -- changed a little bit should be without ORDER BY
 
 -- SELECT Sailors.A
