@@ -6,6 +6,7 @@
  */
 package physicalOperator;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,7 +20,7 @@ public class ExternalSortOperator extends Operator {
 
 	private PriorityQueue<Tuple> intermediateTable;    //  keep track of current 
 	private Operator childOp;
-	private TupleReader sortedReader;
+	private TupleReader sortedReader; 			// keep the sorted result in a file, and access by this reader
 	private int totalPass;  					// total number of passes needed
 	private Buffer memoryBuffer;
 	private int bufferSize;
@@ -52,8 +53,7 @@ public class ExternalSortOperator extends Operator {
 			int nextRuns = ExternalSort(curPass,runs);
 			runs = nextRuns;
 		}
-		sortedReader = new BinaryTupleReader("/tempdir/"+"externalIntermediate"+Integer.toString(totalPass)+"1");
-
+		sortedReader = new BinaryTupleReader("/tempdir/"+"externalIntermediate"+Integer.toString(totalPass)+"0");
 	}
 
 	// pass0
@@ -121,6 +121,14 @@ public class ExternalSortOperator extends Operator {
 			if((curnext=curReader.readNextTuple())!=null) {
 				intermediateTable.add(curnext);
 				tupleToReader.put(curnext, curReader);
+			}
+			// if this run finish delete this table from tempdir
+			else {
+				String dfile = curReader.getFileInfo();
+				File deleteFile = new File (dfile);
+				if(!deleteFile.delete()) {
+					System.out.println("didn't delete this file"+dfile);
+				}
 			}
 		}
 	}

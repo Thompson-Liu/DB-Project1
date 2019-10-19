@@ -2,6 +2,8 @@ package controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.PriorityQueue;
+
 import fileIO.*;
 
 public class ioTest {
@@ -10,15 +12,13 @@ public class ioTest {
 		try {
 		BinaryTupleReader tr= new BinaryTupleReader(
 				"/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/input/db/data/Boats");
-//		System.out.println(tr.readData());
-//		System.out.println(tr.readData().get(2).printData());
 		
 //		BinaryTupleWriter tw= new
 //		 BinaryTupleWriter("/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/output/result");
 		
 
-		// System.out.println(tr.readData().get(2).printData());
-		BinaryTupleWriter tw= new BinaryTupleWriter("/samples/tempdir/result");
+		BinaryTupleWriter tw= new BinaryTupleWriter("/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/tempdir/result");
+		System.out.println(tr.readNextTuple().printData());
 		tw.addNextTuple(tr.readNextTuple()); 
 		tw.addNextTuple(tr.readNextTuple()); 
 		tw.dump();

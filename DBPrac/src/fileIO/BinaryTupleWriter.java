@@ -41,6 +41,7 @@ public class BinaryTupleWriter implements TupleWriter {
 
 	@Override
 	public void addNextTuple(Tuple tup) {
+		
 		numAttr = tup.getTuple().size();
 		numRowPage = (int) Math.floor((4096 - 8) * 1.0 / (numAttr * 4));
 		if (curRow <= numRowPage - 1) {

@@ -69,6 +69,11 @@ public class ReadableTupleReader implements TupleReader {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public String getFileInfo() {
+		return this.file;
+	}
 
 	@Override
 	public Tuple readNextTuple() {

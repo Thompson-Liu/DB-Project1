@@ -10,7 +10,7 @@ import dataStructure.DataTable;
 import dataStructure.Tuple;
 
 public class BinaryTupleReader implements TupleReader {
-	private String fileName;
+	private String file;          // the directory + file name
 	private FileInputStream fin;
 	private FileChannel fc;
 	private ByteBuffer buffer;
@@ -19,11 +19,11 @@ public class BinaryTupleReader implements TupleReader {
 	private static int curRow = 0;    // keep track of next row to read on the buffer
 	private ArrayList<Tuple> pageData;
 
-	public BinaryTupleReader(String fileName) {
+	public BinaryTupleReader(String file) {
 		try {
-			this.fileName=fileName;
+			this.file=file;
 			this.pageData = new ArrayList<Tuple>();
-			fin= new FileInputStream(fileName);
+			fin= new FileInputStream(file);
 			fc= fin.getChannel();
 			buffer= ByteBuffer.allocate(4096);
 		} catch (FileNotFoundException e) {
@@ -59,6 +59,7 @@ public class BinaryTupleReader implements TupleReader {
 		}
 	}
 
+	@Override
 	public Tuple readNextTuple() {
 		if (curRow <= numRows - 1) {
 			return pageData.get(curRow++);
@@ -71,6 +72,32 @@ public class BinaryTupleReader implements TupleReader {
 				return null;
 			}
 		}
+	}
+	
+	@Override
+	public String getFileInfo() {
+		return this.file;
+	}
+	
+	@Override
+	public void close() {
+		try {
+			fin.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void reset() {
+		try {
+			fin= new FileInputStream(file);
+			fc= fin.getChannel();
+			buffer= ByteBuffer.allocate(4096);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		pageData = getNextPage();
 	}
 
 	///**
@@ -150,24 +177,4 @@ public class BinaryTupleReader implements TupleReader {
 	//		return resource;
 	//	}
 
-	@Override
-	public void close() {
-		try {
-			fin.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void reset() {
-		try {
-			fin= new FileInputStream(fileName);
-			fc= fin.getChannel();
-			buffer= ByteBuffer.allocate(4096);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		pageData = getNextPage();
-	}
 }
