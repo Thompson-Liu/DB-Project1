@@ -100,6 +100,14 @@ public class BinaryTupleReader implements TupleReader {
 		pageData = getNextPage();
 	}
 
+	@Override
+	public void reset(int index) {
+		// TODO Auto-generated method stub
+		
+		// Using position(long newPosition) method in FileChannel
+		
+	}
+
 	///**
 	// * read the next tuple
 	// * @return the tuple

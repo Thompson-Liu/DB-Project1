@@ -112,97 +112,77 @@ public class EvaluateJoin implements ExpressionVisitor {
 	
 	@Override
 	public void visit(NullValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Function arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(InverseExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(JdbcParameter arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(DoubleValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(LongValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(DateValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(TimeValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(TimestampValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Parenthesis arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(StringValue arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Addition arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Division arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Multiplication arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Subtraction arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(AndExpression arg0) {
 		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
+		int right= sofar.pop();
+		int left= sofar.pop();
+		sofar.push((right == left && left == 1) ? 1 : 0);
 
 	}
 

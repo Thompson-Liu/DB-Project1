@@ -87,4 +87,10 @@ public class ReadableTupleReader implements TupleReader {
 		return null;
 	}
 
+	@Override
+	public void reset(int index) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
