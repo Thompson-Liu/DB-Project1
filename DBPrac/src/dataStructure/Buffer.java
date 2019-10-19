@@ -15,6 +15,10 @@ public class Buffer {
 		tuples =  new ArrayList<Tuple>();
 	}
 	
+	public ArrayList<Tuple> getTuples(){
+		return tuples;
+	}
+	
 	public void addData(Tuple tup) {
 		tuples.add(tup);
 	}
@@ -47,7 +51,7 @@ public class Buffer {
 	 * @param primary
 	 * @param schema
 	 */
-	public void sortBuffer(ArrayList<Tuple> dataTuples,List<String> primary, ArrayList<String> schema) {
+	public void sortBuffer(List<String> primary, ArrayList<String> schema) {
 		// the new order of sorted data
 		ArrayList<String> newOrder = new ArrayList<String>();
 		for(String priorityCol : primary) {
