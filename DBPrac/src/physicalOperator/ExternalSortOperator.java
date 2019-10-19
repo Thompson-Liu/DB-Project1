@@ -2,6 +2,7 @@
  * For pass0, we used buffer to sort each table,
  * 	   pass 1 .. end, we use priority to keep track of the first tuple to merge among different runs
  * 		and a hashmap of tupleToReader to keep track of the first tuple to merge and the bufferReader it comes from
+ *	The number of tupleReaders represent the number of pages we have in buffer, in order to hold the tuples to sort
  */
 package physicalOperator;
 
@@ -43,7 +44,7 @@ public class ExternalSortOperator extends Operator {
 		// pass0  and get the total number of files stored
 		int totalFiles= initialRun();
 		runs = totalFiles;
-		//这里需要算一下👇
+		//这里需要double check一下👇
 		// calculate the total number of passes needed
 		Double div = Math.ceil(runs/bufferSize);
 		totalPass = (int) Math.ceil(Math.log(div)/Math.log(1.0*(bufferSize-1)));
@@ -51,7 +52,7 @@ public class ExternalSortOperator extends Operator {
 			int nextRuns = ExternalSort(curPass,runs);
 			runs = nextRuns;
 		}
-		sortedReader = new BinaryTupleReader("/tempDir/"+"externalIntermediate"+Integer.toString(totalPass)+"1");
+		sortedReader = new BinaryTupleReader("/tempdir/"+"externalIntermediate"+Integer.toString(totalPass)+"1");
 
 	}
 
@@ -69,7 +70,7 @@ public class ExternalSortOperator extends Operator {
 			}
 			memoryBuffer.addData(cur);
 		}
-		// have a return value to make sure this variable consistent throughout the algo
+		// the number of runs in current pass
 		return this.runs;
 	}
 
@@ -107,7 +108,6 @@ public class ExternalSortOperator extends Operator {
 			// hashmap will not overwrite even for tuple with same value as long as the tuples are coming from different tupleReaders, which is the property 
 			tupleToReader.put(tupleRead.readNextTuple(),tupleRead);
 		}
-
 		BinaryTupleWriter tupleWrite = new BinaryTupleWriter("/tempDir/"+"externalIntermediate"+Integer.toString(pass)+Integer.toString(numMerge));
 		intermediateTable = new PriorityQueue(new TupleComparator(this.colList,this.schema));
 		Tuple next;

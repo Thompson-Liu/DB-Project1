@@ -18,7 +18,7 @@ import dataStructure.Tuple;
 public class BinaryTupleWriter implements TupleWriter {
 
 	private ByteBuffer buffer;
-	private String fileName;
+	private String file;
 	private FileChannel fc;
 	private FileOutputStream fout;
 	private int curRow = 0;   //keep counting the position of current page
@@ -26,10 +26,10 @@ public class BinaryTupleWriter implements TupleWriter {
 	private int numRowPage;
 	private ArrayList<Tuple> pageData;
 
-	public BinaryTupleWriter(String name) {
-		fileName = name;
+	public BinaryTupleWriter(String file) {
+		this.file = file;
 		try {
-			fout = new FileOutputStream(name);
+			fout = new FileOutputStream(file);
 			fc = fout.getChannel();
 			pageData = new ArrayList<Tuple>();
 			buffer = ByteBuffer.allocate(4096);
@@ -89,7 +89,7 @@ public class BinaryTupleWriter implements TupleWriter {
 	@Override
 	public void reset() {
 		try {
-			fout = new FileOutputStream(fileName);
+			fout = new FileOutputStream(file);
 			fc = fout.getChannel();
 			pageData = new ArrayList<Tuple>();
 			buffer = ByteBuffer.allocate(4096);

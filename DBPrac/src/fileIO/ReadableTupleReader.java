@@ -16,13 +16,13 @@ import dataStructure.Tuple;
 
 public class ReadableTupleReader implements TupleReader {
 	private BufferedReader buffer;
-	private String fileName;
+	private String file;
 
-	public ReadableTupleReader(String fileName) {
+	public ReadableTupleReader(String file) {
 		// TODO Auto-generated constructor stub
-		this.fileName=fileName;
+		this.file=file;
 		try {
-			buffer= new BufferedReader(new FileReader(fileName));
+			buffer= new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -64,7 +64,7 @@ public class ReadableTupleReader implements TupleReader {
 	@Override
 	public void reset() {
 		try {
-			buffer= new BufferedReader(new FileReader(fileName));
+			buffer= new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

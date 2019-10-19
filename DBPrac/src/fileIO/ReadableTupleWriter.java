@@ -40,7 +40,6 @@ public class ReadableTupleWriter implements TupleWriter{
 	@Override
 	public void close() {
 		try {
-			//			fout.close();
 			buffer.close();
 		} catch (IOException e) {
 			System.err.println("Fail to close Readable Tuple Writer. ");
@@ -52,24 +51,25 @@ public class ReadableTupleWriter implements TupleWriter{
 	@Override
 	public void write(ArrayList<Tuple> data) {
 		// TODO Auto-generated method stub
-
+		for (Tuple tup : data) {
+			this.data.add(tup.getTuple());
+		}
 	}
 
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-
+		this.data=new ArrayList<ArrayList<Integer>>();
 	}
 
 	@Override
 	public void addNextTuple(Tuple tup) {
-		data.add(tup.getTuple());
+		this.data.add(tup.getTuple());
 	}
 
 	@Override
 	public void dump() {
 		try {
-
 			for (ArrayList<Integer> x : data) {
 				for (int i= 0; i < x.size() - 1; i++) {
 					String out = x.get(i) + ",";

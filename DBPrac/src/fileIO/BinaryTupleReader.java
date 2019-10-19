@@ -22,6 +22,7 @@ public class BinaryTupleReader implements TupleReader {
 	public BinaryTupleReader(String fileName) {
 		try {
 			this.fileName=fileName;
+			this.pageData = new ArrayList<Tuple>();
 			fin= new FileInputStream(fileName);
 			fc= fin.getChannel();
 			buffer= ByteBuffer.allocate(4096);

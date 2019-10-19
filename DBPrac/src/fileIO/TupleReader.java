@@ -13,5 +13,10 @@ public interface TupleReader {
 	public void close();
 
 	public void reset();
+	
+//	/**
+//	 * delete this file of tupleReader
+//	 */
+//	public void deleteFile();
 
 }
