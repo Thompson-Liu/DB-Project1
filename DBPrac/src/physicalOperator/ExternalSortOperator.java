@@ -79,6 +79,7 @@ public class ExternalSortOperator extends Operator {
 			}
 			memoryBuffer.addData(cur);
 		}
+		// dump the rest
 		if(!(memoryBuffer.empty())) {
 			memoryBuffer.sortBuffer(colList, schema);
 			TupleWriter tuplesWriter= new BinaryTupleWriter(
@@ -103,7 +104,10 @@ public class ExternalSortOperator extends Operator {
 			merge(startTable, endTable, i,passnum);
 			startTable= endTable;
 		}
+		System.out.println(pass);
+		System.out.println(runs);
 		this.pass++;
+		System.out.println("merge number is "+mergenum);
 		return mergenum;
 	}
 
@@ -147,7 +151,6 @@ public class ExternalSortOperator extends Operator {
 			}
 			// if this run finish delete this table from tempdir
 			else {
-				System.out.println("----------朋友delete一下呀-----");
 				String dfile= curReader.getFileInfo();
 				File deleteFile= new File(dfile);
 				if (!deleteFile.delete()) {
