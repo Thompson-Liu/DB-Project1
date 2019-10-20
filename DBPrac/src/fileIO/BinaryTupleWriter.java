@@ -51,7 +51,6 @@ public class BinaryTupleWriter implements TupleWriter {
 			curRow++;
 		} else {
 			writeNextPage();
-//			buffer = ByteBuffer.allocate(4096);
 			pageData = new ArrayList<Tuple>();
 			pageData.add(tup);
 			curRow = 1;
@@ -62,13 +61,6 @@ public class BinaryTupleWriter implements TupleWriter {
 		buffer.putInt(numAttr);
 		buffer.putInt(pageData.size());
 		int counter = 8;
-//		for (int i= 0; i < Math.min(numRows, numRowPage); i++ ) {
-//			for (int j= 0; j < numAttr; j++ ) {
-//
-//				buffer.putInt(data.get(numPage * numRowPage + i).get(j));
-//				counter+= 4;
-//			}
-//		}
 		for (int i = 0; i < pageData.size(); i++) {
 			for (int j = 0; j < numAttr; j++) {
 				buffer.putInt(pageData.get(i).getTuple().get(j));

@@ -63,7 +63,6 @@ public class ReadableTupleReader implements TupleReader {
 		}
 	}
 
-	
 	@Override
 	public String getFileInfo() {
 		return this.file;
