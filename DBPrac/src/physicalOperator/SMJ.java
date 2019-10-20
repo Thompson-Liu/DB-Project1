@@ -18,10 +18,11 @@ public class SMJ extends Operator {
 	private Tuple tr;
 	private Tuple ts;
 	private Tuple gs;
+	boolean flag;
 
 	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
-		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
-		for (int i= 0; i < leftColList.size(); i+= 1) {
+		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int k) {
+		for (int i= 0; i < k; i+= 1) {
 			if (leftTup.getData(leftSchema.indexOf(leftColList.get(i))) != rightTup
 				.getData(rightSchema.indexOf(rightColList.get(i)))) { return false; }
 		}
@@ -40,34 +41,52 @@ public class SMJ extends Operator {
 		Tuple firstTuple= rightExSortOp.getNextTuple();
 		ts= firstTuple;
 		gs= firstTuple;
+		flag= false;
 	}
 
 	@Override
 	public Tuple getNextTuple() {
 		while (tr != null && gs != null) {
-			for (int i= 0; i < leftColList.size(); i++ ) {
-				while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
-					.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
-					tr= leftExSortOp.getNextTuple();
-				}
-				while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
-					.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
-					gs= rightExSortOp.getNextTuple();
-				}
-			}
-			ts= gs;
-			while (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema())) {
-				ts= gs;
-				while (ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema())) {
-					Tuple joinedTuple= tr;
-					for (int i= 0; i < rightOp.schema().size(); i++ ) {
-						joinedTuple.addData(ts.getData(i));
+			if (!flag) {
+				int i= 0;
+				while (i < leftColList.size()) {
+					while (tr != null && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
+						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
+						tr= leftExSortOp.getNextTuple();
+						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
+							i= 0;
+							break;
+						}
 					}
-					ts= rightExSortOp.getNextTuple();
-					return joinedTuple;
+					while (tr != null && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
+						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
+						gs= rightExSortOp.getNextTuple();
+						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
+							i= -1;
+							break;
+						}
+					}
+					i+= 1;
 				}
-				gs= ts;
+				ts= gs;
 			}
+			if (tr == null | gs == null) return null;
+//			while (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+//				leftColList.size())) {
+//				ts= gs;
+			if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+				leftColList.size())) {
+				flag= true;
+				Tuple joinedTuple= tr;
+				for (int j= 0; j < rightOp.schema().size(); j++ ) {
+					joinedTuple.addData(ts.getData(j));
+				}
+				ts= rightExSortOp.getNextTuple();
+				return joinedTuple;
+			}
+//			gs= ts;
+//			}
+			flag= false;
 		}
 		return null;
 	}
