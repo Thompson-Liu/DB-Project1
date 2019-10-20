@@ -1,10 +1,13 @@
 package physicalOperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dataStructure.Tuple;
 import fileIO.BinaryTupleWriter;
 import fileIO.TupleWriter;
+import net.sf.jsqlparser.expression.Expression;
+import parser.EvaluateJoin;
 
 public class SMJ extends Operator {
 	private Tuple tr;
@@ -20,8 +23,10 @@ public class SMJ extends Operator {
 		return true;
 	}
 
-	public SMJ(int bufferSize, ArrayList<String> leftColList, ArrayList<String> rightColList, Operator leftOp,
-		Operator rightOp) {
+	public SMJ(int bufferSize,Operator leftOp, Operator rightOp, Expression joinExpr, HashMap<String, String> alias) {
+		EvaluateJoin evalJoin = new EvaluateJoin(joinExpr, leftOp.getTableName(), rightOp.getTableName(), alias);
+		ArrayList<String> leftColList = evalJoin.getJoinAttributesLeft();
+		ArrayList<String> rightColList = evalJoin.getJoinAttributesRight();
 //		ArrayList<String> newSchema= new ArrayList<String>();
 //		for (String col : leftSchema) {
 //			if (!leftColList.contains(col)) {
@@ -82,14 +87,11 @@ public class SMJ extends Operator {
 
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.write(getData().toArrayList());
+		Tuple t; 
+		while ((t = getNextTuple()) != null) {
+			writer.addNextTuple(t);
+		}
+		writer.dump();
 		writer.close();
 	}
-
-	@Override
-	public DataTable getData() {
-		DataTable temp= new DataTable(dataFile, schema);
-		return temp;
-	}
-
 }

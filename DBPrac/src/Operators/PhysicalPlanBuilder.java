@@ -12,11 +12,14 @@ import logicalOperators.ProjectLogOp;
 import logicalOperators.ScanLogOp;
 import logicalOperators.SelectLogOp;
 import logicalOperators.SortLogOp;
+import net.sf.jsqlparser.expression.Expression;
+import parser.EvaluateJoin;
 import physicalOperator.BNLJ;
 import physicalOperator.DuplicateEliminationOperator;
 import physicalOperator.JoinOperator;
 import physicalOperator.Operator;
 import physicalOperator.ProjectOperator;
+import physicalOperator.SMJ;
 import physicalOperator.ScanOperator;
 import physicalOperator.SelectOperator;
 import physicalOperator.SortOperator;
@@ -114,7 +117,8 @@ public class PhysicalPlanBuilder {
 					joinLogOp.getAlias());
 			break;
 		case 2:
-			// to be implemented after SMJ
+			immOp = new SMJ(join[1],leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
+					joinLogOp.getAlias());
 			break;
 		}
 		

@@ -39,7 +39,7 @@ public class BNLJ extends Operator {
 		schema = new ArrayList<String>(outer.schema());
 		schema.addAll(inner.schema());
 		
-		tableName = outer.getTableName() + " " + inner.getTableName();
+		tableName = outer.getTableName() + "," + inner.getTableName();
 		alias = tableAlias;
 		eval = new EvaluateWhere(joinCond, innerOp.schema(), outerOp.schema(), alias);
 	}
