@@ -30,7 +30,8 @@ public class SMJ extends Operator {
 		return true;
 	}
 
-	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias, String dir) {
+	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias,
+		String dir) {
 		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName(), alias);
 		leftColList= evalJoin.getJoinAttributesLeft();
 		rightColList= evalJoin.getJoinAttributesRight();
@@ -63,6 +64,7 @@ public class SMJ extends Operator {
 					while (tr != null && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 						gs= rightExSortOp.getNextTuple();
+						ptr+= 1;
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
 							i= -1;
 							break;
@@ -73,14 +75,10 @@ public class SMJ extends Operator {
 				ts= new Tuple(gs.getTuple());
 			}
 			if (tr == null || gs == null) return null;
-//			while (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
-//				leftColList.size())) {
-//				ts= gs;
 			if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
 				flag= true;
 				Tuple joinedTuple= new Tuple();
-				System.out.println(tr.printData());
 				for (int j= 0; j < leftOp.schema().size(); j++ ) {
 					joinedTuple.addData(tr.getData(j));
 				}
@@ -89,10 +87,11 @@ public class SMJ extends Operator {
 				}
 				ts= rightExSortOp.getNextTuple();
 				return joinedTuple;
+			} else {
+				flag= false;
+				tr= leftExSortOp.getNextTuple();
+				rightExSortOp.resetIndex(ptr);
 			}
-//			gs= new Tuple(ts.getTuple());
-//			}
-			flag= false;
 		}
 		return null;
 	}
@@ -100,9 +99,10 @@ public class SMJ extends Operator {
 	@Override
 	public void dump(TupleWriter writer) {
 		Tuple t;
-		int counter=1;
+		int counter= 1;
+		System.out.println("here");
 		while ((t= getNextTuple()) != null) {
-			System.out.println(counter++);
+			System.out.println(counter++ );
 			System.out.println(t.printData());
 			writer.addNextTuple(t);
 		}
