@@ -17,7 +17,6 @@ public class ProjectOperator extends Operator {
 
 	private Operator childOp;
 	private ArrayList<String> selectColumns;
-//	private DataTable data;
 	private HashMap<String, String> tableAlias;
 	private String tableName;
 
@@ -51,8 +50,6 @@ public class ProjectOperator extends Operator {
 				selectColumns.add(tableName + "." + column);
 			}
 		}
-
-//		this.data= new DataTable(operator.getTableName(), selectColumns);
 	}
 
 	/** @return Returns the next tuple read from the data */
@@ -67,8 +64,6 @@ public class ProjectOperator extends Operator {
 				int index= childOp.schema().indexOf(item.toString());
 				tup.addData(next.getData(index));
 			}
-//			data.addData(tup);
-//			data.setSchema(selectColumns);
 			return tup;
 		}
 		return next;
@@ -105,16 +100,5 @@ public class ProjectOperator extends Operator {
 	@Override
 	public String getTableName() {
 		return this.tableName;
-	}
-
-	/** @return the data read by the operator in DataTable data structure */
-	@Override
-	public DataTable getData() {
-//		Tuple t;
-//		while ((t = getNextTuple()) != null) {
-//		}
-//		reset();
-//		return data;
-		return null;
 	}
 }

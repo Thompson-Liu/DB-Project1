@@ -124,19 +124,11 @@ public class JoinOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.write(getData().toArrayList());
-		writer.close();
-	}
-
-	/** @return the data read by the operator in DataTable data structure */
-	@Override
-	public DataTable getData() {
 		Tuple t;
 		while ((t = getNextTuple()) != null) {
-			
+			writer.addNextTuple(t);
 		}
-		
-		reset();
-		return currentTable;
+		writer.dump();
+		writer.close();
 	}
 }
