@@ -55,14 +55,20 @@ public class SMJ extends Operator {
 				while (i < leftColList.size()) {
 					while (tr != null && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
+						System.out.println("this tr is : " + tr.printData());
 						tr= leftExSortOp.getNextTuple();
+						System.out.println("leftExsort     schema is   :   " + leftExSortOp.schema());
+						System.out.println(" yeeeesssssssssss  tr is : " + tr.printData());
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
 							i= 0;
 							break;
 						}
+						System.out.println(" nnnnnnnnnow  tr is : " + tr.printData());
 					}
 					while (tr != null && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
+						System.out.println("     that  tr is : " + tr.printData());
+
 						gs= rightExSortOp.getNextTuple();
 						ptr+= 1;
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
