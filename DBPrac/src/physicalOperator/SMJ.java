@@ -30,14 +30,14 @@ public class SMJ extends Operator {
 		return true;
 	}
 
-	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias) {
+	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias, String dir) {
 		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName(), alias);
 		leftColList= evalJoin.getJoinAttributesLeft();
 		rightColList= evalJoin.getJoinAttributesRight();
 		leftOp= left;
 		rightOp= right;
-		leftExSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, "/tempdir/");
-		rightExSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, "/tempdir/");
+		leftExSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir);
+		rightExSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir);
 		tr= leftExSortOp.getNextTuple();
 		Tuple firstTuple= rightExSortOp.getNextTuple();
 		ts= firstTuple;
@@ -70,23 +70,27 @@ public class SMJ extends Operator {
 					}
 					i+= 1;
 				}
-				ts= gs;
+				ts= new Tuple(gs.getTuple());
 			}
-			if (tr == null | gs == null) return null;
+			if (tr == null || gs == null) return null;
 //			while (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 //				leftColList.size())) {
 //				ts= gs;
 			if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
 				flag= true;
-				Tuple joinedTuple= tr;
+				Tuple joinedTuple= new Tuple();
+				System.out.println(tr.printData());
+				for (int j= 0; j < leftOp.schema().size(); j++ ) {
+					joinedTuple.addData(tr.getData(j));
+				}
 				for (int j= 0; j < rightOp.schema().size(); j++ ) {
 					joinedTuple.addData(ts.getData(j));
 				}
 				ts= rightExSortOp.getNextTuple();
 				return joinedTuple;
 			}
-//			gs= ts;
+//			gs= new Tuple(ts.getTuple());
 //			}
 			flag= false;
 		}
@@ -96,7 +100,10 @@ public class SMJ extends Operator {
 	@Override
 	public void dump(TupleWriter writer) {
 		Tuple t;
+		int counter=1;
 		while ((t= getNextTuple()) != null) {
+			System.out.println(counter++);
+			System.out.println(t.printData());
 			writer.addNextTuple(t);
 		}
 		writer.dump();

@@ -10,43 +10,43 @@ public class Buffer {
 
 	private ArrayList<Tuple> tuples;
 	private int maxTuples;
-	private ArrayList<String> sortOrder;
-	
+	private ArrayList<String> newOrder;
+
 	public Buffer(int numTuples) {
 		maxTuples = numTuples;
 		tuples =  new ArrayList<Tuple>();
 	}
-	
+
 	public ArrayList<Tuple> getTuples(){
 		return tuples;
 	}
-	
+
 	public void addData(Tuple tup) {
 		tuples.add(tup);
 	}
-	
+
 	public boolean overflow() {
 		if (tuples.size() >= maxTuples) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean empty() {
 		return tuples.size() == 0;
 	}
-	
+
 	public Tuple getTuple(int index) {
 		if (index >= tuples.size()) {
 			return null;
 		}
 		return tuples.get(index);
 	}
-	
+
 	public void setOrder(ArrayList<String> order) {
-		sortOrder  = order;
+		newOrder  = order;
 	}
-	
+
 	/**
 	 *  Sort a set of tuples by firstly primary order, then follows the sequence of schema
 	 * @param dataTuples
@@ -55,13 +55,18 @@ public class Buffer {
 	 */
 	public void sortBuffer(List<String> primary, ArrayList<String> schema) {
 		// the new order of sorted data
-		ArrayList<String> newOrder = new ArrayList<String>();
-		for(String priorityCol : primary) {
-			newOrder.add(priorityCol);
+		newOrder = new ArrayList<String>();
+		if(primary==null) {
+			newOrder=schema;
 		}
-		for(String col:schema) {
-			if(!primary.contains(col)) {
-				newOrder.add(col);
+		else {
+			for(String priorityCol : primary) {
+				newOrder.add(priorityCol);
+			}
+			for(String col:schema) {
+				if(!primary.contains(col)) {
+					newOrder.add(col);
+				}
 			}
 		}
 		Comparator<Tuple> myComparator= new Comparator<Tuple>() {
@@ -83,7 +88,7 @@ public class Buffer {
 
 		log.dumpTable(tuples);
 	}
-	
+
 	public void clear() {
 		tuples = new ArrayList<Tuple>();
 	}

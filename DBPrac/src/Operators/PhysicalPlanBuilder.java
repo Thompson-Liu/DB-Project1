@@ -127,7 +127,7 @@ public class PhysicalPlanBuilder {
 			break;
 		case 2:
 			immOp = new SMJ(join[1],leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
-					joinLogOp.getAlias());
+					joinLogOp.getAlias(), tempDir);
 			break;
 		}
 		

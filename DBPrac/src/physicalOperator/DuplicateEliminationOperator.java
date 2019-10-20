@@ -17,14 +17,18 @@ public class DuplicateEliminationOperator extends Operator {
 	public DuplicateEliminationOperator(ExternalSortOperator operator) {
 		exSortOp= operator;
 		Tuple tmp= operator.getNextTuple();
-		prevTuple= tmp;
+		prevTuple= null;
 		currTuple= tmp;
 	}
 
 	/** @return the next tuple in the buffer after duplicates are removed */
 	@Override
 	public Tuple getNextTuple() {
-		while (currTuple.equals(prevTuple)) {
+		if (prevTuple == null) {
+			prevTuple= currTuple;
+			return currTuple;
+		}
+		while (currTuple!=null && currTuple.getTuple().equals(prevTuple.getTuple())) {
 			currTuple= exSortOp.getNextTuple();
 		}
 		prevTuple= currTuple;

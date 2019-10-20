@@ -206,12 +206,12 @@ public class EvaluateJoin implements ExpressionVisitor {
 			boolean order = (this.leftTableNames.contains(Col1Table) ) && this.rightTableNames.contains(Col2Table);
 			boolean inverse = (this.rightTableNames.contains(Col1Table)) && this.leftTableNames.contains(Col2Table);
 			if(order) {
-				this.joinAttributesLeft.add(Col1.getColumnName());
-				this.joinAttributesRight.add(Col2.getColumnName());
+				this.joinAttributesLeft.add(Col1Table+"."+Col1.getColumnName());
+				this.joinAttributesRight.add(Col2Table+"."+Col2.getColumnName());
 			}
 			else if (inverse) {
-				this.joinAttributesLeft.add(Col2.getColumnName());
-				this.joinAttributesRight.add(Col1.getColumnName());
+				this.joinAttributesLeft.add(Col2Table+"."+ Col2.getColumnName());
+				this.joinAttributesRight.add(Col1Table+"."+Col1.getColumnName());
 			}
 		}
 

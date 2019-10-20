@@ -11,12 +11,17 @@ public class TupleComparator implements Comparator<Tuple> {
 		this.schema = schema;
 		// the new order of sorted data
 		this.order = new ArrayList<String>();
-		for(String priorityCol : colList) {
-			this.order.add(priorityCol);
+		if(colList==null) {
+			order=schema;
 		}
-		for(String col:schema) {
-			if(!colList.contains(col)) {
-				this.order.add(col);
+		else {
+			for(String priorityCol : colList) {
+				this.order.add(priorityCol);
+			}
+			for(String col:schema) {
+				if(!colList.contains(col)) {
+					this.order.add(col);
+				}
 			}
 		}
 	}
