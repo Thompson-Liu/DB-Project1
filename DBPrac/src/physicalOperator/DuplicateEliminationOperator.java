@@ -2,7 +2,6 @@ package physicalOperator;
 
 import java.util.ArrayList;
 
-import dataStructure.DataTable;
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 
@@ -59,12 +58,6 @@ public class DuplicateEliminationOperator extends Operator {
 	@Override
 	public String getTableName() {
 		return exSortOp.getTableName();
-	}
-
-	/** @return the data in the buffer after duplicates are removed */
-	@Override
-	public DataTable getData() {
-		return null;
 	}
 
 }
