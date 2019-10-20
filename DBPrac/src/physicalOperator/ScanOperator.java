@@ -42,7 +42,8 @@ public class ScanOperator extends Operator {
 
 	@Override
 	public Tuple getNextTuple() {
-		return reader.readNextTuple();
+		Tuple t = reader.readNextTuple();
+		return t;
 	}
 
 	/** reset read stream to re-read the data */

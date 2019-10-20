@@ -45,10 +45,13 @@ public class BinaryTupleReader implements TupleReader {
 		}
 
 		if (numRows != 0) {
+			pageData = new ArrayList<Tuple>();
 			// Populate the dataTable
 			for (int i= 0; i < numRows; i++ ) {
 				ArrayList<Integer> temp= new ArrayList<Integer>(numAttr);
+				
 				for (int j= 0; j < numAttr; j++ ) {
+					
 					temp.add(buffer.getInt(i * numAttr * 4 + 8 + j * 4));
 				}
 				pageData.add(new Tuple(temp));

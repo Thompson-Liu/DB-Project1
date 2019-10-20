@@ -44,13 +44,13 @@ public class Interpreter {
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
 
 					// need to pass in the name of the config file path 
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[1] + "/plan_builder_config.txt", args[2]);
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt", args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
-					ReadableTupleWriter writer= new ReadableTupleWriter(
-							outputDir + "/query" + Integer.toString(queryCounter));
-//					BinaryTupleWriter writer= new BinaryTupleWriter(
-//						outputDir + "/query" + Integer.toString(queryCounter));
+//					ReadableTupleWriter writer= new ReadableTupleWriter(
+//							outputDir + "/query" + Integer.toString(queryCounter));
+					BinaryTupleWriter writer= new BinaryTupleWriter(
+						outputDir + "/query" + Integer.toString(queryCounter));
 					long time1 = System.currentTimeMillis();
 					op.dump(writer);
 					

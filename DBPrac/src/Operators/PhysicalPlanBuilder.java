@@ -57,7 +57,7 @@ public class PhysicalPlanBuilder {
 		try {
 			nextLine = buffer.readLine();
 			String[] args = nextLine.split(" ");
-			if (args.length == 0) {
+			if (args.length == 1) {
 				argList = new int[] { 0 };
 			} else {
 				assert(args.length == 2);
@@ -68,8 +68,9 @@ public class PhysicalPlanBuilder {
 					argList[i] = argInt;
 				}
 			}
-		} catch(IOException e) {
+		} catch(Exception e) {
 			System.err.println("An error occured during reading from file");
+			e.getStackTrace();
 		} 
 		return argList;
 	}

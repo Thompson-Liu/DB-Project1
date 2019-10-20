@@ -25,6 +25,7 @@ public class BinaryTupleWriter implements TupleWriter {
 	private int numAttr;
 	private int numRowPage;
 	private ArrayList<Tuple> pageData;
+	private int numPage;
 
 	public BinaryTupleWriter(String file) {
 		this.file = file;
@@ -33,6 +34,7 @@ public class BinaryTupleWriter implements TupleWriter {
 			fc = fout.getChannel();
 			pageData = new ArrayList<Tuple>();
 			buffer = ByteBuffer.allocate(4096);
+			numPage=0;
 		} catch (Exception e) {
 			System.err.print("BinaryTupleWrite initialize fail.");
 			e.printStackTrace();
@@ -49,9 +51,10 @@ public class BinaryTupleWriter implements TupleWriter {
 			curRow++;
 		} else {
 			writeNextPage();
-			buffer = ByteBuffer.allocate(4096);
+//			buffer = ByteBuffer.allocate(4096);
 			pageData = new ArrayList<Tuple>();
 			pageData.add(tup);
+			curRow = 1;
 		}
 	}
 
@@ -59,6 +62,13 @@ public class BinaryTupleWriter implements TupleWriter {
 		buffer.putInt(numAttr);
 		buffer.putInt(pageData.size());
 		int counter = 8;
+//		for (int i= 0; i < Math.min(numRows, numRowPage); i++ ) {
+//			for (int j= 0; j < numAttr; j++ ) {
+//
+//				buffer.putInt(data.get(numPage * numRowPage + i).get(j));
+//				counter+= 4;
+//			}
+//		}
 		for (int i = 0; i < pageData.size(); i++) {
 			for (int j = 0; j < numAttr; j++) {
 				buffer.putInt(pageData.get(i).getTuple().get(j));
@@ -69,9 +79,11 @@ public class BinaryTupleWriter implements TupleWriter {
 			buffer.putInt(0);
 			counter+= 4;
 		}
-//		buffer.flip();
+		numPage++;
+		buffer.flip();
 		try {
 			fc.write(buffer);
+			buffer.clear();
 		} catch (IOException e) {
 			System.err.println("Error when writing to the file");
 			e.printStackTrace();
