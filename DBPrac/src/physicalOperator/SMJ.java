@@ -37,8 +37,8 @@ public class SMJ extends Operator {
 		rightColList= evalJoin.getJoinAttributesRight();
 		leftOp= left;
 		rightOp= right;
-		leftExSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir);
-		rightExSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir);
+		leftExSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, "left");
+		rightExSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
 		tr= leftExSortOp.getNextTuple();
 		Tuple firstTuple= rightExSortOp.getNextTuple();
 		ts= firstTuple;
