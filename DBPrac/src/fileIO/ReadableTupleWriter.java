@@ -17,7 +17,6 @@ public class ReadableTupleWriter implements TupleWriter{
 	private BufferedOutputStream buffer;
 	private FileOutputStream fout;
 
-
 	public ReadableTupleWriter(String name) {
 		try {
 			fout= new FileOutputStream(name);
@@ -28,31 +27,16 @@ public class ReadableTupleWriter implements TupleWriter{
 			e.printStackTrace();
 		}
 	}
-
-	public void addTable(ArrayList<Tuple> dataTable) {
-		for (Tuple tup : dataTable) {
-			ArrayList<Integer> a = tup.getTuple();
-			data.add(a);
-		}
-	}
-
-
+	
 	@Override
-	public void close() {
-		try {
-			buffer.close();
-		} catch (IOException e) {
-			System.err.println("Fail to close Readable Tuple Writer. ");
-			e.printStackTrace();
-		}
-
+	public void addNextTuple(Tuple tup) {
+		data.add(tup.getTuple());
 	}
 
 	@Override
 	public void write(ArrayList<Tuple> data) {
-		// TODO Auto-generated method stub
 		for (Tuple tup : data) {
-			this.data.add(tup.getTuple());
+			addNextTuple(tup);
 		}
 	}
 
@@ -61,10 +45,15 @@ public class ReadableTupleWriter implements TupleWriter{
 		// TODO Auto-generated method stub
 		this.data=new ArrayList<ArrayList<Integer>>();
 	}
-
+	
 	@Override
-	public void addNextTuple(Tuple tup) {
-		this.data.add(tup.getTuple());
+	public void close() {
+		try {
+			buffer.close();
+		} catch (IOException e) {
+			System.err.println("Fail to close Readable Tuple Writer. ");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -80,11 +69,9 @@ public class ReadableTupleWriter implements TupleWriter{
 				String newLine = "\n";
 				buffer.write(newLine.getBytes());
 			}
-
 		} catch (IOException e) {
 			System.err.print("BinaryTupleWriter dump fails: " + e);
 			e.printStackTrace();
 		}
-
 	}
 }

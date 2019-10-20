@@ -64,15 +64,6 @@ public class ReadableTupleReader implements TupleReader {
 	}
 
 	@Override
-	public void reset() {
-		try {
-			buffer= new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Override
 	public String getFileInfo() {
 		return this.file;
 	}
@@ -89,11 +80,6 @@ public class ReadableTupleReader implements TupleReader {
 	}
 
 	@Override
-<<<<<<< HEAD
-	public void reset(int index) {
-		// TODO Auto-generated method stub
-		
-=======
 	public void reset() {
 		try {
 			buffer= new BufferedReader(new FileReader(file));
@@ -102,18 +88,11 @@ public class ReadableTupleReader implements TupleReader {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
->>>>>>> 356174d35d14a1124635a48fd0473e176e646bac
 	}
 
 	@Override
-<<<<<<< HEAD
-	public void reset(int index, int BytesPerRow) {
-		// TODO Auto-generated method stub
-		
-=======
 	public void reset(int index) {
 		dataIndex = index;
->>>>>>> 356174d35d14a1124635a48fd0473e176e646bac
 	}
 
 }
