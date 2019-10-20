@@ -29,7 +29,6 @@ public class SelectOperator extends Operator {
 		exp= expression;
 		childOp= op;
 		this.schema = op.schema();
-//		data= new DataTable(op.getTableName(), op.schema());
 		this.tableAlias= tableAlias;
 	}
 
@@ -41,8 +40,6 @@ public class SelectOperator extends Operator {
 			childOp.schema(), tableAlias);
 		while ((next= childOp.getNextTuple()) != null) {
 			if ((next= exprVisitor.evaluate(null, next)) != null) {
-//				data.addData(next);
-
 				return next;
 			}
 		}
