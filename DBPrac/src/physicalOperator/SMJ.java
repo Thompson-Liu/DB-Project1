@@ -75,22 +75,25 @@ public class SMJ extends Operator {
 				ts= new Tuple(gs.getTuple());
 			}
 			if (tr == null || gs == null) return null;
-			if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+			if (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
-				flag= true;
-				Tuple joinedTuple= new Tuple();
-				for (int j= 0; j < leftOp.schema().size(); j++ ) {
-					joinedTuple.addData(tr.getData(j));
+				if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+					leftColList.size())) {
+					flag= true;
+					Tuple joinedTuple= new Tuple();
+					for (int j= 0; j < leftOp.schema().size(); j++ ) {
+						joinedTuple.addData(tr.getData(j));
+					}
+					for (int j= 0; j < rightOp.schema().size(); j++ ) {
+						joinedTuple.addData(ts.getData(j));
+					}
+					ts= rightExSortOp.getNextTuple();
+					return joinedTuple;
+				} else {
+					flag= false;
+					tr= leftExSortOp.getNextTuple();
+					rightExSortOp.resetIndex(ptr);
 				}
-				for (int j= 0; j < rightOp.schema().size(); j++ ) {
-					joinedTuple.addData(ts.getData(j));
-				}
-				ts= rightExSortOp.getNextTuple();
-				return joinedTuple;
-			} else {
-				flag= false;
-				tr= leftExSortOp.getNextTuple();
-				rightExSortOp.resetIndex(ptr);
 			}
 		}
 		return null;
@@ -99,10 +102,7 @@ public class SMJ extends Operator {
 	@Override
 	public void dump(TupleWriter writer) {
 		Tuple t;
-		int counter= 1;
-		System.out.println("here");
 		while ((t= getNextTuple()) != null) {
-			System.out.println(counter++ );
 			System.out.println(t.printData());
 			writer.addNextTuple(t);
 		}
