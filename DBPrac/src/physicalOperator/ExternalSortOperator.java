@@ -127,6 +127,7 @@ public class ExternalSortOperator extends Operator {
 			Tuple tup;
 			if((tup=tupleRead.readNextTuple())!=null) {
 				intermediateTable.add(tup);
+				tupleToReader.put(tup, tupleRead);
 			}
 			
 		}
@@ -137,7 +138,6 @@ public class ExternalSortOperator extends Operator {
 		TupleReader curReader;
 		// pulling tuple-wise of the first of runs of previous sorted table
 		while ((next= intermediateTable.poll()) != null) {
-			System.out.println("next is : "+next.printData());
 			tupleWrite.addNextTuple(next);
 			curReader= tupleToReader.get(next);
 			tupleToReader.remove(next);

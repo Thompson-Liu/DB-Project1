@@ -1,5 +1,8 @@
 -- SELECT *
 -- FROM Sailors S;
+SELECT *
+FROM Test
+ORDER BY Test.A, Test.B, Test.C;
 
 -- SELECT Sailors.A
 -- FROM Sailors;
@@ -31,9 +34,9 @@
 -- SELECT *
 -- FROM Sailors S1, Sailors S2
 -- WHERE S1.A < S2.A;
-SELECT B.F, B.D
-FROM Boats B
-ORDER BY B.D;
+-- SELECT B.F, B.D
+-- FROM Boats B
+-- ORDER BY B.D;
 -- SELECT *
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
