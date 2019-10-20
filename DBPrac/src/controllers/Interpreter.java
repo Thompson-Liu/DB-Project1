@@ -44,7 +44,7 @@ public class Interpreter {
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
 
 					// need to pass in the name of the config file path 
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder();
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[1] + "/plan_builder_config.txt", args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
 					ReadableTupleWriter writer= new ReadableTupleWriter(

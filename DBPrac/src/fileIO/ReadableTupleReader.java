@@ -19,7 +19,6 @@ public class ReadableTupleReader implements TupleReader {
 	private String file;
 
 	public ReadableTupleReader(String file) {
-		// TODO Auto-generated constructor stub
 		this.file=file;
 		try {
 			buffer= new BufferedReader(new FileReader(file));
@@ -62,15 +61,6 @@ public class ReadableTupleReader implements TupleReader {
 	}
 
 	@Override
-	public void reset() {
-		try {
-			buffer= new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Override
 	public String getFileInfo() {
 		return this.file;
 	}
@@ -80,17 +70,19 @@ public class ReadableTupleReader implements TupleReader {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	public ArrayList<Tuple> readNextPage(){
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+	@Override
+	public void reset() {
+		try {
+			buffer= new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void reset(int index) {
 		// TODO Auto-generated method stub
 		
 	}
-
 }
