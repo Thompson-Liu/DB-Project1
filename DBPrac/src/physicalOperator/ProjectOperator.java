@@ -17,8 +17,9 @@ public class ProjectOperator extends Operator {
 
 	private Operator childOp;
 	private ArrayList<String> selectColumns;
-	private DataTable data;
+//	private DataTable data;
 	private HashMap<String, String> tableAlias;
+	private String tableName;
 
 	/** The constructor for ProjectOperator
 	 * 
@@ -29,6 +30,7 @@ public class ProjectOperator extends Operator {
 		childOp= operator;
 		selectColumns= new ArrayList<String>(list.size());
 		this.tableAlias= tableAlias;
+		this.tableName=operator.getTableName();
 
 		for (SelectItem item : list) {
 			// consider the case of Select A.S, B.W, *
@@ -50,7 +52,7 @@ public class ProjectOperator extends Operator {
 			}
 		}
 
-		this.data= new DataTable(operator.getTableName(), selectColumns);
+//		this.data= new DataTable(operator.getTableName(), selectColumns);
 	}
 
 	/** @return Returns the next tuple read from the data */
@@ -65,8 +67,8 @@ public class ProjectOperator extends Operator {
 				int index= childOp.schema().indexOf(item.toString());
 				tup.addData(next.getData(index));
 			}
-			data.addData(tup);
-			data.setSchema(selectColumns);
+//			data.addData(tup);
+//			data.setSchema(selectColumns);
 			return tup;
 		}
 		return next;
@@ -84,30 +86,35 @@ public class ProjectOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.write(getData().toArrayList());
+		reset();
+		Tuple tup;
+		while((tup=getNextTuple())!=null) {
+			writer.addNextTuple(tup);
+		}
+		writer.dump();
 		writer.close();
 	}
 
 	/** @return the schema of the data table that is read by the operator */
 	@Override
 	public ArrayList<String> schema() {
-		return this.data.getSchema();
+		return this.selectColumns;
 	}
 
 	/** @return the table name from where the operator reads the data */
 	@Override
 	public String getTableName() {
-		return data.getTableName();
+		return this.tableName;
 	}
 
 	/** @return the data read by the operator in DataTable data structure */
 	@Override
 	public DataTable getData() {
-		Tuple t;
-		while ((t = getNextTuple()) != null) {
-
-		}
-		reset();
-		return data;
+//		Tuple t;
+//		while ((t = getNextTuple()) != null) {
+//		}
+//		reset();
+//		return data;
+		return null;
 	}
 }

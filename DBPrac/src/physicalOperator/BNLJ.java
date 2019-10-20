@@ -74,7 +74,7 @@ public class BNLJ extends Operator {
 					while ((innerTup = innerOp.getNextTuple()) != null) {
 						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-								data.addData(next);
+//								data.addData(next);
 								tupState = false;
 								bufState = false;
 								return next;
@@ -86,7 +86,7 @@ public class BNLJ extends Operator {
 				} else {
 					while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 						if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-							data.addData(next);
+//							data.addData(next);
 							bufState = false;
 							return next;
 						}
@@ -102,7 +102,7 @@ public class BNLJ extends Operator {
 					while ((innerTup = innerOp.getNextTuple()) != null) {
 						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-								data.addData(next);
+//								data.addData(next);
 								tupState = false;
 								return next;
 							}
@@ -114,7 +114,7 @@ public class BNLJ extends Operator {
 				} else {
 					while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 						if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-							data.addData(next);
+//							data.addData(next);
 							return next;
 						}
 					}
@@ -128,7 +128,11 @@ public class BNLJ extends Operator {
 	
 	@Override 
 	public void dump(TupleWriter writer) {
-		writer.write(getData().toArrayList());
+		Tuple t; 
+		while ((t = getNextTuple()) != null) {
+			writer.addNextTuple(t);
+		}
+		writer.dump();
 		writer.close();
 	}
 
