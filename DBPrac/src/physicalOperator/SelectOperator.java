@@ -1,12 +1,10 @@
 package physicalOperator;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import dataStructure.DataTable;
 import dataStructure.Tuple;
-import fileIO.*;
+import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
 
@@ -28,8 +26,9 @@ public class SelectOperator extends Operator {
 	public SelectOperator(Expression expression, Operator op, HashMap<String, String> tableAlias) {
 		exp= expression;
 		childOp= op;
-		this.schema = op.schema();
+		this.schema= op.schema();
 		this.tableAlias= tableAlias;
+		tableName= childOp.getTableName();
 	}
 
 	/** @return Returns the next tuple read from the data */
@@ -39,11 +38,9 @@ public class SelectOperator extends Operator {
 		EvaluateWhere exprVisitor= new EvaluateWhere(exp, new ArrayList<String>(),
 			childOp.schema(), tableAlias);
 		while ((next= childOp.getNextTuple()) != null) {
-			if ((next= exprVisitor.evaluate(null, next)) != null) {
-				return next;
-			}
+			if ((next= exprVisitor.evaluate(null, next)) != null) { return next; }
 		}
-		
+
 		return null;
 	}
 
@@ -60,7 +57,7 @@ public class SelectOperator extends Operator {
 	@Override
 	public void dump(TupleWriter writer) {
 		Tuple t;
-		while ((t = getNextTuple()) != null) {
+		while ((t= getNextTuple()) != null) {
 			writer.addNextTuple(t);
 		}
 		writer.dump();
@@ -78,6 +75,5 @@ public class SelectOperator extends Operator {
 	public String getTableName() {
 		return this.tableName;
 	}
-
 
 }
