@@ -17,6 +17,8 @@ import dataStructure.Tuple;
 public class ReadableTupleReader implements TupleReader {
 	private BufferedReader buffer;
 	private String file;
+	private ArrayList<Tuple> data;
+	private int dataIndex = 0;
 
 	public ReadableTupleReader(String file) {
 		this.file=file;
@@ -25,7 +27,7 @@ public class ReadableTupleReader implements TupleReader {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-			
+		data = readData();	
 	}
 
 	public ArrayList<Tuple> readData() {
@@ -67,14 +69,15 @@ public class ReadableTupleReader implements TupleReader {
 
 	@Override
 	public Tuple readNextTuple() {
-		// TODO Auto-generated method stub
-		return null;
+		return data.get(dataIndex);
 	}
 
 	@Override
 	public void reset() {
 		try {
 			buffer= new BufferedReader(new FileReader(file));
+			data = new ArrayList<Tuple>();
+			dataIndex = 0;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -82,7 +85,6 @@ public class ReadableTupleReader implements TupleReader {
 	
 	@Override
 	public void reset(int index) {
-		// TODO Auto-generated method stub
-		
+		dataIndex = index;
 	}
 }
