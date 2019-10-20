@@ -21,7 +21,7 @@ public class SMJ extends Operator {
 	}
 
 	public SMJ(int bufferSize, ArrayList<String> leftColList, ArrayList<String> rightColList, Operator leftOp,
-		Operator rightOp, ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
+		Operator rightOp) {
 //		ArrayList<String> newSchema= new ArrayList<String>();
 //		for (String col : leftSchema) {
 //			if (!leftColList.contains(col)) {
@@ -43,28 +43,28 @@ public class SMJ extends Operator {
 		gs= firstTuple;
 		while (tr != null && gs != null) {
 			for (int i= 0; i < leftColList.size(); i+= 1) {
-				while (tr.getData(leftSchema.indexOf(leftColList.get(i))) < gs
-					.getData(rightSchema.indexOf(rightColList.get(i)))) {
+				while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
+					.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 					tr= leftExSortOp.getNextTuple();
 				}
-				while (tr.getData(leftSchema.indexOf(leftColList.get(i))) > gs
-					.getData(rightSchema.indexOf(rightColList.get(i)))) {
+				while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
+					.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 					gs= rightExSortOp.getNextTuple();
 				}
 			}
 			ts= gs;
 			BinaryTupleWriter tupleWrite= new BinaryTupleWriter(
 				"/tempDir/" + "SMJ");
-			while (ensureEqual(tr, gs, leftColList, rightColList, leftSchema, rightSchema)) {
+			while (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema())) {
 				ts= gs;
-				while (ensureEqual(tr, ts, leftColList, rightColList, leftSchema, rightSchema)) {
+				while (ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema())) {
 					Tuple joinedTuple= tr;
 //					for (int i= 0; i < leftSchema.size(); i++ ) {
 //						if (!leftColList.contains(leftSchema.get(i))) {
 //							joinedEntry.addData(tr.getData(i));
 //						}
 //					}
-					for (int i= 0; i < rightSchema.size(); i++ ) {
+					for (int i= 0; i < rightOp.schema().size(); i++ ) {
 						joinedTuple.addData(ts.getData(i));
 					}
 					tupleWrite.addNextTuple(joinedTuple);

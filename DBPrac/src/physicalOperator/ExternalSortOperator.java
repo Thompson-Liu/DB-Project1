@@ -157,7 +157,7 @@ public class ExternalSortOperator extends Operator {
 	}
 
 	public void resetIndex(int ind) {
-		sortedReader.reset(ind, 4 * schema.size());
+		sortedReader.reset(ind);
 	}
 
 	// 2. 看dump到哪里 write the [temp] directory file to dump dir [output]

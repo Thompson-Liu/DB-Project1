@@ -1,72 +1,70 @@
 package physicalOperator;
 
 import java.util.ArrayList;
+
 import dataStructure.DataTable;
 import dataStructure.Tuple;
-import fileIO.*;
+import fileIO.TupleWriter;
 
 /** the class for the duplicate elimination operator that removes duplicates tuples from the data
  * its child operator generates. */
 public class DuplicateEliminationOperator extends Operator {
-
-	private DataTable sortedBuffer;
-	int ptr;
+	private Tuple prevTuple;
+	private Tuple currTuple;
+	private ExternalSortOperator exSortOp;
 
 	/** @param operator operator is the child operator, which has to be a SortOperator because the
 	 * precondition requires that the data be sorted first. */
-	public DuplicateEliminationOperator(SortOperator operator) {
+	public DuplicateEliminationOperator(ExternalSortOperator operator) {
 		// TODO Auto-generated constructor stub
-		DataTable tmpTable= operator.getData();
-		sortedBuffer= new DataTable("", operator.schema());
-		int i= 0;
-		while (i < tmpTable.cardinality()) {
-			if (i > 0) {
-				if (!tmpTable.getRow(i).equals(tmpTable.getRow(i - 1))) {
-					sortedBuffer.addData(tmpTable.getRow(i));
-				}
-				i+= 1;
-			} else {
-				sortedBuffer.addData(tmpTable.getRow(i));
-				i+= 1;
-			}
-		}
+		exSortOp= operator;
+		Tuple tmp= operator.getNextTuple();
+		prevTuple= tmp;
+		currTuple= tmp;
 	}
 
 	/** @return the next tuple in the buffer after duplicates are removed */
 	@Override
 	public Tuple getNextTuple() {
-		ptr+= 1;
-		if (ptr < sortedBuffer.cardinality()) return new Tuple(sortedBuffer.getRow(ptr));
-		return null;
+		while (currTuple.equals(prevTuple)) {
+			currTuple= exSortOp.getNextTuple();
+		}
+		prevTuple= currTuple;
+		return currTuple;
 	}
 
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.write(sortedBuffer.toArrayList());
+		Tuple tup= getNextTuple();
+		while (tup != null) {
+			writer.addNextTuple(tup);
+			tup= getNextTuple();
+		}
+		writer.dump();
 		writer.close();
 	}
 
 	/** @return the schema of the data table after duplicates are removed. */
 	@Override
 	public ArrayList<String> schema() {
-		return sortedBuffer.getSchema();
+		return exSortOp.schema();
 	}
 
 	@Override
 	public void reset() {
-		ptr= -1;
+		exSortOp.reset();
 	}
 
 	/** @return the name of the buffer data table */
 	@Override
 	public String getTableName() {
-		return sortedBuffer.getTableName();
+		return exSortOp.getTableName();
 	}
 
 	/** @return the data in the buffer after duplicates are removed */
 	@Override
 	public DataTable getData() {
-		return sortedBuffer;
+		return null;
 	}
 
 }

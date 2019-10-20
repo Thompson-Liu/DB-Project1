@@ -19,6 +19,6 @@ public interface TupleReader {
 	/** Reset to a pointer where the next tuple is the index-th row of the whole table
 	 * 
 	 * @param index */
-	public void reset(int index, int BytesPerRow);
+	public void reset(int index);
 
 }
