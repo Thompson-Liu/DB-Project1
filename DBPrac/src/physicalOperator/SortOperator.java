@@ -20,7 +20,10 @@ public class SortOperator extends Operator {
 	public SortOperator(Operator childOp, List<String> colList) {
 		ptr= -1;
 		buffer= new DataTable(childOp.getTableName(), childOp.schema());
-		buffer.setFullTable(childOp.getData().getFullTable());
+		Tuple tup;
+		while((tup=childOp.getNextTuple())!=null) {
+			buffer.addData(tup);
+		}
 		if (colList == null) {
 			buffer.sortData(childOp.schema(), childOp.schema());
 		} else {
