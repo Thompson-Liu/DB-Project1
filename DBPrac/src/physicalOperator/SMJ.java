@@ -29,7 +29,7 @@ public class SMJ extends Operator {
 	}
 
 	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias) {
-		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, leftOp.getTableName(), rightOp.getTableName(), alias);
+		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName(), alias);
 		leftColList= evalJoin.getJoinAttributesLeft();
 		rightColList= evalJoin.getJoinAttributesRight();
 		leftOp= left;
