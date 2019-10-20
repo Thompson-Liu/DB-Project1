@@ -1,5 +1,7 @@
 package fileIO;
 
+import java.util.*;
+import dataStructure.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,8 +21,18 @@ public class Logger {
 		}
 		return log;
 	}
+	
+	public void dumpTable(ArrayList<Tuple> table) {
+		String fileName= "./log.txt";
+		File tmp= new File(fileName);
+		ReadableTupleWriter writer = new ReadableTupleWriter(fileName);
+		writer.addTable(table);
+		writer.dump();
+		writer.close();
+	}
 
-	public void dumpMessage(String msg) throws IOException {
+	public void dumpMessage(String msg) {
+		try {
 		String fileName= "./log.txt";
 		File tmp= new File(fileName);
 		BufferedWriter writer;
@@ -33,6 +45,9 @@ public class Logger {
 			writer.write(msg);
 		}
 		writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

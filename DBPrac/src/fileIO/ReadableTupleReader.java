@@ -63,6 +63,10 @@ public class ReadableTupleReader implements TupleReader {
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 5fde191f55af74f0dff7f7f727af1249937c491c
 	@Override
 	public String getFileInfo() {
 		return this.file;
@@ -90,7 +94,10 @@ public class ReadableTupleReader implements TupleReader {
 		}
 	}
 
+<<<<<<< HEAD
 	@Override
+=======
+>>>>>>> 5fde191f55af74f0dff7f7f727af1249937c491c
 	public void reset(int index) {
 		dataIndex = index;
 	}

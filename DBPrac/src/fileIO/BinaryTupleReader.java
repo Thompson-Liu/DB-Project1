@@ -14,15 +14,16 @@ public class BinaryTupleReader implements TupleReader {
 	private FileInputStream fin;
 	private FileChannel fc;
 	private ByteBuffer buffer;
-	private static int numAttr;
-	private static int numRows;    // number of rows on current buffer page
-	private static int curRow= 0;    // keep track of next row to read on the buffer
+	private int numAttr;
+	private int numRows;    // number of rows on current buffer page
+	private int curRow= 0;    // keep track of next row to read on the buffer
 	private ArrayList<Tuple> pageData;
 
 	public BinaryTupleReader(String file) {
 		try {
 			this.file= file;
 			this.pageData= new ArrayList<Tuple>();
+			System.out.println(file);
 			fin= new FileInputStream(file);
 			fc= fin.getChannel();
 			buffer= ByteBuffer.allocate(4096);
@@ -38,16 +39,16 @@ public class BinaryTupleReader implements TupleReader {
 		try {
 			fc.read(buffer);
 			numAttr= buffer.getInt(0);
-			numRows= buffer.getInt(4);
+			this.numRows= buffer.getInt(4);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("Error when reading into the buffer");
 		}
 
-		if (numRows != 0) {
+		if (this.numRows != 0) {
 			pageData = new ArrayList<Tuple>();
 			// Populate the dataTable
-			for (int i= 0; i < numRows; i++ ) {
+			for (int i= 0; i < this.numRows; i++ ) {
 				ArrayList<Integer> temp= new ArrayList<Integer>(numAttr);
 				
 				for (int j= 0; j < numAttr; j++ ) {
@@ -64,12 +65,12 @@ public class BinaryTupleReader implements TupleReader {
 
 	@Override
 	public Tuple readNextTuple() {
-		if (curRow <= numRows - 1) {
-			return pageData.get(curRow++ );
+		if (curRow <= this.numRows - 1) {
+			return pageData.get(curRow++);
 		} else {
 			curRow= 0;
 			pageData= getNextPage();
-			if (numRows > 0) {
+			if (this.numRows > 0) {
 				return pageData.get(curRow++ );
 			} else {
 				return null;
