@@ -21,6 +21,7 @@ public class BNLJ extends Operator {
 	private boolean bufState = true;
 	private boolean tupState = true;
 	private int bufTupState = 0;
+	private String tableName;
 	private ArrayList<String> schema;
 	private Tuple innerTup;
 	private EvaluateWhere eval;
@@ -28,7 +29,6 @@ public class BNLJ extends Operator {
 
 	public BNLJ(int numPages, Operator outer, Operator inner, 
 			Expression joinExp, HashMap<String, String> tableAlias) {
-		
 		numOuters = (int) Math.floor(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
 		buffer = new Buffer(numOuters);
 
@@ -39,6 +39,7 @@ public class BNLJ extends Operator {
 		schema = new ArrayList<String>(outer.schema());
 		schema.addAll(inner.schema());
 		
+		tableName = outer.getTableName() + " " + inner.getTableName();
 		alias = tableAlias;
 		eval = new EvaluateWhere(joinCond, innerOp.schema(), outerOp.schema(), alias);
 	}
@@ -73,7 +74,6 @@ public class BNLJ extends Operator {
 					while ((innerTup = innerOp.getNextTuple()) != null) {
 						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-//								data.addData(next);
 								tupState = false;
 								bufState = false;
 								return next;
@@ -85,7 +85,6 @@ public class BNLJ extends Operator {
 				} else {
 					while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 						if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-//							data.addData(next);
 							bufState = false;
 							return next;
 						}
@@ -101,7 +100,6 @@ public class BNLJ extends Operator {
 					while ((innerTup = innerOp.getNextTuple()) != null) {
 						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-//								data.addData(next);
 								tupState = false;
 								return next;
 							}
@@ -113,7 +111,6 @@ public class BNLJ extends Operator {
 				} else {
 					while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 						if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-//							data.addData(next);
 							return next;
 						}
 					}
@@ -146,21 +143,11 @@ public class BNLJ extends Operator {
 
 	@Override
 	public ArrayList<String> schema() {
-		return data.getSchema();
+		return schema;
 	}
 
 	@Override
 	public String getTableName() {
-		return data.getTableName();
-	}
-
-	@Override
-	public DataTable getData() {
-		Tuple t;
-		while ((t = getNextTuple()) != null) {
-
-		}
-		reset();
-		return data;
+		return tableName;
 	}
 }
