@@ -15,7 +15,6 @@ public class DuplicateEliminationOperator extends Operator {
 	/** @param operator operator is the child operator, which has to be a SortOperator because the
 	 * precondition requires that the data be sorted first. */
 	public DuplicateEliminationOperator(ExternalSortOperator operator) {
-		// TODO Auto-generated constructor stub
 		exSortOp= operator;
 		Tuple tmp= operator.getNextTuple();
 		prevTuple= tmp;

@@ -16,6 +16,7 @@ import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateJoin;
 import physicalOperator.BNLJ;
 import physicalOperator.DuplicateEliminationOperator;
+import physicalOperator.ExternalSortOperator;
 import physicalOperator.JoinOperator;
 import physicalOperator.Operator;
 import physicalOperator.ProjectOperator;
@@ -27,15 +28,16 @@ import physicalOperator.SortOperator;
 public class PhysicalPlanBuilder {
 
 	static Operator immOp;
-	private  BufferedReader buffer;
+	private BufferedReader buffer;
 	private int[] join;
 	private int[] sort;
+	String tempDir;
 	
-	public PhysicalPlanBuilder(String filePath) {
+	public PhysicalPlanBuilder(String configPath, String tempPath) {
 		try {
-			buffer = new BufferedReader(new FileReader(filePath));
+			buffer = new BufferedReader(new FileReader(configPath));
 		} catch (FileNotFoundException e) {
-			System.err.println("Cannot locate the file" + filePath);
+			System.err.println("Cannot locate the file" + configPath);
 		}
 		join = readConfig();
 		sort = readConfig();
@@ -46,6 +48,7 @@ public class PhysicalPlanBuilder {
 		} catch (IOException e) {
 			System.err.println("Error during closing the buffer.");
 		}
+		tempDir = tempPath;
 	}
 	
 	private int[] readConfig() {
@@ -92,12 +95,17 @@ public class PhysicalPlanBuilder {
 
 	public void visit (SortLogOp sortLop) {
 		sortLop.getChildren()[0].accept(this);
-		immOp = new SortOperator(immOp, sortLop.getColumns());
+		
+		if (sort[0] == 0) {
+			immOp = new SortOperator(immOp, sortLop.getColumns());
+		} else {
+			immOp = new ExternalSortOperator(immOp, sortLop.getColumns(), sort[1], tempDir);
+		}
 	}
 
 	public void visit(DuplicateEliminationLogOp dupElimLogOp) {
 		dupElimLogOp.getChidren()[0].accept(this);
-		immOp = new DuplicateEliminationOperator((SortOperator)immOp);
+		immOp = new DuplicateEliminationOperator((ExternalSortOperator)immOp);
 	}
 
 	public void visit(JoinLogOp joinLogOp) {
