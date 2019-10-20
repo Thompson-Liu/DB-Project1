@@ -5,7 +5,6 @@ package physicalOperator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import dataStructure.DataTable;
 import dataStructure.Tuple;
 import fileIO.*;
 import net.sf.jsqlparser.expression.Expression;
@@ -73,6 +72,7 @@ public class JoinOperator extends Operator {
 		while (flag) {
 			if (resetFlag) {
 				while ((left= leftOperator.getNextTuple()) != null) {
+					System.out.println("left get next tuple != nul--------******");
 					while ((right= rightOperator.getNextTuple()) != null) {
 						if ((next= evawhere.evaluate(left, right)) != null) {
 							resetFlag= false;
@@ -84,6 +84,7 @@ public class JoinOperator extends Operator {
 				flag= false;
 			} else {
 				while ((right= rightOperator.getNextTuple()) != null) {
+					System.out.println("right get next tuple != nul+++++");
 					if ((next= evawhere.evaluate(left, right)) != null) {
 						return next;
 					}
