@@ -53,12 +53,6 @@ public class SortOperator extends Operator {
 		writer.close();
 	}
 
-	/** @return the datable after sorting */
-	@Override
-	public DataTable getData() {
-		return buffer;
-	}
-
 	/** @return the name of the table being sorted */
 	@Override
 	public String getTableName() {

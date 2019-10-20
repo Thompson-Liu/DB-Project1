@@ -15,8 +15,10 @@ public class SelectOperator extends Operator {
 
 	private Expression exp;
 	private Operator childOp;
-	private DataTable data;
+//	private DataTable data;
 	private HashMap<String, String> tableAlias;
+	private String tableName;
+	private ArrayList<String> schema;
 
 	/** A constructor that instantiates a SelectOperator
 	 * 
@@ -26,7 +28,7 @@ public class SelectOperator extends Operator {
 	public SelectOperator(Expression expression, Operator op, HashMap<String, String> tableAlias) {
 		exp= expression;
 		childOp= op;
-		data= new DataTable(op.getTableName(), op.schema());
+		this.schema = op.schema();
 		this.tableAlias= tableAlias;
 	}
 
@@ -38,8 +40,6 @@ public class SelectOperator extends Operator {
 			childOp.schema(), tableAlias);
 		while ((next= childOp.getNextTuple()) != null) {
 			if ((next= exprVisitor.evaluate(null, next)) != null) {
-				data.addData(next);
-
 				return next;
 			}
 		}
@@ -59,29 +59,25 @@ public class SelectOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.write(getData().toArrayList());
+		Tuple t;
+		while ((t = getNextTuple()) != null) {
+			writer.addNextTuple(t);
+		}
+		writer.dump();
 		writer.close();
 	}
 
 	/** @return the schema of the data table that is read by the operator */
 	@Override
 	public ArrayList<String> schema() {
-		return data.getSchema();
+		return this.schema;
 	}
 
 	/** @return the table name from where the operator reads the data */
 	@Override
 	public String getTableName() {
-		return data.getTableName();
+		return this.tableName;
 	}
 
-	/** @return the data read by the operator in DataTable data structure */
-	@Override
-	public DataTable getData() {
-		Tuple t;
-		while ((t = getNextTuple()) != null) {
-		}
-		reset();
-		return data;
-	}
+
 }

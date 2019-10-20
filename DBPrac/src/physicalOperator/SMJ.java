@@ -86,10 +86,10 @@ public class SMJ extends Operator {
 		writer.close();
 	}
 
-//	@Override
-//	public DataTable getData() {
-//		DataTable temp= new DataTable(dataFile, schema);
-//		return temp;
-//	}
+	@Override
+	public DataTable getData() {
+		DataTable temp= new DataTable(dataFile, schema);
+		return temp;
+	}
 
 }

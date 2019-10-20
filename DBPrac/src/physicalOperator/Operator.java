@@ -38,16 +38,6 @@ public abstract class Operator {
 		return null;
 	}
 
-	/** @return the data read by the operator in DataTable data structure */
-	public DataTable getData() {
-		return null;
-	}
-	
-//	/** @return the data on the next page of the file */
-//	public DataTable getNextPage() {
-//		return null;
-//	}
-
 	public void dump(TupleWriter writer) {
 		// TODO Auto-generated method stub
 		
