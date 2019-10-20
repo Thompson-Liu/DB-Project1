@@ -70,7 +70,9 @@ public class SMJ extends Operator {
 				}
 				ts= new Tuple(gs.getTuple());
 			}
-			if (tr == null || gs == null) return null;
+			if (tr == null || gs == null) {
+				return null;
+			}
 //			while (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 //				leftColList.size())) {
 //				ts= gs;
@@ -88,7 +90,7 @@ public class SMJ extends Operator {
 				ts= rightExSortOp.getNextTuple();
 				return joinedTuple;
 			}
-//			gs= new Tuple(ts.getTuple());
+			gs= new Tuple(ts.getTuple());
 //			}
 			flag= false;
 		}

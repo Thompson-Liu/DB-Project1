@@ -105,12 +105,12 @@ public class BinaryTupleReader implements TupleReader {
 
 	@Override
 	public void reset(int index) {
-		// TODO Auto-generated method stub
 		// Using position(long newPosition) method in FileChannel
 		try {
 			int rowsPerPage= 4988 / (4 * numAttr);
 			int numPages= index / rowsPerPage;
 			int newIndex= numPages * 4996 + 8 + (index % rowsPerPage) & (4 * numAttr);
+			curRow=index % rowsPerPage;
 			fc.position(newIndex);
 		} catch (IOException e) {
 			e.printStackTrace();
