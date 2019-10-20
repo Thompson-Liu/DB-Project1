@@ -20,9 +20,9 @@
 -- FROM Sailors, Reserves
 -- WHERE Sailors.A = Reserves.G
 -- ORDER BY Sailors.A;
-SELECT *
-FROM Sailors, Reserves, Boats
-WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
+-- SELECT *
+-- FROM Sailors, Reserves, Boats
+-- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
 -- SELECT *
 -- FROM Sailors, Reserves, Boats
 -- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
@@ -31,9 +31,9 @@ WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
 -- SELECT *
 -- FROM Sailors S1, Sailors S2
 -- WHERE S1.A < S2.A;
--- SELECT B.F, B.D
--- FROM Boats B
--- ORDER BY B.D;
+SELECT B.F, B.D
+FROM Boats B
+ORDER BY B.D;
 -- SELECT *
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
