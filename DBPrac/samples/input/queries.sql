@@ -19,7 +19,6 @@
 -- SELECT *
 -- FROM Sailors, Reserves
 -- WHERE Sailors.A = Reserves.G
--- ORDER BY Sailors.A;
 SELECT *
 FROM Sailors, Reserves, Boats
 WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;

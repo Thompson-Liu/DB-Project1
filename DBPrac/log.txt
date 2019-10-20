@@ -206,3 +206,54 @@
 Running queries...1
 
 Execution time : 7
+Running queries...1
+
+Execution time : 752
+Running queries...1
+
+Execution time : 8
+Running queries...1
+
+Execution time : 7
+Running queries...1
+
+Execution time : 2468
+Running queries...1
+
+Execution time : 2479
+Running queries...1
+
+Execution time : 2478
+Running queries...1
+
+Execution time : 8
+Running queries...1
+
+Execution time : 8
+Running queries...1
+
+Execution time : 2670
+Running queries...1
+
+Execution time : 2452
+Running queries...1
+
+Execution time : 2581
+Running queries...1
+
+Execution time : 2544
+Running queries...1
+
+Execution time : 2408
+Running queries...1
+
+Execution time : 2444
+Running queries...1
+
+Execution time : 451
+Running queries...1
+
+Execution time : 2483
+Running queries...1
+
+Execution time : 2376
