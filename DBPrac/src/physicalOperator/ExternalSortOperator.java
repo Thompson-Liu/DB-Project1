@@ -52,17 +52,16 @@ public class ExternalSortOperator extends Operator {
 		memoryBuffer= new Buffer(tuplesPage);
 		// pass0 and get the total number of files stored
 		int totalFiles= initialRun();
-		System.out.println("total file is  :"+totalFiles);
 		runs= totalFiles;
 
 		// calculate the total number of passes needed
 		Double div= Math.ceil(runs / bufferSize);
 		totalPass= (int) Math.ceil(Math.log(div) / Math.log(1.0 * (bufferSize - 1)));
-		for (int curPass= 1; curPass < totalPass; curPass++ ) {
+		for (int curPass= 1; curPass <= totalPass; curPass++ ) {
 			int nextRuns= ExternalSort(curPass, runs);
 			runs= nextRuns;
 		}
-		sortedReader= new BinaryTupleReader(tempDir+ "/externalIntermediate" + Integer.toString(totalPass) + " 0");
+		sortedReader= new BinaryTupleReader(tempDir+ "/ESInter" + Integer.toString(totalPass) + " 0");
 	}
 
 	// pass0
@@ -73,14 +72,14 @@ public class ExternalSortOperator extends Operator {
 			if (memoryBuffer.overflow()) {
 				memoryBuffer.sortBuffer(colList, schema);
 				TupleWriter tuplesWriter= new BinaryTupleWriter(
-						tempDir + "/externalIntermediate" + Integer.toString(pass) +" "+ Integer.toString(runs));
+						tempDir + "/ESInter" + Integer.toString(pass) +" "+ Integer.toString(runs));
 				tuplesWriter.write(memoryBuffer.getTuples());
 				memoryBuffer.clear();
 				this.runs++ ;
 			}
 			memoryBuffer.addData(cur);
 		}
-		pass++;
+		this.pass++;
 		// the number of runs in current pass
 		return this.runs;
 	}
@@ -93,10 +92,10 @@ public class ExternalSortOperator extends Operator {
 		int startTable= 0;
 		for (int i= 0; i < mergenum; i++ ) {
 			int endTable= Math.min(startTable + bufferSize, runs);
-			merge(startTable, endTable, i);
+			merge(startTable, endTable, i,passnum);
 			startTable= endTable;
 		}
-		pass++;
+		this.pass++;
 		return mergenum;
 	}
 
@@ -105,24 +104,28 @@ public class ExternalSortOperator extends Operator {
 	 * @param runRuns the number of runs in this merge
 	 * @param currentRun the order of runs for this merge (currentRun-th run)
 	 * @param numMerge the order of merge in current pass */
-	private void merge(int firstTable, int endTable, int numMerge) {
+	private void merge(int firstTable, int endTable, int numMerge,int curPass) {
 		List<TupleReader> readerList= new ArrayList<TupleReader>();
 		HashMap<Tuple, TupleReader> tupleToReader= new HashMap<Tuple, TupleReader>();
 		// read previous sorted result
 		for (int i= firstTable; i < endTable; i++ ) {
 			BinaryTupleReader tupleRead= new BinaryTupleReader(
-				tempDir + "/externalIntermediate" + Integer.toString((int)(pass-1)) + " "+Integer.toString(i));
+				tempDir + "/ESInter" + Integer.toString((int)(curPass-1)) + " "+Integer.toString(i));
 			readerList.add(tupleRead);
 			// hashmap will not overwrite even for tuple with same value as long as the tuples are coming from
 			// different tupleReaders, which is the property
 			tupleToReader.put(tupleRead.readNextTuple(), tupleRead);
 		}
 		BinaryTupleWriter tupleWrite= new BinaryTupleWriter(
-			tempDir + "/externalIntermediate" + Integer.toString(pass) +" "+ Integer.toString(numMerge));
+			tempDir + "/ESInter" + Integer.toString(curPass) +" "+ Integer.toString(numMerge));
 		intermediateTable= new PriorityQueue(new TupleComparator(this.colList, this.schema));
 		Tuple next;
 		Tuple curnext;
 		TupleReader curReader;
+		//initialize priority queue
+		for() {
+			
+		}
 		// pulling tuple-wise of the first of runs of previous sorted table
 		while ((next= intermediateTable.poll()) != null) {
 			tupleWrite.addNextTuple(next);
@@ -134,6 +137,7 @@ public class ExternalSortOperator extends Operator {
 			}
 			// if this run finish delete this table from tempdir
 			else {
+				System.out.println("----------朋友delete一下呀-----");
 				String dfile= curReader.getFileInfo();
 				File deleteFile= new File(dfile);
 				if (!deleteFile.delete()) {
@@ -156,7 +160,6 @@ public class ExternalSortOperator extends Operator {
 		return schema;
 	}
 
-	// 1. 需要double check
 	@Override
 	public void reset() {
 		sortedReader.reset();
@@ -166,7 +169,6 @@ public class ExternalSortOperator extends Operator {
 		sortedReader.reset(ind);
 	}
 
-	// 2. 看dump到哪里 write the [temp] directory file to dump dir [output]
 	@Override
 	public void dump(TupleWriter writer) {
 		Tuple tup;
