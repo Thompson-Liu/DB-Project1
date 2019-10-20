@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import dataStructure.Buffer;
-import dataStructure.DataTable;
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
@@ -73,8 +72,6 @@ public class BNLJ extends Operator {
 					while ((innerTup = innerOp.getNextTuple()) != null) {
 						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-								System.out.println("outer tuple: " + outerTup.printData());
-								System.out.println("inner tuple: " + innerTup.printData());
 								tupState = false;
 								bufState = false;
 								return next;

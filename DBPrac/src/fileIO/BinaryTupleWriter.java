@@ -25,7 +25,6 @@ public class BinaryTupleWriter implements TupleWriter {
 	private int numAttr;
 	private int numRowPage;
 	private ArrayList<Tuple> pageData;
-	private int numPage;
 
 	public BinaryTupleWriter(String file) {
 		this.file = file;
@@ -34,7 +33,6 @@ public class BinaryTupleWriter implements TupleWriter {
 			fc = fout.getChannel();
 			pageData = new ArrayList<Tuple>();
 			buffer = ByteBuffer.allocate(4096);
-			numPage=0;
 		} catch (Exception e) {
 			System.err.print("BinaryTupleWrite initialize fail.");
 			e.printStackTrace();
@@ -71,7 +69,6 @@ public class BinaryTupleWriter implements TupleWriter {
 			buffer.putInt(0);
 			counter+= 4;
 		}
-		numPage++;
 		buffer.flip();
 		try {
 			fc.write(buffer);
@@ -128,8 +125,6 @@ public class BinaryTupleWriter implements TupleWriter {
 				}
 				buffer.flip();
 				fc.write(buffer);
-				// no need
-				pageData= new ArrayList<Tuple>();
 			}
 		} catch (IOException e) {
 			System.err.print("BinaryTupleWriter dump fails: " + e);
@@ -149,94 +144,3 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 }
-
-
-
-//	/**
-//	 * add tuple to current stored [data], compute number of rows per page
-//	 * if it hasn't been initialized
-//	 */
-//	public void writeNextTuple(Tuple tup) {
-//		ArrayList<Integer> temp = tup.getTuple();
-//		if (pageData.size() <= 0) {
-//			numAttr= temp.size();
-//			numRowPage= (int) Math.floor((4096 - 8) * 1.0 / (numAttr * 4));
-//		}
-//		if(pageData.size() >= numRowPage) {
-//			dump();
-//			reset();
-//		}
-//
-//		pageData.add(tup);
-//		curRow++;
-//	}
-
-//	/**
-//	 * add a table to current stored [data]
-//	 */
-//	@Override
-//	public void addTable(ArrayList<Tuple> dataTable) {
-//		if(dataTable.size() == 0) return;
-//		// initialize binary tuple writer fields if hasn't been initialized
-//		if (data.size()==0) {
-//			numAttr= dataTable.get(0).getTuple().size();
-//			numRowPage= (int) Math.floor((4096 - 8) / (numAttr * 4));
-//		}
-//		for (Tuple tup : dataTable) {
-//			addTuple(tup);
-//		}
-//	}
-
-//	@Override
-//	public void reset() {
-//		curRow-= numRowPage;
-//		buffer.clear();
-//	}
-//
-//	/**
-//	 * write back the data
-//	 */
-//	@Override
-//	public void dump() {
-//		if (data == null || data.size() == 0) { return; }
-//		try {
-//			int numRows= data.size();
-//			int numPages= (int) Math.ceil(1.0 * numRows / numRowPage);
-//			int counter;
-//			for (int k= 0; k < numPages; k++ ) {
-//				buffer.putInt(numAttr);
-//				buffer.putInt(Math.min(numRows, numRowPage));
-//				counter= 8;
-//				for (int i= 0; i < Math.min(numRows, numRowPage); i++ ) {
-//					for (int j= 0; j < numAttr; j++ ) {
-//
-//						buffer.putInt(data.get(k * numRowPage + i).get(j));
-//						counter+= 4;
-//					}
-//				}
-//				while (counter < 4096) {
-//					buffer.putInt(0);
-//					counter+= 4;
-//				}
-//				buffer.flip();
-//				fc.write(buffer);
-//				data= new ArrayList<ArrayList<Integer>>();
-//			}
-//		} catch (IOException e) {
-//			System.err.print("BinaryTupleWriter dump fails: " + e);
-//			e.printStackTrace();
-//		}
-//
-//	}
-
-//	@Override
-//	public void close() {
-//		try {
-//			fc.close();
-//			fout.close();
-//		} catch (IOException e) {
-//			System.err.print("Fail to close Binary tuple writer. ");
-//			e.printStackTrace();
-//		}
-//	}
-
