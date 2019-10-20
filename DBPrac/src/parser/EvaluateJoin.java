@@ -3,7 +3,7 @@
  */
 package parser;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -53,8 +53,8 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 public class EvaluateJoin implements ExpressionVisitor {
 
 
-	private String leftTableName;
-	private String rightTableName;
+	private List<String> leftTableNames;
+	private List<String> rightTableNames;
 	private HashMap<String,String> tableAlias;
 	private ArrayList<String> joinAttributesLeft;
 	private ArrayList<String> joinAttributesRight;
@@ -67,13 +67,21 @@ public class EvaluateJoin implements ExpressionVisitor {
 		joinAttributesRight = new ArrayList<String> ();
 		
 		// change the leftTableName to its alias if exist
-		if(tableAlias.containsKey(leftTableName)) {
-			leftTableName=tableAlias.get(leftTableName);}
-		this.leftTableName = leftTableName;
+		
+		this.leftTableNames = Arrays.asList(leftTableName.trim().split(","));
+		for(int i=0;i<leftTableNames.size();i++) {
+			if(tableAlias.containsKey(leftTableNames.get(i))) {
+				leftTableNames.set(i, tableAlias.get(leftTableNames.get(i)) );
+				}
+		}
 		// change the rightTableName to its alias if exist
-		if(tableAlias.containsKey(rightTableName)) {
-			rightTableName=tableAlias.get(rightTableName);}
-		this.rightTableName = rightTableName;
+		this.rightTableNames = Arrays.asList(rightTableName.trim().split(","));
+		for(int i=0;i<rightTableNames.size();i++) {
+			if(tableAlias.containsKey(rightTableNames.get(i))) {
+				rightTableNames.set(i, tableAlias.get(rightTableNames.get(i)));}
+		}
+		
+//		this.rightTableNames = rightTableName;
 		
 		this.expr=whereExpr;
 		this.tableAlias = tableAlias;
@@ -195,8 +203,8 @@ public class EvaluateJoin implements ExpressionVisitor {
 			if(tableAlias.containsKey(Col2Table)) {
 				Col2Table =tableAlias.get(Col2Table);}
 			
-			boolean order = (Col1Table==this.leftTableName) && Col2Table==this.rightTableName;
-			boolean inverse = (Col1Table==this.rightTableName) && Col2Table==this.leftTableName;
+			boolean order = (this.leftTableNames.contains(Col1Table) ) && this.rightTableNames.contains(Col2Table);
+			boolean inverse = (this.rightTableNames.contains(Col1Table)) && this.leftTableNames.contains(Col2Table);
 			if(order) {
 				this.joinAttributesLeft.add(Col1.getColumnName());
 				this.joinAttributesRight.add(Col2.getColumnName());
