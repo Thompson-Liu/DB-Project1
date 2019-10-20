@@ -18,6 +18,7 @@ import dataStructure.Tuple;
 import dataStructure.TupleComparator;
 import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;
+import fileIO.Logger;
 import fileIO.TupleReader;
 import fileIO.TupleWriter;
 
@@ -37,6 +38,7 @@ public class ExternalSortOperator extends Operator {
 	private int runs;   			// number of files in each pass
 	// private boolean useBinary = false; // format of intermediate result
 	private int pass= 0;   // the current order of pass
+	private String tempDir;
 
 	/** @param childOp childOp is the child operator, e.g. ProjectOperator or SelectOperator
 	 * @param colList colList is the list of column names to sort data by */
@@ -45,12 +47,14 @@ public class ExternalSortOperator extends Operator {
 		this.bufferSize= bufferSize;
 		this.schema= childOp.schema();
 		this.colList= (ArrayList<String>) colList;
+		this.tempDir=tempDir;
 		this.runs= tuplesPage= (int) Math.floor(1.0 * (4096) / (4.0 * (schema.size())));
 		memoryBuffer= new Buffer(tuplesPage);
 		// pass0 and get the total number of files stored
 		int totalFiles= initialRun();
+		System.out.println("total file is  :"+totalFiles);
 		runs= totalFiles;
-		// 这里需要double check一下👇
+
 		// calculate the total number of passes needed
 		Double div= Math.ceil(runs / bufferSize);
 		totalPass= (int) Math.ceil(Math.log(div) / Math.log(1.0 * (bufferSize - 1)));
@@ -58,7 +62,7 @@ public class ExternalSortOperator extends Operator {
 			int nextRuns= ExternalSort(curPass, runs);
 			runs= nextRuns;
 		}
-		sortedReader= new BinaryTupleReader("/tempdir/" + "externalIntermediate" + Integer.toString(totalPass) + "0");
+		sortedReader= new BinaryTupleReader(tempDir+ "/externalIntermediate" + Integer.toString(totalPass) + " 0");
 	}
 
 	// pass0
@@ -69,13 +73,14 @@ public class ExternalSortOperator extends Operator {
 			if (memoryBuffer.overflow()) {
 				memoryBuffer.sortBuffer(colList, schema);
 				TupleWriter tuplesWriter= new BinaryTupleWriter(
-					"/tempDir/" + "externalIntermediate" + Integer.toString(pass) + Integer.toString(runs));
+						tempDir + "/externalIntermediate" + Integer.toString(pass) +" "+ Integer.toString(runs));
 				tuplesWriter.write(memoryBuffer.getTuples());
 				memoryBuffer.clear();
 				this.runs++ ;
 			}
 			memoryBuffer.addData(cur);
 		}
+		pass++;
 		// the number of runs in current pass
 		return this.runs;
 	}
@@ -91,6 +96,7 @@ public class ExternalSortOperator extends Operator {
 			merge(startTable, endTable, i);
 			startTable= endTable;
 		}
+		pass++;
 		return mergenum;
 	}
 
@@ -103,16 +109,16 @@ public class ExternalSortOperator extends Operator {
 		List<TupleReader> readerList= new ArrayList<TupleReader>();
 		HashMap<Tuple, TupleReader> tupleToReader= new HashMap<Tuple, TupleReader>();
 		// read previous sorted result
-		for (int i= firstTable; i <= endTable; i++ ) {
+		for (int i= firstTable; i < endTable; i++ ) {
 			BinaryTupleReader tupleRead= new BinaryTupleReader(
-				"/tempDir/" + "externalIntermediate" + Integer.toString(pass - 1) + Integer.toString(i));
+				tempDir + "/externalIntermediate" + Integer.toString((int)(pass-1)) + " "+Integer.toString(i));
 			readerList.add(tupleRead);
 			// hashmap will not overwrite even for tuple with same value as long as the tuples are coming from
 			// different tupleReaders, which is the property
 			tupleToReader.put(tupleRead.readNextTuple(), tupleRead);
 		}
 		BinaryTupleWriter tupleWrite= new BinaryTupleWriter(
-			"/tempDir/" + "externalIntermediate" + Integer.toString(pass) + Integer.toString(numMerge));
+			tempDir + "/externalIntermediate" + Integer.toString(pass) +" "+ Integer.toString(numMerge));
 		intermediateTable= new PriorityQueue(new TupleComparator(this.colList, this.schema));
 		Tuple next;
 		Tuple curnext;

@@ -28,6 +28,7 @@ public class Interpreter {
 		String queriesFile= args[0] + "/queries.sql";
 		String dataDir= args[0] + "/db";
 		String outputDir= args[1];
+		String tewpDir= args[2];
 		int queryCounter= 1;
 
 		try {
@@ -56,19 +57,13 @@ public class Interpreter {
 					
 					// Test logger
 					Logger log= Logger.getInstance();
-					try {
 						log.dumpMessage("Running queries..."+Integer.toString(queryCounter));
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					
 					
 					long time2 = System.currentTimeMillis();
 					long diffTime = time2-time1;
-					try {
 						log.dumpMessage("\n"+ "Execution time : "+Long.toString(diffTime));
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					
 
 					queryCounter++ ;
 				} catch (Exception e) {

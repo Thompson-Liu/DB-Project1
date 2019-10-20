@@ -124,11 +124,10 @@ public class JoinOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		Tuple t;
-		while ((t = getNextTuple()) != null) {
-			writer.addNextTuple(t);
+		for (ArrayList<Integer> tupArr: currentTable.getFullTable()) {
+			Tuple tup = new Tuple(tupArr);
+			writer.addNextTuple(tup);
 		}
 		writer.dump();
-		writer.close();
 	}
 }

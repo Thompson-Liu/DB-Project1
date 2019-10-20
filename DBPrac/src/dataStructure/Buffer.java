@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import fileIO.Logger;
+
 public class Buffer {
 
 	private ArrayList<Tuple> tuples;
@@ -77,6 +79,9 @@ public class Buffer {
 
 		};
 		tuples.sort(myComparator);
+		Logger log= Logger.getInstance();
+
+		log.dumpTable(tuples);
 	}
 	
 	public void clear() {

@@ -41,7 +41,7 @@ public class LogicalOperatorFactory {
 		String aliasName= "";
 
 		String fromLeft= plainSelect.getFromItem().toString();
-		
+
 		if(plainSelect.getFromItem().getAlias()!=null) {
 			String tempAlias = plainSelect.getFromItem().getAlias().toString();
 			String tempTable= plainSelect.getFromItem().toString().replace("AS "+tempAlias,"").trim();
@@ -54,7 +54,7 @@ public class LogicalOperatorFactory {
 
 		if (plainSelect.getJoins() != null) {
 			intOp = new JoinLogOp(leftOp, join(plainSelect, plainSelect.getJoins(), tableAlias),
-				plainSelect.getWhere(), tableAlias);
+					plainSelect.getWhere(), tableAlias);
 		} else {
 			intOp= leftOp;
 
@@ -115,7 +115,7 @@ public class LogicalOperatorFactory {
 			String tempAlias = rightJoin.getRightItem().getAlias().toString();
 			String tempTable= rightJoin.getRightItem().toString().replace("AS "+tempAlias,"").trim();
 			tableAlias.put(tempTable,tempAlias);
-						rightOp = new ScanLogOp(tempTable,tempAlias);
+			rightOp = new ScanLogOp(tempTable,tempAlias);
 		}else {
 			rightOp = new ScanLogOp(rightJoin.toString(),"");
 		}
