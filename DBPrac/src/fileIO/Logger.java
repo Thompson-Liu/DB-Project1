@@ -26,7 +26,7 @@ public class Logger {
 		String fileName= "./log.txt";
 		File tmp= new File(fileName);
 		ReadableTupleWriter writer = new ReadableTupleWriter(fileName);
-		writer.addTable(table);
+		writer.write(table);
 		writer.dump();
 		writer.close();
 	}

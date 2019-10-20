@@ -14,14 +14,14 @@ import parser.EvaluateWhere;
 /** the class for the join operator */
 public class JoinOperator extends Operator {
 
-	private DataTable currentTable;
+	private ArrayList<String> schema;
+	private String tableName;
 	private Operator leftOperator;
 	private Operator rightOperator;
 	private Expression joinExp;
 	private static boolean resetFlag= true;
 	private Tuple left;
 	private HashMap<String, String> tableAlias;
-	private int ptr;
 
 	/** Constructor to create JOIN operator
 	 * 
@@ -32,69 +32,49 @@ public class JoinOperator extends Operator {
 	public JoinOperator(Operator LeftOperator, Operator RightOperator,
 		Expression expression, HashMap<String, String> tableAlias) {
 		joinExp= expression;
-		ArrayList<String> cur= (ArrayList<String>) LeftOperator.schema().clone();
-		cur.addAll(RightOperator.schema());
-		currentTable= new DataTable(LeftOperator.getTableName() + " " + RightOperator.getTableName(), cur);
+		
+		schema = (ArrayList<String>) LeftOperator.schema().clone();
+		schema.addAll(RightOperator.schema());
+	
+		tableName = LeftOperator.getTableName() + " " + RightOperator.getTableName();
 		leftOperator= LeftOperator;
 		rightOperator= RightOperator;
 		this.tableAlias= tableAlias;
-		
-		//build the table with the operator construction
-		buildTable();
-		
 	}
 
 	/** reset both left operator and right operator to start from beginning */
 	@Override
 	public void reset() {
-		ptr=-1;
-//		leftOperator.reset();
-//		rightOperator.reset();
+		leftOperator.reset();
+		rightOperator.reset();
 	}
 
 	/** @return the table name from where the operator reads the data */
 	@Override
 	public String getTableName() {
-		return currentTable.getTableName();
+		return tableName;
 	}
 
 	/** @return the schema of the data table that is read by the operator */
 	@Override
 	// return the schema of the current table
 	public ArrayList<String> schema() {
-		return currentTable.getSchema();
+		return schema;
 	}
 
 
 	@Override
 	public Tuple getNextTuple() {
-		ptr+= 1;
-		if (ptr < currentTable.cardinality()) return new Tuple(currentTable.getRow(ptr));
-		return null;
-	}
-	
-	
-	/** for every left tuple loop through every right tuple, until finding a valid tuple or no more
-	 * tuple to add reset to next left tuple when one tuple is done permutating right table
-	 * 
-	 * @return Returns the next tuple read from the data */
-	private void buildTable() {
-		Tuple t;
-		while ((t = HelperBuildTuple()) != null) {
-		}
-	}
-	public Tuple HelperBuildTuple() {
 		Tuple next= null;
 		boolean flag= true;
 		Tuple right;
-		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(),
-			rightOperator.schema(), tableAlias);
+		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(), rightOperator.schema(), tableAlias);
+		
 		while (flag) {
 			if (resetFlag) {
 				while ((left= leftOperator.getNextTuple()) != null) {
 					while ((right= rightOperator.getNextTuple()) != null) {
 						if ((next= evawhere.evaluate(left, right)) != null) {
-							currentTable.addData(next);
 							resetFlag= false;
 							return next;
 						}
@@ -104,9 +84,7 @@ public class JoinOperator extends Operator {
 				flag= false;
 			} else {
 				while ((right= rightOperator.getNextTuple()) != null) {
-					
 					if ((next= evawhere.evaluate(left, right)) != null) {
-						currentTable.addData(next);
 						return next;
 					}
 				}
@@ -124,10 +102,11 @@ public class JoinOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		for (ArrayList<Integer> tupArr: currentTable.getFullTable()) {
-			Tuple tup = new Tuple(tupArr);
-			writer.addNextTuple(tup);
+		Tuple t;
+		while((t = getNextTuple()) != null) {
+			writer.addNextTuple(t);
 		}
 		writer.dump();
+		writer.close();
 	}
 }
