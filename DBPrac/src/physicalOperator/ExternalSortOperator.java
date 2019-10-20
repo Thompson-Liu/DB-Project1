@@ -169,16 +169,7 @@ public class ExternalSortOperator extends Operator {
 		}
 		writer.dump();
 		writer.close();
-	}
-
-	// 3. 需要改架构：比如让 binaryTupleReader 可以return table
-	/** @return the datable after sorting */
-	@Override
-	public DataTable getData() {
-		DataTable temp= new DataTable(dataFile, schema);
-		return temp;
-//		return sortedReader.;
-	}
+	}	
 
 	/** @return the name of the table being sorted */
 	@Override
