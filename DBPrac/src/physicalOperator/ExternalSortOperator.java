@@ -49,6 +49,7 @@ public class ExternalSortOperator extends Operator {
 		this.schema= childOp.schema();
 		this.colList= (ArrayList<String>) colList;
 		this.tempDir=tempDir;
+		this.useName=usageName;
 		tuplesPage= (int) Math.floor(1.0 * (4096)*bufferSize / (4.0 * (schema.size())));
 		memoryBuffer= new Buffer(tuplesPage);
 		// pass0 and get the total number of files stored
@@ -61,8 +62,7 @@ public class ExternalSortOperator extends Operator {
 			int nextRuns= ExternalSort(curPass, runs);
 			runs= nextRuns;
 		}
-		this.useName=useName;
-		sortedReader= new BinaryTupleReader(tempDir+ "/ESInter"+useName + Integer.toString(totalPass) + " 0");
+		sortedReader= new BinaryTupleReader(tempDir+ "/ESInter"+this.useName + Integer.toString(totalPass) + " 0");
 	}
 
 	// pass0
@@ -73,7 +73,7 @@ public class ExternalSortOperator extends Operator {
 			if (memoryBuffer.overflow()) {
 				memoryBuffer.sortBuffer(colList, schema);
 				TupleWriter tuplesWriter= new BinaryTupleWriter(
-						tempDir + "/ESInter"+useName + Integer.toString(pass) +" "+ Integer.toString(runs));
+						tempDir + "/ESInter"+this.useName + Integer.toString(pass) +" "+ Integer.toString(runs));
 				tuplesWriter.write(memoryBuffer.getTuples());
 				memoryBuffer.clear();
 				this.runs++ ;
@@ -84,7 +84,7 @@ public class ExternalSortOperator extends Operator {
 		if(!(memoryBuffer.empty())) {
 			memoryBuffer.sortBuffer(colList, schema);
 			TupleWriter tuplesWriter= new BinaryTupleWriter(
-					tempDir + "/ESInter"+useName + Integer.toString(pass) +" "+ Integer.toString(runs));
+					tempDir + "/ESInter"+this.useName + Integer.toString(pass) +" "+ Integer.toString(runs));
 			tuplesWriter.write(memoryBuffer.getTuples());
 			memoryBuffer.clear();
 			this.runs++;
@@ -176,6 +176,7 @@ public class ExternalSortOperator extends Operator {
 	}
 
 	public void resetIndex(int ind) {
+		sortedReader.setAtt(schema.size());
 		sortedReader.reset(ind);
 	}
 

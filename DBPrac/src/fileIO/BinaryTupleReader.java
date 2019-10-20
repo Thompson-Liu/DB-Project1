@@ -76,6 +76,10 @@ public class BinaryTupleReader implements TupleReader {
 			}
 		}
 	}
+	
+	public void setAtt(int num) {
+		this.numAttr=num;
+	}
 
 	@Override
 	public String getFileInfo() {

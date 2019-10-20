@@ -24,8 +24,13 @@ public class SMJ extends Operator {
 	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
 		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int k) {
 		for (int i= 0; i < k; i+= 1) {
+			System.out.println("righ  col is "+rightColList.toString());
+			System.out.println(rightTup);
+
+			System.out.println("right  schema is   "   +rightSchema.toString());
 			if (leftTup.getData(leftSchema.indexOf(leftColList.get(i))) != rightTup
-				.getData(rightSchema.indexOf(rightColList.get(i)))) { return false; }
+				.getData(rightSchema.indexOf(rightColList.get(i)))) { 
+				return false; }
 		}
 		return true;
 	}
@@ -57,7 +62,6 @@ public class SMJ extends Operator {
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 						System.out.println("this tr is : " + tr.printData());
 						tr= leftExSortOp.getNextTuple();
-						System.out.println("leftExsort     schema is   :   " + leftExSortOp.schema());
 						System.out.println(" yeeeesssssssssss  tr is : " + tr.printData());
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
 							i= 0;
@@ -67,9 +71,16 @@ public class SMJ extends Operator {
 					}
 					while (tr != null && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
-						System.out.println("     that  tr is : " + tr.printData());
-
+						System.out.println("     ------that is   tr is : " + tr.printData());
+						ArrayList<Integer> a = new ArrayList<Integer>();
+						a.add(67);
+						a.add(91);
+						a.add(10);
+						if(tr.getTuple().equals(a)) {
+							System.out.println("");
+						}
 						gs= rightExSortOp.getNextTuple();
+						System.out.println("     read right------that is   tr is : " + tr.printData());
 						ptr+= 1;
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
 							i= -1;
@@ -80,10 +91,10 @@ public class SMJ extends Operator {
 				}
 				ts= new Tuple(gs.getTuple());
 			}
-			if (tr == null || gs == null) return null;
+			if (tr == null || gs == null || tr.getTuple().size() == 0 || gs.getTuple().size() == 0) return null;
 			if (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
-				if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+				if (ts != null && ts.getTuple().size() > 0 && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 					leftColList.size())) {
 					flag= true;
 					Tuple joinedTuple= new Tuple();
@@ -109,7 +120,6 @@ public class SMJ extends Operator {
 	public void dump(TupleWriter writer) {
 		Tuple t;
 		while ((t= getNextTuple()) != null) {
-			System.out.println(t.printData());
 			writer.addNextTuple(t);
 		}
 		writer.dump();
