@@ -93,4 +93,8 @@ public class Tuple {
 		}
 		return str;
 	}
+	
+	public boolean equalTo(Tuple tup2) {
+		return this.equals(tup2);
+	}
 }
