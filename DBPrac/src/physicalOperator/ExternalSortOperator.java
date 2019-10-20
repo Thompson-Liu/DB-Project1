@@ -56,7 +56,6 @@ public class ExternalSortOperator extends Operator {
 		// calculate the total number of passes needed
 		Double div= Math.ceil(1.0*runs );
 		totalPass= (int) Math.ceil(Math.log(div)/Math.log(1.0 * (bufferSize - 1)));
-		System.out.println("Div is   :  "+ div);
 		for (int curPass= 1; curPass <= totalPass; curPass++ ) {
 			int nextRuns= ExternalSort(curPass, runs);
 			runs= nextRuns;
@@ -101,14 +100,10 @@ public class ExternalSortOperator extends Operator {
 		int startTable= 0;
 		for (int i= 0; i < mergenum; i++ ) {
 			int endTable= Math.min(startTable + bufferSize-1, runs);
-			System.out.println(endTable);
 			merge(startTable, endTable, i,passnum);
 			startTable= endTable;
 		}
-//		System.out.println(pass);
-//		System.out.println(runs);
 		this.pass++;
-		System.out.println("merge number is "+mergenum);
 		return mergenum;
 	}
 
