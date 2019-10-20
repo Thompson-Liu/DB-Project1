@@ -12,7 +12,7 @@ import parser.EvaluateWhere;
 
 public class BNLJ extends Operator {
 
-	private static Buffer buffer;
+	private Buffer buffer;
 	private int numOuters;
 	private Operator outerOp;
 	private Operator innerOp;
@@ -25,7 +25,6 @@ public class BNLJ extends Operator {
 	private ArrayList<String> schema;
 	private Tuple innerTup;
 	private EvaluateWhere eval;
-
 
 	public BNLJ(int numPages, Operator outer, Operator inner, 
 			Expression joinExp, HashMap<String, String> tableAlias) {
@@ -41,7 +40,7 @@ public class BNLJ extends Operator {
 		
 		tableName = outer.getTableName() + "," + inner.getTableName();
 		alias = tableAlias;
-		eval = new EvaluateWhere(joinCond, innerOp.schema(), outerOp.schema(), alias);
+		eval = new EvaluateWhere(joinCond, outer.schema(), inner.schema(), alias);
 	}
 
 	private void populateBuffer() {
@@ -74,6 +73,8 @@ public class BNLJ extends Operator {
 					while ((innerTup = innerOp.getNextTuple()) != null) {
 						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
 							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
+								System.out.println("outer tuple: " + outerTup.printData());
+								System.out.println("inner tuple: " + innerTup.printData());
 								tupState = false;
 								bufState = false;
 								return next;
@@ -129,6 +130,7 @@ public class BNLJ extends Operator {
 			writer.addNextTuple(t);
 		}
 		writer.dump();
+		reset();
 		writer.close();
 	}
 

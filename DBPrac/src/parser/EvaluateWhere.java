@@ -96,7 +96,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.tableAlias = tableAlias;
-		
+
 	}
 
 
@@ -328,25 +328,25 @@ public class EvaluateWhere implements ExpressionVisitor {
 	@Override
 	public void visit(Column arg0) {
 		String colTable = arg0.getTable().getName();
-		
+
 		//always using Alias as indexing
 		if(tableAlias.containsKey(colTable)) {
 			colTable=tableAlias.get(colTable);
 		}
-		
+
 		String colName = arg0.getColumnName();
 		String colInfo = colTable+"."+colName;      // the new name of the column  e.g. Sailor.A
-		
+
 		if(!leftSchema.contains(colInfo) && !rightSchema.contains(colInfo)) {
 			sofar.push(null);
 		}else {
 			if (leftSchema.contains(colInfo) ) {
-					int index= leftSchema.indexOf(colInfo);
-					sofar.push(leftTuple.getData(index));
+				int index= leftSchema.indexOf(colInfo);
+				sofar.push(leftTuple.getData(index));
 			}
 			else  {
-					int index= rightSchema.indexOf(colInfo);
-					sofar.push(rightTuple.getData(index));
+				int index= rightSchema.indexOf(colInfo);
+				sofar.push(rightTuple.getData(index));
 			}
 		}
 	}
