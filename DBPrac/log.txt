@@ -266,3 +266,6 @@
 Running queries...1
 
 Execution time : 16
+Running queries...1
+
+Execution time : 75

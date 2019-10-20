@@ -18,6 +18,7 @@ public class SMJ extends Operator {
 	private Tuple tr;
 	private Tuple ts;
 	private Tuple gs;
+	private int ptr;
 	boolean flag;
 
 	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
@@ -41,6 +42,7 @@ public class SMJ extends Operator {
 		Tuple firstTuple= rightExSortOp.getNextTuple();
 		ts= firstTuple;
 		gs= firstTuple;
+		ptr= 0;
 		flag= false;
 	}
 
