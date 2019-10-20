@@ -17,12 +17,11 @@ public class BNLJ extends Operator {
 	private Operator outerOp;
 	private Operator innerOp;
 	private Expression joinCond;
-	private DataTable data;
 	private HashMap<String, String> alias;
 	private boolean bufState = true;
 	private boolean tupState = true;
 	private int bufTupState = 0;
-	
+	private ArrayList<String> schema;
 	private Tuple innerTup;
 	private EvaluateWhere eval;
 
@@ -36,11 +35,11 @@ public class BNLJ extends Operator {
 		outerOp = outer;
 		innerOp = inner;
 		joinCond = joinExp;
-		ArrayList<String> cur= new ArrayList<String>(outer.schema());
-		cur.addAll(inner.schema());
-		data = new DataTable(outer.getTableName() + " " + inner.getTableName(), cur);
-		alias = tableAlias;
 		
+		schema = new ArrayList<String>(outer.schema());
+		schema.addAll(inner.schema());
+		
+		alias = tableAlias;
 		eval = new EvaluateWhere(joinCond, innerOp.schema(), outerOp.schema(), alias);
 	}
 

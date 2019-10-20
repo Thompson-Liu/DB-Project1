@@ -62,7 +62,11 @@ public class SelectOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		writer.write(getData().toArrayList());
+		Tuple t;
+		while ((t = getNextTuple()) != null) {
+			writer.addNextTuple(t);
+		}
+		writer.dump();
 		writer.close();
 	}
 
@@ -78,14 +82,5 @@ public class SelectOperator extends Operator {
 		return this.tableName;
 	}
 
-	/** @return the data read by the operator in DataTable data structure */
-	@Override
-	public DataTable getData() {
-//		Tuple t;
-//		while ((t = getNextTuple()) != null) {
-//		}
-//		reset();
-//		return data;
-		return null;
-	}
+
 }
