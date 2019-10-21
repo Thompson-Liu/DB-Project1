@@ -87,14 +87,14 @@ public class SMJ extends Operator {
 			if (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
 
-				if (ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+				if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 					leftColList.size())) {
 
 					flag= true;
 
-					if(ts.getData(0)==200 && ts.getData(1)==141) {
-						System.out.println("herere");
-					}
+//					if (ts.getData(0) == 200 && ts.getData(1) == 141) {
+//						System.out.println("herere");
+//					}
 					Tuple joinedTuple= new Tuple();
 					for (int j= 0; j < leftOp.schema().size(); j++ ) {
 						joinedTuple.addData(tr.getData(j));
@@ -103,11 +103,11 @@ public class SMJ extends Operator {
 						joinedTuple.addData(ts.getData(j));
 					}
 					ts= rightExSortOp.getNextTuple();
-					
-					System.out.println(tr.printData());
-					System.out.println(ts.printData());
-					System.out.println(gs.printData());
-					System.out.println("======================");
+
+//					System.out.println(tr.printData());
+//					System.out.println(ts.printData());
+//					System.out.println(gs.printData());
+//					System.out.println("======================");
 
 					return joinedTuple;
 				}

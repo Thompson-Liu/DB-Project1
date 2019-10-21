@@ -2,9 +2,9 @@
 -- SELECT *
 -- FROM TestTwo
 -- ORDER BY TestTwo.A, TestTwo.G;
-SELECT *
-FROM Reserves
-ORDER BY Reserves.G
+-- SELECT *
+-- FROM Reserves
+-- ORDER BY Reserves.G
 
 
 -- SELECT *
@@ -24,9 +24,9 @@ ORDER BY Reserves.G
 -- SELECT Sailors.A
 -- FROM Sailors
 -- WHERE Sailors.B >= Sailors.C AND Sailors.B < Sailors.C;
--- SELECT *
--- FROM Sailors, Reserves
--- WHERE Sailors.A = Reserves.G;
+SELECT *
+FROM Sailors, Reserves
+WHERE Sailors.A = Reserves.G;
 -- SELECT *
 -- FROM Sailors, Reserves, Boats
 -- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D
