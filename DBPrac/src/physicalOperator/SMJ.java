@@ -24,10 +24,8 @@ public class SMJ extends Operator {
 	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
 		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int k) {
 		for (int i= 0; i < k; i+= 1) {
-
 			if (leftTup.getData(leftSchema.indexOf(leftColList.get(i))) != rightTup
-				.getData(rightSchema.indexOf(rightColList.get(i)))) { 
-				return false; }
+				.getData(rightSchema.indexOf(rightColList.get(i)))) { return false; }
 		}
 		return true;
 	}
@@ -55,10 +53,18 @@ public class SMJ extends Operator {
 			if (!flag) {
 				int i= 0;
 				while (i < leftColList.size()) {
+<<<<<<< HEAD
 //					if(tr.getData(0)==104 && tr.getData(1)==195) {
 //						System.out.println("heiiiii");
 //					}
 					while (tr!= null &&tr.getTuple().size()>0 && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
+=======
+
+					if (tr.getData(0) == 105 && tr.getData(1) == 195) {
+						System.out.println("heiiiii");
+					}
+					while (tr != null && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
+>>>>>>> e31b1ba075de8b7b4cf300a7d34381af0277b255
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 						tr= leftExSortOp.getNextTuple();
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
@@ -66,11 +72,21 @@ public class SMJ extends Operator {
 							break;
 						}
 					}
+<<<<<<< HEAD
 					while (tr != null &&tr.getTuple().size()>0 &&  gs != null &&gs.getTuple().size() > 0  && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 						rightExSortOp.resetIndex(ptr);
 						gs= rightExSortOp.getNextTuple();
 						ptr+= 1;
+=======
+					while (tr != null && gs != null && gs.getTuple().size() > 0 &&
+						tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
+							.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
+						gs= rightExSortOp.getNextTuple();
+						ptr+= 1;
+						System.out.println("ptr  " + ptr);
+						System.out.println(gs.getData(0));
+>>>>>>> e31b1ba075de8b7b4cf300a7d34381af0277b255
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
 							i= -1;
 							break;
@@ -84,6 +100,7 @@ public class SMJ extends Operator {
 			if (tr == null || gs == null || tr.getTuple().size() == 0 || gs.getTuple().size() == 0) return null;
 			if (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
+<<<<<<< HEAD
 				
 				
 				
@@ -94,6 +111,11 @@ public class SMJ extends Operator {
 						System.out.println("goood");
 					}
 					
+=======
+				if (ts != null && ts.getTuple().size() > 0 &&
+					ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+						leftColList.size())) {
+>>>>>>> e31b1ba075de8b7b4cf300a7d34381af0277b255
 					flag= true;
 					Tuple joinedTuple= new Tuple();
 					for (int j= 0; j < leftOp.schema().size(); j++ ) {
@@ -103,6 +125,7 @@ public class SMJ extends Operator {
 						joinedTuple.addData(ts.getData(j));
 					}
 					ts= rightExSortOp.getNextTuple();
+					ptr+= 1;
 					return joinedTuple;
 				}
 				else {
@@ -110,7 +133,12 @@ public class SMJ extends Operator {
 					tr= leftExSortOp.getNextTuple();
 					rightExSortOp.resetIndex(ptr);
 				}
+<<<<<<< HEAD
 			}else {
+=======
+			} else {
+				System.out.println("=============");
+>>>>>>> e31b1ba075de8b7b4cf300a7d34381af0277b255
 				flag= false;
 				tr= leftExSortOp.getNextTuple();
 				rightExSortOp.resetIndex(ptr);
