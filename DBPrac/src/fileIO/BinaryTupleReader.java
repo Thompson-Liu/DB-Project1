@@ -78,8 +78,8 @@ public class BinaryTupleReader implements TupleReader {
 		}
 	}
 	
-	public void setAtt(int num) {
-		this.numAttr=num;
+	public void setTuplesPage(int num) {
+		this.rowsPerPage=num;
 	}
 
 	@Override

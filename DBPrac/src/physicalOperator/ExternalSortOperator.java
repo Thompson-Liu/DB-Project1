@@ -176,7 +176,7 @@ public class ExternalSortOperator extends Operator {
 	}
 
 	public void resetIndex(int ind) {
-		sortedReader.setAtt(schema.size());
+		sortedReader.setTuplesPage(tuplesPage);
 		sortedReader.reset(ind);
 	}
 
