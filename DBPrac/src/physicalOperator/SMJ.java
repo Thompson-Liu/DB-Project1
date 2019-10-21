@@ -1,5 +1,6 @@
 package physicalOperator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,6 +22,7 @@ public class SMJ extends Operator {
 	private Tuple gs;
 	private int ptr;
 	private boolean flag;
+	private boolean stop;
 	private ArrayList<String> schema;
 
 	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
@@ -55,9 +57,10 @@ public class SMJ extends Operator {
 		ts= firstTuple;
 		gs= firstTuple;
 		ptr= 1;
-		this.schema= new ArrayList<String>(left.schema());
+		this.schema = new ArrayList<String>(left.schema());
 		this.schema.addAll(right.schema());
 		flag= false;
+		stop= false;
 	}
 
 	@Override
@@ -110,9 +113,9 @@ public class SMJ extends Operator {
 						joinedTuple.addData(ts.getData(j));
 					}
 					ts= rightExSortOp.getNextTuple();
-					if(ts.getData(0)==131 && ts.getData(1)==35) {
-						System.out.println(ts.printData());
-					}
+//					if(ts.getData(0)==131 && ts.getData(1)==35) {
+//						System.out.println(ts.printData());
+//					}
 					
 
 
