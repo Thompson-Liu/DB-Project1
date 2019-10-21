@@ -159,9 +159,9 @@ public class ExternalSortOperator extends Operator {
 			else {
 				String dfile= curReader.getFileInfo();
 				File deleteFile= new File(dfile);
-//				if (!deleteFile.delete()) {
-//					System.out.println("didn't delete this file" + dfile);
-//				}
+				if (!deleteFile.delete()) {
+					System.out.println("didn't delete this file" + dfile);
+				}
 			}
 		}
 		tupleWrite.dump();
