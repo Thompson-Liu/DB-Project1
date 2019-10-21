@@ -924,4 +924,4 @@
 
 Running queries...1
 
-Execution time : 61
+Execution time : 14
