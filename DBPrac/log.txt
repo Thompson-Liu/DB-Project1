@@ -999,10 +999,6 @@
 200,120
 200,141
 
-<<<<<<< HEAD
 Running queries...1
 
-Execution time : 379
-=======
-Running queries...1
->>>>>>> e31b1ba075de8b7b4cf300a7d34381af0277b255
+Execution time : 522
