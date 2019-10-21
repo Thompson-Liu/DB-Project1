@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+
 import dataStructure.Tuple;
 
 public class BinaryTupleReader implements TupleReader {
@@ -26,8 +27,8 @@ public class BinaryTupleReader implements TupleReader {
 			fin= new FileInputStream(file);
 			fc= fin.getChannel();
 			buffer= ByteBuffer.allocate(4096);
-			curRow=0;
-			numRows=0;
+			curRow= 0;
+			numRows= 0;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -37,22 +38,16 @@ public class BinaryTupleReader implements TupleReader {
 	private ArrayList<Tuple> getNextPage() {
 		buffer.clear();
 		buffer.putInt(4, 0);
+
 		try {
 			fc.read(buffer);
 			this.numAttr= buffer.getInt(0);
 			this.numRows= buffer.getInt(4);
 			if (this.numRows != 0) {
-				this.rowsPerPage = (int) Math.floor(1.0*(4096-8)/this.numAttr);
-				pageData = new ArrayList<Tuple>();
+				this.rowsPerPage= (int) Math.floor(1.0 * (4096 - 8) / this.numAttr);
+				pageData= new ArrayList<Tuple>();
 				// Populate the dataTable
 				for (int i= 0; i < this.numRows; i++ ) {
-//					if(numAttr==104) {
-//						System.out.println("stop");
-//						break;
-//					}
-					//				System.out.println("i is   :"+i);
-					//				System.out.println("num attributes are   :  "+this.numAttr);
-					//				System.out.println("numRows are   : "+this.numRows);
 					ArrayList<Integer> temp= new ArrayList<Integer>(numAttr);
 					for (int j= 0; j < numAttr; j++ ) {
 						temp.add(buffer.getInt(i * numAttr * 4 + 8 + j * 4));
@@ -60,7 +55,8 @@ public class BinaryTupleReader implements TupleReader {
 					pageData.add(new Tuple(temp));
 				}
 				return pageData;
-			} 
+			}
+			this.pageData= null;
 			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -72,21 +68,23 @@ public class BinaryTupleReader implements TupleReader {
 	@Override
 	public Tuple readNextTuple() {
 		if (curRow <= this.numRows - 1) {
-			return pageData.get(curRow++);
+			return pageData.get(curRow++ );
 		} else {
-			curRow= curRow-numRows;
+			curRow= curRow - numRows;
 			pageData= getNextPage();
+			if (pageData == null) { return null; }
 			if (this.numRows > 0) {
-				return pageData.get(curRow++);
+				return pageData.get(curRow++ );
 			} else {
 				return null;
 			}
 		}
 	}
 
+	@Override
 	public void setAtt(int num) {
 
-		this.numAttr=num;
+		this.numAttr= num;
 	}
 
 	@Override
@@ -120,14 +118,14 @@ public class BinaryTupleReader implements TupleReader {
 	public void reset(int index) {
 		// Using position(long newPosition) method in FileChannel
 		try {
-//			rowsPerPage= 4988 / (4 * numAttr);
+//			rowsPerPage= 4088 / (4 * numAttr);
 //			int numPages= (index+1) / rowsPerPage;
 //			curRow=(index) % rowsPerPage;
-//			int newIndex= numPages * 4996 + 8 + curRow * (4 * numAttr);
-			int pageIndex = (index+1)/this.rowsPerPage;
-			curRow = index % rowsPerPage;
+//			int newIndex= numPages * 4096 + 8 + curRow * (4 * numAttr);
+			int pageIndex= (index + 1) / this.rowsPerPage;
+			curRow= index % rowsPerPage;
 			fc.position(pageIndex);
-			this.pageData = getNextPage();
+			this.pageData= getNextPage();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

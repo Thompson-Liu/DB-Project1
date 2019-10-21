@@ -79,17 +79,23 @@ public class ExternalSortOperator extends Operator {
 				TupleWriter tuplesWriter= new BinaryTupleWriter(
 						tempDir + "/ESInter"+this.useName + Integer.toString(pass) +" "+ Integer.toString(runs));
 				tuplesWriter.write(memoryBuffer.getTuples());
+				tuplesWriter.dump();
 				memoryBuffer.clear();
 				this.runs++ ;
 			}
 			memoryBuffer.addData(cur);
+			
 		}
 		// dump the rest
 		if(!(memoryBuffer.empty())) {
 			memoryBuffer.sortBuffer(colList, schema);
 			TupleWriter tuplesWriter= new BinaryTupleWriter(
 					tempDir + "/ESInter"+this.useName + Integer.toString(pass) +" "+ Integer.toString(runs));
-			tuplesWriter.write(memoryBuffer.getTuples());
+//			tuplesWriter.write(memoryBuffer.getTuples());
+			for(Tuple tup : memoryBuffer.getTuples()) {
+				tuplesWriter.addNextTuple(tup);
+//				tuplesWriter.dump();
+			}
 			tuplesWriter.dump();
 			memoryBuffer.clear();
 			this.runs++;

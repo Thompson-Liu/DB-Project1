@@ -8,6 +8,7 @@ import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateJoin;
 
+/** the class for implementing the Sort Merge Join algorithm */
 public class SMJ extends Operator {
 	private Operator leftOp;
 	private Operator rightOp;
@@ -19,8 +20,11 @@ public class SMJ extends Operator {
 	private Tuple ts;
 	private Tuple gs;
 	private int ptr;
-	boolean flag;
+	private boolean flag;
+	private ArrayList<String> schema;
 
+	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
+	 * each other for the two given tuples, and false otherwise. */
 	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
 		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int k) {
 		for (int i= 0; i < k; i+= 1) {
@@ -30,6 +34,13 @@ public class SMJ extends Operator {
 		return true;
 	}
 
+	/** @param bufferSize: the buffer size used in external sort
+	 * @param left: the left child operator
+	 * @param right: the right child operator
+	 * @param joinExpr: the join evaluation to be evaluated
+	 * @param alias: the mapping between table names and aliases
+	 * @param dir: the prefix of the directory that stores the temporary files generated during external
+	 * sort. */
 	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias,
 		String dir) {
 		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName(), alias);
@@ -44,6 +55,8 @@ public class SMJ extends Operator {
 		ts= firstTuple;
 		gs= firstTuple;
 		ptr= 1;
+		this.schema= new ArrayList<String>(left.schema());
+		this.schema.addAll(right.schema());
 		flag= false;
 	}
 
@@ -67,7 +80,7 @@ public class SMJ extends Operator {
 					}
 					while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
-						rightExSortOp.resetIndex(ptr);
+//						rightExSortOp.resetIndex(ptr);
 						gs= rightExSortOp.getNextTuple();
 						if (gs == null) return null;
 						ptr+= 1;
@@ -85,13 +98,8 @@ public class SMJ extends Operator {
 			if (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
 
-				if (ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+				if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 					leftColList.size())) {
-
-					if (tr.getData(0) == 200 && tr.getData(1) == 119 && tr.getData(2) == 86 && gs.getData(0) == 200 &&
-						gs.getData(1) == 141) {
-						System.out.println("goood");
-					}
 
 					flag= true;
 					Tuple joinedTuple= new Tuple();
@@ -102,9 +110,12 @@ public class SMJ extends Operator {
 						joinedTuple.addData(ts.getData(j));
 					}
 					ts= rightExSortOp.getNextTuple();
-					System.out.println(tr.printData());
-					System.out.println(ts.printData());
-					System.out.println("======================");
+					if(ts.getData(0)==131 && ts.getData(1)==35) {
+						System.out.println(ts.printData());
+					}
+					
+
+
 					return joinedTuple;
 				}
 			}
@@ -137,8 +148,7 @@ public class SMJ extends Operator {
 
 	@Override
 	public ArrayList<String> schema() {
-		leftOp.schema().addAll(rightOp.schema());
-		return leftOp.schema();
+		return this.schema;
 	}
 
 	@Override
