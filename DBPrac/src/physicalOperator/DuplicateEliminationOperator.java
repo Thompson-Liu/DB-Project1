@@ -10,11 +10,13 @@ import fileIO.TupleWriter;
 public class DuplicateEliminationOperator extends Operator {
 	private Tuple prevTuple;
 	private Tuple currTuple;
-	private ExternalSortOperator exSortOp;
+//	private ExternalSortOperator exSortOp;
+	private SortOperator exSortOp;
 
 	/** @param operator operator is the child operator, which has to be a SortOperator because the
 	 * precondition requires that the data be sorted first. */
-	public DuplicateEliminationOperator(ExternalSortOperator operator) {
+//	public DuplicateEliminationOperator(ExternalSortOperator operator) {
+	public DuplicateEliminationOperator(SortOperator operator) {
 		exSortOp= operator;
 		Tuple tmp= operator.getNextTuple();
 		prevTuple= null;

@@ -96,10 +96,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.tableAlias = tableAlias;
-
 	}
-
-
 
 	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple) {
 		sofar= new Stack<Integer>();

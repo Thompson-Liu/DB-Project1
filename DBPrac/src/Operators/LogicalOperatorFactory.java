@@ -39,25 +39,27 @@ public class LogicalOperatorFactory {
 		// (key: tableName, value: alias)
 		HashMap<String, String> tableAlias= new HashMap<String, String>();
 		String aliasName= "";
-
-		String fromLeft= plainSelect.getFromItem().toString();
-
-		if(plainSelect.getFromItem().getAlias()!=null) {
-			String tempAlias = plainSelect.getFromItem().getAlias().toString();
-			String tempTable= plainSelect.getFromItem().toString().replace("AS "+tempAlias,"").trim();
-			tableAlias.put(tempTable,tempAlias);
-			aliasName = plainSelect.getFromItem().getAlias().toString();
-
-		}
+		
+		String fromLeft = plainSelect.getFromItem().toString();
+		Join firstJoin = new Join();
+		firstJoin.setRightItem(plainSelect.getFromItem());
+		
+		List<Join> joinList = new ArrayList<Join>();
+		joinList.add(firstJoin);
+		
 		LogicalOperator intOp;
-		LogicalOperator leftOp = new SelectLogOp(plainSelect.getWhere(), new ScanLogOp(fromLeft, aliasName), tableAlias);
-
 		if (plainSelect.getJoins() != null) {
-			intOp = new JoinLogOp(leftOp, join(plainSelect, plainSelect.getJoins(), tableAlias),
-					plainSelect.getWhere(), tableAlias);
+			joinList.addAll(plainSelect.getJoins());
+			intOp = join(plainSelect, joinList, tableAlias);
 		} else {
-			intOp= leftOp;
+			if(plainSelect.getFromItem().getAlias()!=null) {
+				String tempAlias = plainSelect.getFromItem().getAlias().toString();
+				String tempTable= plainSelect.getFromItem().toString().replace("AS "+tempAlias,"").trim();
+				tableAlias.put(tempTable,tempAlias);
+				aliasName = plainSelect.getFromItem().getAlias().toString();
 
+			}
+			intOp = new SelectLogOp(plainSelect.getWhere(), new ScanLogOp(fromLeft, aliasName), tableAlias);
 		}
 
 		// check select clause
@@ -122,5 +124,4 @@ public class LogicalOperatorFactory {
 		SelectLogOp rightOperator= new SelectLogOp(whereExp, rightOp, tableAlias);
 		return (new JoinLogOp(join(plainSelect, joins, tableAlias), rightOperator, whereExp, tableAlias));
 	}
-
 }
