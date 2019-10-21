@@ -41,8 +41,6 @@ public class BinaryTupleReader implements TupleReader {
 		try {
 			fc.read(buffer);
 			this.numAttr= buffer.getInt(0);
-			System.out.println(file);
-			System.out.println("num attributes   --------------"+numAttr);
 			this.numRows= buffer.getInt(4);
 			if (this.numRows != 0) {
 				this.rowsPerPage = (int) Math.floor(1.0*(4096-8)/this.numAttr);
@@ -77,11 +75,9 @@ public class BinaryTupleReader implements TupleReader {
 		if (curRow <= this.numRows - 1) {
 			return pageData.get(curRow++);
 		} else {
-			System.out.println("get next page");
 			curRow= curRow-numRows;
 			pageData= getNextPage();
 			if (this.numRows > 0) {
-				System.out.println("get to read after read next page"+curRow);
 				return pageData.get(curRow++);
 			} else {
 				return null;
@@ -122,9 +118,6 @@ public class BinaryTupleReader implements TupleReader {
 
 	@Override
 	public void reset(int index) {
-		if (index==510) {
-			System.out.println("hreer");
-		}
 		// Using position(long newPosition) method in FileChannel
 		try {
 //			rowsPerPage= 4988 / (4 * numAttr);

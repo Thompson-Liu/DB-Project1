@@ -58,7 +58,7 @@ public class SMJ extends Operator {
 //					if(tr.getData(0)==104 && tr.getData(1)==195) {
 //						System.out.println("heiiiii");
 //					}
-					while (tr != null && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
+					while (tr!= null &&tr.getTuple().size()>0 && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 						tr= leftExSortOp.getNextTuple();
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
@@ -66,7 +66,7 @@ public class SMJ extends Operator {
 							break;
 						}
 					}
-					while (tr != null && gs != null &&gs.getTuple().size() > 0  && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
+					while (tr != null &&tr.getTuple().size()>0 &&  gs != null &&gs.getTuple().size() > 0  && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 						rightExSortOp.resetIndex(ptr);
 						gs= rightExSortOp.getNextTuple();
@@ -84,8 +84,16 @@ public class SMJ extends Operator {
 			if (tr == null || gs == null || tr.getTuple().size() == 0 || gs.getTuple().size() == 0) return null;
 			if (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
+				
+				
+				
 				if (ts != null && ts.getTuple().size() > 0 && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 					leftColList.size())) {
+					
+					if(tr.getData(0)==200 && tr.getData(1)==14&&tr.getData(2)==117 && gs.getData(0)==200&& gs.getData(1)==9) {
+						System.out.println("goood");
+					}
+					
 					flag= true;
 					Tuple joinedTuple= new Tuple();
 					for (int j= 0; j < leftOp.schema().size(); j++ ) {
@@ -96,13 +104,13 @@ public class SMJ extends Operator {
 					}
 					ts= rightExSortOp.getNextTuple();
 					return joinedTuple;
-				} else {
+				}
+				else {
 					flag= false;
 					tr= leftExSortOp.getNextTuple();
 					rightExSortOp.resetIndex(ptr);
 				}
 			}else {
-				System.out.println("=============");
 				flag= false;
 				tr= leftExSortOp.getNextTuple();
 				rightExSortOp.resetIndex(ptr);
