@@ -1,5 +1,6 @@
 Sailors A B C
 Boats D E F
 Reserves G H
-Test A B C D E F G H
-TestTwo A B C G H
+testRelation0 A B C
+testRelation1 D E F G
+testRelation2 H I J K L

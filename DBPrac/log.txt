@@ -1,0 +1,12 @@
+Running queries...1
+
+Execution time : 0
+Running queries...1
+
+Execution time : 0
+Running queries...1
+
+Execution time : 0
+Running queries...1
+
+Execution time : 79947

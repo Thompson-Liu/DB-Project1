@@ -11,8 +11,9 @@ import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
 import dataStructure.Tuple;
-import fileIO.*;
+import fileIO.BinaryTupleWriter;
 import fileIO.Logger;
+import fileIO.TupleWriter;
 import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
@@ -46,40 +47,44 @@ public class Interpreter {
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
 
-					// need to pass in the name of the config file path 
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt", args[2]);
+					// need to pass in the name of the config file path
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt",
+						args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
 //					ReadableTupleWriter writer= new ReadableTupleWriter(
 //							outputDir + "/query" + Integer.toString(queryCounter));
 					BinaryTupleWriter writer= new BinaryTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
-					
-					long time1 = System.currentTimeMillis();
-					// op.dump(writer);
-					
-					long time2 = System.currentTimeMillis();
-					long diffTime = time2-time1;
+
+					long time1= System.currentTimeMillis();
+					op.dump(writer);
+
+					long time2= System.currentTimeMillis();
+					long diffTime= time2 - time1;
 					System.out.println(diffTime);
-					
+
 					// Test logger
 					Logger log= Logger.getInstance();
-					log.dumpMessage("Running queries..."+Integer.toString(queryCounter));
-					log.dumpMessage("\n"+ "Execution time : "+Long.toString(diffTime));
+					log.dumpMessage("Running queries..." + Integer.toString(queryCounter));
+					log.dumpMessage("\n" + "Execution time : " + Long.toString(diffTime));
 
 					queryCounter++ ;
-					
-					// generate 3 random test data sets
-					int count = 0;
-					BinaryTupleWriter testDataWriter0 = new BinaryTupleWriter(args[0] + "/testData/testRelation" + (count++));
-					generateRandomData(testDataWriter0, 25, 3, 5000);
 
-					BinaryTupleWriter testDataWriter1 = new BinaryTupleWriter(args[0] + "/testData/testRelation" + (count++));
-					generateRandomData(testDataWriter1, 50, 4, 5000);
-					
-					BinaryTupleWriter testDataWriter2 = new BinaryTupleWriter(args[0] + "/testData/testRelation" + (count++));
-					generateRandomData(testDataWriter2, 100, 5, 5000);
-					
+					// generate 3 random test data sets
+//					int count= 0;
+//					BinaryTupleWriter testDataWriter0= new BinaryTupleWriter(
+//						args[0] + "/db/data/testRelation" + (count++ ));
+//					generateRandomData(testDataWriter0, 1000, 3, 5000);
+//
+//					BinaryTupleWriter testDataWriter1= new BinaryTupleWriter(
+//						args[0] + "/db/data/testRelation" + (count++ ));
+//					generateRandomData(testDataWriter1, 2000, 4, 5000);
+//
+//					BinaryTupleWriter testDataWriter2= new BinaryTupleWriter(
+//						args[0] + "/db/data/testRelation" + (count++ ));
+//					generateRandomData(testDataWriter2, 3000, 5, 5000);
+
 				} catch (Exception e) {
 					System.err.println(
 						"Exception occurred during executing the query number " + Integer.toString(queryCounter));
@@ -121,10 +126,10 @@ public class Interpreter {
 		}
 		return cat;
 	}
-	
+
 	private static void generateRandomData(TupleWriter writer, int range, int length, int count) {
-		TestGenerator testGen = new TestGenerator(range, length, count);
-		ArrayList<Tuple> randData = testGen.generateTuples();
+		TestGenerator testGen= new TestGenerator(range, length, count);
+		ArrayList<Tuple> randData= testGen.generateTuples();
 
 		writer.write(randData);
 		writer.dump();
