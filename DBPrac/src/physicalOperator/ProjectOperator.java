@@ -60,7 +60,6 @@ public class ProjectOperator extends Operator {
 			Tuple tup= new Tuple();
 
 			for (String item : selectColumns) {
-
 				int index= childOp.schema().indexOf(item.toString());
 				tup.addData(next.getData(index));
 			}

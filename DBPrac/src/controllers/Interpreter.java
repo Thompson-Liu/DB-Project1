@@ -48,22 +48,21 @@ public class Interpreter {
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt", args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
-					ReadableTupleWriter writer= new ReadableTupleWriter(
-							outputDir + "/query" + Integer.toString(queryCounter));
-//					BinaryTupleWriter writer= new BinaryTupleWriter(
-//						outputDir + "/query" + Integer.toString(queryCounter));
+//					ReadableTupleWriter writer= new ReadableTupleWriter(
+//							outputDir + "/query" + Integer.toString(queryCounter));
+					BinaryTupleWriter writer= new BinaryTupleWriter(
+						outputDir + "/query" + Integer.toString(queryCounter));
 					long time1 = System.currentTimeMillis();
 					op.dump(writer);
 					
-					// Test logger
-					Logger log= Logger.getInstance();
-						log.dumpMessage("Running queries..."+Integer.toString(queryCounter));
-					
-					
 					long time2 = System.currentTimeMillis();
 					long diffTime = time2-time1;
-						log.dumpMessage("\n"+ "Execution time : "+Long.toString(diffTime));
+					System.out.println(diffTime);
 					
+					// Test logger
+					Logger log= Logger.getInstance();
+					log.dumpMessage("Running queries..."+Integer.toString(queryCounter));
+					log.dumpMessage("\n"+ "Execution time : "+Long.toString(diffTime));
 
 					queryCounter++ ;
 				} catch (Exception e) {

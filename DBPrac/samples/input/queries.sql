@@ -1,4 +1,3 @@
-
 -- SELECT *
 -- FROM TestTwo
 -- ORDER BY TestTwo.A, TestTwo.G;
@@ -70,4 +69,6 @@ SELECT *
 FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
 WHERE t0.A = t1.F AND t0.B = t2.I AND t1.E = 3
 
-
+-- SELECT *
+-- FROM Sailors, Reserves
+-- WHERE Sailors.A = Reserves.G and Sailors.C = Reserves.H;

@@ -18,7 +18,7 @@ public class JoinOperator extends Operator {
 	private Operator leftOperator;
 	private Operator rightOperator;
 	private Expression joinExp;
-	private static boolean resetFlag= true;
+	private boolean resetFlag= true;
 	private Tuple left;
 	private HashMap<String, String> tableAlias;
 
