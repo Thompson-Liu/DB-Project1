@@ -8,6 +8,7 @@ import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateJoin;
 
+/** the class for implementing the Sort Merge Join algorithm */
 public class SMJ extends Operator {
 	private Operator leftOp;
 	private Operator rightOp;
@@ -22,6 +23,8 @@ public class SMJ extends Operator {
 	private boolean flag;
 	private ArrayList<String> schema;
 
+	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
+	 * each other for the two given tuples, and false otherwise. */
 	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
 		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int k) {
 		for (int i= 0; i < k; i+= 1) {
@@ -31,6 +34,13 @@ public class SMJ extends Operator {
 		return true;
 	}
 
+	/** @param bufferSize: the buffer size used in external sort
+	 * @param left: the left child operator
+	 * @param right: the right child operator
+	 * @param joinExpr: the join evaluation to be evaluated
+	 * @param alias: the mapping between table names and aliases
+	 * @param dir: the prefix of the directory that stores the temporary files generated during external
+	 * sort. */
 	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias,
 		String dir) {
 		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName(), alias);

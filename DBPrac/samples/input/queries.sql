@@ -50,6 +50,6 @@ ORDER BY Sailors.A, Sailors.B;
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
 -- ORDER BY S.C;
-SELECT *
-FROM Sailors, Reserves
-WHERE Sailors.A = Reserves.G and Sailors.C = Reserves.H;
+-- SELECT *
+-- FROM Sailors, Reserves
+-- WHERE Sailors.A = Reserves.G and Sailors.C = Reserves.H;
