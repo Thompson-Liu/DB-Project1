@@ -6,6 +6,10 @@ import dataStructure.Tuple;
 
 public interface TupleWriter {
 
+	/**
+	 *  only write to buffer, need to call dump if want to write out the full buffer
+	 * @param data  ArrayList of Tuple
+	 */
 	public void write(ArrayList<Tuple> data);
 	
 	/**

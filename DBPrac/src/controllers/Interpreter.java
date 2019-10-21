@@ -48,10 +48,10 @@ public class Interpreter {
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt", args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
-//					ReadableTupleWriter writer= new ReadableTupleWriter(
-//							outputDir + "/query" + Integer.toString(queryCounter));
-					BinaryTupleWriter writer= new BinaryTupleWriter(
-						outputDir + "/query" + Integer.toString(queryCounter));
+					ReadableTupleWriter writer= new ReadableTupleWriter(
+							outputDir + "/query" + Integer.toString(queryCounter));
+//					BinaryTupleWriter writer= new BinaryTupleWriter(
+//						outputDir + "/query" + Integer.toString(queryCounter));
 					long time1 = System.currentTimeMillis();
 					op.dump(writer);
 					

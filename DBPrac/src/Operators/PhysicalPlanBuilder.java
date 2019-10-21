@@ -100,7 +100,7 @@ public class PhysicalPlanBuilder {
 		if (sort[0] == 0) {
 			immOp = new SortOperator(immOp, sortLop.getColumns());
 		} else {
-			immOp = new ExternalSortOperator(immOp, sortLop.getColumns(), sort[1], tempDir);
+			immOp = new ExternalSortOperator(immOp, sortLop.getColumns(), sort[1], tempDir,"sort");
 		}
 	}
 
@@ -127,7 +127,7 @@ public class PhysicalPlanBuilder {
 			break;
 		case 2:
 			immOp = new SMJ(join[1],leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
-					joinLogOp.getAlias());
+					joinLogOp.getAlias(), tempDir);
 			break;
 		}
 		
