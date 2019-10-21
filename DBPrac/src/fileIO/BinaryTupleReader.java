@@ -75,6 +75,7 @@ public class BinaryTupleReader implements TupleReader {
 			System.out.println("currow next is   :  "+curRow);
 			System.out.println("numRow is   :" +numRows);
 			if (pageData == null || curRow>=this.numRows) { return null; }
+
 			if (this.numRows > 0) {
 				return pageData.get(curRow++ );
 			} else {

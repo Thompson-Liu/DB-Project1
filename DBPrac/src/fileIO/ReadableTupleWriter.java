@@ -72,6 +72,13 @@ public class ReadableTupleWriter implements TupleWriter{
 		} catch (IOException e) {
 			System.err.print("BinaryTupleWriter dump fails: " + e);
 			e.printStackTrace();
+		} finally {
+			try {
+				buffer.close();
+				fout.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
