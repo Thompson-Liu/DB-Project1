@@ -61,7 +61,6 @@ public class JoinOperator extends Operator {
 		return schema;
 	}
 
-
 	@Override
 	public Tuple getNextTuple() {
 		Tuple next= null;
@@ -93,7 +92,6 @@ public class JoinOperator extends Operator {
 		}
 		return null;
 	}
-
 
 	/** Prints the data read by operator to the PrintStream [ps]
 	 * 

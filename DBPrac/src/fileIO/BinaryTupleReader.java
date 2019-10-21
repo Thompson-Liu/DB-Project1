@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-
 import dataStructure.Tuple;
 
 public class BinaryTupleReader implements TupleReader {
@@ -85,6 +84,7 @@ public class BinaryTupleReader implements TupleReader {
 	@Override
 	public void close() {
 		try {
+			fc.close();
 			fin.close();
 		} catch (IOException e) {
 			e.printStackTrace();
