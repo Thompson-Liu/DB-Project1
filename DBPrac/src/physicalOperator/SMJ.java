@@ -56,18 +56,20 @@ public class SMJ extends Operator {
 //					if(tr.getData(0)==104 && tr.getData(1)==195) {
 //						System.out.println("heiiiii");
 //					}
-					while (tr!= null &&tr.getTuple().size()>0 && gs != null && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
+					while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 						tr= leftExSortOp.getNextTuple();
+						if (tr == null) return null;
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
 							i= 0;
 							break;
 						}
 					}
-					while (tr != null &&tr.getTuple().size()>0 &&  gs != null &&gs.getTuple().size() > 0  && tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
+					while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 						rightExSortOp.resetIndex(ptr);
 						gs= rightExSortOp.getNextTuple();
+						if (gs == null) return null;
 						ptr+= 1;
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
 							i= -1;
@@ -79,19 +81,18 @@ public class SMJ extends Operator {
 				rightExSortOp.resetIndex(ptr);
 				ts= new Tuple(gs.getTuple());
 			}
-			if (tr == null || gs == null || tr.getTuple().size() == 0 || gs.getTuple().size() == 0) return null;
+			if (tr == null || gs == null) return null;
 			if (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 				leftColList.size())) {
-				
-				
-				
-				if (ts != null && ts.getTuple().size() > 0 && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
+
+				if (ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 					leftColList.size())) {
-					
-					if(tr.getData(0)==200 && tr.getData(1)==14&&tr.getData(2)==117 && gs.getData(0)==200&& gs.getData(1)==9) {
+
+					if (tr.getData(0) == 200 && tr.getData(1) == 119 && tr.getData(2) == 86 && gs.getData(0) == 200 &&
+						gs.getData(1) == 141) {
 						System.out.println("goood");
 					}
-					
+
 					flag= true;
 					Tuple joinedTuple= new Tuple();
 					for (int j= 0; j < leftOp.schema().size(); j++ ) {
@@ -101,19 +102,15 @@ public class SMJ extends Operator {
 						joinedTuple.addData(ts.getData(j));
 					}
 					ts= rightExSortOp.getNextTuple();
-//					ptr+= 1;
+					System.out.println(tr.printData());
+					System.out.println(ts.printData());
+					System.out.println("======================");
 					return joinedTuple;
 				}
-				else {
-					flag= false;
-					tr= leftExSortOp.getNextTuple();
-					rightExSortOp.resetIndex(ptr);
-				}
-			}else {
-				flag= false;
-				tr= leftExSortOp.getNextTuple();
-				rightExSortOp.resetIndex(ptr);
 			}
+			flag= false;
+			tr= leftExSortOp.getNextTuple();
+			rightExSortOp.resetIndex(ptr);
 		}
 		return null;
 	}
