@@ -31,15 +31,15 @@ public class ExternalSortOperator extends Operator {
 	private int totalPass;  					// total number of passes needed
 	private Buffer memoryBuffer;
 	private int bufferSize;
-	private int tuplesPage;        // number of tuples per page
-	private String dataFile;
+	private int tuplesBuffer;        			// number of tuples per buffer
 	private ArrayList<String> schema;
 	private ArrayList<String> colList;
-	private int runs;   			// number of files in each pass
-	// private boolean useBinary = false; // format of intermediate result
-	private int pass= 0;   // the current order of pass
+	private int runs;   						// number of files in each pass
+	private int pass= 0;   						// the current order of pass
 	private String tempDir;
 	private String useName;
+	private int numAttr;
+	private int tuplesPage;
 
 	/** @param childOp childOp is the child operator, e.g. ProjectOperator or SelectOperator
 	 * @param colList colList is the list of column names to sort data by */
@@ -50,14 +50,18 @@ public class ExternalSortOperator extends Operator {
 		this.colList= (ArrayList<String>) colList;
 		this.tempDir=tempDir;
 		this.useName=usageName;
-		tuplesPage= (int) Math.floor(1.0 * (4096)*bufferSize / (4.0 * (schema.size())));
-		memoryBuffer= new Buffer(tuplesPage);
+		this.numAttr=childOp.schema().size();
+		this.tuplesPage = (int) Math.floor(1.0*(4096-8)/(4.0*numAttr));
+		tuplesBuffer= (int) (this.tuplesPage*bufferSize);
+		memoryBuffer= new Buffer(tuplesBuffer);
+		
 		// pass0 and get the total number of files stored
 		int totalFiles= initialRun();
 		runs= totalFiles;		
-		// calculate the total number of passes needed
 		Double div= Math.ceil(1.0*runs );
 		totalPass= (int) Math.ceil(Math.log(div)/Math.log(1.0 * (bufferSize - 1)));
+		
+		// pass 1 - totalPass
 		for (int curPass= 1; curPass <= totalPass; curPass++ ) {
 			int nextRuns= ExternalSort(curPass, runs);
 			runs= nextRuns;
@@ -86,6 +90,7 @@ public class ExternalSortOperator extends Operator {
 			TupleWriter tuplesWriter= new BinaryTupleWriter(
 					tempDir + "/ESInter"+this.useName + Integer.toString(pass) +" "+ Integer.toString(runs));
 			tuplesWriter.write(memoryBuffer.getTuples());
+			tuplesWriter.dump();
 			memoryBuffer.clear();
 			this.runs++;
 		}
@@ -171,12 +176,11 @@ public class ExternalSortOperator extends Operator {
 
 	@Override
 	public void reset() {
-		System.out.println("reset Index result is    :  "+schema);
 		sortedReader.reset();
 	}
 
 	public void resetIndex(int ind) {
-		sortedReader.setTuplesPage(tuplesPage);
+		sortedReader.setAtt(schema.size());
 		sortedReader.reset(ind);
 	}
 

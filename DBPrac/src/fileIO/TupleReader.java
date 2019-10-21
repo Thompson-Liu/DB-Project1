@@ -19,6 +19,6 @@ public interface TupleReader {
 	 * @param index */
 	public void reset(int index);
 	
-	public void setTuplesPage(int num);
+	public void setAtt(int num);
 
 }

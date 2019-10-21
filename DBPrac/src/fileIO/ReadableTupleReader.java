@@ -95,7 +95,7 @@ public class ReadableTupleReader implements TupleReader {
 	}
 
 	@Override
-	public void setTuplesPage(int num) {
+	public void setAtt(int num) {
 		// TODO Auto-generated method stub
 		
 	}
