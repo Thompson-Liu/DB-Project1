@@ -18,6 +18,7 @@ public class BinaryTupleReader implements TupleReader {
 	private int numRows;    // number of rows on current buffer page
 	private int curRow= 0;    // keep track of next row to read on the buffer
 	private ArrayList<Tuple> pageData;
+	private int rowsPerPage;
 
 	public BinaryTupleReader(String file) {
 		try {
@@ -111,10 +112,10 @@ public class BinaryTupleReader implements TupleReader {
 	public void reset(int index) {
 		// Using position(long newPosition) method in FileChannel
 		try {
-			int rowsPerPage= 4988 / (4 * numAttr);
-			int numPages= index / rowsPerPage;
-			int newIndex= numPages * 4996 + 8 + (index % rowsPerPage) & (4 * numAttr);
-			curRow=index % rowsPerPage;
+			rowsPerPage= 4988 / (4 * numAttr);
+			int numPages= (index+1) / rowsPerPage;
+			int newIndex= numPages * 4996 + 8 + ((index+1) % rowsPerPage) & (4 * numAttr);
+			curRow=(index+1) % rowsPerPage;
 			fc.position(newIndex);
 		} catch (IOException e) {
 			e.printStackTrace();
