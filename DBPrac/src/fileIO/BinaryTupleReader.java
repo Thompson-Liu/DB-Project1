@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+
 import dataStructure.Tuple;
 
 public class BinaryTupleReader implements TupleReader {
@@ -37,7 +38,7 @@ public class BinaryTupleReader implements TupleReader {
 	private ArrayList<Tuple> getNextPage() {
 		buffer.clear();
 		buffer.putInt(4, 0);
-		
+
 		try {
 			fc.read(buffer);
 			this.numAttr= buffer.getInt(0);
@@ -55,7 +56,7 @@ public class BinaryTupleReader implements TupleReader {
 				}
 				return pageData;
 			}
-			this.pageData=null;
+			this.pageData= null;
 			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -71,9 +72,7 @@ public class BinaryTupleReader implements TupleReader {
 		} else {
 			curRow= curRow - numRows;
 			pageData= getNextPage();
-			if(pageData==null) {
-				return null;
-			}
+			if (pageData == null) { return null; }
 			if (this.numRows > 0) {
 				return pageData.get(curRow++ );
 			} else {
