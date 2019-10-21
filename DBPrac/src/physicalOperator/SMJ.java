@@ -20,7 +20,6 @@ public class SMJ extends Operator {
 	private Tuple gs;
 	private int ptr;
 	private boolean flag;
-	private boolean stop;
 
 	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
 		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int k) {
@@ -46,7 +45,6 @@ public class SMJ extends Operator {
 		gs= firstTuple;
 		ptr= 1;
 		flag= false;
-		stop= false;
 	}
 
 	@Override

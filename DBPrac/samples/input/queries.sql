@@ -24,9 +24,9 @@
 -- SELECT Sailors.A
 -- FROM Sailors
 -- WHERE Sailors.B >= Sailors.C AND Sailors.B < Sailors.C;
-SELECT *
-FROM Sailors, Reserves
-WHERE Sailors.A = Reserves.G;
+-- SELECT *
+-- FROM Sailors, Reserves
+-- WHERE Sailors.A = Reserves.G;
 -- SELECT *
 -- FROM Sailors, Reserves, Boats
 -- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D
@@ -50,3 +50,6 @@ WHERE Sailors.A = Reserves.G;
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
 -- ORDER BY S.C;
+SELECT *
+FROM Sailors, Reserves
+WHERE Sailors.A = Reserves.G and Sailors.C = Reserves.H;
