@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+
 import dataStructure.Tuple;
 
 public class BinaryTupleReader implements TupleReader {
@@ -37,7 +38,7 @@ public class BinaryTupleReader implements TupleReader {
 	private ArrayList<Tuple> getNextPage() {
 		buffer.clear();
 		buffer.putInt(4, 0);
-		
+
 		try {
 			fc.read(buffer);
 			this.numAttr= buffer.getInt(0);
@@ -55,7 +56,7 @@ public class BinaryTupleReader implements TupleReader {
 				}
 				return pageData;
 			}
-			this.pageData=null;
+			this.pageData= null;
 			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -71,9 +72,9 @@ public class BinaryTupleReader implements TupleReader {
 		} else {
 			curRow= curRow - numRows;
 			pageData= getNextPage();
-			if(pageData==null) {
-				return null;
-			}
+			System.out.println("currow next is   :  "+curRow);
+			System.out.println("numRow is   :" +numRows);
+			if (pageData == null || curRow>=this.numRows) { return null; }
 			if (this.numRows > 0) {
 				return pageData.get(curRow++ );
 			} else {
@@ -119,13 +120,13 @@ public class BinaryTupleReader implements TupleReader {
 	public void reset(int index) {
 		// Using position(long newPosition) method in FileChannel
 		try {
-//			rowsPerPage= 4088 / (4 * numAttr);
-//			int numPages= (index+1) / rowsPerPage;
-//			curRow=(index) % rowsPerPage;
-//			int newIndex= numPages * 4096 + 8 + curRow * (4 * numAttr);
 			int pageIndex= (index + 1) / this.rowsPerPage;
-			curRow= index % rowsPerPage;
-			fc.position(pageIndex);
+			curRow= (index+1) % rowsPerPage-1;
+			Long newIndex = (long) (pageIndex*4096);
+			fc.position(newIndex);
+//			System.out.println("wantt  -------");
+//			System.out.println(curRow);
+//			System.out.println(rowsPerPage);
 			this.pageData= getNextPage();
 		} catch (IOException e) {
 			e.printStackTrace();
