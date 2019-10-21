@@ -37,6 +37,7 @@ public class BinaryTupleReader implements TupleReader {
 	private ArrayList<Tuple> getNextPage() {
 		buffer.clear();
 		buffer.putInt(4, 0);
+		
 		try {
 			fc.read(buffer);
 			this.numAttr= buffer.getInt(0);
@@ -46,13 +47,6 @@ public class BinaryTupleReader implements TupleReader {
 				pageData= new ArrayList<Tuple>();
 				// Populate the dataTable
 				for (int i= 0; i < this.numRows; i++ ) {
-//					if(numAttr==104) {
-//						System.out.println("stop");
-//						break;
-//					}
-					// System.out.println("i is :"+i);
-					// System.out.println("num attributes are : "+this.numAttr);
-					// System.out.println("numRows are : "+this.numRows);
 					ArrayList<Integer> temp= new ArrayList<Integer>(numAttr);
 					for (int j= 0; j < numAttr; j++ ) {
 						temp.add(buffer.getInt(i * numAttr * 4 + 8 + j * 4));
@@ -61,6 +55,7 @@ public class BinaryTupleReader implements TupleReader {
 				}
 				return pageData;
 			}
+			this.pageData=null;
 			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -76,6 +71,9 @@ public class BinaryTupleReader implements TupleReader {
 		} else {
 			curRow= curRow - numRows;
 			pageData= getNextPage();
+			if(pageData==null) {
+				return null;
+			}
 			if (this.numRows > 0) {
 				return pageData.get(curRow++ );
 			} else {

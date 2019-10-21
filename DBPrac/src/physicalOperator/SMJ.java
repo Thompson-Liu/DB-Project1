@@ -92,6 +92,9 @@ public class SMJ extends Operator {
 
 					flag= true;
 
+					if(ts.getData(0)==200 && ts.getData(1)==141) {
+						System.out.println("herere");
+					}
 					Tuple joinedTuple= new Tuple();
 					for (int j= 0; j < leftOp.schema().size(); j++ ) {
 						joinedTuple.addData(tr.getData(j));
@@ -100,6 +103,7 @@ public class SMJ extends Operator {
 						joinedTuple.addData(ts.getData(j));
 					}
 					ts= rightExSortOp.getNextTuple();
+					
 					System.out.println(tr.printData());
 					System.out.println(ts.printData());
 					System.out.println(gs.printData());

@@ -125,6 +125,7 @@ public class BinaryTupleWriter implements TupleWriter {
 					buffer.putInt(0);
 					counter+= 4;
 				}
+				numRows=numRows-numRowPage;
 				buffer.flip();
 				fc.write(buffer);
 			}
