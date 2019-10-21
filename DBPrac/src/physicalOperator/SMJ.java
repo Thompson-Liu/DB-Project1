@@ -19,7 +19,8 @@ public class SMJ extends Operator {
 	private Tuple ts;
 	private Tuple gs;
 	private int ptr;
-	boolean flag;
+	private boolean flag;
+	private boolean stop;
 
 	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
 		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int k) {
@@ -45,6 +46,7 @@ public class SMJ extends Operator {
 		gs= firstTuple;
 		ptr= 1;
 		flag= false;
+		stop= false;
 	}
 
 	@Override
@@ -67,7 +69,7 @@ public class SMJ extends Operator {
 					}
 					while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
-						rightExSortOp.resetIndex(ptr);
+//						rightExSortOp.resetIndex(ptr);
 						gs= rightExSortOp.getNextTuple();
 						if (gs == null) return null;
 						ptr+= 1;
@@ -88,12 +90,8 @@ public class SMJ extends Operator {
 				if (ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
 					leftColList.size())) {
 
-					if (tr.getData(0) == 200 && tr.getData(1) == 119 && tr.getData(2) == 86 && gs.getData(0) == 200 &&
-						gs.getData(1) == 141) {
-						System.out.println("goood");
-					}
-
 					flag= true;
+
 					Tuple joinedTuple= new Tuple();
 					for (int j= 0; j < leftOp.schema().size(); j++ ) {
 						joinedTuple.addData(tr.getData(j));
@@ -104,7 +102,9 @@ public class SMJ extends Operator {
 					ts= rightExSortOp.getNextTuple();
 					System.out.println(tr.printData());
 					System.out.println(ts.printData());
+					System.out.println(gs.printData());
 					System.out.println("======================");
+
 					return joinedTuple;
 				}
 			}
