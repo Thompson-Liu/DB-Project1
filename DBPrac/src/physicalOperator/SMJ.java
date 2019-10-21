@@ -102,6 +102,11 @@ public class SMJ extends Operator {
 						joinedTuple.addData(ts.getData(j));
 					}
 					ts= rightExSortOp.getNextTuple();
+					if(ts.getData(0)==131 && ts.getData(1)==35) {
+						System.out.println(ts.printData());
+					}
+					
+
 
 					return joinedTuple;
 				}
