@@ -26,6 +26,11 @@ public class BinaryTupleWriter implements TupleWriter {
 	private int numRowPage;
 	private ArrayList<Tuple> pageData;
 
+	/**
+	 * Binary Tuple writer constructor 
+	 * 
+	 * @param file  the file path 
+	 */
 	public BinaryTupleWriter(String file) {
 		this.file = file;
 		try {
@@ -57,6 +62,10 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 
+	/**
+	 * Write an extra page of data into the buffer 
+	 * 
+	 */
 	private void writeNextPage() {
 		buffer.putInt(numAttr);
 		buffer.putInt(pageData.size());
@@ -81,6 +90,12 @@ public class BinaryTupleWriter implements TupleWriter {
 		}
 	}
 
+	/**
+	 * write all the data into the file
+	 * 
+	 * @args data 	the data that will be output
+	 * 
+	 */
  	public void write(ArrayList<Tuple> data) {
 		for (Tuple tuple: data) {
 			addNextTuple(tuple);

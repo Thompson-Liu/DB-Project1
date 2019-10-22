@@ -20,6 +20,11 @@ public class BinaryTupleReader implements TupleReader {
 	private ArrayList<Tuple> pageData;
 	private int rowsPerPage;
 
+	/**
+	 * Binary tuple Reader consturctor 
+	 * 
+	 * @param file   the path of the file 
+	 */
 	public BinaryTupleReader(String file) {
 		try {
 			this.file= file;
@@ -35,6 +40,11 @@ public class BinaryTupleReader implements TupleReader {
 		pageData= getNextPage();
 	}
 
+	/**
+	 * Return in the next page of data
+	 * 
+	 * @return  an arraylist of tuples that can be read in a page
+	 */
 	private ArrayList<Tuple> getNextPage() {
 		buffer.clear();
 		buffer.putInt(4, 0);
@@ -125,11 +135,6 @@ public class BinaryTupleReader implements TupleReader {
 			curRow= index % rowsPerPage;
 			Long newIndex= (long) (pageIndex * 4096);
 			fc.position(newIndex);
-
-//			System.out.println("wantt  -------");
-//			System.out.println("curRow is   :    " + curRow);
-//			System.out.println("rows perpage is :    " + rowsPerPage);
-//			System.out.println("index is   :    " + index);
 			this.pageData= getNextPage();
 		} catch (IOException e) {
 			e.printStackTrace();

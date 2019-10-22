@@ -12,19 +12,38 @@ public class Buffer {
 	private int maxTuples;
 	private ArrayList<String> newOrder;
 
+	/**
+	 * The constructor of Buffer 
+	 * 
+	 * @param numTuples   number of tuples allowed in a buffer
+	 */
 	public Buffer(int numTuples) {
 		maxTuples = numTuples;
 		tuples =  new ArrayList<Tuple>();
 	}
-
+	
+	/**
+	 * Return the tuples stores in buffer 
+	 * @return the tuples stored
+	 */
 	public ArrayList<Tuple> getTuples(){
 		return tuples;
 	}
 
+	/**
+	 * Add another tuple into the buffer
+	 * 
+	 * @param tup  the new tuple added
+	 */
 	public void addData(Tuple tup) {
 		tuples.add(tup);
 	}
 
+	/**
+	 * Test to see if there are more spaces to store extra tuples
+	 * 
+	 * @return boolean that decides whether the buffer overflows
+	 */
 	public boolean overflow() {
 		if (tuples.size() >= maxTuples) {
 			return true;
@@ -32,10 +51,21 @@ public class Buffer {
 		return false;
 	}
 
+	/**
+	 * Test to see if the buffer is empty
+	 * 
+	 * @return boolean to decide whether the buffer is empty 
+	 */
 	public boolean empty() {
 		return tuples.size() == 0;
 	}
 
+	/**
+	 * return the tuple at the index
+	 * 
+	 * @param index   index of the interested tuple
+	 * @return   the tuple returned 
+	 */
 	public Tuple getTuple(int index) {
 		if (index >= tuples.size()) {
 			return null;
@@ -43,6 +73,11 @@ public class Buffer {
 		return tuples.get(index);
 	}
 
+	/**
+	 * The order of the bufferr that will be used to sort
+	 * 
+	 * @param order   the sorting order
+	 */
 	public void setOrder(ArrayList<String> order) {
 		newOrder  = order;
 	}
@@ -89,6 +124,10 @@ public class Buffer {
 		log.dumpTable(tuples);
 	}
 
+	/**
+	 * Clear the buffer 
+	 * 
+	 */
 	public void clear() {
 		tuples = new ArrayList<Tuple>();
 	}

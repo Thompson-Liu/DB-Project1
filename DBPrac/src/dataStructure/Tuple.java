@@ -94,6 +94,13 @@ public class Tuple {
 		return str;
 	}
 	
+	/**
+	 * 
+	 * Test to see if two tuples are the same 
+	 * 
+	 * @param tup2   the tuple to be compared with 
+	 * @return   boolean that determines equality 
+	 */
 	public boolean equalTo(Tuple tup2) {
 		return this.equals(tup2);
 	}

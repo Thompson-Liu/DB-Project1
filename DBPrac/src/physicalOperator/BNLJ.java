@@ -25,6 +25,16 @@ public class BNLJ extends Operator {
 	private Tuple innerTup;
 	private EvaluateWhere eval;
 
+	/**
+	 * 
+	 * The constructor of BNLJ physcial operator 
+	 * 
+	 * @param numPages   number of pages allowed for the buffer
+	 * @param outer    	 outer operator 
+	 * @param inner		 inner operator 
+	 * @param joinExp    join expression
+	 * @param tableAlias 	the alias of the table 
+	 */
 	public BNLJ(int numPages, Operator outer, Operator inner, 
 			Expression joinExp, HashMap<String, String> tableAlias) {
 		numOuters = (int) Math.floor(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
@@ -42,6 +52,10 @@ public class BNLJ extends Operator {
 		eval = new EvaluateWhere(joinCond, outer.schema(), inner.schema(), alias);
 	}
 
+	/**
+	 * 
+	 * Populate the buffer
+	 */
 	private void populateBuffer() {
 		buffer.clear();
 		Tuple tup;

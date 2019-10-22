@@ -27,6 +27,11 @@ import test.TestGenerator;
 /** The top level class of our code, which read inputs queries, tables and produce output data */
 public class Interpreter {
 
+	/**
+	 * The driver function that will execute the data base management system, it can choose 
+	 * beteen binary tuple writer and readable tuple writer, and also can generate 
+	 * test data.
+	 */
 	public static void main(String[] args) {
 		String queriesFile= args[0] + "/queries.sql";
 		String dataDir= args[0] + "/db";
@@ -127,6 +132,14 @@ public class Interpreter {
 		return cat;
 	}
 
+	/**
+	 * Used to generate random test data
+	 * 
+	 * @param writer	The tupleWriter
+	 * @param range		The range of the test data
+	 * @param length	The length of each tuple	
+	 * @param count		The number of tuples 
+	 */
 	private static void generateRandomData(TupleWriter writer, int range, int length, int count) {
 		TestGenerator testGen= new TestGenerator(range, length, count);
 		ArrayList<Tuple> randData= testGen.generateTuples();
