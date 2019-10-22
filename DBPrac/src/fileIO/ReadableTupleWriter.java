@@ -1,6 +1,7 @@
 package fileIO;
 
 import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.Buffer;
@@ -16,9 +17,11 @@ public class ReadableTupleWriter implements TupleWriter{
 	private ArrayList<ArrayList<Integer>> data;
 	private BufferedOutputStream buffer;
 	private FileOutputStream fout;
+	private String name;
 
 	public ReadableTupleWriter(String name) {
 		try {
+			this.name=name;
 			fout= new FileOutputStream(name);
 			data= new ArrayList<ArrayList<Integer>>();
 			buffer = new BufferedOutputStream(fout);
@@ -34,16 +37,23 @@ public class ReadableTupleWriter implements TupleWriter{
 	}
 
 	@Override
-	public void write(ArrayList<Tuple> data) {
-		for (Tuple tup : data) {
-			addNextTuple(tup);
+	public void write(ArrayList<Tuple> dataTable) {
+		System.out.println("hrerere");
+
+		for (Tuple tup : dataTable) {
+			data.add(tup.getTuple());
 		}
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
-		this.data=new ArrayList<ArrayList<Integer>>();
+		try {
+			fout= new FileOutputStream(name);
+			data= new ArrayList<ArrayList<Integer>>();
+			buffer = new BufferedOutputStream(fout);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

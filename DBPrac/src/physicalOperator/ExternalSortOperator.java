@@ -17,6 +17,7 @@ import dataStructure.Tuple;
 import dataStructure.TupleComparator;
 import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;
+import fileIO.Logger;
 import fileIO.TupleReader;
 import fileIO.TupleWriter;
 
@@ -133,9 +134,6 @@ public class ExternalSortOperator extends Operator {
 				tempDir + "/ESInter" + useName + Integer.toString(curPass - 1) + " " + Integer.toString(i));
 			Tuple tup;
 			tup= tupleRead.readNextTuple();
-//			if (tup == null) {
-//				System.out.println("table is " + endTable);
-//			}
 			intermediateTable.add(tup);
 			tupleToReader.put(tup, tupleRead);
 		}
@@ -153,14 +151,18 @@ public class ExternalSortOperator extends Operator {
 			if ((curnext= curReader.readNextTuple()) != null) {
 				intermediateTable.add(curnext);
 				tupleToReader.put(curnext, curReader);
+				if(curPass == this.totalPass) {
+					Logger log= Logger.getInstance();
+					log.logTuple(curnext);
+				}
 			}
 			// if this run finish delete this table from tempdir
 			else {
 				String dfile= curReader.getFileInfo();
 				File deleteFile= new File(dfile);
-				if (!deleteFile.delete()) {
-					System.out.println("didn't delete this file" + dfile);
-				}
+//				if (!deleteFile.delete()) {
+//					System.out.println("didn't delete this file" + dfile);
+//				}
 			}
 		}
 		tupleWrite.dump();

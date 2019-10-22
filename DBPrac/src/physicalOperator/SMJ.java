@@ -141,12 +141,16 @@ public class SMJ extends Operator {
 
 	@Override
 	public void reset() {
+		System.out.println("hereree");
 		leftExSortOp.reset();
 		rightExSortOp.reset();
 		tr= leftExSortOp.getNextTuple();
 		Tuple firstTuple= rightExSortOp.getNextTuple();
 		ts= firstTuple;
 		gs= firstTuple;
+//		ptr = 0;
+//		flag= false;
+//		stop= false;
 	}
 
 	@Override

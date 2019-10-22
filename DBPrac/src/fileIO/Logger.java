@@ -11,8 +11,14 @@ import java.io.IOException;
 public class Logger {
 
 	private static Logger log= new Logger();
+	private String fileName;
+	private File tmp;
+	ReadableTupleWriter writer;
 
 	private Logger() {
+		fileName= "./log.txt";
+		tmp= new File(fileName);
+		writer = new ReadableTupleWriter(fileName);
 	}
 
 	public static Logger getInstance() {
@@ -23,12 +29,20 @@ public class Logger {
 	}
 	
 	public void dumpTable(ArrayList<Tuple> table) {
-		String fileName= "./log.txt";
-		File tmp= new File(fileName);
-		ReadableTupleWriter writer = new ReadableTupleWriter(fileName);
+//		String fileName= "./log.txt";
+//		File tmp= new File(fileName);
+//		ReadableTupleWriter writer = new ReadableTupleWriter(fileName);
 		writer.write(table);
 		writer.dump();
 		writer.close();
+	}
+	
+	public void logTuple(Tuple tup) {
+		writer.addNextTuple(tup);
+	}
+	
+	public void dump() {
+		writer.dump();
 	}
 
 	public void dumpMessage(String msg) {

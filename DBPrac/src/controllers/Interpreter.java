@@ -1,5 +1,5 @@
 package controllers;
-
+import fileIO.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,22 +57,23 @@ public class Interpreter {
 						args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
-//					ReadableTupleWriter writer= new ReadableTupleWriter(
-//						outputDir + "/query" + Integer.toString(queryCounter));
-					BinaryTupleWriter writer= new BinaryTupleWriter(
+					ReadableTupleWriter writer= new ReadableTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
+//					BinaryTupleWriter writer= new BinaryTupleWriter(
+//						outputDir + "/query" + Integer.toString(queryCounter));
 
 					long time1= System.currentTimeMillis();
 					op.dump(writer);
 
 					long time2= System.currentTimeMillis();
 					long diffTime= time2 - time1;
-					System.out.println(diffTime);
+//					System.out.println(diffTime);
 
 					// Test logger
 					Logger log= Logger.getInstance();
-					log.dumpMessage("Running queries..." + Integer.toString(queryCounter));
-					log.dumpMessage("\n" + "Execution time : " + Long.toString(diffTime));
+					log.dump();
+//					log.dumpMessage("Running queries..." + Integer.toString(queryCounter));
+//					log.dumpMessage("\n" + "Execution time : " + Long.toString(diffTime));
 
 					queryCounter++ ;
 
