@@ -65,7 +65,7 @@ public class SMJ extends Operator {
 	@Override
 	public Tuple getNextTuple() {
 		while (tr != null && gs != null) {
-			System.out.println("hiii");
+
 //			if (tr.getData(0) == 134 && tr.getData(1) == 22) {
 //				System.out.println("heiiiii");
 //			}

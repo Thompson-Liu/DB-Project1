@@ -34,9 +34,9 @@ WHERE Sailors.A = Reserves.G;
 -- FROM Reserves, Boats
 -- WHERE Reserves.H = Boats.D
 -- ORDER BY Reserves.H;
--- SELECT *
--- FROM Sailors, Reserves, Boats
--- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
+SELECT *
+FROM Sailors, Reserves, Boats
+WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
 -- SELECT *
 -- FROM Sailors, Reserves, Boats
 -- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
@@ -68,9 +68,9 @@ WHERE Sailors.A = Reserves.G;
 -- FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
 -- WHERE t0.A = t1.D AND t0.B = t2.J
 
-SELECT t0.A, t1.D
-FROM testRelation0 as t0, testRelation1 as t1
-WHERE t0.B = t1.E
+-- SELECT t0.A, t1.D
+-- FROM testRelation0 as t0, testRelation1 as t1
+-- WHERE t0.B = t1.E
 
 
 -- SELECT *

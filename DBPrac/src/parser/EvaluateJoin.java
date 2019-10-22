@@ -3,11 +3,11 @@
  */
 package parser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Stack;
+import java.util.List;
 
-import dataStructure.Tuple;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
@@ -52,58 +52,58 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class EvaluateJoin implements ExpressionVisitor {
 
-
 	private List<String> leftTableNames;
 	private List<String> rightTableNames;
-	private HashMap<String,String> tableAlias;
+	private HashMap<String, String> tableAlias;
 	private ArrayList<String> joinAttributesLeft;
 	private ArrayList<String> joinAttributesRight;
 	private Expression expr;
 
+	public EvaluateJoin(Expression whereExpr, String leftTableName,
+		String rightTableName, HashMap<String, String> tableAlias) {
+		joinAttributesLeft= new ArrayList<String>();
+		joinAttributesRight= new ArrayList<String>();
 
-	public EvaluateJoin(Expression whereExpr, String leftTableName, 
-			String rightTableName,HashMap<String,String> tableAlias) {
-		joinAttributesLeft = new ArrayList<String> ();
-		joinAttributesRight = new ArrayList<String> ();
-		
 		// change the leftTableName to its alias if exist
-		
-		this.leftTableNames = Arrays.asList(leftTableName.trim().split(","));
-		for(int i=0;i<leftTableNames.size();i++) {
-			if(tableAlias.containsKey(leftTableNames.get(i))) {
-				leftTableNames.set(i, tableAlias.get(leftTableNames.get(i)) );
-				}
+
+		this.leftTableNames= Arrays.asList(leftTableName.trim().split(","));
+		for (int i= 0; i < leftTableNames.size(); i++ ) {
+			String temp= leftTableNames.get(i);
+			String temp2= Arrays.asList(temp.trim().split("AS")).get(0).trim();
+
+			if (tableAlias.containsKey(temp2)) {
+//				System.out.println(temp2);
+				leftTableNames.set(i, tableAlias.get(temp2));
+			}
 		}
 		// change the rightTableName to its alias if exist
-		this.rightTableNames = Arrays.asList(rightTableName.trim().split(","));
-		for(int i=0;i<rightTableNames.size();i++) {
-			if(tableAlias.containsKey(rightTableNames.get(i))) {
-				rightTableNames.set(i, tableAlias.get(rightTableNames.get(i)));}
+		this.rightTableNames= Arrays.asList(rightTableName.trim().split(","));
+		for (int i= 0; i < rightTableNames.size(); i++ ) {
+			if (tableAlias.containsKey(rightTableNames.get(i))) {
+				rightTableNames.set(i, tableAlias.get(rightTableNames.get(i)));
+			}
 		}
-		
+
+//		System.out.println("left is   :  " + tableAlias.get(0));
+//		System.out.println(rightTableNames.get(0));
+		;
 //		this.rightTableNames = rightTableName;
-		
-		this.expr=whereExpr;
-		this.tableAlias = tableAlias;
+
+		this.expr= whereExpr;
+		this.tableAlias= tableAlias;
 		this.expr.accept(this);
 	}
-	
-	/**
-	 * 
-	 * @return the joining attributes given leftTable, rightTable
-	 */
-	public ArrayList<String> getJoinAttributesLeft(){
+
+	/** @return the joining attributes given leftTable, rightTable */
+	public ArrayList<String> getJoinAttributesLeft() {
 		return joinAttributesLeft;
 	}
-	
-	/**
-	 * 
-	 * @return the joining attributes given tableA, tableB
-	 */
-	public ArrayList<String> getJoinAttributesRight(){
+
+	/** @return the joining attributes given tableA, tableB */
+	public ArrayList<String> getJoinAttributesRight() {
 		return joinAttributesRight;
 	}
-	
+
 	@Override
 	public void visit(NullValue arg0) {
 	}
@@ -184,34 +184,33 @@ public class EvaluateJoin implements ExpressionVisitor {
 	public void visit(Between arg0) {
 	}
 
-	/**
-	 * add the attributes to lists of leftAttributes and rightAttributes
-	 */
+	/** add the attributes to lists of leftAttributes and rightAttributes */
 	@Override
 	public void visit(EqualsTo arg0) {
 		Expression left= arg0.getLeftExpression();
-		Expression right = arg0.getRightExpression();
-		if((left instanceof Column) && (right instanceof Column)) {
-			Column Col1 = (Column) left;
-			Column Col2 = (Column) right;
-			
-			String Col1Table = Col1.getTable().getName();
+		Expression right= arg0.getRightExpression();
+		if ((left instanceof Column) && (right instanceof Column)) {
+			Column Col1= (Column) left;
+			Column Col2= (Column) right;
+
+			String Col1Table= Col1.getTable().getName();
 			// change the leftTableName to its alias if exist
-			if(tableAlias.containsKey(Col1Table)) {
-				Col1Table =tableAlias.get(Col1Table);}
-			String Col2Table = Col2.getTable().getName();
-			if(tableAlias.containsKey(Col2Table)) {
-				Col2Table =tableAlias.get(Col2Table);}
-			
-			boolean order = (this.leftTableNames.contains(Col1Table) ) && this.rightTableNames.contains(Col2Table);
-			boolean inverse = (this.rightTableNames.contains(Col1Table)) && this.leftTableNames.contains(Col2Table);
-			if(order) {
-				this.joinAttributesLeft.add(Col1Table+"."+Col1.getColumnName());
-				this.joinAttributesRight.add(Col2Table+"."+Col2.getColumnName());
+			if (tableAlias.containsKey(Col1Table)) {
+				Col1Table= tableAlias.get(Col1Table);
 			}
-			else if (inverse) {
-				this.joinAttributesLeft.add(Col2Table+"."+ Col2.getColumnName());
-				this.joinAttributesRight.add(Col1Table+"."+Col1.getColumnName());
+			String Col2Table= Col2.getTable().getName();
+			if (tableAlias.containsKey(Col2Table)) {
+				Col2Table= tableAlias.get(Col2Table);
+			}
+
+			boolean order= (this.leftTableNames.contains(Col1Table)) && this.rightTableNames.contains(Col2Table);
+			boolean inverse= (this.rightTableNames.contains(Col1Table)) && this.leftTableNames.contains(Col2Table);
+			if (order) {
+				this.joinAttributesLeft.add(Col1Table + "." + Col1.getColumnName());
+				this.joinAttributesRight.add(Col2Table + "." + Col2.getColumnName());
+			} else if (inverse) {
+				this.joinAttributesLeft.add(Col2Table + "." + Col2.getColumnName());
+				this.joinAttributesRight.add(Col1Table + "." + Col1.getColumnName());
 			}
 		}
 
