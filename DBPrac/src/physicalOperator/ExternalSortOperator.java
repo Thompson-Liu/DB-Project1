@@ -133,9 +133,9 @@ public class ExternalSortOperator extends Operator {
 				tempDir + "/ESInter" + useName + Integer.toString(curPass - 1) + " " + Integer.toString(i));
 			Tuple tup;
 			tup= tupleRead.readNextTuple();
-			if (tup == null) {
-				System.out.println("table is " + endTable);
-			}
+//			if (tup == null) {
+//				System.out.println("table is " + endTable);
+//			}
 			intermediateTable.add(tup);
 			tupleToReader.put(tup, tupleRead);
 		}
