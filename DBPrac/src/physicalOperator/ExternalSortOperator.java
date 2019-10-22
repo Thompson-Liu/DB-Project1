@@ -13,12 +13,10 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import dataStructure.Buffer;
-import dataStructure.DataTable;
 import dataStructure.Tuple;
 import dataStructure.TupleComparator;
 import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;
-import fileIO.Logger;
 import fileIO.TupleReader;
 import fileIO.TupleWriter;
 
@@ -43,30 +41,31 @@ public class ExternalSortOperator extends Operator {
 
 	/** @param childOp childOp is the child operator, e.g. ProjectOperator or SelectOperator
 	 * @param colList colList is the list of column names to sort data by */
-	public ExternalSortOperator(Operator childOp, List<String> colList, int bufferSize, String tempDir,String usageName) {
+	public ExternalSortOperator(Operator childOp, List<String> colList, int bufferSize, String tempDir,
+		String usageName) {
 		this.childOp= childOp;
 		this.bufferSize= bufferSize;
 		this.schema= childOp.schema();
 		this.colList= (ArrayList<String>) colList;
-		this.tempDir=tempDir;
-		this.useName=usageName;
-		this.numAttr=childOp.schema().size();
-		this.tuplesPage = (int) Math.floor(1.0*(4096-8)/(4.0*numAttr));
-		tuplesBuffer= (int) (this.tuplesPage*bufferSize);
+		this.tempDir= tempDir;
+		this.useName= usageName;
+		this.numAttr= childOp.schema().size();
+		this.tuplesPage= (int) Math.floor(1.0 * (4096 - 8) / (4.0 * numAttr));
+		tuplesBuffer= this.tuplesPage * bufferSize;
 		memoryBuffer= new Buffer(tuplesBuffer);
-		
+
 		// pass0 and get the total number of files stored
 		int totalFiles= initialRun();
-		runs= totalFiles;		
-		Double div= Math.ceil(1.0*runs );
-		totalPass= (int) Math.ceil(Math.log(div)/Math.log(1.0 * (bufferSize - 1)));
-		
+		runs= totalFiles;
+		Double div= Math.ceil(1.0 * runs);
+		totalPass= (int) Math.ceil(Math.log(div) / Math.log(1.0 * (bufferSize - 1)));
+
 		// pass 1 - totalPass
 		for (int curPass= 1; curPass <= totalPass; curPass++ ) {
 			int nextRuns= ExternalSort(curPass, runs);
 			runs= nextRuns;
 		}
-		sortedReader= new BinaryTupleReader(tempDir+ "/ESInter"+this.useName + Integer.toString(totalPass) + " 0");
+		sortedReader= new BinaryTupleReader(tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0");
 	}
 
 	// pass0
@@ -77,30 +76,30 @@ public class ExternalSortOperator extends Operator {
 			if (memoryBuffer.overflow()) {
 				memoryBuffer.sortBuffer(colList, schema);
 				TupleWriter tuplesWriter= new BinaryTupleWriter(
-						tempDir + "/ESInter"+this.useName + Integer.toString(pass) +" "+ Integer.toString(runs));
+					tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
 				tuplesWriter.write(memoryBuffer.getTuples());
 				tuplesWriter.dump();
 				memoryBuffer.clear();
 				this.runs++ ;
 			}
 			memoryBuffer.addData(cur);
-			
+
 		}
 		// dump the rest
-		if(!(memoryBuffer.empty())) {
+		if (!(memoryBuffer.empty())) {
 			memoryBuffer.sortBuffer(colList, schema);
 			TupleWriter tuplesWriter= new BinaryTupleWriter(
-					tempDir + "/ESInter"+this.useName + Integer.toString(pass) +" "+ Integer.toString(runs));
+				tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
 //			tuplesWriter.write(memoryBuffer.getTuples());
-			for(Tuple tup : memoryBuffer.getTuples()) {
+			for (Tuple tup : memoryBuffer.getTuples()) {
 				tuplesWriter.addNextTuple(tup);
 //				tuplesWriter.dump();
 			}
 			tuplesWriter.dump();
 			memoryBuffer.clear();
-			this.runs++;
+			this.runs++ ;
 		}
-		this.pass++;
+		this.pass++ ;
 		// the number of runs in current pass
 		return this.runs;
 	}
@@ -112,11 +111,11 @@ public class ExternalSortOperator extends Operator {
 		int mergenum= (int) Math.ceil(1.0 * runs / (this.bufferSize - 1));
 		int startTable= 0;
 		for (int i= 0; i < mergenum; i++ ) {
-			int endTable= Math.min(startTable + bufferSize-1, runs);
-			merge(startTable, endTable, i,passnum);
+			int endTable= Math.min(startTable + bufferSize - 1, runs);
+			merge(startTable, endTable, i, passnum);
 			startTable= endTable;
 		}
-		this.pass++;
+		this.pass++ ;
 		return mergenum;
 	}
 
@@ -125,23 +124,23 @@ public class ExternalSortOperator extends Operator {
 	 * @param runRuns the number of runs in this merge
 	 * @param currentRun the order of runs for this merge (currentRun-th run)
 	 * @param numMerge the order of merge in current pass */
-	private void merge(int firstTable, int endTable, int numMerge,int curPass) {
+	private void merge(int firstTable, int endTable, int numMerge, int curPass) {
 		HashMap<Tuple, TupleReader> tupleToReader= new HashMap<Tuple, TupleReader>();
 		// read previous sorted result and initialization
 		intermediateTable= new PriorityQueue(new TupleComparator(this.colList, this.schema));
 		for (int i= firstTable; i < endTable; i++ ) {
 			BinaryTupleReader tupleRead= new BinaryTupleReader(
-					tempDir + "/ESInter"+useName + Integer.toString((int)(curPass-1)) + " "+Integer.toString(i));
+				tempDir + "/ESInter" + useName + Integer.toString(curPass - 1) + " " + Integer.toString(i));
 			Tuple tup;
-			tup=tupleRead.readNextTuple();
-			if(tup==null) {
-				System.out.println("table is "+endTable);
+			tup= tupleRead.readNextTuple();
+			if (tup == null) {
+				System.out.println("table is " + endTable);
 			}
 			intermediateTable.add(tup);
 			tupleToReader.put(tup, tupleRead);
 		}
 		BinaryTupleWriter tupleWrite= new BinaryTupleWriter(
-				tempDir + "/ESInter"+useName + Integer.toString(curPass) +" "+ Integer.toString(numMerge));
+			tempDir + "/ESInter" + useName + Integer.toString(curPass) + " " + Integer.toString(numMerge));
 		Tuple next;
 		Tuple curnext;
 		TupleReader curReader;
@@ -198,7 +197,7 @@ public class ExternalSortOperator extends Operator {
 		}
 		writer.dump();
 		writer.close();
-	}	
+	}
 
 	/** @return the name of the table being sorted */
 	@Override
