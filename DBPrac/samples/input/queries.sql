@@ -23,15 +23,14 @@
 -- SELECT Sailors.A
 -- FROM Sailors
 -- WHERE Sailors.B >= Sailors.C AND Sailors.B < Sailors.C;
-<<<<<<< HEAD
-SELECT *
-FROM Sailors, Reserves
-WHERE Sailors.A = Reserves.G;
-=======
 -- SELECT *
 -- FROM Sailors, Reserves
 -- WHERE Sailors.A = Reserves.G;
->>>>>>> f9eaff24f12db74ab1a49fbb5fa36ca9fb08d54a
+
+-- SELECT *
+-- FROM Reserves, Boats
+-- WHERE Reserves.H = Boats.D
+-- ORDER BY Reserves.H;
 -- SELECT *
 -- FROM Sailors, Reserves, Boats
 -- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
@@ -54,8 +53,6 @@ WHERE Sailors.A = Reserves.G;
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
 -- ORDER BY S.C;
-<<<<<<< HEAD
-=======
 
 
 --======================================================--
@@ -64,20 +61,19 @@ WHERE Sailors.A = Reserves.G;
 -- WHERE Sailors.A = Reserves.G and Sailors.C = Reserves.H;
 
 
-SELECT *
-FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
-WHERE t0.A = t1.D AND t0.B = t2.J
+-- SELECT *
+-- FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
+-- WHERE t0.A = t1.D AND t0.B = t2.J
 
--- SELECT t0.A, t1.D
--- FROM testRelation0 as t0, testRelation1 as t1
--- WHERE t0.B = t1.E AND t0.C = t1.F
+SELECT t0.A, t1.D
+FROM testRelation0 as t0, testRelation1 as t1
+WHERE t0.B = t1.E
 
 
 -- SELECT *
 -- FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
 -- WHERE t0.A = t1.F AND t0.B = t2.I AND t1.E = 3
 
->>>>>>> f9eaff24f12db74ab1a49fbb5fa36ca9fb08d54a
 -- SELECT *
 -- FROM Sailors, Reserves
 -- WHERE Sailors.A = Reserves.G and Sailors.C = Reserves.H;

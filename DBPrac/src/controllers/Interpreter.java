@@ -53,7 +53,7 @@ public class Interpreter {
 					Operator op= planBuilder.generatePlan(logOp);
 
 //					ReadableTupleWriter writer= new ReadableTupleWriter(
-//							outputDir + "/query" + Integer.toString(queryCounter));
+//						outputDir + "/query" + Integer.toString(queryCounter));
 					BinaryTupleWriter writer= new BinaryTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
 

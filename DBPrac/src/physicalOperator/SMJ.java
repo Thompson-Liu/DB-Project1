@@ -1,6 +1,5 @@
 package physicalOperator;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -56,8 +55,8 @@ public class SMJ extends Operator {
 		Tuple firstTuple= rightExSortOp.getNextTuple();
 		ts= firstTuple;
 		gs= firstTuple;
-		ptr= 1;
-		this.schema = new ArrayList<String>(left.schema());
+		ptr= 0;
+		this.schema= new ArrayList<String>(left.schema());
 		this.schema.addAll(right.schema());
 		flag= false;
 		stop= false;
@@ -66,14 +65,16 @@ public class SMJ extends Operator {
 	@Override
 	public Tuple getNextTuple() {
 		while (tr != null && gs != null) {
+			System.out.println("hiii");
+//			if (tr.getData(0) == 134 && tr.getData(1) == 22) {
+//				System.out.println("heiiiii");
+//			}
 			if (!flag) {
 				int i= 0;
 				while (i < leftColList.size()) {
-//					if(tr.getData(0)==104 && tr.getData(1)==195) {
-//						System.out.println("heiiiii");
-//					}
 					while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
+//						System.out.println(tr.printData());
 						tr= leftExSortOp.getNextTuple();
 						if (tr == null) return null;
 						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
@@ -84,6 +85,7 @@ public class SMJ extends Operator {
 					while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
 						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
 //						rightExSortOp.resetIndex(ptr);
+						rightExSortOp.resetIndex(ptr);
 						gs= rightExSortOp.getNextTuple();
 						if (gs == null) return null;
 						ptr+= 1;
@@ -116,8 +118,6 @@ public class SMJ extends Operator {
 //					if(ts.getData(0)==131 && ts.getData(1)==35) {
 //						System.out.println(ts.printData());
 //					}
-					
-
 
 					return joinedTuple;
 				}
