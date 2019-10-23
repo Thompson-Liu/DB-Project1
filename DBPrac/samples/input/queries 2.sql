@@ -70,9 +70,9 @@
 -- WHERE t0.B = t1.E
 
 
-SELECT *
-FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
-WHERE t0.A = t1.F AND t0.B = t2.I AND t1.E = 3
+-- SELECT *
+-- FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
+-- WHERE t0.A = t1.F AND t0.B = t2.I AND t1.E = 3
 
 -- SELECT *
 -- FROM Sailors, Reserves

@@ -5,11 +5,14 @@
 -- SELECT * FROM Sailors WHERE Sailors.B >= Sailors.C;
 -- SELECT Sailors.A FROM Sailors WHERE Sailors.B >= Sailors.C
 -- SELECT Sailors.A FROM Sailors WHERE Sailors.B >= Sailors.C AND Sailors.B < Sailors.C;
--- SELECT * FROM Sailors, Reserves WHERE Sailors.A = Reserves.G;
 SELECT *
-FROM Sailors, Reserves, Boats
-WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D
-ORDER BY Sailors.A, Reserves.H,Sailors.B;
+FROM Sailors, Reserves
+WHERE Sailors.A = Reserves.G
+ORDER BY Sailors.A;
+-- SELECT *
+-- FROM Sailors, Reserves, Boats
+-- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
+-- ORDER BY Sailors.A, Reserves.H,Sailors.B;
 -- SELECT * FROM Sailors, Reserves, Boats WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
 -- SELECT DISTINCT * FROM Sailors;
 -- SELECT * FROM Sailors S1, Sailors S2 WHERE S1.A < S2.A;
