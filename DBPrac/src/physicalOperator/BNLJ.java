@@ -9,6 +9,13 @@ import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
 
+/**
+ * 
+ * The BNLJ physcial operator that will join tuples according to the BNLJ algorithm
+ * 
+ * @author mingzhaoliu
+ *
+ */
 public class BNLJ extends Operator {
 
 	private Buffer buffer;
@@ -53,7 +60,6 @@ public class BNLJ extends Operator {
 	}
 
 	/**
-	 * 
 	 * Populate the buffer
 	 */
 	private void populateBuffer() {

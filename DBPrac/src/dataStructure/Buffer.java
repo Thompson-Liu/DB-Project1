@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import fileIO.Logger;
-
+/**
+ * 
+ * The Buffer implementation that is used to store tuples with a capacity of specified number of tuples
+ * @author mingzhaoliu
+ *
+ */
 public class Buffer {
 
 	private ArrayList<Tuple> tuples;
@@ -119,9 +123,6 @@ public class Buffer {
 
 		};
 		tuples.sort(myComparator);
-		Logger log= Logger.getInstance();
-
-//		log.dumpTable(tuples);
 	}
 
 	/**

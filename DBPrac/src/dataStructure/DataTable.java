@@ -159,6 +159,10 @@ public class DataTable {
 		System.out.print("]\n");
 	}
 	
+	/**
+	 * Get the arrayList representation of the data stored in DataTable
+	 * @return
+	 */
 	public ArrayList<Tuple> toArrayList() {
 		ArrayList<Tuple> dataList = new ArrayList<Tuple>();
 		for (int i = 0; i < cardinality(); ++i) {

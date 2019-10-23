@@ -1,9 +1,7 @@
 package physicalOperator;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
@@ -30,8 +28,6 @@ public class SMJ extends Operator {
 	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
 	 * each other for the two given tuples, and false otherwise. */
 	private int ensureEqual(Tuple leftTup, Tuple rightTup) {
-		assert(leftTup != null);
-		assert(rightTup != null);
 
 		int result = 0; 
 		int count = 0;
@@ -90,8 +86,8 @@ public class SMJ extends Operator {
 				gs = new Tuple(ts.getTuple());
 				ptr = count;
 			}
-			Tuple joinedTuple = null;
 
+			Tuple joinedTuple = null;
 			if (ensureEqual(tr, ts) == 0) {
 				joinedTuple = new Tuple();
 

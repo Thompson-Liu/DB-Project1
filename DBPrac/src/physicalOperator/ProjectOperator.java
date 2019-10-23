@@ -1,15 +1,11 @@
 package physicalOperator;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import dataStructure.DataTable;
 import dataStructure.Tuple;
 import fileIO.*;
 import net.sf.jsqlparser.statement.select.AllColumns;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 /** the class for the project operator */
@@ -36,7 +32,6 @@ public class ProjectOperator extends Operator {
 			if (item instanceof AllColumns) {
 				selectColumns.addAll(operator.schema());
 			} else {
-				SelectExpressionItem expressItem= (SelectExpressionItem) item;
 				String tableColCom= item.toString();
 				String[] tableCol= tableColCom.trim().split("\\.");
 				String column= tableCol[1];

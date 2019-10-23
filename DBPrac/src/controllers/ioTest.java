@@ -1,9 +1,6 @@
 package controllers;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.PriorityQueue;
-
 import fileIO.*;
 
 public class ioTest {
