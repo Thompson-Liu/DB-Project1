@@ -75,14 +75,30 @@ public class SMJ extends Operator {
 			if (gs == null) {
 				while (ensureEqual(tr, ts) < 0) {
 					tr = leftExSortOp.getNextTuple();
+<<<<<<< HEAD
 					if (tr == null)  { 
 						return null; } 
+=======
+					if (tr == null) { 
+						leftExSortOp.deleteFile();
+						rightExSortOp.deleteFile();
+						return null; 
+					} 
+>>>>>>> 829658661933e952faf50722cb25a1a708f367b8
 				}
 
 				while (ensureEqual(tr, ts) > 0) {
 					ts = rightExSortOp.getNextTuple();
+<<<<<<< HEAD
 					if (ts == null)  { 
 						return null; } 
+=======
+					if (ts == null) { 
+						leftExSortOp.deleteFile();
+						rightExSortOp.deleteFile();
+						return null; 
+					} 
+>>>>>>> 829658661933e952faf50722cb25a1a708f367b8
 					count++;
 				}
 				gs = new Tuple(ts.getTuple());
@@ -120,7 +136,12 @@ public class SMJ extends Operator {
 			tr = leftExSortOp.getNextTuple();
 			gs = null;
 		}
+<<<<<<< HEAD
 		
+=======
+		leftExSortOp.deleteFile();
+		rightExSortOp.deleteFile();
+>>>>>>> 829658661933e952faf50722cb25a1a708f367b8
 		return null;
 	}
 
