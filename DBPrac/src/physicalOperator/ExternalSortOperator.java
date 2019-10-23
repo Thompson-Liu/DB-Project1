@@ -38,7 +38,7 @@ public class ExternalSortOperator extends Operator {
 	private String tempDir;
 	private String useName;
 	private int numAttr;
-	private int tuplesPage;
+	private boolean useBinary;
 
 	/** @param childOp childOp is the child operator, e.g. ProjectOperator or SelectOperator
 	 * @param colList colList is the list of column names to sort data by */
@@ -51,8 +51,8 @@ public class ExternalSortOperator extends Operator {
 		this.tempDir= tempDir;
 		this.useName= usageName;
 		this.numAttr= childOp.schema().size();
-		this.tuplesPage= (int) Math.floor(1.0 * (4096 - 8) / (4.0 * numAttr));
-		tuplesBuffer= this.tuplesPage * bufferSize;
+		tuplesBuffer= (int) Math.floor(1.0 * (4096)*bufferSize / (4.0 * numAttr));
+//		tuplesBuffer= this.tuplesPage * bufferSize;
 		memoryBuffer= new Buffer(tuplesBuffer);
 
 		// pass0 and get the total number of files stored

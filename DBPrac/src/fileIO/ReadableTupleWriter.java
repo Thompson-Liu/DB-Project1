@@ -38,8 +38,6 @@ public class ReadableTupleWriter implements TupleWriter{
 
 	@Override
 	public void write(ArrayList<Tuple> dataTable) {
-		System.out.println("hrerere");
-
 		for (Tuple tup : dataTable) {
 			data.add(tup.getTuple());
 		}
