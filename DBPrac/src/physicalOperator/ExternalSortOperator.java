@@ -208,6 +208,10 @@ public class ExternalSortOperator extends Operator {
 		return tup;
 	}
 	
+	/**
+	 * Delete the intermediate file created by external sort operator
+	 * 
+	 */
 	public void deleteFile() {
 		String file= this.file;
 		File deleteFile= new File(file);

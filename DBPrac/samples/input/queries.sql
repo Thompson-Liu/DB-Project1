@@ -9,10 +9,10 @@
 -- FROM Sailors, Reserves
 -- WHERE Sailors.A = Reserves.G
 -- ORDER BY Sailors.A;
--- SELECT *
--- FROM Sailors, Reserves, Boats
--- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D
--- ORDER BY Sailors.A, Reserves.H;
+SELECT *
+FROM Sailors, Reserves, Boats
+WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D
+ORDER BY Sailors.A, Reserves.H;
 -- SELECT * FROM Sailors, Reserves, Boats WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
 -- SELECT DISTINCT * FROM Sailors;
 -- SELECT * FROM Sailors S1, Sailors S2 WHERE S1.A < S2.A;
@@ -48,6 +48,6 @@
 -- FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
 -- WHERE t0.A = t1.F AND t1.F = t2.I AND t1.E=3
 
-SELECT t0.A, t1.D
-FROM testRelation0 as t0, testRelation1 as t1
-WHERE t0.B = t1.E
+-- SELECT t0.A, t1.D
+-- FROM testRelation0 as t0, testRelation1 as t1
+-- WHERE t0.B = t1.E
