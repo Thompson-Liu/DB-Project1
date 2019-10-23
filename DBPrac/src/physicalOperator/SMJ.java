@@ -75,12 +75,20 @@ public class SMJ extends Operator {
 			if (gs == null) {
 				while (ensureEqual(tr, ts) < 0) {
 					tr = leftExSortOp.getNextTuple();
-					if (tr == null)  { return null; } 
+					if (tr == null) { 
+						leftExSortOp.deleteFile();
+						rightExSortOp.deleteFile();
+						return null; 
+					} 
 				}
 
 				while (ensureEqual(tr, ts) > 0) {
 					ts = rightExSortOp.getNextTuple();
-					if (ts == null)  { return null; } 
+					if (ts == null) { 
+						leftExSortOp.deleteFile();
+						rightExSortOp.deleteFile();
+						return null; 
+					} 
 					count++;
 				}
 				gs = new Tuple(ts.getTuple());
@@ -118,6 +126,8 @@ public class SMJ extends Operator {
 			tr = leftExSortOp.getNextTuple();
 			gs = null;
 		}
+		leftExSortOp.deleteFile();
+		rightExSortOp.deleteFile();
 		return null;
 	}
 

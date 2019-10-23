@@ -203,12 +203,15 @@ public class ExternalSortOperator extends Operator {
 	public Tuple getNextTuple() {
 		Tuple tup= sortedReader.readNextTuple();
 		if(tup==null) {
-			String file= this.file;
-			File deleteFile= new File(file);
-			deleteFile.delete();
-//			System.out.println("hrere");
+			deleteFile();
 		}
 		return tup;
+	}
+	
+	public void deleteFile() {
+		String file= this.file;
+		File deleteFile= new File(file);
+		deleteFile.delete();
 	}
 
 	/** @return the schema of the data table that is sorted by the operator */
