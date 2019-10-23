@@ -1,9 +1,7 @@
 package physicalOperator;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
@@ -30,8 +28,6 @@ public class SMJ extends Operator {
 	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
 	 * each other for the two given tuples, and false otherwise. */
 	private int ensureEqual(Tuple leftTup, Tuple rightTup) {
-		assert(leftTup != null);
-		assert(rightTup != null);
 
 		int result = 0; 
 		int count = 0;
@@ -79,19 +75,27 @@ public class SMJ extends Operator {
 			if (gs == null) {
 				while (ensureEqual(tr, ts) < 0) {
 					tr = leftExSortOp.getNextTuple();
-					if (tr == null)  { return null; } 
+					if (tr == null) { 
+						leftExSortOp.deleteFile();
+						rightExSortOp.deleteFile();
+						return null; 
+					} 
 				}
 
 				while (ensureEqual(tr, ts) > 0) {
 					ts = rightExSortOp.getNextTuple();
-					if (ts == null)  { return null; } 
+					if (ts == null) { 
+						leftExSortOp.deleteFile();
+						rightExSortOp.deleteFile();
+						return null; 
+					} 
 					count++;
 				}
 				gs = new Tuple(ts.getTuple());
 				ptr = count;
 			}
-			Tuple joinedTuple = null;
 
+			Tuple joinedTuple = null;
 			if (ensureEqual(tr, ts) == 0) {
 				joinedTuple = new Tuple();
 
@@ -122,6 +126,8 @@ public class SMJ extends Operator {
 			tr = leftExSortOp.getNextTuple();
 			gs = null;
 		}
+		leftExSortOp.deleteFile();
+		rightExSortOp.deleteFile();
 		return null;
 	}
 
