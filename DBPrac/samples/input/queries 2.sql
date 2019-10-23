@@ -61,18 +61,18 @@
 -- WHERE Sailors.A = Reserves.G and Sailors.C = Reserves.H;
 
 
-SELECT *
-FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
-WHERE t0.A = t1.D AND t0.B = t2.J
+-- SELECT *
+-- FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
+-- WHERE t0.A = t1.D AND t0.B = t2.J
 
 -- SELECT t0.A, t1.D
 -- FROM testRelation0 as t0, testRelation1 as t1
 -- WHERE t0.B = t1.E
 
 
--- SELECT *
--- FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
--- WHERE t0.A = t1.F AND t0.B = t2.I AND t1.E = 3
+SELECT *
+FROM testRelation0 as t0, testRelation1 as t1, testRelation2 as t2
+WHERE t0.A = t1.F AND t1.F = t2.I AND t1.E=3
 
 -- SELECT *
 -- FROM Sailors, Reserves
