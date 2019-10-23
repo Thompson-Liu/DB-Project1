@@ -13,6 +13,12 @@ public interface TupleWriter {
 	public void write(ArrayList<Tuple> data);
 	
 	/**
+	 * 
+	 * @return the file info of the binary tuple writer
+	 */
+	public String getInfo() ;
+	
+	/**
 	 *  only add tuple to the buffer, may not writing it out if buffer is not full
 	 *  if want to make sure write out, should call dump()
 	 * @param tup tuple to add

@@ -158,4 +158,9 @@ public class BinaryTupleWriter implements TupleWriter {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public String getInfo() {
+		return file;
+	}
 }

@@ -89,4 +89,9 @@ public class ReadableTupleWriter implements TupleWriter{
 			}
 		}
 	}
+
+	@Override
+	public String getInfo() {
+		return name;
+	}
 }

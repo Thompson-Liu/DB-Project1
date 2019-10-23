@@ -1,5 +1,6 @@
 package physicalOperator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,20 +20,27 @@ public class SMJ extends Operator {
 	private Tuple tr;
 	private Tuple ts;
 	private Tuple gs;
-	private int ptr;
-	private boolean flag;
-	private boolean stop;
+	private int ptr;     // store the number of lines of gs
+	private int count;   // store the number of lines of ts
 	private ArrayList<String> schema;
+
+	private ArrayList<String> leftSchema;
+	private ArrayList<String> rightSchema;
 
 	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
 	 * each other for the two given tuples, and false otherwise. */
-	private boolean ensureEqual(Tuple leftTup, Tuple rightTup, ArrayList<String> leftColList,
-		ArrayList<String> rightColList, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int k) {
-		for (int i= 0; i < k; i+= 1) {
-			if (leftTup.getData(leftSchema.indexOf(leftColList.get(i))) != rightTup
-				.getData(rightSchema.indexOf(rightColList.get(i)))) { return false; }
+	private int ensureEqual(Tuple leftTup, Tuple rightTup) {
+		assert(leftTup != null);
+		assert(rightTup != null);
+
+		int result = 0; 
+		int count = 0;
+		while (count < leftColList.size() && result == 0) {
+			result = leftTup.getData(leftSchema.indexOf(leftColList.get(count))) - rightTup
+					.getData(rightSchema.indexOf(rightColList.get(count)));
+			count++;
 		}
-		return true;
+		return result;
 	}
 
 	/** @param bufferSize: the buffer size used in external sort
@@ -43,88 +51,76 @@ public class SMJ extends Operator {
 	 * @param dir: the prefix of the directory that stores the temporary files generated during external
 	 * sort. */
 	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias,
-		String dir) {
+			String dir) {
 		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName(), alias);
 		leftColList= evalJoin.getJoinAttributesLeft();
 		rightColList= evalJoin.getJoinAttributesRight();
 		leftOp= left;
 		rightOp= right;
-		leftExSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, "left");
+		leftExSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, leftOp.getTableName());
 		rightExSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
-		tr= leftExSortOp.getNextTuple();
-		Tuple firstTuple= rightExSortOp.getNextTuple();
-		ts= firstTuple;
-		gs= firstTuple;
-		ptr= 0;
+
+		tr = leftExSortOp.getNextTuple();
+
+		ts = rightExSortOp.getNextTuple();
+		gs = null;
+		ptr = 0;
+		count = 0;
 		this.schema= new ArrayList<String>(left.schema());
 		this.schema.addAll(right.schema());
-		flag= false;
-		stop= false;
+
+		leftSchema = leftExSortOp.schema();
+		rightSchema = rightExSortOp.schema();
 	}
 
 	@Override
 	public Tuple getNextTuple() {
-		while (tr != null && gs != null) {
-
-//			if (tr.getData(0) == 134 && tr.getData(1) == 22) {
-//				System.out.println("heiiiii");
-//			}
-			if (!flag) {
-				int i= 0;
-				while (i < leftColList.size()) {
-					while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) < gs
-						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
-//						System.out.println(tr.printData());
-						tr= leftExSortOp.getNextTuple();
-						if (tr == null) return null;
-						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
-							i= 0;
-							break;
-						}
-					}
-					while (tr.getData(leftOp.schema().indexOf(leftColList.get(i))) > gs
-						.getData(rightOp.schema().indexOf(rightColList.get(i)))) {
-//						rightExSortOp.resetIndex(ptr);
-						rightExSortOp.resetIndex(ptr);
-						gs= rightExSortOp.getNextTuple();
-						if (gs == null) return null;
-						ptr+= 1;
-						if (!ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(), i)) {
-							i= -1;
-							break;
-						}
-					}
-					i+= 1;
+		while (tr != null && ts != null) {
+			if (gs == null) {
+				while (ensureEqual(tr, ts) < 0) {
+					tr = leftExSortOp.getNextTuple();
+					if (tr == null)  { return null; } 
 				}
-				rightExSortOp.resetIndex(ptr);
-				ts= new Tuple(gs.getTuple());
-			}
-			if (tr == null || gs == null) return null;
-			if (ensureEqual(tr, gs, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
-				leftColList.size())) {
 
-				if (ts != null && ensureEqual(tr, ts, leftColList, rightColList, leftOp.schema(), rightOp.schema(),
-					leftColList.size())) {
-
-					flag= true;
-					Tuple joinedTuple= new Tuple();
-					for (int j= 0; j < leftOp.schema().size(); j++ ) {
-						joinedTuple.addData(tr.getData(j));
-					}
-					for (int j= 0; j < rightOp.schema().size(); j++ ) {
-						joinedTuple.addData(ts.getData(j));
-					}
-					ts= rightExSortOp.getNextTuple();
-//					if(ts.getData(0)==131 && ts.getData(1)==35) {
-//						System.out.println(ts.printData());
-//					}
-
-					return joinedTuple;
+				while (ensureEqual(tr, ts) > 0) {
+					ts = rightExSortOp.getNextTuple();
+					if (ts == null)  { return null; } 
+					count++;
 				}
+				gs = new Tuple(ts.getTuple());
+				ptr = count;
 			}
-			flag= false;
-			tr= leftExSortOp.getNextTuple();
+			Tuple joinedTuple = null;
+
+			if (ensureEqual(tr, ts) == 0) {
+				joinedTuple = new Tuple();
+
+				// Generate the combined tuple result
+				for (int j= 0; j < leftOp.schema().size(); j++ ) {
+					joinedTuple.addData(tr.getData(j));
+				}
+				for (int j= 0; j < rightOp.schema().size(); j++ ) {
+					joinedTuple.addData(ts.getData(j));
+				}
+
+				ts = rightExSortOp.getNextTuple();
+				count++;
+				if (ts == null || ensureEqual(tr, ts) != 0) {
+					tr = leftExSortOp.getNextTuple();
+					gs = null;
+
+					rightExSortOp.resetIndex(ptr);
+					ts = rightExSortOp.getNextTuple();
+					count = ptr;
+				}
+				return joinedTuple;
+			} 
 			rightExSortOp.resetIndex(ptr);
+			ts = rightExSortOp.getNextTuple();
+			count = ptr;
+
+			tr = leftExSortOp.getNextTuple();
+			gs = null;
 		}
 		return null;
 	}
@@ -141,16 +137,12 @@ public class SMJ extends Operator {
 
 	@Override
 	public void reset() {
-		System.out.println("hereree");
 		leftExSortOp.reset();
 		rightExSortOp.reset();
 		tr= leftExSortOp.getNextTuple();
 		Tuple firstTuple= rightExSortOp.getNextTuple();
 		ts= firstTuple;
 		gs= firstTuple;
-//		ptr = 0;
-//		flag= false;
-//		stop= false;
 	}
 
 	@Override
