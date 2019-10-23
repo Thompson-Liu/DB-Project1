@@ -78,20 +78,14 @@ public class BinaryTupleReader implements TupleReader {
 	@Override
 	public Tuple readNextTuple() {
 		if (curRow <= this.numRows - 1) {
-			int temp=curRow;
-			curRow++;
-			return pageData.get(temp);
+			return pageData.get(curRow++);
 		} else {
 			curRow= curRow - numRows;
 			pageData= getNextPage();
-//			System.out.println("currow next is   :  " + curRow);
-//			System.out.println("numRow is   :" + numRows);
 			if (pageData == null || curRow >= this.numRows) { return null; }
 
 			if (this.numRows > 0) {
-				int temp=curRow;
-				curRow++;
-				return pageData.get(temp);
+				return pageData.get(curRow++);
 			} else {
 				return null;
 			}
@@ -100,7 +94,6 @@ public class BinaryTupleReader implements TupleReader {
 
 	@Override
 	public void setAtt(int num) {
-
 		this.numAttr= num;
 	}
 
@@ -137,8 +130,7 @@ public class BinaryTupleReader implements TupleReader {
 		try {
 			int pageIndex= index / this.rowsPerPage;
 			curRow= index % rowsPerPage;
-			Long newIndex= (long) (pageIndex * 4096);
-			fc.position(newIndex);
+			fc.position(pageIndex * 4096);
 			this.pageData= getNextPage();
 		} catch (IOException e) {
 			e.printStackTrace();

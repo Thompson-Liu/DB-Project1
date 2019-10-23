@@ -75,7 +75,7 @@ public class Interpreter {
 //					log.dumpMessage("Running queries..." + Integer.toString(queryCounter));
 //					log.dumpMessage("\n" + "Execution time : " + Long.toString(diffTime));
 
-					queryCounter++ ;
+					queryCounter++;
 
 					// generate 3 random test data sets
 //					int count= 0;
