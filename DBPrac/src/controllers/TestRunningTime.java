@@ -69,21 +69,7 @@ public class TestRunningTime {
 
 //					queryCounter++ ;
 
-<<<<<<< HEAD
-//					 generate 3 random test data sets
-//					int count= 0;
-//					BinaryTupleWriter testDataWriter0= new BinaryTupleWriter(
-//						args[0] + "/db/data/testRelation" + (count++ ));
-//					generateRandomData(testDataWriter0, 5000, 3, 5000);
-//
-//					BinaryTupleWriter testDataWriter1= new BinaryTupleWriter(
-//						args[0] + "/db/data/testRelation" + (count++ ));
-//					generateRandomData(testDataWriter1, 10000, 4, 5000);
-//
-//					BinaryTupleWriter testDataWriter2= new BinaryTupleWriter(
-//						args[0] + "/db/data/testRelation" + (count++ ));
-//					generateRandomData(testDataWriter2, 20000, 5, 5000);
-=======
+
 					// generate 3 random test data sets
 					int count= 0;
 					BinaryTupleWriter testDataWriter0= new BinaryTupleWriter(
@@ -97,7 +83,6 @@ public class TestRunningTime {
 					BinaryTupleWriter testDataWriter2= new BinaryTupleWriter(
 						args[0] + "/db/data/testRelation" + (count++ ));
 					generateRandomData(testDataWriter2, 3000, 5, 5000);
->>>>>>> 6b0436a1195daf214d759ed63124f0fba0d57c42
 
 				} catch (Exception e) {
 					System.err.println(
