@@ -7,13 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
 import dataStructure.Tuple;
-import fileIO.BinaryTupleWriter;
-import fileIO.Logger;
 import fileIO.TupleWriter;
 import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
@@ -38,7 +35,6 @@ public class TestRunningTime {
 		String queriesFile= args[0] + "/queries 2.sql";
 		String dataDir= args[0] + "/db";
 		String outputDir= args[1];
-		String tewpDir= args[2];
 		int queryCounter= 1;
 
 		try {
@@ -49,7 +45,7 @@ public class TestRunningTime {
 					Select select= (Select) statement;
 					SelectBody selectBody= select.getSelectBody();
 					PlainSelect plainSelect= (PlainSelect) selectBody;
-					Catalog cat= createCatalog(dataDir);
+					createCatalog(dataDir);
 
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
@@ -59,10 +55,10 @@ public class TestRunningTime {
 						args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
-//					ReadableTupleWriter writer= new ReadableTupleWriter(
-//						outputDir + "/query" + Integer.toString(queryCounter));
-					BinaryTupleWriter writer= new BinaryTupleWriter(
+					ReadableTupleWriter writer= new ReadableTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
+//					BinaryTupleWriter writer= new BinaryTupleWriter(
+//						outputDir + "/query" + Integer.toString(queryCounter));
 
 					long time1= System.currentTimeMillis();
 					op.dump(writer);
@@ -73,19 +69,19 @@ public class TestRunningTime {
 
 					queryCounter++ ;
 
-//					 generate 3 random test data sets
-//					int count= 0;
-//					BinaryTupleWriter testDataWriter0= new BinaryTupleWriter(
-//						args[0] + "/db/data/testRelation" + (count++ ));
-//					generateRandomData(testDataWriter0, 1000, 3, 5000);
+					// generate 3 random test data sets
+					int count= 0;
+					BinaryTupleWriter testDataWriter0= new BinaryTupleWriter(
+						args[0] + "/db/data/testRelation" + (count++ ));
+					generateRandomData(testDataWriter0, 1000, 3, 5000);
 
-//					BinaryTupleWriter testDataWriter1= new BinaryTupleWriter(
-//						args[0] + "/db/data/testRelation" + (count++ ));
-//					generateRandomData(testDataWriter1, 2000, 4, 5000);
-//
-//					BinaryTupleWriter testDataWriter2= new BinaryTupleWriter(
-//						args[0] + "/db/data/testRelation" + (count++ ));
-//					generateRandomData(testDataWriter2, 3000, 5, 5000);
+					BinaryTupleWriter testDataWriter1= new BinaryTupleWriter(
+						args[0] + "/db/data/testRelation" + (count++ ));
+					generateRandomData(testDataWriter1, 2000, 4, 5000);
+
+					BinaryTupleWriter testDataWriter2= new BinaryTupleWriter(
+						args[0] + "/db/data/testRelation" + (count++ ));
+					generateRandomData(testDataWriter2, 3000, 5, 5000);
 
 				} catch (Exception e) {
 					System.err.println(

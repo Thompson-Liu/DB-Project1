@@ -1,9 +1,6 @@
 package physicalOperator;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
-
-import dataStructure.DataTable;
 import dataStructure.Tuple;
 import fileIO.*;
 
@@ -38,6 +35,11 @@ public abstract class Operator {
 		return null;
 	}
 
+	/**
+	 * 
+	 * Dump the resulted tuples using [writer]
+	 * @param writer    The tuple Writer that will be used to dump the result 
+	 */
 	public void dump(TupleWriter writer) {
 		// TODO Auto-generated method stub
 		

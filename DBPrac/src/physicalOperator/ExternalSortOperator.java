@@ -222,6 +222,11 @@ public class ExternalSortOperator extends Operator {
 		sortedReader.reset();
 	}
 
+	/**
+	 * 
+	 * Reset the next tuple get to index [ind]
+	 * @param ind    The index that will be rewinded back 
+	 */
 	public void resetIndex(int ind) {
 		sortedReader.setAtt(schema.size());
 		sortedReader.reset(ind);

@@ -1,19 +1,15 @@
 package controllers;
-import fileIO.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
-import dataStructure.Tuple;
 import fileIO.BinaryTupleWriter;
-import fileIO.Logger;
-import fileIO.TupleWriter;
+import fileIO.ReadableTupleWriter;
 import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
@@ -22,7 +18,6 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import physicalOperator.Operator;
-import test.TestGenerator;
 
 /** The top level class of our code, which read inputs queries, tables and produce output data */
 public class Interpreter {
@@ -36,7 +31,6 @@ public class Interpreter {
 		String queriesFile= args[0] + "/queries.sql";
 		String dataDir= args[0] + "/db";
 		String outputDir= args[1];
-		String tewpDir= args[2];
 		int queryCounter= 1;
 
 		try {
@@ -47,7 +41,7 @@ public class Interpreter {
 					Select select= (Select) statement;
 					SelectBody selectBody= select.getSelectBody();
 					PlainSelect plainSelect= (PlainSelect) selectBody;
-					Catalog cat= createCatalog(dataDir);
+					createCatalog(dataDir);
 
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
@@ -57,17 +51,18 @@ public class Interpreter {
 						args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
-//					ReadableTupleWriter writer= new ReadableTupleWriter(
-//						outputDir + "/query" + Integer.toString(queryCounter));
-					BinaryTupleWriter writer= new BinaryTupleWriter(
+					ReadableTupleWriter writer= new ReadableTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
+//					BinaryTupleWriter writer= new BinaryTupleWriter(
+//						outputDir + "/query" + Integer.toString(queryCounter));
 
+					long time1= System.currentTimeMillis();
 					op.dump(writer);
 
-
-
+					long time2= System.currentTimeMillis();
+					long diffTime= time2 - time1;
+					System.out.println(diffTime);
 					queryCounter++;
-
 				} catch (Exception e) {
 					System.err.println(
 						"Exception occurred during executing the query number " + Integer.toString(queryCounter));

@@ -39,7 +39,7 @@ public class PhysicalPlanBuilder {
 		}
 		join= readConfig();
 		sort= readConfig();
-		assert (sort[0] == 0 || (sort[0] == 1 && sort[1] >= 3));
+//		assert (sort[0] == 0 || (sort[0] == 1 && sort[1] >= 3));
 
 		try {
 			buffer.close();
