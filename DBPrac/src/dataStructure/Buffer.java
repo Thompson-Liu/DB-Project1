@@ -121,7 +121,7 @@ public class Buffer {
 		tuples.sort(myComparator);
 		Logger log= Logger.getInstance();
 
-		log.dumpTable(tuples);
+//		log.dumpTable(tuples);
 	}
 
 	/**

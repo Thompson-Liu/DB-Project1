@@ -100,9 +100,6 @@ public class BinaryTupleWriter implements TupleWriter {
 		for (Tuple tuple: data) {
 			addNextTuple(tuple);
 		}
-		if (pageData.size() > 0) {
-			writeNextPage();
-		}
 	}
 	
 	@Override

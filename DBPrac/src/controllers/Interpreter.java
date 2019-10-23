@@ -70,8 +70,8 @@ public class Interpreter {
 //					System.out.println(diffTime);
 
 					// Test logger
-					Logger log= Logger.getInstance();
-					log.dump();
+//					Logger log= Logger.getInstance();
+//					log.dump();
 //					log.dumpMessage("Running queries..." + Integer.toString(queryCounter));
 //					log.dumpMessage("\n" + "Execution time : " + Long.toString(diffTime));
 
