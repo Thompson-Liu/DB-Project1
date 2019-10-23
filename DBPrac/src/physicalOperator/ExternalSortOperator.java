@@ -36,6 +36,7 @@ public class ExternalSortOperator extends Operator {
 	private int runs;   						// number of files in each pass
 	private int pass= 0;   						// the current order of pass
 	private String tempDir;
+	private String file;
 	private String useName;
 	private int numAttr;
 	private boolean useBinary;
@@ -71,8 +72,8 @@ public class ExternalSortOperator extends Operator {
 			sortedReader= new BinaryTupleReader(tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0");
 		}else {
 			sortedReader= new ReadableTupleReader(tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0");
-
 		}
+		this.file=tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0";
 	}
 
 	// pass0
@@ -201,6 +202,12 @@ public class ExternalSortOperator extends Operator {
 	@Override
 	public Tuple getNextTuple() {
 		Tuple tup= sortedReader.readNextTuple();
+		if(tup==null) {
+			String file= this.file;
+			File deleteFile= new File(file);
+			deleteFile.delete();
+//			System.out.println("hrere");
+		}
 		return tup;
 	}
 
@@ -235,4 +242,14 @@ public class ExternalSortOperator extends Operator {
 	public String getTableName() {
 		return childOp.getTableName();
 	}
+	
+	/**
+	 * Get the file name of the file being read
+	 * 
+	 * @return 	the file name
+	 */
+	public String getFileInfo() {
+		return this.file;
+	}
+
 }
