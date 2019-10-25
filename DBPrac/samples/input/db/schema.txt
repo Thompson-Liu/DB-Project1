@@ -1,2 +1,7 @@
 Sailors A B C
+<<<<<<< HEAD
 Boats D E F
+=======
+Boats D E F
+Reserves G H
+>>>>>>> 628e665bd3a9cee912db547383e21494276287d1
