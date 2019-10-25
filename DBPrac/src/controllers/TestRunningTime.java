@@ -67,7 +67,8 @@ public class TestRunningTime {
 					long diffTime= time2 - time1;
 					System.out.println(diffTime);
 
-					queryCounter++ ;
+//					queryCounter++ ;
+
 
 					// generate 3 random test data sets
 					int count= 0;

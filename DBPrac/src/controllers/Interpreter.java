@@ -50,7 +50,11 @@ public class Interpreter {
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt",
 						args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
+<<<<<<< HEAD
 //
+=======
+
+>>>>>>> b977f3526009d36c047242510e79de3f69e26654
 //					ReadableTupleWriter writer= new ReadableTupleWriter(
 //						outputDir + "/query" + Integer.toString(queryCounter));
 					BinaryTupleWriter writer= new BinaryTupleWriter(

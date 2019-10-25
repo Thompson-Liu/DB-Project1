@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 -- SELECT * FROM Sailors;
 -- SELECT Sailors.A FROM Sailors;
 -- SELECT Boats.F, Boats.D FROM Boats;
@@ -13,3 +15,4 @@
 -- SELECT B.F, B.D FROM Boats B ORDER BY B.D;
 -- SELECT * FROM Sailors S, Reserves R, Boats B WHERE S.A = R.G AND R.H = B.D ORDER BY S.C;
 -- SELECT DISTINCT * FROM Sailors S, Reserves R, Boats B WHERE S.A = R.G AND R.H = B.D ORDER BY S.C;
+>>>>>>> 628e665bd3a9cee912db547383e21494276287d1
