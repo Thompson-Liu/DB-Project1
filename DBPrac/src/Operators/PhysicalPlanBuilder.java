@@ -104,7 +104,12 @@ public class PhysicalPlanBuilder {
 
 	public void visit(DuplicateEliminationLogOp dupElimLogOp) {
 		dupElimLogOp.getChidren()[0].accept(this);
-		immOp= new DuplicateEliminationOperator((ExternalSortOperator) immOp);
+		if (immOp instanceof SortOperator) {
+			immOp= new DuplicateEliminationOperator((SortOperator)immOp);
+		} else {
+			immOp= new DuplicateEliminationOperator((ExternalSortOperator)immOp);
+		}
+		
 //		immOp= new DuplicateEliminationOperator((SortOperator) immOp);
 	}
 

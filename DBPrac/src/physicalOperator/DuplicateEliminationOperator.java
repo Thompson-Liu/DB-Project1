@@ -10,12 +10,19 @@ import fileIO.TupleWriter;
 public class DuplicateEliminationOperator extends Operator {
 	private Tuple prevTuple;
 	private Tuple currTuple;
-	private ExternalSortOperator exSortOp;
+	private Operator sortOp;
 
 	/** @param operator operator is the child operator, which has to be a SortOperator because the
 	 * precondition requires that the data be sorted first. */
 	public DuplicateEliminationOperator(ExternalSortOperator operator) {
-		exSortOp= operator;
+		sortOp= operator;
+		Tuple tmp= operator.getNextTuple();
+		prevTuple= null;
+		currTuple= tmp;
+	}
+	
+	public DuplicateEliminationOperator(SortOperator operator) {
+		sortOp= operator;
 		Tuple tmp= operator.getNextTuple();
 		prevTuple= null;
 		currTuple= tmp;
@@ -29,7 +36,7 @@ public class DuplicateEliminationOperator extends Operator {
 			return currTuple;
 		}
 		while (currTuple != null && currTuple.getTuple().equals(prevTuple.getTuple())) {
-			currTuple= exSortOp.getNextTuple();
+			currTuple= sortOp.getNextTuple();
 		}
 		prevTuple= currTuple;
 		return currTuple;
@@ -49,18 +56,18 @@ public class DuplicateEliminationOperator extends Operator {
 	/** @return the schema of the data table after duplicates are removed. */
 	@Override
 	public ArrayList<String> schema() {
-		return exSortOp.schema();
+		return sortOp.schema();
 	}
 
 	@Override
 	public void reset() {
-		exSortOp.reset();
+		sortOp.reset();
 	}
 
 	/** @return the name of the buffer data table */
 	@Override
 	public String getTableName() {
-		return exSortOp.getTableName();
+		return sortOp.getTableName();
 	}
 
 }
