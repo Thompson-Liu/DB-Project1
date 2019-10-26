@@ -12,6 +12,9 @@ public class Deserializer {
 	private FileChannel fc;
 	private ByteBuffer buffer;
 
+	/** The deserializer deserializes a serialized B+-tree, which is stored in an index file.
+	 * 
+	 * @param indexFile: the index file available */
 	public Deserializer(String indexFile) {
 
 		try {
