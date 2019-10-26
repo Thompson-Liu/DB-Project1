@@ -28,8 +28,30 @@ public class Deserializer {
 	}
 
 	/** Find the rid of the first key that matches the scan condition */
-	public Integer[] getFirstKeyAddress(int lowKey) {
+	public int[] getRid(int lowKey, int highKey) {
 		int loc= initialDescent(lowKey);
+		try {
+			buffer.clear();
+			fc.position(loc * 4096);
+			fc.read(buffer);
+			int flag= buffer.getInt(0);
+			if (flag == 1) return null; // non-leaf nodes
+			int numElements= buffer.getInt(4);
+			int pos= 8; // starting pos
+			// A data entry: k, # of rids, (p,t) for each rid
+			for (int i= 0; i < numElements; i++ ) {
+				int key= buffer.getInt(pos);
+				int numRids= buffer.getInt(pos + 4);
+				if (key >= lowKey &&
+					key <= highKey) { return new int[] { buffer.getInt(pos + 8), buffer.getInt(pos + 12) }; }
+				pos+= 8 + numRids * 8; // skip the first two metadata and numRids rids (each rid is 8 bytes)
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return null;
 	}
 
@@ -55,13 +77,14 @@ public class Deserializer {
 				int pos= 0;
 				while (pos < numKeys) {
 					curKey= buffer.getInt(8 + 4 * pos); // actual keys in the node start from index 8
-					if (lowKey == prevKey || (lowKey > prevKey && lowKey < curKey)) {
+					if (lowKey == prevKey || (lowKey > prevKey && lowKey < curKey)) { // Found the node where lowKey is
 						break;
 					}
 					prevKey= curKey;
 					pos++ ;
 				}
-				startInd= buffer.getInt((2 + numKeys) * 4 + (pos * 4));
+				startInd= buffer.getInt((2 + numKeys) * 4 + (pos * 4)); // metadata (2), keys (numKeys), pos to be
+																	    // skipped (pos), multiply by 4 to get bytes
 
 			}
 
