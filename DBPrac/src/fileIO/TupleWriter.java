@@ -24,11 +24,20 @@ public interface TupleWriter {
 	 * @param tup tuple to add
 	 */
 	public void addNextTuple(Tuple tup);
+	
+	/**
+	 *  add another value to the buffer, should call dump() if want to make sure it
+	 *  write out
+	 * @param val
+	 */
+	public void addNextValue(int val);
 		
 	public void reset();
 	
 	public void close();
 	
-	// make sure to write every thing from buffer to file (including the left pageData)
+	/**
+	 *  make sure to write every thing from buffer to file (including the left pageData)
+	 */
 	public void dump();
 }

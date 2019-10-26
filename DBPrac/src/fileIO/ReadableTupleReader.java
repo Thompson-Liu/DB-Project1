@@ -94,10 +94,21 @@ public class ReadableTupleReader implements TupleReader {
 		dataIndex = index;
 	}
 
+	//是做什么用的呢？
 	@Override
 	public void setAtt(int num) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public int getCurRow() {
+		return 0;
+	}
+
+	@Override
+	public int getPage() {
+		return 0;
 	}
 
 }

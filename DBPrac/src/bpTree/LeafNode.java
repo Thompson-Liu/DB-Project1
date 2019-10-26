@@ -18,7 +18,6 @@ public class LeafNode extends Node {
 
 	@Override
 	public int getType() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -63,5 +62,11 @@ public class LeafNode extends Node {
 	@Override
 	public int leastKey() {
 		return keys.get(0);
+	}
+
+
+	@Override
+	public ArrayList<Node> getChildren() {
+		return null;
 	}
 }
