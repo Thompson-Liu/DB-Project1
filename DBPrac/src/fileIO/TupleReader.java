@@ -20,5 +20,9 @@ public interface TupleReader {
 	public void reset(int index);
 	
 	public void setAtt(int num);
+	
+	public int getCurRow();
+	
+	public int getPage();
 
 }

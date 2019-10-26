@@ -19,6 +19,7 @@ public class BinaryTupleReader implements TupleReader {
 	private int curRow;    // keep track of next row to read on the buffer
 	private ArrayList<Tuple> pageData;
 	private int rowsPerPage;
+	private int pageNum;
 
 	/**
 	 * Binary tuple Reader consturctor 
@@ -37,6 +38,7 @@ public class BinaryTupleReader implements TupleReader {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		pageNum = 0;
 		pageData= getNextPage();
 	}
 
@@ -64,6 +66,7 @@ public class BinaryTupleReader implements TupleReader {
 					}
 					pageData.add(new Tuple(temp));
 				}
+				pageNum++;
 				return pageData;
 			}
 			this.pageData= null;
@@ -111,6 +114,14 @@ public class BinaryTupleReader implements TupleReader {
 			e.printStackTrace();
 		}
 	}
+	
+	public int getCurRow() {
+		return curRow;
+	}
+	
+	public int getPage() {
+		return pageNum;
+	}
 
 	@Override
 	public void reset() {
@@ -118,6 +129,8 @@ public class BinaryTupleReader implements TupleReader {
 			fin= new FileInputStream(file);
 			fc= fin.getChannel();
 			buffer= ByteBuffer.allocate(4096);
+			curRow = 0;
+			pageNum = 0;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -129,6 +142,7 @@ public class BinaryTupleReader implements TupleReader {
 		// Using position(long newPosition) method in FileChannel
 		try {
 			int pageIndex= index / this.rowsPerPage;
+			pageNum = pageIndex;
 			curRow= index % rowsPerPage;
 			fc.position(pageIndex * 4096);
 			this.pageData= getNextPage();
