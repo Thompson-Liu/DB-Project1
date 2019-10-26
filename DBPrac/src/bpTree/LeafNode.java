@@ -22,7 +22,6 @@ public class LeafNode extends Node {
 		return 0;
 	}
 
-
 	@Override
 	public int getNumElement() {
 		return keys.size();
@@ -45,6 +44,24 @@ public class LeafNode extends Node {
 		}
 	}
 	
+	public int getKey(int index) {
+		return keys.get(index);
+	}
 	
+	public ArrayList<int[]> getRids(int key) {
+		return ridMap.get(key);
+	}
+	
+	public void addDatas(int key, ArrayList<int[]> rids) {
+		assert(!keys.contains(key));
+		
+		keys.add(key);
+		ridMap.put(key, rids);
+	}
 
+
+	@Override
+	public int leastKey() {
+		return keys.get(0);
+	}
 }
