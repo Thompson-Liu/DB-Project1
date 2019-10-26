@@ -15,10 +15,13 @@ public class Serializer {
 	private int totalnumNodes;
 	private int order;
 
-	public Serializer(TupleWriter bw, Node root, int order) {
+	public Serializer(boolean isClustered, TupleReader tr, TupleWriter bw, 
+			String attr, String tableName, int order) {
 		this.bw = bw;
 		this.order=order;
-		collectNodes(root);
+		
+		BulkLoader bulkLoading = new BulkLoader(isClustered, order, tr, attr, tableName);
+		collectNodes(bulkLoading.buildTree());
 		writeHeader();
 		writeLeaveNode();
 		writeIndexNode();
