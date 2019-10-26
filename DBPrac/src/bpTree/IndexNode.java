@@ -5,7 +5,7 @@ import java.util.*;
 public class IndexNode extends Node{
 	
 	private int pageNum;
-	private List<Node> children;
+	private ArrayList<Node> children;
 	private List<Integer> keys;
 	
 	public IndexNode(int pageNum) {
@@ -14,21 +14,22 @@ public class IndexNode extends Node{
 		keys = new ArrayList<Integer>();
 	}
 
+	public List<Integer> getKeys() {
+		return keys;
+	}
+	
 	@Override
 	public int getType() {
-		// TODO Auto-generated method stub
 		return 1;
 	}
 
 	@Override
 	public int getNumElement() {
-		// TODO Auto-generated method stub
 		return keys.size();
 	}
 
 	@Override
 	public int getPage() {
-		// TODO Auto-generated method stub
 		return pageNum;
 	}
 	
@@ -48,5 +49,10 @@ public class IndexNode extends Node{
 		for (int i = 1; i < children.size(); ++i) {
 			keys.add(children.get(i).leastKey());
 		}
+	}
+
+	@Override
+	public ArrayList<Node> getChildren() {
+		return children;
 	}
 }

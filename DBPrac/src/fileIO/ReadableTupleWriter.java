@@ -29,7 +29,7 @@ public class ReadableTupleWriter implements TupleWriter{
 			System.err.print(" Readable Tuple Write initialize fail. ");
 			e.printStackTrace();
 		}
-	}
+	}	
 	
 	@Override
 	public void addNextTuple(Tuple tup) {

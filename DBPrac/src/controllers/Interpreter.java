@@ -9,8 +9,12 @@ import java.util.ArrayList;
 
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
+import bpTree.Serializer;
 import dataStructure.Catalog;
+import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;
+import fileIO.TupleReader;
+import fileIO.TupleWriter;
 import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
@@ -30,6 +34,18 @@ public class Interpreter {
 		String dataDir= args[0] + "/db";
 		String outputDir= args[1];
 		int queryCounter= 1;
+		
+		String tableName = "Boats";
+		String attr = "E";
+		int order = 10;
+		boolean isClustered = false;
+		TupleWriter tw = new BinaryTupleWriter(args[3] + "/Boasts.E");
+		
+		createCatalog(dataDir);
+		Catalog catalog = Catalog.getInstance();
+		String dir= catalog.getDir(tableName);
+		TupleReader tr = new BinaryTupleReader(dir);
+		Serializer serialize = new Serializer(false, tr, tw, attr, tableName, order);
 
 		try {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
@@ -39,7 +55,7 @@ public class Interpreter {
 					Select select= (Select) statement;
 					SelectBody selectBody= select.getSelectBody();
 					PlainSelect plainSelect= (PlainSelect) selectBody;
-					createCatalog(dataDir);
+//					createCatalog(dataDir);
 
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
