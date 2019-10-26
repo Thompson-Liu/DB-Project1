@@ -10,6 +10,8 @@ public class IndexNode extends Node{
 	
 	public IndexNode(int pageNum) {
 		this.pageNum =pageNum;
+		children = new ArrayList<Node>();
+		keys = new ArrayList<Integer>();
 	}
 
 	@Override
@@ -31,7 +33,20 @@ public class IndexNode extends Node{
 	}
 	
 	public void addChild(Node child) {
-		
+		children.add(child);
 	}
+	
+	public int leastKey() {
+		assert(children.size() != 0);
+		
+		return children.get(0).leastKey();
+	}
+	
+	public void buildKeys() {
+		assert(children.size() != 0);
 
+		for (int i = 1; i < children.size(); ++i) {
+			keys.add(children.get(i).leastKey());
+		}
+	}
 }

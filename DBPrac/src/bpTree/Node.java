@@ -7,5 +7,7 @@ public abstract class Node {
 	public abstract int getNumElement();
 	
 	public abstract int getPage();
+	
+	public abstract int leastKey();
 
 }
