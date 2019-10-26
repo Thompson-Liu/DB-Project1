@@ -1,15 +1,16 @@
 package controllers;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
 import dataStructure.Catalog;
 import fileIO.BinaryTupleWriter;
-import fileIO.ReadableTupleWriter;
 import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
@@ -22,11 +23,8 @@ import physicalOperator.Operator;
 /** The top level class of our code, which read inputs queries, tables and produce output data */
 public class Interpreter {
 
-	/**
-	 * The driver function that will execute the data base management system, it can choose 
-	 * beteen binary tuple writer and readable tuple writer, and also can generate 
-	 * test data.
-	 */
+	/** The driver function that will execute the data base management system, it can choose beteen
+	 * binary tuple writer and readable tuple writer, and also can generate test data. */
 	public static void main(String[] args) {
 		String queriesFile= args[0] + "/queries.sql";
 		String dataDir= args[0] + "/db";
@@ -50,11 +48,7 @@ public class Interpreter {
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt",
 						args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
-<<<<<<< HEAD
-//
-=======
 
->>>>>>> b977f3526009d36c047242510e79de3f69e26654
 //					ReadableTupleWriter writer= new ReadableTupleWriter(
 //						outputDir + "/query" + Integer.toString(queryCounter));
 					BinaryTupleWriter writer= new BinaryTupleWriter(
@@ -66,7 +60,7 @@ public class Interpreter {
 					long time2= System.currentTimeMillis();
 					long diffTime= time2 - time1;
 //					System.out.println(diffTime);
-					queryCounter++;
+					queryCounter++ ;
 				} catch (Exception e) {
 					System.err.println(
 						"Exception occurred during executing the query number " + Integer.toString(queryCounter));
