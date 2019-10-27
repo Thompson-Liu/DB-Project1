@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 import dataStructure.Catalog;
 import dataStructure.Tuple;
+import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;
 import fileIO.TupleReader;
 import fileIO.TupleWriter;
+import physicalOperator.ScanOperator;
+import physicalOperator.SortOperator;
 
 public class BulkLoader {
 
@@ -14,27 +17,36 @@ public class BulkLoader {
 	private TupleReader tr;
 	private String attr;
 	private String tableName;
+	private String alias;
 	int counter = 1;
 	private Catalog catalog;
 
 	private void generateSorted(boolean isClustered) {
 		if (!isClustered) {
+			ArrayList<String> sortList = new ArrayList<String>();
+			sortList.add(attr);
+			
+			SortOperator sort = new SortOperator(new ScanOperator(tableName, alias), sortList);
 			TupleWriter writer = new BinaryTupleWriter(tr.getFileInfo());
+			
 			Tuple tup;
-			while ((tup = tr.readNextTuple()) != null) {
+			while ((tup = sort.getNextTuple()) != null) {
+				System.out.println(tup.printData());
 				writer.addNextTuple(tup);
 			}
+			tr = new BinaryTupleReader(tr.getFileInfo());
 			writer.dump();
 			writer.close();
 		}
 	}
 
-	public BulkLoader(boolean isClustered, int order, TupleReader tr, String attr, String tableName) {
+	public BulkLoader(boolean isClustered, int order, TupleReader tr, String attr, String tableName, String tableAlias) {
 		this.order = order;
 		this.tr = tr;
 		catalog = Catalog.getInstance();
 		this.tableName = tableName;
 		this.attr = attr;
+		alias = tableAlias;
 		generateSorted(isClustered);
 	}
 
@@ -54,11 +66,12 @@ public class BulkLoader {
 		int curKey = Integer.MIN_VALUE;
 		Tuple tp;
 
-		while ((tp = tr.readNextTuple()) != null) {
-			int numKeys=0;
-			Node leaf = new LeafNode(counter++);
+		int numKeys=0;
+		Node leaf = new LeafNode(counter++);
 
-			while(numKeys < order * 2) {
+		while ((tp = tr.readNextTuple()) != null) {
+			
+			if (numKeys < order * 2) {
 				int colNum = catalog.getSchema(tableName).indexOf(attr);
 				int key = tp.getData(colNum);
 				int[] rid = new int[] { tr.getPage(), tr.getCurRow() };
@@ -67,8 +80,11 @@ public class BulkLoader {
 					numKeys++;
 					curKey = key;
 				}
+			} else {
+				leaves.add(leaf);
+				leaf = new LeafNode(counter++);
+				numKeys = 0;
 			}
-			leaves.add(leaf);
 		}
 		tr.close();
 
