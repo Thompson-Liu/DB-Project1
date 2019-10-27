@@ -24,11 +24,15 @@ public class BulkLoader {
 	private void generateSorted(boolean isClustered) {
 		if (!isClustered) {
 			ArrayList<String> sortList = new ArrayList<String>();
-			sortList.add(attr);
-			
+			if (alias != "") {
+				sortList.add(alias + "." + attr);
+			} else {
+				sortList.add(tableName + "." + attr);
+			}
+
 			SortOperator sort = new SortOperator(new ScanOperator(tableName, alias), sortList);
 			TupleWriter writer = new BinaryTupleWriter(tr.getFileInfo());
-			
+
 			Tuple tup;
 			while ((tup = sort.getNextTuple()) != null) {
 				System.out.println(tup.printData());
@@ -66,25 +70,26 @@ public class BulkLoader {
 		int curKey = Integer.MIN_VALUE;
 		Tuple tp;
 
-		int numKeys=0;
+		int numKeys = 0;
 		Node leaf = new LeafNode(counter++);
 
 		while ((tp = tr.readNextTuple()) != null) {
-			
-			if (numKeys < order * 2) {
-				int colNum = catalog.getSchema(tableName).indexOf(attr);
-				int key = tp.getData(colNum);
-				int[] rid = new int[] { tr.getPage(), tr.getCurRow() };
-				((LeafNode)leaf).add(key,rid);
-				if(key != curKey) {
-					numKeys++;
-					curKey = key;
-				}
-			} else {
+			int colNum = catalog.getSchema(tableName).indexOf(attr);
+			int key = tp.getData(colNum);
+			int[] rid = new int[] { tr.getPage(), tr.getCurRow() };
+
+			// check if this new tuple shares the same key as previous tuples
+			if(key != curKey) {
+				numKeys++;
+				curKey = key;
+			}
+
+			if (numKeys >= order * 2) {
 				leaves.add(leaf);
 				leaf = new LeafNode(counter++);
-				numKeys = 0;
+				numKeys -= (order * 2);
 			}
+			((LeafNode)leaf).add(key,rid);
 		}
 		tr.close();
 
@@ -161,19 +166,19 @@ public class BulkLoader {
 			int startIndex = (numNodes - 1) * (2 * order + 1);
 			int endIndex = childRemain >= 3 * order + 2 ? 
 					startIndex + (2 * order + 1) : startIndex + childRemain / 2;
-			for (int j = startIndex; j < endIndex; ++j) {
-				secLastIndex.addChild(child.get(j));
-			}
-			secLastIndex.buildKeys();
-			indices.add(secLastIndex);
+					for (int j = startIndex; j < endIndex; ++j) {
+						secLastIndex.addChild(child.get(j));
+					}
+					secLastIndex.buildKeys();
+					indices.add(secLastIndex);
 
-			// construct the last index
-			IndexNode lastIndex = new IndexNode(counter++);
-			for (int j = endIndex; j < child.size(); ++j) {
-				lastIndex.addChild(child.get(j));
-			}
-			lastIndex.buildKeys();
-			indices.add(lastIndex);
+					// construct the last index
+					IndexNode lastIndex = new IndexNode(counter++);
+					for (int j = endIndex; j < child.size(); ++j) {
+						lastIndex.addChild(child.get(j));
+					}
+					lastIndex.buildKeys();
+					indices.add(lastIndex);
 		}
 		return indices;
 	}
