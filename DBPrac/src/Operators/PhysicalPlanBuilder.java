@@ -1,8 +1,6 @@
 package Operators;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 import logicalOperators.DuplicateEliminationLogOp;
@@ -32,20 +30,20 @@ public class PhysicalPlanBuilder {
 	String tempDir;
 
 	public PhysicalPlanBuilder(String configPath, String tempPath) {
-		try {
-			buffer= new BufferedReader(new FileReader(configPath));
-		} catch (FileNotFoundException e) {
-			System.err.println("Cannot locate the file" + configPath);
-		}
-		join= readConfig();
-		sort= readConfig();
+//		try {
+//			buffer= new BufferedReader(new FileReader(configPath));
+//		} catch (FileNotFoundException e) {
+//			System.err.println("Cannot locate the file" + configPath);
+//		}
+//		join= readConfig();
+//		sort= readConfig();
 //		assert (sort[0] == 0 || (sort[0] == 1 && sort[1] >= 3));
 
-		try {
-			buffer.close();
-		} catch (IOException e) {
-			System.err.println("Error during closing the buffer.");
-		}
+//		try {
+//			buffer.close();
+//		} catch (IOException e) {
+//			System.err.println("Error during closing the buffer.");
+//		}
 		tempDir= tempPath;
 	}
 
@@ -80,8 +78,10 @@ public class PhysicalPlanBuilder {
 
 	public void visit(ScanLogOp scanLop) throws IOException {
 //		immOp= new ScanOperator(scanLop.getTableName(), scanLop.getAliasName());
+		System.out.println(scanLop.getTableName());
+		System.out.println(scanLop.getAliasName());
 		immOp= new IndexScanOperator(scanLop.getTableName(), scanLop.getAliasName(), "A",
-			"/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/expected_indexes/Sailors.A", true, 5, 999);
+			"/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/expected_indexes/Sailors.A", true, 0, 100000000);
 	}
 
 	public void visit(SelectLogOp selectLop) {

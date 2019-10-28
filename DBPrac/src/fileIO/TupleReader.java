@@ -18,11 +18,13 @@ public interface TupleReader {
 	 * 
 	 * @param index */
 	public void reset(int index);
-	
+
+	public void reset(int pageInd, int rowInd);
+
 	public void setAtt(int num);
-	
+
 	public int getCurRow();
-	
+
 	public int getPage();
 
 }

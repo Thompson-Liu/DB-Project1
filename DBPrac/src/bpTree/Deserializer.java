@@ -41,6 +41,7 @@ public class Deserializer {
 	 * @param highKey: the higher bound of the range of the scan (inclusive) */
 	public int[] getRid(int lowKey, int highKey) {
 		startLeaf= initialDescent(lowKey);
+		System.out.println(startLeaf);
 		try {
 			buffer.clear();
 			fc.position(startLeaf * 4096);
@@ -60,6 +61,7 @@ public class Deserializer {
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("IO Error");
 			e.printStackTrace();
 		}
 
@@ -78,7 +80,7 @@ public class Deserializer {
 				int flag= buffer.getInt(0); // 1: index node; 0: leaf node
 				if (flag == 0) return startInd; // found the leaf node
 				int numKeys= buffer.getInt(4); // # of keys in the node
-				int prevKey= Integer.MAX_VALUE;
+				int prevKey= Integer.MIN_VALUE;
 				int curKey;
 				int pos= 0;
 				while (pos < numKeys) {
