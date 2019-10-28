@@ -78,10 +78,8 @@ public class PhysicalPlanBuilder {
 
 	public void visit(ScanLogOp scanLop) throws IOException {
 //		immOp= new ScanOperator(scanLop.getTableName(), scanLop.getAliasName());
-		System.out.println(scanLop.getTableName());
-		System.out.println(scanLop.getAliasName());
 		immOp= new IndexScanOperator(scanLop.getTableName(), scanLop.getAliasName(), "A",
-			"/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/expected_indexes/Sailors.A", true, 0, 100000000);
+			"/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/expected_indexes/Sailors.A", true, 3210, 6000);
 	}
 
 	public void visit(SelectLogOp selectLop) {
