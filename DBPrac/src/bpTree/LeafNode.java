@@ -12,7 +12,9 @@ public class LeafNode extends Node {
 	
 	public LeafNode(int pageNum) {
 		this.pageNum = pageNum;
-		this.ridMap = new HashMap<Integer, ArrayList<int[]>> ();
+		ridMap = new HashMap<Integer, ArrayList<int[]>> ();
+		keys = new ArrayList<Integer>();
+		
 	}
 	
 
@@ -39,6 +41,7 @@ public class LeafNode extends Node {
 		else {
 			this.keys.add(key);
 			ArrayList<int[]> rids = new ArrayList<int[]>();
+			rids.add(rid);
 			this.ridMap.put(key,rids);
 		}
 	}

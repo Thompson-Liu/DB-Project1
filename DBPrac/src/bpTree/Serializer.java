@@ -16,11 +16,11 @@ public class Serializer {
 	private int order;
 
 	public Serializer(boolean isClustered, TupleReader tr, TupleWriter bw, 
-			String attr, String tableName, int order) {
+			String attr, String tableName, String alias, int order) {
 		this.bw = bw;
 		this.order=order;
 		
-		BulkLoader bulkLoading = new BulkLoader(isClustered, order, tr, attr, tableName);
+		BulkLoader bulkLoading = new BulkLoader(isClustered, order, tr, attr, tableName, alias);
 		collectNodes(bulkLoading.buildTree());
 		writeHeader();
 		writeLeaveNode();
