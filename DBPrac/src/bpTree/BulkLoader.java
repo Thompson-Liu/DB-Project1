@@ -84,7 +84,7 @@ public class BulkLoader {
 				curKey = key;
 			}
 
-			if (numKeys >= order * 2) {
+			if (numKeys > order * 2) {
 				leaves.add(leaf);
 				leaf = new LeafNode(counter++);
 				numKeys -= (order * 2);
@@ -92,11 +92,16 @@ public class BulkLoader {
 			((LeafNode)leaf).add(key,rid);
 		}
 		tr.close();
+		
+		// add the remaining nodes to the leaves arrayList
+		if (leaf.getNumElement() > 0) {
+			leaves.add(leaf);
+		}
 
 		// Check if the last Node has less than d entries
 		if (leaves.get(leaves.size() - 1).getNumElement() < order) {
 
-			// check if there's only one index node
+			// check if there's only one leaf node
 			if (leaves.size() > 1) {
 				Node secLast = leaves.get(leaves.size() - 2);
 				Node last = leaves.get(leaves.size() - 1);
@@ -146,14 +151,17 @@ public class BulkLoader {
 			indices.add(index);
 		}
 
-		// Seperate the cases:
-		int childRemain = child.size() - (2 * order + 1) * (numNodes - 1);
-
+		// Seperate the cases: if numNodes == 0, previous for loop does not execute
+		// Otherwise, calculate the leftover nodes after executing the for loop
+		int childRemain = numNodes == 0 ? child.size() : child.size() - (2 * order + 1) * (numNodes - 1);
+		int multiplier = numNodes == 0 ? 0 : numNodes - 1; 
+		
 		// 1) Only one index node will be enough, ie. remain <= 2d + 1
 		if (childRemain <= (2 * order + 1)) {
 			IndexNode index = new IndexNode(counter++);
+			
 			for (int j = 0; j < childRemain; ++j) {
-				index.addChild(child.get((numNodes - 1) * (2 * order + 1) + j));
+				index.addChild(child.get(multiplier * (2 * order + 1) + j));
 			}
 			index.buildKeys();
 			indices.add(index);
@@ -163,9 +171,8 @@ public class BulkLoader {
 		else {
 			// Construct the second to last index
 			IndexNode secLastIndex = new IndexNode(counter++);
-			int startIndex = (numNodes - 1) * (2 * order + 1);
-			int endIndex = childRemain >= 3 * order + 2 ? 
-					startIndex + (2 * order + 1) : startIndex + childRemain / 2;
+			int startIndex = multiplier * (2 * order + 1);
+			int endIndex = childRemain >= 3 * order + 2 ? startIndex + (2 * order + 1) : startIndex + childRemain / 2;
 					for (int j = startIndex; j < endIndex; ++j) {
 						secLastIndex.addChild(child.get(j));
 					}
