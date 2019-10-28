@@ -109,7 +109,6 @@ public class PhysicalPlanBuilder {
 		} else {
 			immOp= new DuplicateEliminationOperator((ExternalSortOperator)immOp);
 		}
-		
 //		immOp= new DuplicateEliminationOperator((SortOperator) immOp);
 	}
 
