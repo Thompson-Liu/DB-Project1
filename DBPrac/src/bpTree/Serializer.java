@@ -19,6 +19,7 @@ public class Serializer {
 			String attr, String tableName, String alias, int order) {
 		this.bw = bw;
 		this.order=order;
+		levelsNodes = new Stack<ArrayList<Node>>();
 		
 		BulkLoader bulkLoading = new BulkLoader(isClustered, order, tr, attr, tableName, alias);
 		collectNodes(bulkLoading.buildTree());
