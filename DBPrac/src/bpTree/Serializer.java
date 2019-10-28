@@ -35,16 +35,20 @@ public class Serializer {
 		curLevel.add(root);
 		totalnumNodes=1;
 		nextLevel = root.getChildren();
-		levelsNodes.add(curLevel);
-		while(nextLevel.get(0)!=null) {
+		
+		while(nextLevel.size()!=0) {
+			levelsNodes.add(curLevel);
 			nextLevel = new ArrayList<Node>();
 			for(Node curNode : curLevel) {
 				ArrayList<Node> curChildren = curNode.getChildren();
-				nextLevel.addAll(curChildren);
-				totalnumNodes+=curChildren.size();
+				if(curChildren!=null) {
+					nextLevel.addAll(curChildren);
+					totalnumNodes+=curChildren.size();
+				}
+				
 			}
 			curLevel = nextLevel;
-			levelsNodes.add(curLevel);
+//			levelsNodes.add(curLevel);
 		}
 
 	}
@@ -77,9 +81,10 @@ public class Serializer {
 	}
 
 	private void writeIndexNode() {
-		for(int i=levelsNodes.size()-2; i>=0; i++) {
+		for(int i=levelsNodes.size()-2; i>=0; i--) {
 			ArrayList<Node> indexNodes = levelsNodes.get(i);
-			for(int j=0;i<indexNodes.size();i++) {
+			for(int j=0;j<indexNodes.size();j++) {
+//				System.out.println(indexNodes.get(j).getType());
 				IndexNode indexNode =(IndexNode) indexNodes.get(j);
 				bw.addNextValue(indexNode.getType());
 				bw.addNextValue(indexNode.getChildren().size());

@@ -90,7 +90,6 @@ public class IndexScanOperator extends ScanOperator {
 		if (isClustered) {
 			Tuple tp= reader.readNextTuple(); // assumes it's reading sorted data file
 			if (tp == null || tp.getData(schema.indexOf(colName)) > hi) return null;
-			System.out.println(tp.printData());
 			return tp;
 		}
 		if (ptr > repo.size()) return null;

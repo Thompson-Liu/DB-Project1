@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
+import bpTree.Serializer;
 import dataStructure.Catalog;
 import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;
@@ -44,7 +45,7 @@ public class Interpreter {
 		Catalog catalog= Catalog.getInstance();
 		String dir= catalog.getDir(tableName);
 		TupleReader tr= new BinaryTupleReader(dir);
-//		Serializer serialize = new Serializer(false, tr, tw, attr, tableName, "", order);
+		Serializer serialize = new Serializer(false, tr, tw, attr, tableName, "", order);
 
 		try {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
