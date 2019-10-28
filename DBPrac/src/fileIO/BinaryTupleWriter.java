@@ -162,12 +162,15 @@ public class BinaryTupleWriter implements TupleWriter {
 	// dump indexData if any
 	private void dumpIndex() {
 		try {
+			
 			int counter = 0;
 			if(indexData.size()!=0){
 				for(int i : indexData) {
+//					System.out.println(indexData.size());
 					buffer.putInt(i);
 					counter += 4;
 				}
+				indexData=new ArrayList<Integer>();
 				while (counter < 4096) {
 					buffer.putInt(0);
 					counter+= 4;

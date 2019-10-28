@@ -80,6 +80,7 @@ public class PhysicalPlanBuilder {
 //		immOp= new ScanOperator(scanLop.getTableName(), scanLop.getAliasName());
 		immOp= new IndexScanOperator(scanLop.getTableName(), scanLop.getAliasName(), "A",
 			"/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/expected_indexes/Sailors.A", true, 3210, 6000);
+
 	}
 
 	public void visit(SelectLogOp selectLop) {
@@ -109,7 +110,6 @@ public class PhysicalPlanBuilder {
 		} else {
 			immOp= new DuplicateEliminationOperator((ExternalSortOperator) immOp);
 		}
-
 //		immOp= new DuplicateEliminationOperator((SortOperator) immOp);
 	}
 
