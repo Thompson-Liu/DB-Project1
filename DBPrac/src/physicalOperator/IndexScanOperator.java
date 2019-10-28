@@ -54,10 +54,10 @@ public class IndexScanOperator extends ScanOperator {
 		this.startRid= dsl.getRid(lo, hi);
 		Catalog catalog= Catalog.getInstance();
 		this.reader= new BinaryTupleReader(catalog.getDir(tableName)); // Dealing with alias?
-		this.schema= catalog.getSchema(catalog.getDir(tableName)); // Not sure
+		this.schema= catalog.getSchema(tableName); // Not sure
 		this.ptr= 0;
 		if (isClustered) {
-			reader.reset(startRid[0] * 4096 + startRid[1]);
+			reader.reset(startRid[0], startRid[1]);
 		} else {
 			int startLeaf= dsl.getStartLeaf();
 			while (true) {
@@ -89,11 +89,12 @@ public class IndexScanOperator extends ScanOperator {
 	public Tuple getNextTuple() {
 		if (isClustered) {
 			Tuple tp= reader.readNextTuple(); // assumes it's reading sorted data file
-			if (tp.getData(schema.indexOf(colName)) > hi) return null;
+			if (tp == null || tp.getData(schema.indexOf(colName)) > hi) return null;
+			System.out.println(tp.printData());
 			return tp;
 		}
 		if (ptr > repo.size()) return null;
-		reader.reset(repo.get(ptr)[0] * 4096 + repo.get(ptr)[1]);
+		reader.reset(repo.get(ptr)[0], repo.get(ptr)[1]);
 		ptr+= 1;
 		return reader.readNextTuple();
 
@@ -102,7 +103,7 @@ public class IndexScanOperator extends ScanOperator {
 	@Override
 	public void reset() {
 		if (isClustered) {
-			reader.reset(startRid[0] * 4096 + startRid[1]);
+			reader.reset(startRid[0], startRid[1]);
 		} else {
 			ptr= 0;
 		}

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
-import bpTree.Serializer;
 import dataStructure.Catalog;
 import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;
@@ -34,18 +33,18 @@ public class Interpreter {
 		String dataDir= args[0] + "/db";
 		String outputDir= args[1];
 		int queryCounter= 1;
-		
-		String tableName = "Boats";
-		String attr = "E";
-		int order = 10;
-		boolean isClustered = false;
-		TupleWriter tw = new BinaryTupleWriter(args[3] + "/Boasts.E");
-		
+
+		String tableName= "Boats";
+		String attr= "E";
+		int order= 10;
+		boolean isClustered= false;
+		TupleWriter tw= new BinaryTupleWriter(args[3] + "/Boasts.E");
+
 		createCatalog(dataDir);
-		Catalog catalog = Catalog.getInstance();
+		Catalog catalog= Catalog.getInstance();
 		String dir= catalog.getDir(tableName);
-		TupleReader tr = new BinaryTupleReader(dir);
-		Serializer serialize = new Serializer(false, tr, tw, attr, tableName, "", order);
+		TupleReader tr= new BinaryTupleReader(dir);
+//		Serializer serialize = new Serializer(false, tr, tw, attr, tableName, "", order);
 
 		try {
 			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
@@ -61,7 +60,7 @@ public class Interpreter {
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
 
 					// need to pass in the name of the config file path
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt",
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/interpreter_config_file.txt",
 						args[2]);
 					Operator op= planBuilder.generatePlan(logOp);
 
