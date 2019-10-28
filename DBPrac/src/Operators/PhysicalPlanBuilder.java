@@ -15,11 +15,11 @@ import logicalOperators.SortLogOp;
 import physicalOperator.BNLJ;
 import physicalOperator.DuplicateEliminationOperator;
 import physicalOperator.ExternalSortOperator;
+import physicalOperator.IndexScanOperator;
 import physicalOperator.JoinOperator;
 import physicalOperator.Operator;
 import physicalOperator.ProjectOperator;
 import physicalOperator.SMJ;
-import physicalOperator.ScanOperator;
 import physicalOperator.SelectOperator;
 import physicalOperator.SortOperator;
 
@@ -78,8 +78,10 @@ public class PhysicalPlanBuilder {
 		return immOp;
 	}
 
-	public void visit(ScanLogOp scanLop) {
-		immOp= new ScanOperator(scanLop.getTableName(), scanLop.getAliasName());
+	public void visit(ScanLogOp scanLop) throws IOException {
+//		immOp= new ScanOperator(scanLop.getTableName(), scanLop.getAliasName());
+		immOp= new IndexScanOperator(scanLop.getTableName(), scanLop.getAliasName(), "A",
+			"/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/expected_indexes/Sailors.A", true, 5, 999);
 	}
 
 	public void visit(SelectLogOp selectLop) {
@@ -105,11 +107,11 @@ public class PhysicalPlanBuilder {
 	public void visit(DuplicateEliminationLogOp dupElimLogOp) {
 		dupElimLogOp.getChidren()[0].accept(this);
 		if (immOp instanceof SortOperator) {
-			immOp= new DuplicateEliminationOperator((SortOperator)immOp);
+			immOp= new DuplicateEliminationOperator((SortOperator) immOp);
 		} else {
-			immOp= new DuplicateEliminationOperator((ExternalSortOperator)immOp);
+			immOp= new DuplicateEliminationOperator((ExternalSortOperator) immOp);
 		}
-		
+
 //		immOp= new DuplicateEliminationOperator((SortOperator) immOp);
 	}
 
