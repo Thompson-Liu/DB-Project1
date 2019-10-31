@@ -23,8 +23,6 @@ public interface TupleReader {
 
 	public void setAtt(int num);
 
-	public int getCurRow();
-
-	public int getPage();
+	public int[] getTupleLoc();
 
 }

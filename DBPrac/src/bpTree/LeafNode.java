@@ -13,8 +13,7 @@ public class LeafNode extends Node {
 	public LeafNode(int pageNum) {
 		this.pageNum = pageNum;
 		ridMap = new HashMap<Integer, ArrayList<int[]>> ();
-		keys = new ArrayList<Integer>();
-		
+		keys = new ArrayList<Integer>();	
 	}
 	
 

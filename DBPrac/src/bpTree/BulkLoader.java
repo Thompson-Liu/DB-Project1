@@ -1,6 +1,8 @@
 package bpTree;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 import dataStructure.Catalog;
 import dataStructure.Tuple;
@@ -18,11 +20,12 @@ public class BulkLoader {
 	private String attr;
 	private String tableName;
 	private String alias;
-	int counter= 1;
-	private Catalog catalog;
+	private int counter = 1;
+	private ArrayList<Integer> keys;
+	private HashMap<Integer, ArrayList<int[]>> dataEntries;
 
 	private void generateSorted(boolean isClustered) {
-		if (!isClustered) {
+		if (isClustered) {
 			ArrayList<String> sortList= new ArrayList<String>();
 			if (alias != "") {
 				sortList.add(alias + "." + attr);
@@ -35,7 +38,6 @@ public class BulkLoader {
 
 			Tuple tup;
 			while ((tup= sort.getNextTuple()) != null) {
-//				System.out.println(tup.printData());
 				writer.addNextTuple(tup);
 			}
 			tr= new BinaryTupleReader(tr.getFileInfo());
@@ -45,101 +47,131 @@ public class BulkLoader {
 	}
 
 	public BulkLoader(boolean isClustered, int order, TupleReader tr, String attr, String tableName,
-		String tableAlias) {
+			String tableAlias) {
 		this.order= order;
 		this.tr= tr;
-		catalog= Catalog.getInstance();
 		this.tableName= tableName;
 		this.attr= attr;
 		alias= tableAlias;
 		generateSorted(isClustered);
+
+		keys = new ArrayList<Integer>();
+		dataEntries = new HashMap<Integer, ArrayList<int[]>>();
 	}
 
 	public Node buildTree() {
+		buildDataEntries();
 		ArrayList<Node> leaves= buildLeaves();
 
-		ArrayList<IndexNode> indices= new ArrayList<IndexNode>();
-		// Generate upper level of index nodes
+		// Generate levels of index nodes until the number of index nodes becomes zero
+		ArrayList<Node> indices= new ArrayList<Node>();
 		do {
-			indices= buildIndex(leaves);
+			indices = buildIndex(leaves);
+			leaves = indices;
 		} while (indices.size() > 1);
+		
 		return indices.get(0);
 	}
 
-	private ArrayList<Node> buildLeaves() {
-		ArrayList<Node> leaves= new ArrayList<Node>();
-		int curKey= Integer.MIN_VALUE;
-		Tuple tp;
+	private void buildDataEntries() {
+		Catalog catalog = Catalog.getInstance();
 
-		int numKeys= 0;
-		Node leaf= new LeafNode(counter++ );
+		Tuple tup;
+		while ((tup = tr.readNextTuple()) != null) {
+			int colNum = catalog.getSchema(tableName).indexOf(attr);
+			int key = tup.getData(colNum);
+			int[] rid = new int[] { tr.getTupleLoc()[0], tr.getTupleLoc()[1] };
 
-		while ((tp= tr.readNextTuple()) != null) {
-			int colNum= catalog.getSchema(tableName).indexOf(attr);
-			int key= tp.getData(colNum);
-			int[] rid= new int[] { tr.getPage(), tr.getCurRow() };
-
-			// check if this new tuple shares the same key as previous tuples
-			if (key != curKey) {
-				numKeys++ ;
-				curKey= key;
+			if (keys.contains(key)) {
+				dataEntries.get(key).add(rid);
+			} else {
+				keys.add(key);
+				ArrayList<int[]> dataEntry = new ArrayList<int[]>();
+				dataEntry.add(rid);
+				dataEntries.put(key, dataEntry);
 			}
-
-			if (numKeys > order * 2) {
-				leaves.add(leaf);
-				leaf= new LeafNode(counter++ );
-				numKeys-= (order * 2);
-			}
-			((LeafNode) leaf).add(key, rid);
 		}
 		tr.close();
+		Collections.sort(keys);
+	}
 
-		// add the remaining nodes to the leaves arrayList
-		if (leaf.getNumElement() > 0) {
+	private ArrayList<Node> buildLeaves() {
+		int numEntries = keys.size();
+
+		int numNodes = (int) Math.ceil(numEntries * 1.0 / (2 * order));
+		ArrayList<Node> leaves = new ArrayList<Node>(numNodes);
+
+		// Insert all the data entries to generate (size - 2) leaf nodes
+		for (int i = 0; i < numNodes - 2; ++i) {
+			Node leaf= new LeafNode(counter++);
+
+			for (int j = 0; j < 2 * order; ++j) {
+				int key = keys.get(i * 2 * order + j);
+				((LeafNode) leaf).addDatas(key, dataEntries.get(key));
+			}
 			leaves.add(leaf);
 		}
 
-		// Check if the last Node has less than d entries
-		if (leaves.get(leaves.size() - 1).getNumElement() < order) {
+		// If there is only one leaf node
+		if (numNodes == 1) {
+			Node leaf = new LeafNode(counter++);
+			for (int j = 0; j < numEntries; ++j) {
+				int key = keys.get(j);
+				((LeafNode) leaf).addDatas(key, dataEntries.get(key));
+			}
+			leaves.add(leaf);
+		} 
 
-			// check if there's only one leaf node
-			if (leaves.size() > 1) {
-				Node secLast= leaves.get(leaves.size() - 2);
-				Node last= leaves.get(leaves.size() - 1);
+		else {
+			// Check if the last node only has less than d data entries 
+			if (numNodes > 1 && numEntries % (2 * order) < order) {
 
-				int totalElem= last.getNumElement() + secLast.getNumElement();
+				// Generate the second to last leaf node
+				Node secLastLeaf = new LeafNode(counter++);
+				int secLastNumEntry = (2 * order + numEntries % (2 * order)) / 2;
 
-				// Regenerate the second to last node
-				LeafNode secLastLeaf= new LeafNode(counter - 2);
-				for (int i= 0; i < totalElem / 2; ++i) {
-					int key= ((LeafNode) secLast).getKey(i);
-					ArrayList<int[]> rids= ((LeafNode) secLast).getRids(key);
-					secLastLeaf.addDatas(key, rids);
+				for (int j = 0; j < secLastNumEntry; ++j) {
+					int key = keys.get((numNodes - 2) * 2 * order + j);
+					((LeafNode) secLastLeaf).addDatas(key, dataEntries.get(key));
 				}
-				leaves.set(leaves.size() - 2, secLastLeaf);
+				leaves.add(secLastLeaf);
 
-				// Generate the last node of size [totalElem / 2] + size of original
-				LeafNode lastLeaf= new LeafNode(counter - 1);
-				for (int i= totalElem / 2; i < secLast.getNumElement(); ++i) {
-					int key= ((LeafNode) secLast).getKey(i);
-					ArrayList<int[]> rids= ((LeafNode) secLast).getRids(key);
-					secLastLeaf.addDatas(key, rids);
-				}
+				// Generate the last leaf node
+				Node lastLeaf = new LeafNode(counter++);
+				int lastNumEntry = 2 * order + numEntries % (2 * order) - secLastNumEntry;
 
-				for (int i= 0; i < last.getNumElement(); ++i) {
-					int key= ((LeafNode) secLast).getKey(i);
-					ArrayList<int[]> rids= ((LeafNode) secLast).getRids(key);
-					secLastLeaf.addDatas(key, rids);
+				for (int j = 0; j < lastNumEntry; ++j) {
+					int key = keys.get(numEntries - lastNumEntry + j);
+					((LeafNode) lastLeaf).addDatas(key, dataEntries.get(key));
 				}
-				leaves.set(leaves.size() - 1, lastLeaf);
+				leaves.add(lastLeaf);
+			} else {
+				// Generate the second to last leaf node
+				Node secLastLeaf = new LeafNode(counter++);
+				
+				for (int j = 0; j < 2 * order; ++j) {
+					int key = keys.get((numNodes - 2) * 2 * order + j);
+					((LeafNode) secLastLeaf).addDatas(key, dataEntries.get(key));
+				}
+				leaves.add(secLastLeaf);
+
+				// Generate the last leaf node
+				Node lastLeaf = new LeafNode(counter++);
+				int lastNumEntry = numEntries - (numNodes - 1) * 2 * order;
+
+				for (int j = 0; j < lastNumEntry; ++j) {
+					int key = keys.get(numEntries - lastNumEntry + j);
+					((LeafNode) lastLeaf).addDatas(key, dataEntries.get(key));
+				}
+				leaves.add(lastLeaf);
 			}
 		}
 		return leaves;
 	}
 
-	private ArrayList<IndexNode> buildIndex(ArrayList<Node> child) {
+	private ArrayList<Node> buildIndex(ArrayList<Node> child) {
 		// Generate the first level of index nodes
-		ArrayList<IndexNode> indices= new ArrayList<IndexNode>();
+		ArrayList<Node> indices= new ArrayList<Node>();
 		int numNodes= child.size() / (2 * order + 1);
 
 		for (int i= 0; i < numNodes - 1; ++i) {

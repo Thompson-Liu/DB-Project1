@@ -77,14 +77,14 @@ public class BinaryTupleReader implements TupleReader {
 	@Override
 	public Tuple readNextTuple() {
 		if (curRow <= this.numRows - 1) {
-			return pageData.get(curRow++ );
+			return pageData.get(curRow++);
 		} else {
 			curRow= curRow - numRows;
 			pageData= getNextPage();
 			if (pageData == null || curRow >= this.numRows) { return null; }
 
 			if (this.numRows > 0) {
-				return pageData.get(curRow++ );
+				return pageData.get(curRow++);
 			} else {
 				return null;
 			}
@@ -112,13 +112,12 @@ public class BinaryTupleReader implements TupleReader {
 	}
 
 	@Override
-	public int getCurRow() {
-		return curRow;
-	}
-
-	@Override
-	public int getPage() {
-		return pageNum;
+	public int[] getTupleLoc() {
+		if (curRow == 0) {
+			return new int[] { pageNum - 1, numRows - 1 };
+		} else {
+			return new int[] { pageNum - 1, curRow - 1 };
+		}
 	}
 
 	@Override

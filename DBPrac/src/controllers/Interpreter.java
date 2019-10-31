@@ -47,49 +47,49 @@ public class Interpreter {
 		TupleReader tr= new BinaryTupleReader(dir);
 		Serializer serialize= new Serializer(false, tr, tw, attr, tableName, "", order);
 
-		try {
-			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
-			Statement statement;
-			while ((statement= parser.Statement()) != null) {
-				try {
-					Select select= (Select) statement;
-					SelectBody selectBody= select.getSelectBody();
-					PlainSelect plainSelect= (PlainSelect) selectBody;
-//					createCatalog(dataDir);
-
-					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
-					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
-
-					// need to pass in the name of the config file path
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/interpreter_config_file.txt",
-						args[2]);
-					Operator op= planBuilder.generatePlan(logOp);
-
-//					ReadableTupleWriter writer= new ReadableTupleWriter(
+//		try {
+//			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
+//			Statement statement;
+//			while ((statement= parser.Statement()) != null) {
+//				try {
+//					Select select= (Select) statement;
+//					SelectBody selectBody= select.getSelectBody();
+//					PlainSelect plainSelect= (PlainSelect) selectBody;
+////					createCatalog(dataDir);
+//
+//					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
+//					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
+//
+//					// need to pass in the name of the config file path
+//					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/interpreter_config_file.txt",
+//						args[2]);
+//					Operator op= planBuilder.generatePlan(logOp);
+//
+////					ReadableTupleWriter writer= new ReadableTupleWriter(
+////						outputDir + "/query" + Integer.toString(queryCounter));
+//					BinaryTupleWriter writer= new BinaryTupleWriter(
 //						outputDir + "/query" + Integer.toString(queryCounter));
-					BinaryTupleWriter writer= new BinaryTupleWriter(
-						outputDir + "/query" + Integer.toString(queryCounter));
-
-					long time1= System.currentTimeMillis();
-					op.dump(writer);
-
-					long time2= System.currentTimeMillis();
-					long diffTime= time2 - time1;
-//					System.out.println(diffTime);
-					queryCounter++ ;
-				} catch (Exception e) {
-					System.err.println(
-						"Exception occurred during executing the query number " + Integer.toString(queryCounter));
-					queryCounter++ ;
-					e.printStackTrace();
-				}
-			}
-		} catch (FileNotFoundException fileNotFound) {
-			System.err.println("The query file directory does not exist");
-			System.err.println(queriesFile);
-		} catch (ParseException parseException) {
-			System.err.println("Exception occured during parsing");
-		}
+//
+//					long time1= System.currentTimeMillis();
+//					op.dump(writer);
+//
+//					long time2= System.currentTimeMillis();
+//					long diffTime= time2 - time1;
+////					System.out.println(diffTime);
+//					queryCounter++ ;
+//				} catch (Exception e) {
+//					System.err.println(
+//						"Exception occurred during executing the query number " + Integer.toString(queryCounter));
+//					queryCounter++ ;
+//					e.printStackTrace();
+//				}
+//			}
+//		} catch (FileNotFoundException fileNotFound) {
+//			System.err.println("The query file directory does not exist");
+//			System.err.println(queriesFile);
+//		} catch (ParseException parseException) {
+//			System.err.println("Exception occured during parsing");
+//		}
 	}
 
 	/** Construct catalog from directory

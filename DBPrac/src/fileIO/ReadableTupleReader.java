@@ -96,13 +96,8 @@ public class ReadableTupleReader implements TupleReader {
 	}
 
 	@Override
-	public int getCurRow() {
-		return 0;
-	}
-
-	@Override
-	public int getPage() {
-		return 0;
+	public int[] getTupleLoc() {
+		return null;
 	}
 
 	@Override
