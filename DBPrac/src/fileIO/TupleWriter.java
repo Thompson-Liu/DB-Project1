@@ -34,7 +34,13 @@ public interface TupleWriter {
 		
 	public void reset();
 	
+	/** reset the position to the page
+	 *  @param page : the page number to reset back
+	 */
+	public void reset(int page);
+	
 	public void close();
+	
 	
 	/**
 	 *  make sure to write every thing from buffer to file (including the left pageData)

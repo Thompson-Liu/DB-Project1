@@ -11,6 +11,7 @@ import dataStructure.Tuple;
 public class ReadableTupleWriter implements TupleWriter {
 
 	private ArrayList<ArrayList<Integer>> data;
+	private ArrayList<Integer> index;
 	private BufferedOutputStream buffer;
 	private FileOutputStream fout;
 	private String name;
@@ -96,4 +97,11 @@ public class ReadableTupleWriter implements TupleWriter {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void reset(int page) {
+		// TODO Auto-generated method stub
+	}
+	
+	
 }

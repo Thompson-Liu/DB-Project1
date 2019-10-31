@@ -12,14 +12,9 @@ import fileIO.TupleWriter;
 public class Serializer {
 
 	private TupleWriter bw;
-	private Stack<ArrayList<Node>> levelsNodes;    				// store the levels from root to leaves
-	private int totalnumNodes;
-	private int order;
 
-	public Serializer(boolean isClustered, TupleReader tr, TupleWriter bw,
-			String attr, String tableName, String alias, int order) {
+	public Serializer(boolean isClustered, TupleWriter bw) {
 		this.bw= bw;
-		this.order= order;
 	}
 
 	private void writeHeader(int rootAddress, int numLeaves, int order) {
@@ -60,6 +55,4 @@ public class Serializer {
 		}
 		bw.dump();
 	}
-
-
 }

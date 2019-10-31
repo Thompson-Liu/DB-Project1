@@ -201,4 +201,17 @@ public class BinaryTupleWriter implements TupleWriter {
 	public String getInfo() {
 		return file;
 	}
+
+	@Override
+	public void reset(int page) {
+		try {
+			indexData= new ArrayList<Integer>() ;
+			pageData = new ArrayList<Tuple> ();
+			curRow = 0;
+			fc.position(page);
+		} catch (IOException e) {
+			System.err.print("failed to reset page Binary Tuple Writer. ");
+			e.printStackTrace();
+		}
+	}
 }
