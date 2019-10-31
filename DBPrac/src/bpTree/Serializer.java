@@ -46,7 +46,6 @@ public class Serializer {
 					nextLevel.addAll(curChildren);
 					totalnumNodes+= curChildren.size();
 				}
-
 			}
 			curLevel= nextLevel;
 //			levelsNodes.add(curLevel);
