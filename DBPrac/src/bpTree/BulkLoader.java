@@ -17,6 +17,7 @@ public class BulkLoader {
 
 	private int order;
 	private TupleReader tr;
+	private TupleWriter tw;
 	private String attr;
 	private String tableName;
 	private String alias;
@@ -52,6 +53,7 @@ public class BulkLoader {
 			String tableAlias) {
 		this.order= order;
 		this.tr= tr;
+		this.tw = tw;
 		this.tableName= tableName;
 		this.attr= attr;
 		alias= tableAlias;
@@ -61,10 +63,10 @@ public class BulkLoader {
 		dataEntries = new HashMap<Integer, ArrayList<int[]>>();
 		
 		
-		serialize = new Serializer(isClustered, tr, tw, attr, tableName, tableAlias, order);
+		serialize = new Serializer(isClustered, tw);
 	}
 
-	public Node buildTree() {
+	public void buildTree() {
 		buildDataEntries();
 		ArrayList<Node> leaves = buildLeaves();
 
@@ -75,7 +77,9 @@ public class BulkLoader {
 			leaves = indices;
 		} while (indices.size() > 1);
 		
-		return indices.get(0);
+		Node root = indices.get(0);
+		
+		serialize.writeHeader(root.getPage(), leaves.size(), order);
 	}
 
 	private void buildDataEntries() {
@@ -101,6 +105,8 @@ public class BulkLoader {
 	}
 
 	private ArrayList<Node> buildLeaves() {
+		tw.reset(1);
+		
 		int numEntries = keys.size();
 
 		int numNodes = (int) Math.ceil(numEntries * 1.0 / (2 * order));

@@ -4,9 +4,6 @@
 package bpTree;
 
 import java.util.ArrayList;
-import java.util.Stack;
-
-import fileIO.TupleReader;
 import fileIO.TupleWriter;
 
 public class Serializer {
@@ -17,7 +14,7 @@ public class Serializer {
 		this.bw= bw;
 	}
 
-	private void writeHeader(int rootAddress, int numLeaves, int order) {
+	public void writeHeader(int rootAddress, int numLeaves, int order) {
 		bw.reset(0);
 		bw.addNextValue(rootAddress);
 		bw.addNextValue(numLeaves);

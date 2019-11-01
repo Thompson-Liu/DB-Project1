@@ -208,7 +208,7 @@ public class BinaryTupleWriter implements TupleWriter {
 			indexData= new ArrayList<Integer>() ;
 			pageData = new ArrayList<Tuple> ();
 			curRow = 0;
-			fc.position(page);
+			fc.position(page * 4096);
 		} catch (IOException e) {
 			System.err.print("failed to reset page Binary Tuple Writer. ");
 			e.printStackTrace();
