@@ -40,7 +40,7 @@ public class Interpreter {
 		String attr= "E";
 		int order= 10;
 		boolean isClustered= false;
-		TupleWriter tw= new BinaryTupleWriter(args[2] + "/Boats.E");
+		TupleWriter tw= new BinaryTupleWriter(args[2] + "/Boats.E.txt");
 
 		createCatalog(dataDir);
 		Catalog catalog = Catalog.getInstance();
