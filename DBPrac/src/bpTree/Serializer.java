@@ -10,7 +10,7 @@ public class Serializer {
 
 	private TupleWriter bw;
 
-	public Serializer(boolean isClustered, TupleWriter bw) {
+	public Serializer(TupleWriter bw) {
 		this.bw= bw;
 	}
 

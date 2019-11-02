@@ -20,23 +20,18 @@ public class BulkLoader {
 	private TupleWriter tw;
 	private String attr;
 	private String tableName;
-	private String alias;
 	private int counter = 1;
 	private ArrayList<Integer> keys;
 	private HashMap<Integer, ArrayList<int[]>> dataEntries;
-	
+
 	private Serializer serialize;
 
-	private void generateSorted(boolean isClustered) {
-		if (isClustered) {
+	private void generateSorted(int isClustered) {
+		if (isClustered == 1) {
 			ArrayList<String> sortList= new ArrayList<String>();
-			if (alias != "") {
-				sortList.add(alias + "." + attr);
-			} else {
-				sortList.add(tableName + "." + attr);
-			}
+			sortList.add(tableName + "." + attr);
 
-			SortOperator sort= new SortOperator(new ScanOperator(tableName, alias), sortList);
+			SortOperator sort= new SortOperator(new ScanOperator(tableName, ""), sortList);
 			TupleWriter writer= new BinaryTupleWriter(tr.getFileInfo());
 
 			Tuple tup;
@@ -49,20 +44,18 @@ public class BulkLoader {
 		}
 	}
 
-	public BulkLoader(boolean isClustered, int order, TupleReader tr, TupleWriter tw, String attr, String tableName,
-			String tableAlias) {
+	public BulkLoader(int isClustered, int order, TupleReader tr, TupleWriter tw, String attr, String tableName) {
 		this.order= order;
 		this.tr= tr;
 		this.tw = tw;
 		this.tableName= tableName;
 		this.attr= attr;
-		alias= tableAlias;
 		generateSorted(isClustered);
 
 		keys = new ArrayList<Integer>();
 		dataEntries = new HashMap<Integer, ArrayList<int[]>>();
-		
-		serialize = new Serializer(isClustered, tw);
+
+		serialize = new Serializer(tw);
 	}
 
 	public void buildTree() {
@@ -76,9 +69,9 @@ public class BulkLoader {
 			indices = buildIndex(leaves);
 			leaves = indices;
 		} while (indices.size() > 1);
-		
+
 		Node root = indices.get(0);
-		
+
 		serialize.writeHeader(root.getPage(), numLeaves, order);
 	}
 
@@ -106,7 +99,7 @@ public class BulkLoader {
 
 	private ArrayList<Node> buildLeaves() {
 		tw.reset(1);
-		
+
 		int numEntries = keys.size();
 		int numNodes = (int) Math.ceil(numEntries * 1.0 / (2 * order));
 		ArrayList<Node> leaves = new ArrayList<Node>(numNodes);
@@ -162,7 +155,7 @@ public class BulkLoader {
 			} else {
 				// Generate the second to last leaf node
 				Node secLastLeaf = new LeafNode(counter++);
-				
+
 				for (int j = 0; j < 2 * order; ++j) {
 					int key = keys.get((numNodes - 2) * 2 * order + j);
 					((LeafNode) secLastLeaf).addDatas(key, dataEntries.get(key));
