@@ -50,187 +50,247 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class IndexConditionSeperator implements ExpressionVisitor {
-	private ArrayList<String> columns;
-	private ArrayList<String> schema;
+	private String indexColumn;
 	private Expression splitted;
 	private Expression original;
+	private int lowKey;
+	private int highKey;
 	
 	
-	public IndexConditionSeperator(ArrayList<String> columns,ArrayList<String> schema,Expression expr ) {
+	public IndexConditionSeperator(String column,Expression expr ) {
 		original = expr;
+		lowKey =Integer.MIN_VALUE;
+		highKey= Integer.MAX_VALUE;
+		splitted = original;
+		this.indexColumn=column;
+		original.accept(this);
 	}
+	
+	public int getLowKey() {
+		return lowKey;
+	}
+	
+	public int getHighKey() {
+		return highKey;
+	}
+	
+	public Expression getRestExpr() {
+		return splitted;
+	}
+	
+	
 
 	@Override
 	public void visit(NullValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Function arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(InverseExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(JdbcParameter arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(DoubleValue arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(LongValue arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(DateValue arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(TimeValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(TimestampValue arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Parenthesis arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(StringValue arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Addition arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Division arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Multiplication arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Subtraction arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(AndExpression arg0) {
-		// TODO Auto-generated method stub
-
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
 	}
 
 	@Override
 	public void visit(OrExpression arg0) {
-		// TODO Auto-generated method stub
-
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
 	}
 
 	@Override
 	public void visit(Between arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(EqualsTo arg0) {
-		// TODO Auto-generated method stub
-
+		Expression left= arg0.getLeftExpression();
+		Expression right= arg0.getRightExpression();
+		if((left instanceof Column) && (right instanceof DoubleValue)) {
+			if(((Column)left).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)right).getValue();
+				lowKey = value;
+				highKey = value;
+			}
+			
+		}
+		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
+			if(((Column)right).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)left).getValue();
+				lowKey = value;
+				highKey = value;
+			}
+		}
 	}
 
 	@Override
 	public void visit(GreaterThan arg0) {
-		// TODO Auto-generated method stub
+		Expression left= arg0.getLeftExpression();
+		Expression right= arg0.getRightExpression();
+		if((left instanceof Column) && (right instanceof DoubleValue)) {
+			if(((Column)left).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)right).getValue();
+				lowKey = value+1;
+			}
+			
+		}
+		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
+			if(((Column)right).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)left).getValue();
+				highKey = value-1;
+			}
+		}
 
 	}
 
 	@Override
 	public void visit(GreaterThanEquals arg0) {
-		// TODO Auto-generated method stub
-
+		Expression left= arg0.getLeftExpression();
+		Expression right= arg0.getRightExpression();
+		if((left instanceof Column) && (right instanceof DoubleValue)) {
+			if(((Column)left).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)right).getValue();
+				lowKey = value;
+			}
+			
+		}
+		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
+			if(((Column)right).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)left).getValue();
+				highKey = value;
+			}
+		}
 	}
 
 	@Override
 	public void visit(InExpression arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(IsNullExpression arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(LikeExpression arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(MinorThan arg0) {
-		// TODO Auto-generated method stub
+		Expression left= arg0.getLeftExpression();
+		Expression right= arg0.getRightExpression();
+		if((left instanceof Column) && (right instanceof DoubleValue)) {
+			if(((Column)left).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)right).getValue();
+				highKey = value-1;
+			}
+			
+		}
+		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
+			if(((Column)right).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)left).getValue();
+				lowKey = value+1;
+			}
+		}
+		
 
 	}
 
 	@Override
 	public void visit(MinorThanEquals arg0) {
-		// TODO Auto-generated method stub
+		Expression left= arg0.getLeftExpression();
+		Expression right= arg0.getRightExpression();
+		if((left instanceof Column) && (right instanceof DoubleValue)) {
+			if(((Column)left).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)right).getValue();
+				highKey = value;
+			}
+			
+		}
+		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
+			if(((Column)right).getColumnName()==indexColumn) {
+				int value =(int) ((DoubleValue)left).getValue();
+				lowKey = value;
+			}
+		}
 
 	}
 
 	@Override
 	public void visit(NotEqualsTo arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(Column arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void visit(SubSelect arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
