@@ -41,7 +41,6 @@ public class Deserializer {
 	 * @param highKey: the higher bound of the range of the scan (inclusive) */
 	public int[] getRid(int lowKey, int highKey) {
 		startLeaf= initialDescent(lowKey);
-		System.out.println(startLeaf);
 		try {
 			buffer.clear();
 			fc.position(startLeaf * 4096);
