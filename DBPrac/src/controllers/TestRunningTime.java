@@ -35,6 +35,7 @@ public class TestRunningTime {
 		String queriesFile= args[0] + "/queries 2.sql";
 		String dataDir= args[0] + "/db";
 		String outputDir= args[1];
+		String tempDir = args[2];
 		int queryCounter= 1;
 
 		try {
@@ -52,7 +53,7 @@ public class TestRunningTime {
 
 					// need to pass in the name of the config file path
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builder_config.txt",
-						args[2]);
+						args[2],tempDir);
 					Operator op= planBuilder.generatePlan(logOp);
 
 					ReadableTupleWriter writer= new ReadableTupleWriter(
