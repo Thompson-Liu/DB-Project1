@@ -55,15 +55,18 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private int lowKey;
 	private int highKey;
 	private boolean flag;
+	private String tableName;
+	private String alias;
 	
 	
-	
-	public IndexConditionSeperator(String column,Expression expr ) {
+	public IndexConditionSeperator(String tableName, String alias,String column,Expression expr ) {
 		original = expr;
 		lowKey =Integer.MIN_VALUE;
 		highKey= Integer.MAX_VALUE;
 		this.indexColumn=column;
 		original.accept(this);
+		this.tableName= tableName;
+		this.alias=alias;
 	}
 	
 	public int getLowKey() {
@@ -187,7 +190,9 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
-			if(((Column)left).getColumnName()==indexColumn) {
+			boolean check = ((Column)left).getColumnName()==indexColumn 
+					&& (((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias);
+			if(check) {
 				int value =(int) ((DoubleValue)right).getValue();
 				lowKey = value;
 				highKey = value;
@@ -196,7 +201,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			
 		}
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
-			if(((Column)right).getColumnName()==indexColumn) {
+			if(((Column)right).getColumnName()==indexColumn &&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
 				lowKey = value;
 				highKey = value;
@@ -210,7 +215,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
-			if(((Column)left).getColumnName()==indexColumn) {
+			if(((Column)left).getColumnName()==indexColumn &&  (((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)right).getValue();
 				lowKey = value+1;
 				flag=true;
@@ -218,7 +223,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			
 		}
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
-			if(((Column)right).getColumnName()==indexColumn) {
+			if(((Column)right).getColumnName()==indexColumn&&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
 				highKey = value-1;
 				flag=true;
@@ -232,7 +237,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
-			if(((Column)left).getColumnName()==indexColumn) {
+			if(((Column)left).getColumnName()==indexColumn&&  (((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)right).getValue();
 				lowKey = value;
 				flag=true;
@@ -240,7 +245,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			
 		}
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
-			if(((Column)right).getColumnName()==indexColumn) {
+			if(((Column)right).getColumnName()==indexColumn&&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
 				highKey = value;
 				flag=true;
@@ -267,7 +272,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
-			if(((Column)left).getColumnName()==indexColumn) {
+			if(((Column)left).getColumnName()==indexColumn &&(((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)right).getValue();
 				highKey = value-1;
 				flag=true;
@@ -276,7 +281,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			
 		}
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
-			if(((Column)right).getColumnName()==indexColumn) {
+			if(((Column)right).getColumnName()==indexColumn &&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
 				lowKey = value+1;
 				flag=true;
@@ -292,7 +297,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
-			if(((Column)left).getColumnName()==indexColumn) {
+			if(((Column)left).getColumnName()==indexColumn &&(((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)right).getValue();
 				highKey = value;
 				flag=true;
@@ -301,7 +306,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			
 		}
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
-			if(((Column)right).getColumnName()==indexColumn) {
+			if(((Column)right).getColumnName()==indexColumn&&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
 				lowKey = value;
 				flag=true;
