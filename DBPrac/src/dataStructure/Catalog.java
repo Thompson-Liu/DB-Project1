@@ -11,6 +11,8 @@ public class Catalog {
 	private static Catalog dbCatalog = null;
 	private HashMap<String, String> tableDir;
 	private HashMap<String, ArrayList<String>> schemaList;
+	private HashMap<String,String> sortedCol;     // the index that the table is sorted on
+	private HashMap<String, Boolean> isClustered;
 	
 	/**
 	 * The private Catalog object consturctor that will not be accessed from other
@@ -19,6 +21,8 @@ public class Catalog {
 	private Catalog() {
 		tableDir = new HashMap<String, String>();
 		schemaList = new HashMap<String, ArrayList<String>>();
+		sortedCol = new HashMap<String,String>();
+		isClustered = new HashMap<String, Boolean>() ;
 	}
 	
 	/**
@@ -70,6 +74,35 @@ public class Catalog {
 	 */
 	public ArrayList<String> getSchema(String name) {
 		return schemaList.get(name);
+	}
+	
+	/**
+	 *  set the index column that the table is sorted on
+	 * @param tableName  : name of table
+	 * @param setSortCol : index on the file that the table sorted on
+	 * @param isClustered : if the table is clustered
+	 */
+	public void addIndex(String tableName, String sortedCol,boolean isClustered) {
+		this.sortedCol.put(tableName, sortedCol);
+		this.isClustered.put(tableName, isClustered);
+	}
+	
+	/**
+	 * 
+	 * @param tableName the name of table
+	 * @return col is sorted on on file
+	 */
+	public String getIndexCol(String tableName) {
+		return sortedCol.get(tableName);
+	}
+	
+	/**
+	 * 
+	 * @param tableName the name of table
+	 * @return col is sorted on on file
+	 */
+	public Boolean getIsClustered(String tableName) {
+		return isClustered.get(tableName);
 	}
 	
 	/** 
