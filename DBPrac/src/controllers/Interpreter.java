@@ -36,63 +36,63 @@ public class Interpreter {
 		String outputDir= args[1];
 		int queryCounter= 1;
 
-		String tableName= "Boats";
-		String attr= "E";
+		String tableName= "Sailors";
+		String attr= "A";
 		int order= 10;
 		boolean isClustered= false;
-		TupleWriter tw= new BinaryTupleWriter(args[2] + "/Boats.E.txt");
+		TupleWriter tw= new BinaryTupleWriter(args[0] +"/db/indexes"+ "/Sailors.A");
 
 		createCatalog(dataDir);
 		Catalog catalog = Catalog.getInstance();
 		String dir = catalog.getDir(tableName);
 		TupleReader tr= new BinaryTupleReader(dir);
 		
-		BulkLoader bulkloading = new BulkLoader(false, order, tr, tw, attr, tableName, "");
+		BulkLoader bulkloading = new BulkLoader(true, order, tr, tw, attr, tableName, "");
 		bulkloading.buildTree();
 
-//		try {
-//			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
-//			Statement statement;
-//			while ((statement= parser.Statement()) != null) {
-//				try {
-//					Select select= (Select) statement;
-//					SelectBody selectBody= select.getSelectBody();
-//					PlainSelect plainSelect= (PlainSelect) selectBody;
-////					createCatalog(dataDir);
-//
-//					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
-//					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
-//
-//					// need to pass in the name of the config file path
-//					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/interpreter_config_file.txt",
-//						args[2]);
-//					Operator op= planBuilder.generatePlan(logOp);
-//
-////					ReadableTupleWriter writer= new ReadableTupleWriter(
-////						outputDir + "/query" + Integer.toString(queryCounter));
-//					BinaryTupleWriter writer= new BinaryTupleWriter(
+		try {
+			CCJSqlParser parser= new CCJSqlParser(new FileReader(new File(queriesFile)));
+			Statement statement;
+			while ((statement= parser.Statement()) != null) {
+				try {
+					Select select= (Select) statement;
+					SelectBody selectBody= select.getSelectBody();
+					PlainSelect plainSelect= (PlainSelect) selectBody;
+					createCatalog(dataDir);
+
+					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
+					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
+
+					// need to pass in the name of the config file path
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(args[0] + "/plan_builer_config.txt",
+						args[2]);
+					Operator op= planBuilder.generatePlan(logOp);
+
+//					ReadableTupleWriter writer= new ReadableTupleWriter(
 //						outputDir + "/query" + Integer.toString(queryCounter));
-//
-//					long time1= System.currentTimeMillis();
-//					op.dump(writer);
-//
-//					long time2= System.currentTimeMillis();
-//					long diffTime= time2 - time1;
-////					System.out.println(diffTime);
-//					queryCounter++ ;
-//				} catch (Exception e) {
-//					System.err.println(
-//						"Exception occurred during executing the query number " + Integer.toString(queryCounter));
-//					queryCounter++ ;
-//					e.printStackTrace();
-//				}
-//			}
-//		} catch (FileNotFoundException fileNotFound) {
-//			System.err.println("The query file directory does not exist");
-//			System.err.println(queriesFile);
-//		} catch (ParseException parseException) {
-//			System.err.println("Exception occured during parsing");
-//		}
+					BinaryTupleWriter writer= new BinaryTupleWriter(
+						outputDir + "/query" + Integer.toString(queryCounter));
+
+					long time1= System.currentTimeMillis();
+					op.dump(writer);
+
+					long time2= System.currentTimeMillis();
+					long diffTime= time2 - time1;
+//					System.out.println(diffTime);
+					queryCounter++ ;
+				} catch (Exception e) {
+					System.err.println(
+						"Exception occurred during executing the query number " + Integer.toString(queryCounter));
+					queryCounter++ ;
+					e.printStackTrace();
+				}
+			}
+		} catch (FileNotFoundException fileNotFound) {
+			System.err.println("The query file directory does not exist");
+			System.err.println(queriesFile);
+		} catch (ParseException parseException) {
+			System.err.println("Exception occured during parsing");
+		}
 	}
 
 	/** Construct catalog from directory

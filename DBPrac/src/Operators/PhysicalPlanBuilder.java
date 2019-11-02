@@ -18,6 +18,7 @@ import physicalOperator.JoinOperator;
 import physicalOperator.Operator;
 import physicalOperator.ProjectOperator;
 import physicalOperator.SMJ;
+import physicalOperator.ScanOperator;
 import physicalOperator.SelectOperator;
 import physicalOperator.SortOperator;
 
@@ -78,8 +79,9 @@ public class PhysicalPlanBuilder {
 
 	public void visit(ScanLogOp scanLop) throws IOException {
 //		immOp= new ScanOperator(scanLop.getTableName(), scanLop.getAliasName());
+		
 		immOp= new IndexScanOperator(scanLop.getTableName(), scanLop.getAliasName(), "A",
-			"/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/expected_indexes/Sailors.A", true, 3210, 6000);
+			"/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/expected_indexes/Sailors.A", false, 3210, 6000);
 
 	}
 
