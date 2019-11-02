@@ -1,16 +1,20 @@
 package Operators;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
+import dataStructure.Catalog;
 import logicalOperators.DuplicateEliminationLogOp;
-import logicalOperators.IndexScanLogOp;
 import logicalOperators.JoinLogOp;
 import logicalOperators.LogicalOperator;
 import logicalOperators.ProjectLogOp;
 import logicalOperators.ScanLogOp;
 import logicalOperators.SelectLogOp;
 import logicalOperators.SortLogOp;
+import net.sf.jsqlparser.expression.Expression;
+import parser.IndexConditionSeperator;
 import physicalOperator.BNLJ;
 import physicalOperator.DuplicateEliminationOperator;
 import physicalOperator.ExternalSortOperator;
@@ -29,24 +33,30 @@ public class PhysicalPlanBuilder {
 	private BufferedReader buffer;
 	private int[] join;
 	private int[] sort;
-	String tempDir;
+	private String tempDir;
+	private String indexDir;
+	private boolean useIndex;
+	private Expression indexExpr;
 
-	public PhysicalPlanBuilder(String configPath, String tempPath) {
-//		try {
-//			buffer= new BufferedReader(new FileReader(configPath));
-//		} catch (FileNotFoundException e) {
-//			System.err.println("Cannot locate the file" + configPath);
-//		}
-//		join= readConfig();
-//		sort= readConfig();
-//		assert (sort[0] == 0 || (sort[0] == 1 && sort[1] >= 3));
+	public PhysicalPlanBuilder(String configPath, String tempPath, String indexPath) {
+		try {
+			buffer= new BufferedReader(new FileReader(configPath));
+		} catch (FileNotFoundException e) {
+			System.err.println("Cannot locate the file" + configPath);
+		}
+		join= readConfig();
+		sort= readConfig();
+		useIndex = (readConfig()[0] == 1);
+		
+		assert (sort[0] == 0 || (sort[0] == 1 && sort[1] >= 3));
 
-//		try {
-//			buffer.close();
-//		} catch (IOException e) {
-//			System.err.println("Error during closing the buffer.");
-//		}
-		tempDir= tempPath;
+		try {
+			buffer.close();
+		} catch (IOException e) {
+			System.err.println("Error during closing the buffer.");
+		}
+		tempDir = tempPath;
+		indexDir = indexPath;
 	}
 
 	private int[] readConfig() {
@@ -56,7 +66,7 @@ public class PhysicalPlanBuilder {
 			nextLine= buffer.readLine();
 			String[] args= nextLine.split(" ");
 			if (args.length == 1) {
-				argList= new int[] { 0 };
+				argList= new int[] { Integer.parseInt(args[0]) };
 			} else {
 				assert (args.length == 2);
 
@@ -77,25 +87,36 @@ public class PhysicalPlanBuilder {
 		lop.accept(this);
 		return immOp;
 	}
-	
-	public void visit(IndexScanLogOp indexScanLop) throws IOException {
-		immOp= new IndexScanOperator(indexScanLop.getTableName(), indexScanLop.getAliasName(), indexScanLop.getColName(),
-				"/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/expected_indexes/Sailors.A", false, indexScanLop.getLowKey(), indexScanLop.getHighKey());
-		
-	}
-	
-	
 
 	public void visit(ScanLogOp scanLop) throws IOException {
-//		immOp= new ScanOperator(scanLop.getTableName(), scanLop.getAliasName());
 		
+		Catalog catalog = Catalog.getInstance();
+		String tableName =scanLop.getTableName();
+		String alias = scanLop.getAliasName();
+		String colName = catalog.getIndexCol(tableName);
+		
+		// If not using index or the data table dosen't have an index, build a full-scan operator
+		if (! useIndex || catalog.getIndexCol(tableName) == null) {
+			immOp= new ScanOperator(tableName, alias);
+			return;
+		}
+		
+		IndexConditionSeperator indexSep = new IndexConditionSeperator(tableName, alias,colName,indexExpr);
+		int lowKey = indexSep.getLowKey();
+		int highKey = indexSep.getHighKey();
+		indexExpr = indexSep.getRestExpr();
+		
+		String tableIndexDir = indexDir + "/" + tableName + "." + colName;
+		immOp= new IndexScanOperator(tableName, alias, catalog.getIndexCol(tableName), tableIndexDir,
+				catalog.getIsClustered(tableName), lowKey, highKey);
 		
 
 	}
 
 	public void visit(SelectLogOp selectLop) {
+		indexExpr = selectLop.getSelectExpr();
 		selectLop.getChildren()[0].accept(this);
-		immOp= new SelectOperator(selectLop.getSelectExpr(), immOp, selectLop.getAlias());
+		immOp= new SelectOperator(indexExpr, immOp, selectLop.getAlias());
 	}
 
 	public void visit(ProjectLogOp projectLop) {
