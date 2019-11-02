@@ -58,6 +58,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private String tableName;
 	private String alias;
 	
+
+	R.A=R.B AND R.A=5 AND R.C=5
 	
 	public IndexConditionSeperator(String tableName, String alias,String column,Expression expr ) {
 		original = expr;
@@ -194,8 +196,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 					&& (((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias);
 			if(check) {
 				int value =(int) ((DoubleValue)right).getValue();
-				lowKey = value;
-				highKey = value;
+				lowKey = Math.max(lowKey,value);
+				highKey = Math.min(highKey, value);
 				flag = true;
 			}
 			
@@ -203,8 +205,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
 			if(((Column)right).getColumnName()==indexColumn &&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
-				lowKey = value;
-				highKey = value;
+				lowKey = Math.max(lowKey, value);
+				highKey = Math.min(value, highKey);
 				flag = true;
 			}
 		}
