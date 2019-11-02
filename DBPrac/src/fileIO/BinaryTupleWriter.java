@@ -127,6 +127,7 @@ public class BinaryTupleWriter implements TupleWriter {
 	public void dump() {
 		if(indexData.size()!=0) {
 			dumpIndex();
+			return;
 		}
 		else if (pageData == null || pageData.size() == 0) { return; }
 		try {

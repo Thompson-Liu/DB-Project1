@@ -26,9 +26,16 @@ public class Serializer {
 		bw.addNextValue(leaf.getType());
 		bw.addNextValue(leaf.getNumElement());
 		for (int i= 0; i < leaf.getNumElement(); i++ ) {
+			
+			// write the value of k
 			int k= leaf.getKey(i);
 			bw.addNextValue(k);
+			
+			// write the number of rids in the entry
 			ArrayList<int[]> rids= leaf.getRids(k);
+			bw.addNextValue(rids.size());
+			
+			// write pi and ti for each rid in the entry
 			for (int[] rid : rids) {
 				bw.addNextValue(rid[0]);
 				bw.addNextValue(rid[1]);
@@ -39,7 +46,7 @@ public class Serializer {
 
 	public void writeIndexNode(IndexNode indexNode) {
 		bw.addNextValue(indexNode.getType());
-		bw.addNextValue(indexNode.getChildren().size());
+		bw.addNextValue(indexNode.getNumElement());
 		
 		// write keys
 		for (int key : indexNode.getKeys()) {
