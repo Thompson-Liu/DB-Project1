@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
 import bpTree.BulkLoader;
-import bpTree.Serializer;
 import dataStructure.Catalog;
 import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;

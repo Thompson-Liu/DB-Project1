@@ -62,13 +62,13 @@ public class BulkLoader {
 		keys = new ArrayList<Integer>();
 		dataEntries = new HashMap<Integer, ArrayList<int[]>>();
 		
-		
 		serialize = new Serializer(isClustered, tw);
 	}
 
 	public void buildTree() {
 		buildDataEntries();
 		ArrayList<Node> leaves = buildLeaves();
+		int numLeaves = leaves.size();
 
 		// Generate levels of index nodes until the number of index nodes becomes zero
 		ArrayList<Node> indices= new ArrayList<Node>();
@@ -79,7 +79,7 @@ public class BulkLoader {
 		
 		Node root = indices.get(0);
 		
-		serialize.writeHeader(root.getPage(), leaves.size(), order);
+		serialize.writeHeader(root.getPage(), numLeaves, order);
 	}
 
 	private void buildDataEntries() {
@@ -108,7 +108,6 @@ public class BulkLoader {
 		tw.reset(1);
 		
 		int numEntries = keys.size();
-
 		int numNodes = (int) Math.ceil(numEntries * 1.0 / (2 * order));
 		ArrayList<Node> leaves = new ArrayList<Node>(numNodes);
 
