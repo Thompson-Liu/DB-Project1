@@ -79,7 +79,7 @@ public class IndexBuilder {
 				int isClustered = Integer.parseInt(components[2]);
 				
 				// update the catalog
-				catalog.addIndex(tableName, columnName, isClustered);
+				catalog.addIndex(tableName, columnName, isClustered == 1);
 			}
 		} catch (NumberFormatException e) {
 			System.err.println("Error when converting integer to String");

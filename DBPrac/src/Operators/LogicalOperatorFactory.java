@@ -117,6 +117,7 @@ public class LogicalOperatorFactory {
 			String tempAlias = rightJoin.getRightItem().getAlias().toString();
 			String tempTable= rightJoin.getRightItem().toString().replace("AS "+tempAlias,"").trim();
 			tableAlias.put(tempTable,tempAlias);
+			
 			rightOp = new ScanLogOp(tempTable,tempAlias);
 		}else {
 			rightOp = new ScanLogOp(rightJoin.toString(),"");

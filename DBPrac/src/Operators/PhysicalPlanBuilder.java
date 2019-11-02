@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 import logicalOperators.DuplicateEliminationLogOp;
+import logicalOperators.IndexScanLogOp;
 import logicalOperators.JoinLogOp;
 import logicalOperators.LogicalOperator;
 import logicalOperators.ProjectLogOp;
@@ -76,12 +77,19 @@ public class PhysicalPlanBuilder {
 		lop.accept(this);
 		return immOp;
 	}
+	
+	public void visit(IndexScanLogOp indexScanLop) throws IOException {
+		immOp= new IndexScanOperator(indexScanLop.getTableName(), indexScanLop.getAliasName(), indexScanLop.getColName(),
+				"/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/expected_indexes/Sailors.A", false, indexScanLop.getLowKey(), indexScanLop.getHighKey());
+		
+	}
+	
+	
 
 	public void visit(ScanLogOp scanLop) throws IOException {
 //		immOp= new ScanOperator(scanLop.getTableName(), scanLop.getAliasName());
 		
-		immOp= new IndexScanOperator(scanLop.getTableName(), scanLop.getAliasName(), "A",
-			"/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/expected_indexes/Sailors.A", false, 3210, 6000);
+		
 
 	}
 

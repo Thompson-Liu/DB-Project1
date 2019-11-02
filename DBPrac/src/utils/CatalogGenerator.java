@@ -38,8 +38,6 @@ public class CatalogGenerator {
 			readSchema.close();
 		} catch (IOException e) {
 			System.err.println("Exception unable to access the directory");
-		} finally {
-			readSchema.close();
 		}
 	}
 }
