@@ -1,6 +1,6 @@
 
 /**
- * Seperate the expression with column listed and the rest
+ * Separate the expression with column listed and the rest
  */
 package parser;
 
@@ -57,10 +57,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private boolean flag;
 	private String tableName;
 	private String alias;
-	
-
-	R.A=R.B AND R.A=5 AND R.C=5
-	
+		
 	public IndexConditionSeperator(String tableName, String alias,String column,Expression expr ) {
 		original = expr;
 		lowKey =Integer.MIN_VALUE;

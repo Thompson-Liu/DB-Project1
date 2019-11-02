@@ -109,8 +109,6 @@ public class PhysicalPlanBuilder {
 		String tableIndexDir = indexDir + "/" + tableName + "." + colName;
 		immOp= new IndexScanOperator(tableName, alias, catalog.getIndexCol(tableName), tableIndexDir,
 				catalog.getIsClustered(tableName), lowKey, highKey);
-		
-
 	}
 
 	public void visit(SelectLogOp selectLop) {

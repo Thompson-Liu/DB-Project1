@@ -20,8 +20,8 @@ public class IndexBuilder {
 	private Catalog catalog = Catalog.getInstance();
 
 	public IndexBuilder(String dbDir) {
-		indexInfo = dbDir + "index_info.txt";
-		indexes = dbDir + "indexes/";
+		indexInfo = dbDir + "/index_info.txt";
+		indexes = dbDir + "/indexes/";
 	}
 	
 	private void buildIndex(int isClustered, int order, String attr, String tableName) {		
