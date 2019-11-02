@@ -51,17 +51,17 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class IndexConditionSeperator implements ExpressionVisitor {
 	private String indexColumn;
-	private Expression splitted;
 	private Expression original;
 	private int lowKey;
 	private int highKey;
+	private boolean flag;
+	
 	
 	
 	public IndexConditionSeperator(String column,Expression expr ) {
 		original = expr;
 		lowKey =Integer.MIN_VALUE;
 		highKey= Integer.MAX_VALUE;
-		splitted = original;
 		this.indexColumn=column;
 		original.accept(this);
 	}
@@ -75,7 +75,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	}
 	
 	public Expression getRestExpr() {
-		return splitted;
+		return original;
 	}
 	
 	
@@ -152,14 +152,30 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 
 	@Override
 	public void visit(AndExpression arg0) {
+		flag = false;
 		arg0.getLeftExpression().accept(this);
+		if (flag) {
+			arg0.setLeftExpression(null);
+		}
+		flag = false;
 		arg0.getRightExpression().accept(this);
+		if (flag) {
+			arg0.setRightExpression(null);
+		}
 	}
 
 	@Override
 	public void visit(OrExpression arg0) {
+		flag = false;
 		arg0.getLeftExpression().accept(this);
+		if (flag) {
+			arg0.setLeftExpression(null);
+		}
+		flag = false;
 		arg0.getRightExpression().accept(this);
+		if (flag) {
+			arg0.setRightExpression(null);
+		}
 	}
 
 	@Override
@@ -175,6 +191,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 				int value =(int) ((DoubleValue)right).getValue();
 				lowKey = value;
 				highKey = value;
+				flag = true;
 			}
 			
 		}
@@ -183,6 +200,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 				int value =(int) ((DoubleValue)left).getValue();
 				lowKey = value;
 				highKey = value;
+				flag = true;
 			}
 		}
 	}
@@ -195,6 +213,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			if(((Column)left).getColumnName()==indexColumn) {
 				int value =(int) ((DoubleValue)right).getValue();
 				lowKey = value+1;
+				flag=true;
 			}
 			
 		}
@@ -202,6 +221,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			if(((Column)right).getColumnName()==indexColumn) {
 				int value =(int) ((DoubleValue)left).getValue();
 				highKey = value-1;
+				flag=true;
 			}
 		}
 
@@ -215,6 +235,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			if(((Column)left).getColumnName()==indexColumn) {
 				int value =(int) ((DoubleValue)right).getValue();
 				lowKey = value;
+				flag=true;
 			}
 			
 		}
@@ -222,6 +243,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			if(((Column)right).getColumnName()==indexColumn) {
 				int value =(int) ((DoubleValue)left).getValue();
 				highKey = value;
+				flag=true;
 			}
 		}
 	}
@@ -248,6 +270,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			if(((Column)left).getColumnName()==indexColumn) {
 				int value =(int) ((DoubleValue)right).getValue();
 				highKey = value-1;
+				flag=true;
+
 			}
 			
 		}
@@ -255,6 +279,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			if(((Column)right).getColumnName()==indexColumn) {
 				int value =(int) ((DoubleValue)left).getValue();
 				lowKey = value+1;
+				flag=true;
+
 			}
 		}
 		
@@ -269,6 +295,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			if(((Column)left).getColumnName()==indexColumn) {
 				int value =(int) ((DoubleValue)right).getValue();
 				highKey = value;
+				flag=true;
+
 			}
 			
 		}
@@ -276,6 +304,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			if(((Column)right).getColumnName()==indexColumn) {
 				int value =(int) ((DoubleValue)left).getValue();
 				lowKey = value;
+				flag=true;
+
 			}
 		}
 
