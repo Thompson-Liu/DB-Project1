@@ -216,16 +216,16 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
 			if(((Column)left).getColumnName()==indexColumn &&  (((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)right).getValue();
-				lowKey = value+1;
-				flag=true;
+				lowKey = Math.max(lowKey,value+1);
+				flag = true;
 			}
 			
 		}
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
 			if(((Column)right).getColumnName()==indexColumn&&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
-				highKey = value-1;
-				flag=true;
+				highKey = Math.min(value-1, highKey);
+				flag = true;
 			}
 		}
 
@@ -238,16 +238,16 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
 			if(((Column)left).getColumnName()==indexColumn&&  (((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)right).getValue();
-				lowKey = value;
-				flag=true;
+				lowKey = Math.max(lowKey,value);
+				flag = true;
 			}
 			
 		}
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
 			if(((Column)right).getColumnName()==indexColumn&&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
-				highKey = value;
-				flag=true;
+				highKey = Math.min(value, highKey);
+				flag = true;
 			}
 		}
 	}
@@ -273,8 +273,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
 			if(((Column)left).getColumnName()==indexColumn &&(((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)right).getValue();
-				highKey = value-1;
-				flag=true;
+				highKey = Math.min(value-1, highKey);
+				flag = true;
 
 			}
 			
@@ -282,8 +282,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
 			if(((Column)right).getColumnName()==indexColumn &&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
-				lowKey = value+1;
-				flag=true;
+				lowKey = Math.max(lowKey,value+1);
+				flag = true;
 
 			}
 		}
@@ -298,8 +298,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		if((left instanceof Column) && (right instanceof DoubleValue)) {
 			if(((Column)left).getColumnName()==indexColumn &&(((Column)left).getTable().getName()==tableName || ((Column)left).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)right).getValue();
-				highKey = value;
-				flag=true;
+				highKey = Math.min(value, highKey);
+				flag = true;
 
 			}
 			
@@ -307,8 +307,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		else if ((left instanceof DoubleValue)&& (right instanceof Column)) {
 			if(((Column)right).getColumnName()==indexColumn&&  (((Column)right).getTable().getName()==tableName || ((Column)right).getTable().getName()==alias)) {
 				int value =(int) ((DoubleValue)left).getValue();
-				lowKey = value;
-				flag=true;
+				lowKey = Math.max(lowKey,value);
+				flag = true;
 
 			}
 		}
