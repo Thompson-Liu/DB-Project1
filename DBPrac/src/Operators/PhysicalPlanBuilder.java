@@ -96,7 +96,7 @@ public class PhysicalPlanBuilder {
 		String colName = catalog.getIndexCol(tableName);
 		
 		// If not using index or the data table dosen't have an index, build a full-scan operator
-		if (! useIndex || catalog.getIndexCol(tableName) == null) {
+		if (! useIndex || catalog.getIndexCol(tableName) == null || indexExpr==null) {
 			immOp= new ScanOperator(tableName, alias);
 			return;
 		}

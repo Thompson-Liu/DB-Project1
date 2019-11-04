@@ -34,7 +34,7 @@ public class Interpreter {
 		// If evalQuery = 1, evaluate the qeury
 		if (evalQuery == 1) {
 			indexBuilder.readIndices();
-			QueryEvaluator queryEval = new QueryEvaluator(inputDir + "queries.sql", 
+			QueryEvaluator queryEval = new QueryEvaluator(inputDir + "/queries.sql", 
 					outputDir, inputDir, tempDir);
 			queryEval.evaluateQuery();
 		}
