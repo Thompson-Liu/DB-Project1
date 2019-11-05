@@ -1,3 +1,3 @@
 SELECT *
-FROM Sailors
-WHERE Sailors.A>3210 AND Sailors.A<=6000
+FROM Sailors S
+WHERE S.A>3210 AND S.A<=6000

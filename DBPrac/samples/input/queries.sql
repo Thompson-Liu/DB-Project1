@@ -1,12 +1,13 @@
 SELECT *
-FROM Sailors;
+FROM Sailors, Boats
+WHERE Sailors.A>5000 AND B.D<50;
 
 -- SELECT *
 -- FROM testRelation0
 -- WHERE testRelation0.A>210 AND testRelation0.A<=600;
 
 
--- SELECT testRelation0.A, testRelation0.C
+-- SELECT testRelation0.A, testRelation0.Cs
 -- FROM testRelation0
 -- WHERE testRelation0.A > 500 OR testRelation0.B < 100;
 

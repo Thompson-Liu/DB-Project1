@@ -1,5 +1,13 @@
+<<<<<<< HEAD
+/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/input
+/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/output
+/Users/yutingyang/Desktop/db_prac/DB-Project2/DBPrac/samples/tempdir
+0
+1
+=======
 /Users/mingzhaoliu/Dropbox/Homework/2019-2020 Fall/CS 4321/DB-Project1/DBPrac/samples/input
 /Users/mingzhaoliu/Dropbox/Homework/2019-2020 Fall/CS 4321/DB-Project1/DBPrac/samples/output
 /Users/mingzhaoliu/Dropbox/Homework/2019-2020 Fall/CS 4321/DB-Project1/DBPrac/samples/tempdir
 1
 1
+>>>>>>> 8ef0cdb992f6559a47fe151132f959e9e1cee9e7

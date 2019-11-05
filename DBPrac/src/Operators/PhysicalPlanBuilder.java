@@ -90,16 +90,21 @@ public class PhysicalPlanBuilder {
 
 	public void visit(ScanLogOp scanLop) throws IOException {
 		
+		
 		Catalog catalog = Catalog.getInstance();
-		String tableName =scanLop.getTableName();
+		String tmpName =scanLop.getTableName();
+		String tableName = tmpName.split("AS")[0].strip();
 		String alias = scanLop.getAliasName();
 		String colName = catalog.getIndexCol(tableName);
-		
+		System.out.println(colName);
+
 		// If not using index or the data table dosen't have an index, build a full-scan operator
 		if (! useIndex || catalog.getIndexCol(tableName) == null || indexExpr==null) {
+
 			immOp= new ScanOperator(tableName, alias);
 			return;
 		}
+
 		
 		IndexConditionSeperator indexSep = new IndexConditionSeperator(tableName, alias,colName,indexExpr);
 		int lowKey = indexSep.getLowKey();

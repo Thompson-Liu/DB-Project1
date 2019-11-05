@@ -74,6 +74,9 @@ public class IndexScanOperator extends ScanOperator {
 					if (key > hi) return;
 					if (key >= lo && key <= hi) {
 						for (int j= 0; j < numRids * 2; j+= 2) {
+//							System.out.println("numRids : "+numRids);
+//							System.out.println("numElements  :" +numElements);
+							System.out.println("pos is   : "+(pos + 8 + j * 4));
 							int[] rid= new int[] { buffer.getInt(pos + 8 + j * 4),
 									buffer.getInt(pos + 8 + (j + 1) * 4) };
 							repo.add(rid);
