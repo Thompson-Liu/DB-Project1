@@ -56,7 +56,7 @@ public class IndexScanOperator extends ScanOperator {
 		this.reader= new BinaryTupleReader(catalog.getDir(tableName)); // Dealing with alias?
 		this.schema= catalog.getSchema(tableName); // Not sure
 		this.ptr= 0;
-		this.repo = new ArrayList<int []>();
+		this.repo= new ArrayList<int[]>();
 		if (isClustered) {
 			reader.reset(startRid[0], startRid[1]);
 		} else {
@@ -65,7 +65,7 @@ public class IndexScanOperator extends ScanOperator {
 				buffer.clear();
 				fc.position(startLeaf * 4096);
 				fc.read(buffer);
-				assert (buffer.getInt(0) == 0);
+				if (buffer.getInt(0) == 0) return;
 				int numElements= buffer.getInt(4);
 				int pos= 8;
 				for (int i= 0; i < numElements; i++ ) {
