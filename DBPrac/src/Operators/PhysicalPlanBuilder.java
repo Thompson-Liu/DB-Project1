@@ -46,8 +46,8 @@ public class PhysicalPlanBuilder {
 		}
 		join= readConfig();
 		sort= readConfig();
-		useIndex = (readConfig()[0] == 1);
-		
+		useIndex= (readConfig()[0] == 1);
+
 		assert (sort[0] == 0 || (sort[0] == 1 && sort[1] >= 3));
 
 		try {
@@ -55,8 +55,8 @@ public class PhysicalPlanBuilder {
 		} catch (IOException e) {
 			System.err.println("Error during closing the buffer.");
 		}
-		tempDir = tempPath;
-		indexDir = indexPath;
+		tempDir= tempPath;
+		indexDir= indexPath;
 	}
 
 	private int[] readConfig() {
@@ -89,37 +89,36 @@ public class PhysicalPlanBuilder {
 	}
 
 	public void visit(ScanLogOp scanLop) throws IOException {
-		
-		
-		Catalog catalog = Catalog.getInstance();
-		String tmpName =scanLop.getTableName();
-		String tableName = tmpName.split("AS")[0].strip();
-		String alias = scanLop.getAliasName();
-		String colName = catalog.getIndexCol(tableName);
+
+		Catalog catalog= Catalog.getInstance();
+		String tmpName= scanLop.getTableName();
+		String tableName= tmpName.split("AS")[0].trim();
+		String alias= scanLop.getAliasName();
+		String colName= catalog.getIndexCol(tableName);
 //		System.out.println(tableName);
 
 		// If not using index or the data table dosen't have an index, build a full-scan operator
-		if (! useIndex || catalog.getIndexCol(tableName) == null || indexExpr==null) {
+		if (!useIndex || catalog.getIndexCol(tableName) == null || indexExpr == null) {
 			immOp= new ScanOperator(tableName, alias);
 			return;
 		}
 
-		IndexConditionSeperator indexSep = new IndexConditionSeperator(tableName, alias,colName,indexExpr);
+		IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, alias, colName, indexExpr);
 
-		int lowKey = indexSep.getLowKey();
-		int highKey = indexSep.getHighKey();
+		int lowKey= indexSep.getLowKey();
+		int highKey= indexSep.getHighKey();
 //		System.out.println(lowKey);
 //		System.out.println(highKey);
-		indexExpr = indexSep.getRestExpr();
+		indexExpr= indexSep.getRestExpr();
 //		System.out.println(indexExpr.toString());
 
-		String tableIndexDir = indexDir + "/" + tableName + "." + colName;
+		String tableIndexDir= indexDir + "/" + tableName + "." + colName;
 		immOp= new IndexScanOperator(tableName, alias, catalog.getIndexCol(tableName), tableIndexDir,
-				catalog.getIsClustered(tableName), lowKey, highKey);
+			catalog.getIsClustered(tableName), lowKey, highKey);
 	}
 
 	public void visit(SelectLogOp selectLop) {
-		indexExpr = selectLop.getSelectExpr();
+		indexExpr= selectLop.getSelectExpr();
 		selectLop.getChildren()[0].accept(this);
 		immOp= new SelectOperator(indexExpr, immOp, selectLop.getAlias());
 	}
