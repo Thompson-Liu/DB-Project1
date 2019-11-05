@@ -96,21 +96,23 @@ public class PhysicalPlanBuilder {
 		String tableName = tmpName.split("AS")[0].strip();
 		String alias = scanLop.getAliasName();
 		String colName = catalog.getIndexCol(tableName);
-		System.out.println(colName);
+//		System.out.println(tableName);
 
 		// If not using index or the data table dosen't have an index, build a full-scan operator
 		if (! useIndex || catalog.getIndexCol(tableName) == null || indexExpr==null) {
-
 			immOp= new ScanOperator(tableName, alias);
 			return;
 		}
 
-		
 		IndexConditionSeperator indexSep = new IndexConditionSeperator(tableName, alias,colName,indexExpr);
+
 		int lowKey = indexSep.getLowKey();
 		int highKey = indexSep.getHighKey();
+//		System.out.println(lowKey);
+//		System.out.println(highKey);
 		indexExpr = indexSep.getRestExpr();
-		
+//		System.out.println(indexExpr.toString());
+
 		String tableIndexDir = indexDir + "/" + tableName + "." + colName;
 		immOp= new IndexScanOperator(tableName, alias, catalog.getIndexCol(tableName), tableIndexDir,
 				catalog.getIsClustered(tableName), lowKey, highKey);

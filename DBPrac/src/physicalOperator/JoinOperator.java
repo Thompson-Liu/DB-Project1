@@ -101,6 +101,7 @@ public class JoinOperator extends Operator {
 	public void dump(TupleWriter writer) {
 		Tuple t;
 		while((t = getNextTuple()) != null) {
+//			System.out.println(t.printData());
 			writer.addNextTuple(t);
 		}
 		writer.dump();

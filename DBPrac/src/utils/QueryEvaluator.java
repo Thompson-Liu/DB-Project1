@@ -61,7 +61,7 @@ public class QueryEvaluator {
 
 					long time2= System.currentTimeMillis();
 					long diffTime= time2 - time1;
-//					System.out.println(diffTime);
+					System.out.println(diffTime);
 					queryCounter++ ;
 				} catch (Exception e) {
 					System.err.println(

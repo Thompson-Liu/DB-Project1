@@ -1,2 +1,5 @@
 Sailors A B C
 Boats D E F
+testRelation0 A B C
+testRelation1 D E F G
+

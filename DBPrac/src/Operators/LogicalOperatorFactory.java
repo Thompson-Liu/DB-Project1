@@ -72,7 +72,10 @@ public class LogicalOperatorFactory {
 		if (tmpList != null) {
 			List<String> orderByList= new ArrayList<String>(tmpList.size());
 			for (OrderByElement x : tmpList) {
-				orderByList.add(x.toString());  
+				String[] nameCol = x.toString().split("\\.");
+				String tableName =  tableAlias.containsKey(nameCol[0]) ? tableAlias.get(nameCol[0]) : nameCol[0] ;
+				String full = tableName+"."+nameCol[1];
+				orderByList.add(full);  
 			}
 			intOp= new SortLogOp(intOp, orderByList);
 			return (d == null) ? intOp : new DuplicateEliminationLogOp((SortLogOp) intOp);
@@ -84,6 +87,8 @@ public class LogicalOperatorFactory {
 		}
 		return intOp;
 	}
+	
+
 
 	/** helper function to iterate the joining tree
 	 *   perform left-deep join, add the right most branch as select each time

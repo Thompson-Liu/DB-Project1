@@ -25,6 +25,7 @@ public class SortOperator extends Operator {
 		if (colList == null) {
 			buffer.sortData(childOp.schema(), childOp.schema());
 		} else {
+
 			buffer.sortData(colList, childOp.schema());
 		}
 	}

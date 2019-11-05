@@ -62,21 +62,28 @@ public class IndexScanOperator extends ScanOperator {
 		} else {
 			int startLeaf= dsl.getStartLeaf();
 			while (true) {
+//				System.out.println("hrere1");
+
 				buffer.clear();
 				fc.position(startLeaf * 4096);
 				fc.read(buffer);
-				if (buffer.getInt(0) == 0) return;
+				if (buffer.getInt(0) != 0) return;
 				int numElements= buffer.getInt(4);
 				int pos= 8;
+//				System.out.println("hrere2");
+
 				for (int i= 0; i < numElements; i++ ) {
+//					System.out.println("hrere3");
+
 					int key= buffer.getInt(pos);
 					int numRids= buffer.getInt(pos + 4);
+//					System.out.println("numRids : "+numRids);
 					if (key > hi) return;
 					if (key >= lo && key <= hi) {
 						for (int j= 0; j < numRids * 2; j+= 2) {
-//							System.out.println("numRids : "+numRids);
+							
 //							System.out.println("numElements  :" +numElements);
-							System.out.println("pos is   : "+(pos + 8 + j * 4));
+//							System.out.println("pos is   : "+(pos + 8 + j * 4));
 							int[] rid= new int[] { buffer.getInt(pos + 8 + j * 4),
 									buffer.getInt(pos + 8 + (j + 1) * 4) };
 							repo.add(rid);
@@ -85,6 +92,7 @@ public class IndexScanOperator extends ScanOperator {
 					pos+= 8 + numRids * 8; // skip the first two metadata and numRids rids (each rid is 8 bytes)
 				}
 				startLeaf++ ;
+
 			}
 		}
 	}
