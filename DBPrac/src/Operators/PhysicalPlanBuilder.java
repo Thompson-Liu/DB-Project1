@@ -93,7 +93,7 @@ public class PhysicalPlanBuilder {
 		
 		Catalog catalog = Catalog.getInstance();
 		String tmpName =scanLop.getTableName();
-		String tableName = tmpName.split("AS")[0].strip();
+		String tableName = tmpName.split("AS")[0].trim();
 		String alias = scanLop.getAliasName();
 		String colName = catalog.getIndexCol(tableName);
 //		System.out.println(tableName);
