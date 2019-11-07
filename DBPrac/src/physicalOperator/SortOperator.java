@@ -50,7 +50,7 @@ public class SortOperator extends Operator {
 	}
 	
 	public void resetIndex(int ptr) {
-		this.ptr = ptr;
+		this.ptr = ptr - 1;
 	}
 
 	@Override

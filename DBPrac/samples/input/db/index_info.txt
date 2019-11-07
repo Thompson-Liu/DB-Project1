@@ -1,4 +1,4 @@
-Boats E 0 10
+Boats E 1 10
 Sailors A 1 15
 testRelation0 A 1 15
 testRelation1 E 1 15

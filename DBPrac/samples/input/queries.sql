@@ -1,6 +1,7 @@
 SELECT *
-FROM Sailors, Boats B
-WHERE Sailors.A>9000 AND Boats.D<50;
+FROM Sailors
+WHERE Sailors.A=3202
+ORDER BY Sailors.A;
 
 -- SELECT *
 -- FROM testRelation0

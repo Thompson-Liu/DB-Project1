@@ -108,8 +108,13 @@ public class PhysicalPlanBuilder {
 
 		int lowKey= indexSep.getLowKey();
 		int highKey= indexSep.getHighKey();
-//		System.out.println(lowKey);
-//		System.out.println(highKey);
+		System.out.println(lowKey);
+		System.out.println(highKey);
+
+		if(indexSep.getRestExpr().equals(indexExpr)) {
+			immOp=new ScanOperator(tableName,alias);
+			return;
+		}
 		indexExpr= indexSep.getRestExpr();
 //		System.out.println(indexExpr.toString());
 
