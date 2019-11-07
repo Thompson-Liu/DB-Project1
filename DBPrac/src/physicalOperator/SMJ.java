@@ -83,18 +83,22 @@ public class SMJ extends Operator {
 			if (gs == null) {
 				while (ensureEqual(tr, ts) < 0) {
 					tr = leftSortOp.getNextTuple();
-					if (tr == null && useExternal) { 
-						( (ExternalSortOperator)leftSortOp ).deleteFile();
-						( (ExternalSortOperator)rightSortOp ).deleteFile();
+					if (tr == null) { 
+						if (useExternal) {
+							( (ExternalSortOperator)leftSortOp ).deleteFile();
+							( (ExternalSortOperator)rightSortOp ).deleteFile();
+						}
 						return null; 
 					} 
 				}
 
 				while (ensureEqual(tr, ts) > 0) {
 					ts = rightSortOp.getNextTuple();
-					if (ts == null && useExternal) { 
-						( (ExternalSortOperator)leftSortOp ).deleteFile();
-						( (ExternalSortOperator)rightSortOp ).deleteFile();
+					if (ts == null) { 
+						if (useExternal) {
+							( (ExternalSortOperator)leftSortOp ).deleteFile();
+							( (ExternalSortOperator)rightSortOp ).deleteFile();
+						}
 						return null; 
 					} 
 					count++;
