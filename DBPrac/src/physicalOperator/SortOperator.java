@@ -56,6 +56,7 @@ public class SortOperator extends Operator {
 	@Override
 	public void dump(TupleWriter writer) {
 		writer.write(buffer.toArrayList());
+		writer.dump();
 		writer.close();
 	}
 
