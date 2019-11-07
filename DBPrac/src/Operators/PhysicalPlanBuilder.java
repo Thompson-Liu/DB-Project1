@@ -166,8 +166,13 @@ public class PhysicalPlanBuilder {
 				joinLogOp.getAlias());
 			break;
 		case 2:
-			immOp= new SMJ(join[1], leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
-				joinLogOp.getAlias(), tempDir);
+			if (sort[0] == 0) {
+				immOp= new SMJ(0, leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
+						joinLogOp.getAlias(), tempDir, false);
+			} else {
+				immOp= new SMJ(sort[1], leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
+						joinLogOp.getAlias(), tempDir, true);
+			}
 			break;
 		}
 

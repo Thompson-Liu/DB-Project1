@@ -48,6 +48,10 @@ public class SortOperator extends Operator {
 	public void reset() {
 		ptr= -1;
 	}
+	
+	public void resetIndex(int ptr) {
+		this.ptr = ptr;
+	}
 
 	@Override
 	public void dump(TupleWriter writer) {
