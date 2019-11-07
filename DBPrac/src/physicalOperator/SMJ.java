@@ -13,18 +13,19 @@ public class SMJ extends Operator {
 	private Operator rightOp;
 	private ArrayList<String> leftColList;
 	private ArrayList<String> rightColList;
-	private ExternalSortOperator leftExSortOp;
-	private ExternalSortOperator rightExSortOp;
 	private Tuple tr;
 	private Tuple ts;
 	private Tuple gs;
 	private int ptr;     // store the number of lines of gs
 	private int count;   // store the number of lines of ts
 	private ArrayList<String> schema;
-
+	private boolean useExternal;
+	
+	private Operator leftSortOp;
+	private Operator rightSortOp;
 	private ArrayList<String> leftSchema;
 	private ArrayList<String> rightSchema;
-
+	
 	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
 	 * each other for the two given tuples, and false otherwise. */
 	private int ensureEqual(Tuple leftTup, Tuple rightTup) {
@@ -47,26 +48,33 @@ public class SMJ extends Operator {
 	 * @param dir: the prefix of the directory that stores the temporary files generated during external
 	 * sort. */
 	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias,
-			String dir) {
+			String dir, boolean useExternal) {
 		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName(), alias);
 		leftColList= evalJoin.getJoinAttributesLeft();
 		rightColList= evalJoin.getJoinAttributesRight();
 		leftOp= left;
 		rightOp= right;
-		leftExSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, leftOp.getTableName());
-		rightExSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
+		this.useExternal = useExternal;
+		
+		if (useExternal) {
+			leftSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, leftOp.getTableName());
+			rightSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
+		} else {
+			leftSortOp= new SortOperator(leftOp, leftColList);
+			rightSortOp= new SortOperator(rightOp, rightColList);
+		}
+		
+		tr = leftSortOp.getNextTuple();
 
-		tr = leftExSortOp.getNextTuple();
-
-		ts = rightExSortOp.getNextTuple();
+		ts = rightSortOp.getNextTuple();
 		gs = null;
 		ptr = 0;
 		count = 0;
 		this.schema= new ArrayList<String>(left.schema());
 		this.schema.addAll(right.schema());
 
-		leftSchema = leftExSortOp.schema();
-		rightSchema = rightExSortOp.schema();
+		leftSchema = leftSortOp.schema();
+		rightSchema = rightSortOp.schema();
 	}
 
 	@Override
@@ -74,19 +82,19 @@ public class SMJ extends Operator {
 		while (tr != null && ts != null) {
 			if (gs == null) {
 				while (ensureEqual(tr, ts) < 0) {
-					tr = leftExSortOp.getNextTuple();
-					if (tr == null) { 
-						leftExSortOp.deleteFile();
-						rightExSortOp.deleteFile();
+					tr = leftSortOp.getNextTuple();
+					if (tr == null && useExternal) { 
+						( (ExternalSortOperator)leftSortOp ).deleteFile();
+						( (ExternalSortOperator)rightSortOp ).deleteFile();
 						return null; 
 					} 
 				}
 
 				while (ensureEqual(tr, ts) > 0) {
-					ts = rightExSortOp.getNextTuple();
-					if (ts == null) { 
-						leftExSortOp.deleteFile();
-						rightExSortOp.deleteFile();
+					ts = rightSortOp.getNextTuple();
+					if (ts == null && useExternal) { 
+						( (ExternalSortOperator)leftSortOp ).deleteFile();
+						( (ExternalSortOperator)rightSortOp ).deleteFile();
 						return null; 
 					} 
 					count++;
@@ -107,27 +115,38 @@ public class SMJ extends Operator {
 					joinedTuple.addData(ts.getData(j));
 				}
 
-				ts = rightExSortOp.getNextTuple();
+				ts = rightSortOp.getNextTuple();
 				count++;
 				if (ts == null || ensureEqual(tr, ts) != 0) {
-					tr = leftExSortOp.getNextTuple();
+					tr = leftSortOp.getNextTuple();
 					gs = null;
 
-					rightExSortOp.resetIndex(ptr);
-					ts = rightExSortOp.getNextTuple();
+					if(useExternal) {
+						( (ExternalSortOperator)rightSortOp ).resetIndex(ptr);
+					} else {
+						( (SortOperator)rightSortOp ).resetIndex(ptr);
+					}
+					ts = rightSortOp.getNextTuple();
 					count = ptr;
 				}
 				return joinedTuple;
 			} 
-			rightExSortOp.resetIndex(ptr);
-			ts = rightExSortOp.getNextTuple();
+			
+			if(useExternal) {
+				( (ExternalSortOperator)rightSortOp ).resetIndex(ptr);
+			} else {
+				( (SortOperator)rightSortOp ).resetIndex(ptr);
+			}
+			ts = rightSortOp.getNextTuple();
 			count = ptr;
 
-			tr = leftExSortOp.getNextTuple();
+			tr = leftSortOp.getNextTuple();
 			gs = null;
 		}
-		leftExSortOp.deleteFile();
-		rightExSortOp.deleteFile();
+		if(useExternal) {
+			( (ExternalSortOperator)leftSortOp ).deleteFile();
+			( (ExternalSortOperator)rightSortOp ).deleteFile();
+		}
 		return null;
 	}
 
@@ -143,10 +162,10 @@ public class SMJ extends Operator {
 
 	@Override
 	public void reset() {
-		leftExSortOp.reset();
-		rightExSortOp.reset();
-		tr= leftExSortOp.getNextTuple();
-		Tuple firstTuple= rightExSortOp.getNextTuple();
+		leftSortOp.reset();
+		rightSortOp.reset();
+		tr= leftSortOp.getNextTuple();
+		Tuple firstTuple= rightSortOp.getNextTuple();
 		ts= firstTuple;
 		gs= firstTuple;
 	}
