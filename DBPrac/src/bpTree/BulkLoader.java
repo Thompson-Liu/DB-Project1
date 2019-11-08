@@ -129,7 +129,7 @@ public class BulkLoader {
 
 		else {
 			// Check if the last node only has less than d data entries 
-			if (numEntries % (2 * order) < order) {
+			if (numEntries % (2 * order) != 0 && numEntries % (2 * order) < order) {
 
 				// Generate the second to last leaf node
 				Node secLastLeaf = new LeafNode(counter++);

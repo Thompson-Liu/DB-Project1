@@ -58,6 +58,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private boolean flag;
 	private String tableName;
 	private String alias;
+	private boolean change = false;
 
 	public IndexConditionSeperator(String tableName, String alias,String column, Expression expr ) {
 		original = expr;
@@ -66,9 +67,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		this.indexColumn=column;
 		this.tableName= tableName;
 		this.alias=alias;
-
+		
 		original.accept(this);
-
 	}
 
 	public int getLowKey() {
@@ -79,11 +79,9 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		return highKey;
 	}
 
-	public Expression getRestExpr() {
-		return original;
+	public boolean changed() {
+		return change;
 	}
-
-
 
 	@Override
 	public void visit(NullValue arg0) {
@@ -163,12 +161,14 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		if (flag) {
 			arg0.setLeftExpression(new NullValue() );
 			flag = false;
+			change = true;
 		}
 		flag = false;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
 			arg0.setRightExpression(new NullValue() );
 			flag = false;
+			change = true;
 		}
 	}
 
@@ -179,17 +179,20 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		if (flag) {
 			arg0.setLeftExpression(new NullValue() );
 			flag=false;
+			change = true;
 		}
 		flag = false;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
 			arg0.setRightExpression(new NullValue() );
 			flag=false;
+			change = true;
 		}
 	}
 
 	@Override
 	public void visit(Between arg0) {
+		
 	}
 
 	/**
@@ -253,7 +256,6 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		if((value= checkLeft(left, right))!=null) {
 			lowKey = Math.max(lowKey,value+1);
 			flag = true;
-
 		}
 		else if ((value=checkRight(left,right))!=null) {
 			highKey = Math.min(value-1, highKey);
@@ -292,8 +294,6 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	public void visit(LikeExpression arg0) {
 	}
 
-
-
 	@Override
 	public void visit(MinorThan arg0) {
 		Expression left= arg0.getLeftExpression();
@@ -302,14 +302,11 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		if((value= checkLeft(left, right))!=null) {
 			highKey = Math.min(value-1, highKey);
 			flag = true;
-
 		}
 		else if ((value=checkRight(left,right))!=null) {
 			lowKey = Math.max(lowKey,value+1);
 			flag = true;
 		}
-
-
 	}
 
 	@Override
@@ -324,7 +321,6 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		else if ((value=checkRight(left,right))!=null) {
 			lowKey = Math.max(lowKey,value);
 			flag = true;
-
 		}
 
 	}

@@ -1,6 +1,8 @@
 package controllers;
 
+import fileIO.BinaryTupleWriter;
 import utils.CatalogGenerator;
+import utils.DataGenerator;
 import utils.IndexBuilder;
 import utils.InputFileParser;
 import utils.QueryEvaluator;
@@ -24,6 +26,9 @@ public class Interpreter {
 		// Generate the catalog of data relations' directory and schema
 		CatalogGenerator catalogGen = new CatalogGenerator(inputDir + "/db");
 		catalogGen.createCatalog();
+		
+		// build random testing data
+//		DataGenerator dataGen = new DataGenerator(3, inputDir, 3, 4, 100000);
 		
 		// If buildIndex = 1, build the index
 		IndexBuilder indexBuilder = new IndexBuilder(inputDir + "/db");

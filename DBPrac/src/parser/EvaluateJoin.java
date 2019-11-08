@@ -65,7 +65,6 @@ public class EvaluateJoin implements ExpressionVisitor {
 		joinAttributesRight= new ArrayList<String>();
 
 		// change the leftTableName to its alias if exist
-
 		this.leftTableNames= Arrays.asList(leftTableName.trim().split(","));
 		for (int i= 0; i < leftTableNames.size(); i++ ) {
 			String temp= leftTableNames.get(i);
@@ -78,6 +77,8 @@ public class EvaluateJoin implements ExpressionVisitor {
 		}
 		// change the rightTableName to its alias if exist
 		this.rightTableNames= Arrays.asList(rightTableName.trim().split(","));
+		System.out.println("Right table name: " + rightTableName);
+		System.out.println("Corresponding alias: " + tableAlias.get(rightTableNames.get(0)));
 		for (int i= 0; i < rightTableNames.size(); i++ ) {
 			if (tableAlias.containsKey(rightTableNames.get(i))) {
 				rightTableNames.set(i, tableAlias.get(rightTableNames.get(i)));

@@ -120,6 +120,7 @@ public class DataTable {
 			public int compare(ArrayList<Integer> arr1, ArrayList<Integer> arr2) {
 				int result= 0;
 				int ptr= 0;
+				
 				while (ptr < newOrder.size() && result == 0) {
 					result= arr1.get(colSchema.indexOf(newOrder.get(ptr))) -
 						arr2.get(colSchema.indexOf(newOrder.get(ptr)));

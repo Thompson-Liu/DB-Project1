@@ -25,7 +25,6 @@ public class SortOperator extends Operator {
 		if (colList == null) {
 			buffer.sortData(childOp.schema(), childOp.schema());
 		} else {
-
 			buffer.sortData(colList, childOp.schema());
 		}
 	}
@@ -50,12 +49,13 @@ public class SortOperator extends Operator {
 	}
 	
 	public void resetIndex(int ptr) {
-		this.ptr = ptr;
+		this.ptr = ptr - 1;
 	}
 
 	@Override
 	public void dump(TupleWriter writer) {
 		writer.write(buffer.toArrayList());
+		writer.dump();
 		writer.close();
 	}
 

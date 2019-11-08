@@ -60,7 +60,12 @@ public class SMJ extends Operator {
 			leftSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, leftOp.getTableName());
 			rightSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
 		} else {
+//			System.out.println("table name: " + leftOp.getTableName());
+//			System.out.println("table col list: " + leftColList.toString());
 			leftSortOp= new SortOperator(leftOp, leftColList);
+			
+//			System.out.println("table name: " + rightOp.getTableName());
+//			System.out.println("table col list: " + rightColList.toString());
 			rightSortOp= new SortOperator(rightOp, rightColList);
 		}
 		

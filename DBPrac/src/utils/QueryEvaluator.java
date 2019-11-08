@@ -7,6 +7,7 @@ import java.io.FileReader;
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
 import fileIO.BinaryTupleWriter;
+import fileIO.ReadableTupleWriter;
 import logicalOperators.LogicalOperator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
