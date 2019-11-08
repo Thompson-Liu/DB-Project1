@@ -5,7 +5,6 @@
 SELECT *
 FROM Sailors
 WHERE Sailors.A<10000 AND Sailors.A>=10000;
->>>>>>> 14465cd7c647b3a04e8227935e6cbac70ceb67cb
 
 -- SELECT *
 -- FROM testRelation0
@@ -22,10 +21,10 @@ WHERE Sailors.A<10000 AND Sailors.A>=10000;
 -- WHERE t0.A > 200 AND t1.E > 400 AND t0.A <= t1.F;
 
 
-SELECT *
-FROM Sailors S, Boats
-WHERE S.A=3202 AND S.A>=400 AND Boats.D<50
-ORDER BY Sailors.A, Sailors.B;
+-- SELECT *
+-- FROM Sailors S, Boats
+-- WHERE S.A=3202 AND S.A>=400 AND Boats.D<50
+-- ORDER BY Sailors.A, Sailors.B;
 
 -- SELECT *
 -- FROM Sailors
@@ -35,3 +34,7 @@ ORDER BY Sailors.A, Sailors.B;
 -- SELECT *
 -- FROM Sailors
 -- WHERE Sailors.A<=10000 AND Sailors.A>=10000;
+
+SELECT *
+FROM Sailors
+WHERE Sailors.A >= 5000 AND Sailors.B < Sailors.C
