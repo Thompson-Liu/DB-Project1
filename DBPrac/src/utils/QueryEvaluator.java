@@ -52,10 +52,10 @@ public class QueryEvaluator {
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(inputDir + "/plan_builder_config.txt", tempDir, inputDir + "/db/indexes");
 					Operator op= planBuilder.generatePlan(logOp);
 
-//					ReadableTupleWriter writer= new ReadableTupleWriter(
-//						outputDir + "/query" + Integer.toString(queryCounter));
-					BinaryTupleWriter writer= new BinaryTupleWriter(
+					ReadableTupleWriter writer= new ReadableTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
+//					BinaryTupleWriter writer= new BinaryTupleWriter(
+//						outputDir + "/query" + Integer.toString(queryCounter));
 
 					long time1= System.currentTimeMillis();
 					op.dump(writer);
