@@ -13,6 +13,7 @@ import fileIO.TupleWriter;
 import physicalOperator.ScanOperator;
 import physicalOperator.SortOperator;
 
+/** The class that implements the bulk loading algorithm. */
 public class BulkLoader {
 
 	private int order;
@@ -20,12 +21,15 @@ public class BulkLoader {
 	private TupleWriter tw;
 	private String attr;
 	private String tableName;
-	private int counter = 1;
+	private int counter= 1;
 	private ArrayList<Integer> keys;
 	private HashMap<Integer, ArrayList<int[]>> dataEntries;
 
 	private Serializer serialize;
 
+	/** Generated temporary sorted data files in the case of clustered index scan.
+	 * 
+	 * @param isClustered: whether the index scan is clustered. */
 	private void generateSorted(int isClustered) {
 		if (isClustered == 1) {
 			ArrayList<String> sortList= new ArrayList<String>();
@@ -44,51 +48,61 @@ public class BulkLoader {
 		}
 	}
 
+	/** Construct a bulk loader.
+	 * 
+	 * @param isClustered: whether the index scan is clustered or not
+	 * @param order: the order of a tree
+	 * @param tr: a TupleReader
+	 * @param tw: a TupleWriter
+	 * @param attr: the name of the attribute
+	 * @param tableName: the name of the table */
 	public BulkLoader(int isClustered, int order, TupleReader tr, TupleWriter tw, String attr, String tableName) {
 		this.order= order;
 		this.tr= tr;
-		this.tw = tw;
+		this.tw= tw;
 		this.tableName= tableName;
 		this.attr= attr;
 		generateSorted(isClustered);
 
-		keys = new ArrayList<Integer>();
-		dataEntries = new HashMap<Integer, ArrayList<int[]>>();
+		keys= new ArrayList<Integer>();
+		dataEntries= new HashMap<Integer, ArrayList<int[]>>();
 
-		serialize = new Serializer(tw);
+		serialize= new Serializer(tw);
 	}
 
+	/** Build a tree using a Serializer. */
 	public void buildTree() {
 		buildDataEntries();
-		ArrayList<Node> leaves = buildLeaves();
-		int numLeaves = leaves.size();
+		ArrayList<Node> leaves= buildLeaves();
+		int numLeaves= leaves.size();
 
 		// Generate levels of index nodes until the number of index nodes becomes zero
 		ArrayList<Node> indices= new ArrayList<Node>();
 		do {
-			indices = buildIndex(leaves);
-			leaves = indices;
+			indices= buildIndex(leaves);
+			leaves= indices;
 		} while (indices.size() > 1);
 
-		Node root = indices.get(0);
+		Node root= indices.get(0);
 
 		serialize.writeHeader(root.getPage(), numLeaves, order);
 	}
 
+	/** Built the individual data entries. */
 	private void buildDataEntries() {
-		Catalog catalog = Catalog.getInstance();
-		int colNum = catalog.getSchema(tableName).indexOf(attr);
+		Catalog catalog= Catalog.getInstance();
+		int colNum= catalog.getSchema(tableName).indexOf(attr);
 
 		Tuple tup;
-		while ((tup = tr.readNextTuple()) != null) {
-			int key = tup.getData(colNum);
-			int[] rid = new int[] { tr.getTupleLoc()[0], tr.getTupleLoc()[1] };
+		while ((tup= tr.readNextTuple()) != null) {
+			int key= tup.getData(colNum);
+			int[] rid= new int[] { tr.getTupleLoc()[0], tr.getTupleLoc()[1] };
 
 			if (keys.contains(key)) {
 				dataEntries.get(key).add(rid);
 			} else {
 				keys.add(key);
-				ArrayList<int[]> dataEntry = new ArrayList<int[]>();
+				ArrayList<int[]> dataEntry= new ArrayList<int[]>();
 				dataEntry.add(rid);
 				dataEntries.put(key, dataEntry);
 			}
@@ -97,87 +111,91 @@ public class BulkLoader {
 		Collections.sort(keys);
 	}
 
+	/** Build tree leaves. */
 	private ArrayList<Node> buildLeaves() {
 		tw.reset(1);
 
-		int numEntries = keys.size();
-		int numNodes = (int) Math.ceil(numEntries * 1.0 / (2 * order));
-		ArrayList<Node> leaves = new ArrayList<Node>(numNodes);
+		int numEntries= keys.size();
+		int numNodes= (int) Math.ceil(numEntries * 1.0 / (2 * order));
+		ArrayList<Node> leaves= new ArrayList<Node>(numNodes);
 
 		// Insert all the data entries to generate (size - 2) leaf nodes
-		for (int i = 0; i < numNodes - 2; ++i) {
-			Node leaf= new LeafNode(counter++);
+		for (int i= 0; i < numNodes - 2; ++i) {
+			Node leaf= new LeafNode(counter++ );
 
-			for (int j = 0; j < 2 * order; ++j) {
-				int key = keys.get(i * 2 * order + j);
+			for (int j= 0; j < 2 * order; ++j) {
+				int key= keys.get(i * 2 * order + j);
 				((LeafNode) leaf).addDatas(key, dataEntries.get(key));
 			}
 			leaves.add(leaf);
-			serialize.writeLeaveNode( (LeafNode) leaf);
+			serialize.writeLeaveNode((LeafNode) leaf);
 		}
 
 		// If there is only one leaf node
 		if (numNodes == 1) {
-			Node leaf = new LeafNode(counter++);
-			for (int j = 0; j < numEntries; ++j) {
-				int key = keys.get(j);
+			Node leaf= new LeafNode(counter++ );
+			for (int j= 0; j < numEntries; ++j) {
+				int key= keys.get(j);
 				((LeafNode) leaf).addDatas(key, dataEntries.get(key));
 			}
 			leaves.add(leaf);
-			serialize.writeLeaveNode( (LeafNode) leaf);
-		} 
+			serialize.writeLeaveNode((LeafNode) leaf);
+		}
 
 		else {
-			// Check if the last node only has less than d data entries 
+			// Check if the last node only has less than d data entries
 			if (numEntries % (2 * order) != 0 && numEntries % (2 * order) < order) {
 				// Generate the second to last leaf node
-				Node secLastLeaf = new LeafNode(counter++);
-				int secLastNumEntry = (2 * order + numEntries % (2 * order)) / 2;
+				Node secLastLeaf= new LeafNode(counter++ );
+				int secLastNumEntry= (2 * order + numEntries % (2 * order)) / 2;
 
-				for (int j = 0; j < secLastNumEntry; ++j) {
-					int key = keys.get((numNodes - 2) * 2 * order + j);
+				for (int j= 0; j < secLastNumEntry; ++j) {
+					int key= keys.get((numNodes - 2) * 2 * order + j);
 					((LeafNode) secLastLeaf).addDatas(key, dataEntries.get(key));
 				}
 				leaves.add(secLastLeaf);
-				serialize.writeLeaveNode( (LeafNode) secLastLeaf);
+				serialize.writeLeaveNode((LeafNode) secLastLeaf);
 
 				// Generate the last leaf node
-				Node lastLeaf = new LeafNode(counter++);
-				int lastNumEntry = 2 * order + numEntries % (2 * order) - secLastNumEntry;
+				Node lastLeaf= new LeafNode(counter++ );
+				int lastNumEntry= 2 * order + numEntries % (2 * order) - secLastNumEntry;
 
-				for (int j = 0; j < lastNumEntry; ++j) {
-					int key = keys.get(numEntries - lastNumEntry + j);
+				for (int j= 0; j < lastNumEntry; ++j) {
+					int key= keys.get(numEntries - lastNumEntry + j);
 					((LeafNode) lastLeaf).addDatas(key, dataEntries.get(key));
 				}
 				leaves.add(lastLeaf);
-				serialize.writeLeaveNode( (LeafNode) lastLeaf);
+				serialize.writeLeaveNode((LeafNode) lastLeaf);
 			} else {
 				// Generate the second to last leaf node
-				Node secLastLeaf = new LeafNode(counter++);
+				Node secLastLeaf= new LeafNode(counter++ );
 
-				for (int j = 0; j < 2 * order; ++j) {
-					int key = keys.get((numNodes - 2) * 2 * order + j);
+				for (int j= 0; j < 2 * order; ++j) {
+					int key= keys.get((numNodes - 2) * 2 * order + j);
 					((LeafNode) secLastLeaf).addDatas(key, dataEntries.get(key));
 				}
 				leaves.add(secLastLeaf);
-				serialize.writeLeaveNode( (LeafNode) secLastLeaf);
+				serialize.writeLeaveNode((LeafNode) secLastLeaf);
 
 				// Generate the last leaf node
-				Node lastLeaf = new LeafNode(counter++);
-				int lastNumEntry = numEntries - (numNodes - 1) * 2 * order;
-				assert(lastNumEntry >= order);
+				Node lastLeaf= new LeafNode(counter++ );
+				int lastNumEntry= numEntries - (numNodes - 1) * 2 * order;
+				assert (lastNumEntry >= order);
 
-				for (int j = 0; j < lastNumEntry; ++j) {
-					int key = keys.get(numEntries - lastNumEntry + j);
+				for (int j= 0; j < lastNumEntry; ++j) {
+					int key= keys.get(numEntries - lastNumEntry + j);
 					((LeafNode) lastLeaf).addDatas(key, dataEntries.get(key));
 				}
 				leaves.add(lastLeaf);
-				serialize.writeLeaveNode( (LeafNode) lastLeaf);
+				serialize.writeLeaveNode((LeafNode) lastLeaf);
 			}
 		}
 		return leaves;
 	}
 
+	/** Build index nodes in a B+-tree.
+	 * 
+	 * @param child: A list of child nodes. */
 	private ArrayList<Node> buildIndex(ArrayList<Node> child) {
 		// Generate the first level of index nodes
 		ArrayList<Node> indices= new ArrayList<Node>();
@@ -200,7 +218,7 @@ public class BulkLoader {
 
 		// 1) Only one index node will be enough, ie. remain <= 2d + 1
 		if (childRemain <= (2 * order + 1)) {
-			IndexNode index= new IndexNode(counter++);
+			IndexNode index= new IndexNode(counter++ );
 
 			for (int j= 0; j < childRemain; ++j) {
 				index.addChild(child.get(multiplier * (2 * order + 1) + j));
@@ -213,7 +231,7 @@ public class BulkLoader {
 		// 2) Two indices are needed
 		else {
 			// Construct the second to last index
-			IndexNode secLastIndex= new IndexNode(counter++);
+			IndexNode secLastIndex= new IndexNode(counter++ );
 			int startIndex= multiplier * (2 * order + 1);
 			int endIndex= childRemain >= 3 * order + 2 ? startIndex + (2 * order + 1) : startIndex + childRemain / 2;
 			for (int j= startIndex; j < endIndex; ++j) {
