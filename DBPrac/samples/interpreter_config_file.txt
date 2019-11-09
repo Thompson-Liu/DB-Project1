@@ -1,5 +1,5 @@
-/Users/yutingyang/Desktop/DB-Project1/DBPrac/samples/input
-/Users/yutingyang/Desktop/DB-Project1/DBPrac/samples/output
-/Users/yutingyang/Desktop/DB-Project1/DBPrac/samples/tempdir
+/Users/yutingyang/Desktop/DBPrac_project/DB-Project1/DBPrac/samples/input
+/Users/yutingyang/Desktop/DBPrac_project/DB-Project1/DBPrac/samples/output
+/Users/yutingyang/Desktop/DBPrac_project/DB-Project1/DBPrac/samples/tempdir
 1
 1

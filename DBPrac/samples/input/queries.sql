@@ -1,44 +1,43 @@
 ----------------============================   P 1    ===========================-----------
 
--- SELECT *
--- FROM Reserves;
-
--- SELECT *
--- FROM Reserves
--- WHERE Sailors.A = Reserves.G;
-
--- SELECT S.A, S.C, S.B
--- FROM Sailors S;
-
--- SELECT *
--- FROM Sailors S
--- ORDER BY S.B, S.C, S.A;
-
-
--- SELECT S.A
--- FROM Sailors S
--- WHERE S.A < 10000;
-
--- SELECT DISTINCT R.H
--- FROM Reserves R
--- WHERE R.G=1;
-
--- SELECT DISTINCT Sailors.A
--- FROM Sailors, Reserves
--- WHERE Sailors.A = Reserves.G;
-
--- SELECT *
--- FROM Sailors S1, Sailors S2
--- WHERE S1.A = S2.A
--- ORDER BY S1.B,S1.C,S1.A;
-
--- SELECT S1.B
--- FROM Sailors S1, Sailors S2
--- WHERE S1.A = S2.B;
+SELECT *
+FROM Reserves;
 
 SELECT *
-FROM Sailors S1, Boats B, Sailors S2
-WHERE S1.A =  S2.A AND S1.A=B.E AND B.E=S2.A AND S1.A>=8000;
+FROM Reserves
+WHERE Sailors.A = Reserves.G;
+
+SELECT S.A, S.C, S.B
+FROM Sailors S;
+
+SELECT *
+FROM Sailors S
+ORDER BY S.B, S.C, S.A;
+
+SELECT S.A
+FROM Sailors S
+WHERE S.A < 10000;
+
+SELECT DISTINCT R.H
+FROM Reserves R
+WHERE R.G=1;
+
+SELECT DISTINCT Sailors.A
+FROM Sailors, Reserves
+WHERE Sailors.A = Reserves.G;
+
+SELECT *
+FROM Sailors S1, Sailors S2
+WHERE S1.A = S2.A
+ORDER BY S1.B,S1.C,S1.A;
+
+SELECT S1.B
+FROM Sailors S1, Sailors S2
+WHERE S1.A = S2.B;
+
+-- SELECT *
+-- FROM Sailors S1, Boats B, Sailors S2
+-- WHERE S1.A =  S2.A AND S1.A=B.E AND B.E=S2.A AND S1.A>=8000;
 
 -- SELECT *
 -- FROM Sailors S1, Reserves R, Sailors S2
