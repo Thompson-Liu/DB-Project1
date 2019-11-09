@@ -1,7 +1,7 @@
 package physicalOperator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
@@ -20,22 +20,22 @@ public class SMJ extends Operator {
 	private int count;   // store the number of lines of ts
 	private ArrayList<String> schema;
 	private boolean useExternal;
-	
+
 	private Operator leftSortOp;
 	private Operator rightSortOp;
 	private ArrayList<String> leftSchema;
 	private ArrayList<String> rightSchema;
-	
+
 	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
 	 * each other for the two given tuples, and false otherwise. */
 	private int ensureEqual(Tuple leftTup, Tuple rightTup) {
 
-		int result = 0; 
-		int count = 0;
+		int result= 0;
+		int count= 0;
 		while (count < leftColList.size() && result == 0) {
-			result = leftTup.getData(leftSchema.indexOf(leftColList.get(count))) - rightTup
-					.getData(rightSchema.indexOf(rightColList.get(count)));
-			count++;
+			result= leftTup.getData(leftSchema.indexOf(leftColList.get(count))) - rightTup
+				.getData(rightSchema.indexOf(rightColList.get(count)));
+			count++ ;
 		}
 		return result;
 	}
@@ -54,8 +54,8 @@ public class SMJ extends Operator {
 		System.out.println("SMJ");
 		leftOp= left;
 		rightOp= right;
-		this.useExternal = useExternal;
-		
+		this.useExternal= useExternal;
+
 		if (useExternal) {
 			leftSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, leftOp.getTableName());
 			rightSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
@@ -63,18 +63,18 @@ public class SMJ extends Operator {
 			leftSortOp= new SortOperator(leftOp, leftColList);
 			rightSortOp= new SortOperator(rightOp, rightColList);
 		}
-		
-		tr = leftSortOp.getNextTuple();
 
-		ts = rightSortOp.getNextTuple();
-		gs = null;
-		ptr = 0;
-		count = 0;
+		tr= leftSortOp.getNextTuple();
+
+		ts= rightSortOp.getNextTuple();
+		gs= null;
+		ptr= 0;
+		count= 0;
 		this.schema= new ArrayList<String>(left.schema());
 		this.schema.addAll(right.schema());
 
-		leftSchema = leftSortOp.schema();
-		rightSchema = rightSortOp.schema();
+		leftSchema= leftSortOp.schema();
+		rightSchema= rightSortOp.schema();
 	}
 
 	@Override
@@ -82,34 +82,34 @@ public class SMJ extends Operator {
 		while (tr != null && ts != null) {
 			if (gs == null) {
 				while (ensureEqual(tr, ts) < 0) {
-					tr = leftSortOp.getNextTuple();
-					if (tr == null) { 
+					tr= leftSortOp.getNextTuple();
+					if (tr == null) {
 						if (useExternal) {
-							( (ExternalSortOperator)leftSortOp ).deleteFile();
-							( (ExternalSortOperator)rightSortOp ).deleteFile();
+							((ExternalSortOperator) leftSortOp).deleteFile();
+							((ExternalSortOperator) rightSortOp).deleteFile();
 						}
-						return null; 
-					} 
+						return null;
+					}
 				}
 
 				while (ensureEqual(tr, ts) > 0) {
-					ts = rightSortOp.getNextTuple();
-					if (ts == null) { 
+					ts= rightSortOp.getNextTuple();
+					if (ts == null) {
 						if (useExternal) {
-							( (ExternalSortOperator)leftSortOp ).deleteFile();
-							( (ExternalSortOperator)rightSortOp ).deleteFile();
+							((ExternalSortOperator) leftSortOp).deleteFile();
+							((ExternalSortOperator) rightSortOp).deleteFile();
 						}
-						return null; 
-					} 
-					count++;
+						return null;
+					}
+					count++ ;
 				}
-				gs = new Tuple(ts.getTuple());
-				ptr = count;
+				gs= new Tuple(ts.getTuple());
+				ptr= count;
 			}
 
-			Tuple joinedTuple = null;
+			Tuple joinedTuple= null;
 			if (ensureEqual(tr, ts) == 0) {
-				joinedTuple = new Tuple();
+				joinedTuple= new Tuple();
 
 				// Generate the combined tuple result
 				for (int j= 0; j < leftOp.schema().size(); j++ ) {
@@ -119,37 +119,37 @@ public class SMJ extends Operator {
 					joinedTuple.addData(ts.getData(j));
 				}
 
-				ts = rightSortOp.getNextTuple();
-				count++;
+				ts= rightSortOp.getNextTuple();
+				count++ ;
 				if (ts == null || ensureEqual(tr, ts) != 0) {
-					tr = leftSortOp.getNextTuple();
-					gs = null;
+					tr= leftSortOp.getNextTuple();
+					gs= null;
 
-					if(useExternal) {
-						( (ExternalSortOperator)rightSortOp ).resetIndex(ptr);
+					if (useExternal) {
+						((ExternalSortOperator) rightSortOp).resetIndex(ptr);
 					} else {
-						( (SortOperator)rightSortOp ).resetIndex(ptr);
+						((SortOperator) rightSortOp).resetIndex(ptr);
 					}
-					ts = rightSortOp.getNextTuple();
-					count = ptr;
+					ts= rightSortOp.getNextTuple();
+					count= ptr;
 				}
 				return joinedTuple;
-			} 
-			
-			if(useExternal) {
-				( (ExternalSortOperator)rightSortOp ).resetIndex(ptr);
-			} else {
-				( (SortOperator)rightSortOp ).resetIndex(ptr);
 			}
-			ts = rightSortOp.getNextTuple();
-			count = ptr;
 
-			tr = leftSortOp.getNextTuple();
-			gs = null;
+			if (useExternal) {
+				((ExternalSortOperator) rightSortOp).resetIndex(ptr);
+			} else {
+				((SortOperator) rightSortOp).resetIndex(ptr);
+			}
+			ts= rightSortOp.getNextTuple();
+			count= ptr;
+
+			tr= leftSortOp.getNextTuple();
+			gs= null;
 		}
-		if(useExternal) {
-			( (ExternalSortOperator)leftSortOp ).deleteFile();
-			( (ExternalSortOperator)rightSortOp ).deleteFile();
+		if (useExternal) {
+			((ExternalSortOperator) leftSortOp).deleteFile();
+			((ExternalSortOperator) rightSortOp).deleteFile();
 		}
 		return null;
 	}

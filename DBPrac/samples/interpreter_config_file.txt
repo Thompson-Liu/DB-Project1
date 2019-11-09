@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 /Users/yutingyang/Desktop/DBPrac_project/DB-Project1/DBPrac/samples/input
 /Users/yutingyang/Desktop/DBPrac_project/DB-Project1/DBPrac/samples/output
 /Users/yutingyang/Desktop/DBPrac_project/DB-Project1/DBPrac/samples/tempdir
+=======
+/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/input
+/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/output
+/Users/ziweigu/Desktop/DB-Project1/DBPrac/samples/tempdir
+>>>>>>> 08093a4e8076a53959a5c60b865ed62bc41a0c0f
 1
 1

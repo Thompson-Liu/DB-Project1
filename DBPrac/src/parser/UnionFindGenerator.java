@@ -1,15 +1,11 @@
-
-/**
- * Separate the expression with column listed and the rest
- */
 package parser;
 
+import dataStructure.UnionFind;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
 import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.DoubleValue;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.InverseExpression;
@@ -46,57 +42,47 @@ import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-public class IndexConditionSeperator implements ExpressionVisitor {
-	private String indexColumn;
-	private Expression original;
-	private int lowKey;
-	private int highKey;
+public class UnionFindGenerator implements ExpressionVisitor {
+
+	private UnionFind uf;
+	private int tmpInt;
 	private boolean flag;
-	private String tableName;
-	private boolean change= false;
-	private boolean applyToAll= true;
 
-	public IndexConditionSeperator(String tableName, String column, Expression expr) {
-		original= expr;
-		lowKey= Integer.MIN_VALUE;
-		highKey= Integer.MAX_VALUE;
-		this.indexColumn= column;
-		this.tableName= tableName;
-
-		original.accept(this);
+	public UnionFindGenerator() {
+		uf= new UnionFind();
 	}
 
-	public int getLowKey() {
-		return lowKey;
-	}
-
-	public int getHighKey() {
-		return highKey;
-	}
-
-	public boolean changed() {
-		return change;
+	public UnionFind getUnionFind() {
+		return uf;
 	}
 
 	@Override
 	public void visit(NullValue arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(Function arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(InverseExpression arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(JdbcParameter arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(DoubleValue arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
@@ -107,238 +93,139 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 
 	@Override
 	public void visit(DateValue arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(TimeValue arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(TimestampValue arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(Parenthesis arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(StringValue arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Addition arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Division arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Multiplication arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(Subtraction arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(AndExpression arg0) {
-		flag= false;
+		// TODO Auto-generated method stub
 
-		arg0.getLeftExpression().accept(this);
-		if (flag) {
-			arg0.setLeftExpression(new NullValue());
-			flag= false;
-			change= true;
-		}
-
-		arg0.getRightExpression().accept(this);
-		if (flag) {
-			arg0.setRightExpression(new NullValue());
-			flag= false;
-			change= true;
-		}
 	}
 
 	@Override
 	public void visit(OrExpression arg0) {
-		flag= false;
-		arg0.getLeftExpression().accept(this);
-		if (flag) {
-			arg0.setLeftExpression(new NullValue());
-			flag= false;
-			change= true;
-		}
-		flag= false;
-		arg0.getRightExpression().accept(this);
-		if (flag) {
-			arg0.setRightExpression(new NullValue());
-			flag= false;
-			change= true;
-		}
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(Between arg0) {
+		// TODO Auto-generated method stub
 
-	}
-
-	/** helper function
-	 * 
-	 * @param left: left expression
-	 * @param right: right expression
-	 * @return */
-	private Integer checkLeft(Expression left, Expression right) {
-		if ((left instanceof Column) && (right instanceof DoubleValue || right instanceof LongValue)) {
-			if (((Column) left).getColumnName().equals(indexColumn) &&
-				((Column) left).getTable().getName().equals(tableName)) {
-				if (right instanceof DoubleValue) { return (int) ((DoubleValue) right).getValue(); }
-				return (int) ((LongValue) right).getValue();
-			}
-		}
-		return null;
-	}
-
-	private Integer checkRight(Expression left, Expression right) {
-		if ((left instanceof DoubleValue) && (right instanceof Column)) {
-			if (((Column) right).getColumnName() == indexColumn &&
-				(((Column) right).getTable().getName() == tableName)) {
-				if (left instanceof DoubleValue) {
-					return (int) ((DoubleValue) left).getValue();
-				}
-
-				else {
-					return (int) ((LongValue) left).getValue();
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override
 	public void visit(EqualsTo arg0) {
-		Expression left= arg0.getLeftExpression();
-		Expression right= arg0.getRightExpression();
-		Integer value;
-		if ((value= checkLeft(left, right)) != null) {
-			lowKey= Math.max(lowKey, value);
-			highKey= Math.min(highKey, value);
-			flag= true;
-			change= true;
+		// TODO Auto-generated method stub
 
-		} else if ((value= checkRight(left, right)) != null) {
-			lowKey= Math.max(lowKey, value);
-			highKey= Math.min(value, highKey);
-			flag= true;
-			change= true;
-		} else {
-			applyToAll= false;
-		}
 	}
 
 	@Override
 	public void visit(GreaterThan arg0) {
-		Expression left= arg0.getLeftExpression();
-		Expression right= arg0.getRightExpression();
-		Integer value;
-		if ((value= checkLeft(left, right)) != null) {
-			lowKey= Math.max(lowKey, value + 1);
-			flag= true;
-			change= true;
-		} else if ((value= checkRight(left, right)) != null) {
-			highKey= Math.min(value - 1, highKey);
-			flag= true;
-			change= true;
-		} else {
-			applyToAll= false;
-		}
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(GreaterThanEquals arg0) {
-		Expression left= arg0.getLeftExpression();
-		Expression right= arg0.getRightExpression();
-		Integer value;
-		if ((value= checkLeft(left, right)) != null) {
-			lowKey= Math.max(lowKey, value);
-			flag= true;
-			change= true;
-		} else if ((value= checkRight(left, right)) != null) {
-			highKey= Math.min(value, highKey);
-			flag= true;
-			change= true;
-		} else {
-			applyToAll= false;
-		}
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(InExpression arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(IsNullExpression arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void visit(LikeExpression arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(MinorThan arg0) {
-		Expression left= arg0.getLeftExpression();
-		Expression right= arg0.getRightExpression();
-		Integer value;
-		if ((value= checkLeft(left, right)) != null) {
-			highKey= Math.min(value - 1, highKey);
-			flag= true;
-			change= true;
-		} else if ((value= checkRight(left, right)) != null) {
-			lowKey= Math.max(lowKey, value + 1);
-			flag= true;
-			change= true;
-		} else {
-			applyToAll= false;
-		}
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(MinorThanEquals arg0) {
-		Expression left= arg0.getLeftExpression();
-		Expression right= arg0.getRightExpression();
-		Integer value;
-		if ((value= checkLeft(left, right)) != null) {
-			highKey= Math.min(value, highKey);
-			flag= true;
-			change= true;
-		} else if ((value= checkRight(left, right)) != null) {
-			lowKey= Math.max(lowKey, value);
-			flag= true;
-			change= true;
-		} else {
-			applyToAll= false;
-		}
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(NotEqualsTo arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(Column arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void visit(SubSelect arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
@@ -402,8 +289,4 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 
 	}
 
-	public boolean applyAll() {
-		// TODO Auto-generated method stub
-		return applyToAll;
-	}
 }
