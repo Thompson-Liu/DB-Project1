@@ -27,10 +27,10 @@
 -- FROM Sailors, Reserves
 -- WHERE Sailors.A = Reserves.G;
 
-SELECT *
-FROM Sailors S1, Sailors S2
-WHERE S1.A = S2.A
-ORDER BY S1.B,S1.C,S1.A;
+-- SELECT *
+-- FROM Sailors S1, Sailors S2
+-- WHERE S1.A = S2.A
+-- ORDER BY S1.B,S1.C,S1.A;
 
 -- SELECT S1.B
 -- FROM Sailors S1, Sailors S2
@@ -38,64 +38,64 @@ ORDER BY S1.B,S1.C,S1.A;
 
 SELECT *
 FROM Sailors S1, Boats B, Sailors S2
-WHERE S1.A =  S2.A AND S1.A=B.E AND B.E=S2.A AND S1.A=10000;
+WHERE S1.A =  S2.A AND S1.A=B.E AND B.E=S2.A AND S1.A>=8000;
 
-SELECT *
-FROM Sailors S1, Reserves R, Sailors S2
-WHERE S1.A = R.G AND R.G=S2.A AND R.G=164;
+-- SELECT *
+-- FROM Sailors S1, Reserves R, Sailors S2
+-- WHERE S1.A = R.G AND R.G=S2.A AND R.G=164;
 
-SELECT S1.A
-FROM Sailors S1, Reserves R, Sailors S2
-WHERE S1.A = R.G AND R.G=S2.A AND S1.A>=9000;
+-- SELECT S1.A
+-- FROM Sailors S1, Reserves R, Sailors S2
+-- WHERE S1.A = R.G AND R.G=S2.A AND S1.A>=9000;
 
-SELECT Sailors.B
-FROM Sailors
-WHERE Sailors.A > 9000 AND 1>3;
+-- SELECT Sailors.B
+-- FROM Sailors
+-- WHERE Sailors.A > 9000 AND 1>3;
 
-SELECT Sailors.B
-FROM Sailors
-WHERE Sailors.A = 10000;
+-- SELECT Sailors.B
+-- FROM Sailors
+-- WHERE Sailors.A = 10000;
 
-SELECT Sailors.B
-FROM Sailors
-WHERE Sailors.A > 9000;
-
-
-SELECT R.G
-FROM Reserves R
-ORDER BY R.G;
-
-SELECT DISTINCT Reserves.H
-FROM Reserves;
-
-SELECT DISTINCT S.A
-FROM Sailors S, Boats B
-WHERE S.A < 2;
-
-SELECT *
-FROM Reserves
-ORDER BY Reserves.H;
-
-SELECT DISTINCT S.C
-FROM Sailors S
-WHERE S.B>100
-ORDER BY S.C;
-
-SELECT *
-FROM Sailors;
+-- SELECT Sailors.B
+-- FROM Sailors
+-- WHERE Sailors.A > 9000;
 
 
-SELECT *
-FROM Sailors S1, Sailors S2
-WHERE S1.A < S2.A;
-SELECT DISTINCT R.G
-FROM Reserves R;
+-- SELECT R.G
+-- FROM Reserves R
+-- ORDER BY R.G;
+
+-- SELECT DISTINCT Reserves.H
+-- FROM Reserves;
+
+-- SELECT DISTINCT S.A
+-- FROM Sailors S, Boats B
+-- WHERE S.A < 2;
+
+-- SELECT *
+-- FROM Reserves
+-- ORDER BY Reserves.H;
+
+-- SELECT DISTINCT S.C
+-- FROM Sailors S
+-- WHERE S.B>100
+-- ORDER BY S.C;
+
+-- SELECT *
+-- FROM Sailors;
 
 
-SELECT A.A, B.B, R.H
-FROM Sailors A, Sailors B, Reserves R
-WHERE A.A<1000 AND A.A = B.G
-ORDER BY B.B;
+-- SELECT *
+-- FROM Sailors S1, Sailors S2
+-- WHERE S1.A < S2.A;
+-- SELECT DISTINCT R.G
+-- FROM Reserves R;
+
+
+-- SELECT A.A, B.B, R.H
+-- FROM Sailors A, Sailors B, Reserves R
+-- WHERE A.A<1000 AND A.A = B.G
+-- ORDER BY B.B;
 
 
 

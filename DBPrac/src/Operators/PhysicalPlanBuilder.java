@@ -171,6 +171,7 @@ public class PhysicalPlanBuilder {
 			if (sort[0] == 0) {
 				immOp= new SMJ(0, leftChildOp, rightChildOp, joinLogOp.getJoinExpression(), tempDir, false);
 			} else {
+				System.out.println(joinLogOp.getJoinExpression());
 				immOp= new SMJ(sort[1], leftChildOp, rightChildOp, joinLogOp.getJoinExpression(), tempDir, true);
 			}
 			break;
