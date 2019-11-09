@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+/** The class that implements the deserialization of a tree. */
 public class Deserializer {
 
 	private FileInputStream fin;
