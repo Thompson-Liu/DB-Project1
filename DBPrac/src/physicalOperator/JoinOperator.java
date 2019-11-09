@@ -20,7 +20,6 @@ public class JoinOperator extends Operator {
 	private Expression joinExp;
 	private boolean resetFlag= true;
 	private Tuple left;
-	private HashMap<String, String> tableAlias;
 
 	/** Constructor to create JOIN operator
 	 * 
@@ -28,17 +27,15 @@ public class JoinOperator extends Operator {
 	 * @param RightOperator the right operator of join
 	 * @param expression the where expression to select tuple
 	 * @param tableAlias hashmap of <tablename,alias> */
-	public JoinOperator(Operator LeftOperator, Operator RightOperator,
-		Expression expression, HashMap<String, String> tableAlias) {
+	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
 		joinExp= expression;
 		
 		schema = (ArrayList<String>) LeftOperator.schema().clone();
 		schema.addAll(RightOperator.schema());
 	
-		tableName = LeftOperator.getTableName() + " " + RightOperator.getTableName();
+		tableName = LeftOperator.getTableName() + "," + RightOperator.getTableName();
 		leftOperator= LeftOperator;
 		rightOperator= RightOperator;
-		this.tableAlias= tableAlias;
 	}
 
 	/** reset both left operator and right operator to start from beginning */
@@ -66,7 +63,7 @@ public class JoinOperator extends Operator {
 		Tuple next= null;
 		boolean flag= true;
 		Tuple right;
-		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(), rightOperator.schema(), tableAlias);
+		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(), rightOperator.schema());
 		
 		while (flag) {
 			if (resetFlag) {

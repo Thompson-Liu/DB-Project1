@@ -12,7 +12,6 @@ public class SortOperator extends Operator {
 	private DataTable buffer;
 	private int ptr;
 	
-
 	/** @param childOp childOp is the child operator, e.g. ProjectOperator or SelectOperator
 	 * @param colList colList is the list of column names to sort data by */
 	public SortOperator(Operator childOp, List<String> colList) {
@@ -64,5 +63,4 @@ public class SortOperator extends Operator {
 	public String getTableName() {
 		return buffer.getTableName();
 	}
-
 }

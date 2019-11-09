@@ -40,10 +40,9 @@ public class BNLJ extends Operator {
 	 * @param outer    	 outer operator 
 	 * @param inner		 inner operator 
 	 * @param joinExp    join expression
-	 * @param tableAlias 	the alias of the table 
+	 *
 	 */
-	public BNLJ(int numPages, Operator outer, Operator inner, 
-			Expression joinExp, HashMap<String, String> tableAlias) {
+	public BNLJ(int numPages, Operator outer, Operator inner, Expression joinExp) {
 		numOuters = (int) Math.floor(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
 		buffer = new Buffer(numOuters);
 
@@ -55,8 +54,7 @@ public class BNLJ extends Operator {
 		schema.addAll(inner.schema());
 		
 		tableName = outer.getTableName() + "," + inner.getTableName();
-		alias = tableAlias;
-		eval = new EvaluateWhere(joinCond, outer.schema(), inner.schema(), alias);
+		eval = new EvaluateWhere(joinCond, outer.schema(), inner.schema());
 	}
 
 	/**

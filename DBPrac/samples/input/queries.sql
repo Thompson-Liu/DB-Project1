@@ -1,12 +1,6 @@
-<<<<<<< HEAD
--- SELECT *
--- FROM Sailors, Boats B
--- WHERE Sailors.A>9000 AND Boats.D<50;
-=======
 SELECT *
-FROM Sailors
-WHERE Sailors.A<10000 AND Sailors.A>=10000;
->>>>>>> 14465cd7c647b3a04e8227935e6cbac70ceb67cb
+FROM Sailors S
+WHERE S.A<=10000 AND S.A>=10000;
 
 -- SELECT *
 -- FROM testRelation0
@@ -24,9 +18,9 @@ WHERE Sailors.A<10000 AND Sailors.A>=10000;
 
 
 SELECT *
-FROM Sailors S, Boats
-WHERE S.A=3202 AND S.A>=400 AND Boats.D<50
-ORDER BY Sailors.A, Sailors.B;
+FROM Sailors S, Boats B
+WHERE S.A=3202 AND S.A>=400 AND B.D<50
+ORDER BY S.A, S.B;
 
 -- SELECT *
 -- FROM Sailors

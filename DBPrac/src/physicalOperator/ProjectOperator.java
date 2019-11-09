@@ -13,7 +13,6 @@ public class ProjectOperator extends Operator {
 
 	private Operator childOp;
 	private ArrayList<String> selectColumns;
-	private HashMap<String, String> tableAlias;
 	private String tableName;
 
 	/** The constructor for ProjectOperator
@@ -21,11 +20,10 @@ public class ProjectOperator extends Operator {
 	 * @param operator The child operator of ProjectOperator, either a ScanOperator or a SelectOperator
 	 * @param list The list of items to be projected upon
 	 * @param tableAlias The hashmap that maps the name of the table to the alias associated */
-	public ProjectOperator(Operator operator, List<SelectItem> list, HashMap<String, String> tableAlias) {
+	public ProjectOperator(Operator operator, List<SelectItem> list) {
 		childOp= operator;
-		selectColumns= new ArrayList<String>(list.size());
-		this.tableAlias= tableAlias;
-		this.tableName=operator.getTableName();
+		selectColumns = new ArrayList<String>(list.size());
+		this.tableName = operator.getTableName();
 
 		for (SelectItem item : list) {
 			// consider the case of Select A.S, B.W, *
@@ -36,12 +34,6 @@ public class ProjectOperator extends Operator {
 				String[] tableCol= tableColCom.trim().split("\\.");
 				String column= tableCol[1];
 				String tableName= tableCol[0];
-
-				// if the name has corresponding alias,
-				// then change the projection table name to
-				if (this.tableAlias.containsKey(tableName)) {
-					tableName= this.tableAlias.get(tableName);
-				}
 				selectColumns.add(tableName + "." + column);
 			}
 		}

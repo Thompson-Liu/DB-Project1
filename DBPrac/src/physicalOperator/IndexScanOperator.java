@@ -18,7 +18,6 @@ public class IndexScanOperator extends ScanOperator {
 
 	private String tableName;
 	private String colName;
-	private ArrayList<String> schema;
 	private FileInputStream fin;
 	private FileChannel fc;
 	private ByteBuffer buffer;
@@ -41,12 +40,14 @@ public class IndexScanOperator extends ScanOperator {
 	public IndexScanOperator(String tableName, String alias, String index, String indexFile, boolean isClustered,
 		int lowkey,
 		int highkey) throws IOException {
+		
 		super(tableName, alias);
+
 		fin= new FileInputStream(indexFile);
 		fc= fin.getChannel();
 		buffer= ByteBuffer.allocate(4096);
-		this.tableName= tableName;
-		this.colName= index;
+		
+		this.colName = (alias == "") ? tableName + "." + index : alias + "." + index;
 		this.isClustered= isClustered;
 		this.lo= lowkey;
 		this.hi= highkey;
@@ -54,7 +55,7 @@ public class IndexScanOperator extends ScanOperator {
 		this.startRid= dsl.getRid(lo, hi);
 		Catalog catalog= Catalog.getInstance();
 		this.reader= new BinaryTupleReader(catalog.getDir(tableName)); // Dealing with alias?
-		this.schema= catalog.getSchema(tableName); // Not sure
+		
 		this.ptr= 0;
 		this.repo= new ArrayList<int[]>();
 		if (isClustered) {
@@ -92,7 +93,7 @@ public class IndexScanOperator extends ScanOperator {
 	public Tuple getNextTuple() {
 		if (isClustered) {
 			Tuple tp= reader.readNextTuple(); // assumes it's reading sorted data file
-			if (tp == null || tp.getData(schema.indexOf(colName)) > hi) return null;
+			if (tp == null || tp.getData(super.schema().indexOf(colName)) > hi) return null;
 			return tp;
 		}
 		if (ptr >= repo.size()) return null;

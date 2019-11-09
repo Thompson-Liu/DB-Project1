@@ -47,11 +47,11 @@ public class SMJ extends Operator {
 	 * @param alias: the mapping between table names and aliases
 	 * @param dir: the prefix of the directory that stores the temporary files generated during external
 	 * sort. */
-	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, HashMap<String, String> alias,
-			String dir, boolean useExternal) {
-		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName(), alias);
+	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, String dir, boolean useExternal) {
+		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName());
 		leftColList= evalJoin.getJoinAttributesLeft();
 		rightColList= evalJoin.getJoinAttributesRight();
+
 		leftOp= left;
 		rightOp= right;
 		this.useExternal = useExternal;
@@ -60,12 +60,7 @@ public class SMJ extends Operator {
 			leftSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, leftOp.getTableName());
 			rightSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
 		} else {
-//			System.out.println("table name: " + leftOp.getTableName());
-//			System.out.println("table col list: " + leftColList.toString());
 			leftSortOp= new SortOperator(leftOp, leftColList);
-			
-//			System.out.println("table name: " + rightOp.getTableName());
-//			System.out.println("table col list: " + rightColList.toString());
 			rightSortOp= new SortOperator(rightOp, rightColList);
 		}
 		

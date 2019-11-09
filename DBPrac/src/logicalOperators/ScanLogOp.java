@@ -7,11 +7,11 @@ import Operators.PhysicalPlanBuilder;
 public class ScanLogOp extends LogicalOperator {
 
 	private String tableName;
-	private String aliasName;
+	private String alias;
 
-	public ScanLogOp(String table, String alias) {
+	public ScanLogOp(String table, String aliasName) {
 		tableName= table;
-		aliasName= alias;
+		alias = aliasName;
 	}
 
 	@Override
@@ -22,9 +22,9 @@ public class ScanLogOp extends LogicalOperator {
 	public String getTableName() {
 		return tableName;
 	}
-
-	public String getAliasName() {
-		return aliasName;
+	
+	public String getAliasName( ) {
+		return alias;
 	}
 
 	@Override

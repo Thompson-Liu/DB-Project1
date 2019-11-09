@@ -34,12 +34,8 @@ public class LogicalOperatorFactory {
 	 * @return operator
 	 */
 	public LogicalOperator generateQueryPlan(PlainSelect plainSelect) {
-
-		// alias ->tableName
-		// (key: tableName, value: alias)
-		HashMap<String, String> tableAlias= new HashMap<String, String>();
-		String aliasName= "";
 		
+		String aliasName = "";
 		String fromLeft = plainSelect.getFromItem().toString();
 		Join firstJoin = new Join();
 		firstJoin.setRightItem(plainSelect.getFromItem());
@@ -50,22 +46,21 @@ public class LogicalOperatorFactory {
 		LogicalOperator intOp;
 		if (plainSelect.getJoins() != null) {
 			joinList.addAll(plainSelect.getJoins());
-			intOp = join(plainSelect, joinList, tableAlias);
+			intOp = join(plainSelect, joinList);
 		} else {
 			if(plainSelect.getFromItem().getAlias()!=null) {
-				String tempAlias = plainSelect.getFromItem().getAlias().toString();
-				String tempTable= plainSelect.getFromItem().toString().replace("AS "+tempAlias,"").trim();
-				tableAlias.put(tempTable,tempAlias);
 				aliasName = plainSelect.getFromItem().getAlias().toString();
-
+				String tempTable = fromLeft.replace("AS " + aliasName, "").trim();
+				intOp = new SelectLogOp(plainSelect.getWhere(), new ScanLogOp(tempTable, aliasName));
+			} else {
+				intOp = new SelectLogOp(plainSelect.getWhere(), new ScanLogOp(fromLeft, aliasName));
 			}
-			intOp = new SelectLogOp(plainSelect.getWhere(), new ScanLogOp(fromLeft, aliasName), tableAlias);
 		}
 
 		// check select clause
 		List<SelectItem> selectItems= plainSelect.getSelectItems();
 		if (!(selectItems.get(0) instanceof AllColumns)) {
-			intOp= new ProjectLogOp(intOp, selectItems, tableAlias);
+			intOp= new ProjectLogOp(intOp, selectItems);
 		}
 		Distinct d= plainSelect.getDistinct();
 		List<OrderByElement> tmpList= plainSelect.getOrderByElements();
@@ -73,8 +68,8 @@ public class LogicalOperatorFactory {
 			List<String> orderByList= new ArrayList<String>(tmpList.size());
 			for (OrderByElement x : tmpList) {
 				String[] nameCol = x.toString().split("\\.");
-				String tableName =  tableAlias.containsKey(nameCol[0]) ? tableAlias.get(nameCol[0]) : nameCol[0] ;
-				String full = tableName+"."+nameCol[1];
+//				String tableName =  tableAlias.containsKey(nameCol[0]) ? tableAlias.get(nameCol[0]) : nameCol[0] ;
+				String full = nameCol[0] + "." + nameCol[1];
 				orderByList.add(full);  
 			}
 			intOp= new SortLogOp(intOp, orderByList);
@@ -96,38 +91,34 @@ public class LogicalOperatorFactory {
 	 * 
 	 * @param plainSelect
 	 * @param joins
-	 * @param tableAlias
 	 * @return
 	 */
-	private LogicalOperator join(PlainSelect plainSelect, List<Join> joins, HashMap<String, String> tableAlias) {
+	private LogicalOperator join(PlainSelect plainSelect, List<Join> joins) {
 		if (joins.size() == 1) {
 			Join res= joins.get(0);
 			LogicalOperator scanOp;
-			if(res.getRightItem().getAlias()!=null) {
+			if(res.getRightItem().getAlias() != null) {
 				String tempAlias = res.getRightItem().getAlias().toString();
-				String tempTable= res.getRightItem().toString().replace("AS "+tempAlias,"").trim();
-				tableAlias.put(tempTable,tempAlias);
-				scanOp= new ScanLogOp(res.getRightItem().toString(),tempAlias);
+				String tempTable = res.getRightItem().toString().replace("AS " + tempAlias, "").trim();
+				scanOp= new ScanLogOp(tempTable, tempAlias);
 			}
 			else {
-				scanOp= new ScanLogOp(res.getRightItem().toString(),"");
+				scanOp= new ScanLogOp(res.getRightItem().toString(), "");
 			}
 
-			return new SelectLogOp(plainSelect.getWhere(), scanOp, tableAlias);
+			return new SelectLogOp(plainSelect.getWhere(), scanOp);
 		}
 		Join rightJoin= joins.remove(joins.size() - 1);
-		Expression whereExp= plainSelect.getWhere();
+		Expression whereExp = plainSelect.getWhere();
 		LogicalOperator rightOp;
 		if(rightJoin.getRightItem().getAlias()!=null) {
 			String tempAlias = rightJoin.getRightItem().getAlias().toString();
-			String tempTable= rightJoin.getRightItem().toString().replace("AS "+tempAlias,"").trim();
-			tableAlias.put(tempTable,tempAlias);
-			
-			rightOp = new ScanLogOp(tempTable,tempAlias);
+			String tempTable = rightJoin.getRightItem().toString().replace("AS " + tempAlias, "").trim();
+			rightOp = new ScanLogOp(tempTable, tempAlias);
 		}else {
-			rightOp = new ScanLogOp(rightJoin.toString(),"");
+			rightOp = new ScanLogOp(rightJoin.toString(), "");
 		}
-		SelectLogOp rightOperator= new SelectLogOp(whereExp, rightOp, tableAlias);
-		return (new JoinLogOp(join(plainSelect, joins, tableAlias), rightOperator, whereExp, tableAlias));
+		SelectLogOp rightOperator= new SelectLogOp(whereExp, rightOp);
+		return (new JoinLogOp(join(plainSelect, joins), rightOperator, whereExp));
 	}
 }

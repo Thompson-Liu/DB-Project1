@@ -13,8 +13,6 @@ public class SelectOperator extends Operator {
 
 	private Expression exp;
 	private Operator childOp;
-//	private DataTable data;
-	private HashMap<String, String> tableAlias;
 	private String tableName;
 	private ArrayList<String> schema;
 
@@ -23,11 +21,10 @@ public class SelectOperator extends Operator {
 	 * @param expression The expression that will be used to select tuple
 	 * @param op The child operrator that is asscoaited with SelectOperator
 	 * @param tableAlias The alias of the tableTable that is being selected by SelectOperator */
-	public SelectOperator(Expression expression, Operator op, HashMap<String, String> tableAlias) {
+	public SelectOperator(Expression expression, Operator op) {
 		exp= expression;
 		childOp= op;
 		this.schema= op.schema();
-		this.tableAlias= tableAlias;
 		tableName= childOp.getTableName();
 	}
 
@@ -35,8 +32,7 @@ public class SelectOperator extends Operator {
 	@Override
 	public Tuple getNextTuple() {
 		Tuple next;
-		EvaluateWhere exprVisitor= new EvaluateWhere(exp, new ArrayList<String>(),
-			childOp.schema(), tableAlias);
+		EvaluateWhere exprVisitor= new EvaluateWhere(exp, new ArrayList<String>(), childOp.schema());
 		while ((next= childOp.getNextTuple()) != null) {
 			if ((next= exprVisitor.evaluate(null, next)) != null) { return next; }
 		}

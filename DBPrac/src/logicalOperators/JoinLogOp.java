@@ -9,17 +9,12 @@ public class JoinLogOp extends LogicalOperator{
 	
 	private Expression joinExp;
 	private LogicalOperator left;
-	private LogicalOperator right;
-	private HashMap<String, String> tableAlias;
+	private LogicalOperator right;	
 	
-	
-	public JoinLogOp(LogicalOperator leftOp, LogicalOperator rightOp, 
-			Expression expr, HashMap<String, String> alias) {
-		
+	public JoinLogOp(LogicalOperator leftOp, LogicalOperator rightOp, Expression expr) {
 		joinExp = expr;
 		left = leftOp;
 		right = rightOp;
-		tableAlias = alias;
 	}
 	
 	public LogicalOperator[] getChildren() {
@@ -32,10 +27,6 @@ public class JoinLogOp extends LogicalOperator{
 
 	public LogicalOperator getRightChild() {
 		return right;
-	}
-	
-	public HashMap<String, String> getAlias() {
-		return tableAlias;
 	}
 	
 	public Expression getJoinExpression() {

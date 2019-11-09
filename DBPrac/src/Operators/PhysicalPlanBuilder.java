@@ -90,8 +90,8 @@ public class PhysicalPlanBuilder {
 
 	public void visit(ScanLogOp scanLop) throws IOException {		
 		Catalog catalog = Catalog.getInstance();
-		String tmpName =scanLop.getTableName();
-		String tableName = tmpName.split("AS")[0].trim();
+		String tableName = scanLop.getTableName();
+//		String tableName = tmpName.split("AS")[0].trim();
 		String alias = scanLop.getAliasName();
 		String colName = catalog.getIndexCol(tableName);
 
@@ -100,13 +100,19 @@ public class PhysicalPlanBuilder {
 			immOp= new ScanOperator(tableName, alias);
 			return;
 		}
-		IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, alias, colName, indexExpr);
+		
+		IndexConditionSeperator indexSep;
+		if (alias == "") {
+			indexSep = new IndexConditionSeperator(tableName, colName, indexExpr);
+		} else {
+			indexSep = new IndexConditionSeperator(alias, colName, indexExpr);
+
+		}
 		int lowKey= indexSep.getLowKey();
 		int highKey= indexSep.getHighKey();
 
 		// If the rest expressions after parsing is the same as before, then no index is applicable
 		// A full-scan operator is generated
-		
 		if (!indexSep.changed()) {
 			immOp= new ScanOperator(tableName, alias);
 			return;
@@ -119,12 +125,12 @@ public class PhysicalPlanBuilder {
 	public void visit(SelectLogOp selectLop) {
 		indexExpr= selectLop.getSelectExpr();
 		selectLop.getChildren()[0].accept(this);
-		immOp= new SelectOperator(indexExpr, immOp, selectLop.getAlias());
+		immOp= new SelectOperator(indexExpr, immOp);
 	}
 
 	public void visit(ProjectLogOp projectLop) {
 		projectLop.getChildren()[0].accept(this);
-		immOp= new ProjectOperator(immOp, projectLop.getItems(), projectLop.getAlias());
+		immOp= new ProjectOperator(immOp, projectLop.getItems());
 	}
 
 	public void visit(SortLogOp sortLop) {
@@ -156,20 +162,16 @@ public class PhysicalPlanBuilder {
 
 		switch (join[0]) {
 		case 0:
-			immOp= new JoinOperator(leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
-				joinLogOp.getAlias());
+			immOp= new JoinOperator(leftChildOp, rightChildOp, joinLogOp.getJoinExpression());
 			break;
 		case 1:
-			immOp= new BNLJ(join[1], leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
-				joinLogOp.getAlias());
+			immOp= new BNLJ(join[1], leftChildOp, rightChildOp, joinLogOp.getJoinExpression());
 			break;
 		case 2:
 			if (sort[0] == 0) {
-				immOp= new SMJ(0, leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
-						joinLogOp.getAlias(), tempDir, false);
+				immOp= new SMJ(0, leftChildOp, rightChildOp, joinLogOp.getJoinExpression(), tempDir, false);
 			} else {
-				immOp= new SMJ(sort[1], leftChildOp, rightChildOp, joinLogOp.getJoinExpression(),
-						joinLogOp.getAlias(), tempDir, true);
+				immOp= new SMJ(sort[1], leftChildOp, rightChildOp, joinLogOp.getJoinExpression(), tempDir, true);
 			}
 			break;
 		}

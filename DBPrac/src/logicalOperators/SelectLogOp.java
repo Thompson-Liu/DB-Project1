@@ -9,13 +9,11 @@ import physicalOperator.Operator;
 public class SelectLogOp extends LogicalOperator {
 	
 	private Expression exp;
-	private HashMap<String, String> tableAlias;
 	private LogicalOperator childOp;
 
-	public SelectLogOp(Expression expression, LogicalOperator op, HashMap<String, String> alias) {
+	public SelectLogOp(Expression expression, LogicalOperator op) {
 		exp = expression;
 		childOp = op;
-		tableAlias = alias;
 	}
 	
 	public LogicalOperator[] getChildren() {
@@ -24,10 +22,6 @@ public class SelectLogOp extends LogicalOperator {
 	
 	public Expression getSelectExpr() {
 		return exp;
-	}
-	
-	public HashMap<String, String> getAlias() {
-		return tableAlias;
 	}
 	
 	public void accept(PhysicalPlanBuilder planBuilder) {

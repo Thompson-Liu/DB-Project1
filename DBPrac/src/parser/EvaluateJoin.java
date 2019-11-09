@@ -54,44 +54,17 @@ public class EvaluateJoin implements ExpressionVisitor {
 
 	private List<String> leftTableNames;
 	private List<String> rightTableNames;
-	private HashMap<String, String> tableAlias;
 	private ArrayList<String> joinAttributesLeft;
 	private ArrayList<String> joinAttributesRight;
 	private Expression expr;
 
-	public EvaluateJoin(Expression whereExpr, String leftTableName,
-		String rightTableName, HashMap<String, String> tableAlias) {
+	public EvaluateJoin(Expression whereExpr, String leftTableName, String rightTableName) {
 		joinAttributesLeft= new ArrayList<String>();
 		joinAttributesRight= new ArrayList<String>();
 
-		// change the leftTableName to its alias if exist
 		this.leftTableNames= Arrays.asList(leftTableName.trim().split(","));
-		for (int i= 0; i < leftTableNames.size(); i++ ) {
-			String temp= leftTableNames.get(i);
-			String temp2= Arrays.asList(temp.trim().split("AS")).get(0).trim();
-
-			if (tableAlias.containsKey(temp2)) {
-//				System.out.println(temp2);
-				leftTableNames.set(i, tableAlias.get(temp2));
-			}
-		}
-		// change the rightTableName to its alias if exist
 		this.rightTableNames= Arrays.asList(rightTableName.trim().split(","));
-		System.out.println("Right table name: " + rightTableName);
-		System.out.println("Corresponding alias: " + tableAlias.get(rightTableNames.get(0)));
-		for (int i= 0; i < rightTableNames.size(); i++ ) {
-			if (tableAlias.containsKey(rightTableNames.get(i))) {
-				rightTableNames.set(i, tableAlias.get(rightTableNames.get(i)));
-			}
-		}
-
-//		System.out.println("left is   :  " + tableAlias.get(0));
-//		System.out.println(rightTableNames.get(0));
-		;
-//		this.rightTableNames = rightTableName;
-
 		this.expr= whereExpr;
-		this.tableAlias= tableAlias;
 		this.expr.accept(this);
 	}
 
@@ -174,7 +147,6 @@ public class EvaluateJoin implements ExpressionVisitor {
 	public void visit(AndExpression arg0) {
 		arg0.getLeftExpression().accept(this);
 		arg0.getRightExpression().accept(this);
-
 	}
 
 	@Override
@@ -192,18 +164,11 @@ public class EvaluateJoin implements ExpressionVisitor {
 		Expression right= arg0.getRightExpression();
 		if ((left instanceof Column) && (right instanceof Column)) {
 			Column Col1= (Column) left;
+			String Col1Table = Col1.getTable().getName();
+			
 			Column Col2= (Column) right;
-
-			String Col1Table= Col1.getTable().getName();
-			// change the leftTableName to its alias if exist
-			if (tableAlias.containsKey(Col1Table)) {
-				Col1Table= tableAlias.get(Col1Table);
-			}
-			String Col2Table= Col2.getTable().getName();
-			if (tableAlias.containsKey(Col2Table)) {
-				Col2Table= tableAlias.get(Col2Table);
-			}
-
+			String Col2Table = Col2.getTable().getName();
+			
 			boolean order= (this.leftTableNames.contains(Col1Table)) && this.rightTableNames.contains(Col2Table);
 			boolean inverse= (this.rightTableNames.contains(Col1Table)) && this.leftTableNames.contains(Col2Table);
 			if (order) {
