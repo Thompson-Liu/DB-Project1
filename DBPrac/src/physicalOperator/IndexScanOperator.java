@@ -16,7 +16,6 @@ import fileIO.BinaryTupleReader;
  * from a relation file using B+-tree indices */
 public class IndexScanOperator extends ScanOperator {
 
-	private String tableName;
 	private String colName;
 	private FileInputStream fin;
 	private FileChannel fc;
@@ -45,7 +44,6 @@ public class IndexScanOperator extends ScanOperator {
 		fin= new FileInputStream(indexFile);
 		fc= fin.getChannel();
 		buffer= ByteBuffer.allocate(4096);
-		this.tableName=tableName;
 		this.colName = (alias == "") ? tableName + "." + index : alias + "." + index;
 		this.isClustered= isClustered;
 		this.lo= lowkey;
@@ -112,7 +110,7 @@ public class IndexScanOperator extends ScanOperator {
 
 	@Override
 	public String getTableName() {
-		return this.tableName;
+		return super.getTableName();
 	}
 
 }
