@@ -26,7 +26,7 @@ public class JoinOperator extends Operator {
 	 * @param LeftOperator the left operator of join
 	 * @param RightOperator the right operator of join
 	 * @param expression the where expression to select tuple
-	 * @param tableAlias hashmap of <tablename,alias> */
+	  */
 	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
 		joinExp= expression;
 		
