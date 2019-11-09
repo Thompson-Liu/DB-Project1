@@ -4,10 +4,6 @@
  */
 package parser;
 
-
-import java.util.ArrayList;
-
-import dataStructure.Catalog;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
@@ -57,16 +53,16 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private int highKey;
 	private boolean flag;
 	private String tableName;
-	private boolean change = false;
-	private boolean applyToAll = true;
+	private boolean change= false;
+	private boolean applyToAll= true;
 
 	public IndexConditionSeperator(String tableName, String column, Expression expr) {
-		original = expr;
-		lowKey =Integer.MIN_VALUE;
+		original= expr;
+		lowKey= Integer.MIN_VALUE;
 		highKey= Integer.MAX_VALUE;
-		this.indexColumn=column;
+		this.indexColumn= column;
 		this.tableName= tableName;
-		
+
 		original.accept(this);
 	}
 
@@ -154,98 +150,96 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 
 	@Override
 	public void visit(AndExpression arg0) {
-		flag = false;
-		
+		flag= false;
+
 		arg0.getLeftExpression().accept(this);
 		if (flag) {
-			arg0.setLeftExpression(new NullValue() );
-			flag = false;
-			change = true;
+			arg0.setLeftExpression(new NullValue());
+			flag= false;
+			change= true;
 		}
 
 		arg0.getRightExpression().accept(this);
 		if (flag) {
-			arg0.setRightExpression(new NullValue() );
-			flag = false;
-			change = true;
+			arg0.setRightExpression(new NullValue());
+			flag= false;
+			change= true;
 		}
 	}
 
 	@Override
 	public void visit(OrExpression arg0) {
-		flag = false;
+		flag= false;
 		arg0.getLeftExpression().accept(this);
 		if (flag) {
-			arg0.setLeftExpression(new NullValue() );
-			flag=false;
-			change = true;
+			arg0.setLeftExpression(new NullValue());
+			flag= false;
+			change= true;
 		}
-		flag = false;
+		flag= false;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
-			arg0.setRightExpression(new NullValue() );
-			flag=false;
-			change = true;
+			arg0.setRightExpression(new NullValue());
+			flag= false;
+			change= true;
 		}
 	}
 
 	@Override
 	public void visit(Between arg0) {
-		
+
 	}
 
-	/**
-	 *  helper function
-	 * @param left:  left expression
+	/** helper function
+	 * 
+	 * @param left: left expression
 	 * @param right: right expression
-	 * @return
-	 */
+	 * @return */
 	private Integer checkLeft(Expression left, Expression right) {
-		if((left instanceof Column) && (right instanceof DoubleValue || right instanceof LongValue)) {
-			if(((Column)left).getColumnName().equals(indexColumn) &&  ((Column)left).getTable().getName().equals(tableName)){
-				if(right instanceof DoubleValue) {
-					return (int) ((DoubleValue)right).getValue();
-				}
-				return (int) ((LongValue)right).getValue();
+		if ((left instanceof Column) && (right instanceof DoubleValue || right instanceof LongValue)) {
+			if (((Column) left).getColumnName().equals(indexColumn) &&
+				((Column) left).getTable().getName().equals(tableName)) {
+				if (right instanceof DoubleValue) { return (int) ((DoubleValue) right).getValue(); }
+				return (int) ((LongValue) right).getValue();
 			}
 		}
-		return null;	
+		return null;
 	}
 
 	private Integer checkRight(Expression left, Expression right) {
-		if ((left instanceof DoubleValue)&& (right instanceof Column)) {
-			if(((Column)right).getColumnName()==indexColumn &&  (((Column)right).getTable().getName()==tableName)) {
-				if(left instanceof DoubleValue) {
-					return (int) ((DoubleValue)left).getValue();
+		if ((left instanceof DoubleValue) && (right instanceof Column)) {
+			if (((Column) right).getColumnName() == indexColumn &&
+				(((Column) right).getTable().getName() == tableName)) {
+				if (left instanceof DoubleValue) {
+					return (int) ((DoubleValue) left).getValue();
 				}
 
 				else {
-					return (int) ((LongValue)left).getValue();
+					return (int) ((LongValue) left).getValue();
 				}
 			}
 		}
 		return null;
 	}
 
-
-
 	@Override
 	public void visit(EqualsTo arg0) {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		Integer value;
-		if((value= checkLeft(left, right))!=null) {
-			lowKey = Math.max(lowKey,value);
-			highKey = Math.min(highKey, value);
-			flag = true;
+		if ((value= checkLeft(left, right)) != null) {
+			lowKey= Math.max(lowKey, value);
+			highKey= Math.min(highKey, value);
+			flag= true;
+			change= true;
 
-		}
-		else if ((value=checkRight(left,right))!=null) {
-			lowKey = Math.max(lowKey, value);
-			highKey = Math.min(value, highKey);
-			flag = true;
+		} else if ((value= checkRight(left, right)) != null) {
+			lowKey= Math.max(lowKey, value);
+			highKey= Math.min(value, highKey);
+			flag= true;
+			change= true;
 		} else {
-			applyToAll = false;
+			applyToAll= false;
 		}
 	}
 
@@ -254,15 +248,16 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		Integer value;
-		if((value= checkLeft(left, right))!=null) {
-			lowKey = Math.max(lowKey,value+1);
-			flag = true;
-		}
-		else if ((value=checkRight(left,right))!=null) {
-			highKey = Math.min(value-1, highKey);
-			flag = true;
+		if ((value= checkLeft(left, right)) != null) {
+			lowKey= Math.max(lowKey, value + 1);
+			flag= true;
+			change= true;
+		} else if ((value= checkRight(left, right)) != null) {
+			highKey= Math.min(value - 1, highKey);
+			flag= true;
+			change= true;
 		} else {
-			applyToAll = false;
+			applyToAll= false;
 		}
 	}
 
@@ -271,15 +266,16 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		Integer value;
-		if((value= checkLeft(left, right))!=null) {
-			lowKey = Math.max(lowKey,value);
-			flag = true;
-		}
-		else if ((value=checkRight(left,right))!=null) {
-			highKey = Math.min(value, highKey);
-			flag = true;
+		if ((value= checkLeft(left, right)) != null) {
+			lowKey= Math.max(lowKey, value);
+			flag= true;
+			change= true;
+		} else if ((value= checkRight(left, right)) != null) {
+			highKey= Math.min(value, highKey);
+			flag= true;
+			change= true;
 		} else {
-			applyToAll = false;
+			applyToAll= false;
 		}
 	}
 
@@ -302,15 +298,16 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		Integer value;
-		if((value= checkLeft(left, right))!=null) {
-			highKey = Math.min(value-1, highKey);
-			flag = true;
-		}
-		else if ((value=checkRight(left,right))!=null) {
-			lowKey = Math.max(lowKey,value+1);
-			flag = true;
+		if ((value= checkLeft(left, right)) != null) {
+			highKey= Math.min(value - 1, highKey);
+			flag= true;
+			change= true;
+		} else if ((value= checkRight(left, right)) != null) {
+			lowKey= Math.max(lowKey, value + 1);
+			flag= true;
+			change= true;
 		} else {
-			applyToAll = false;
+			applyToAll= false;
 		}
 	}
 
@@ -319,15 +316,16 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		Expression left= arg0.getLeftExpression();
 		Expression right= arg0.getRightExpression();
 		Integer value;
-		if((value= checkLeft(left, right))!=null) {
-			highKey = Math.min(value, highKey);
-			flag = true;
-		}
-		else if ((value=checkRight(left,right))!=null) {
-			lowKey = Math.max(lowKey,value);
-			flag = true;
+		if ((value= checkLeft(left, right)) != null) {
+			highKey= Math.min(value, highKey);
+			flag= true;
+			change= true;
+		} else if ((value= checkRight(left, right)) != null) {
+			lowKey= Math.max(lowKey, value);
+			flag= true;
+			change= true;
 		} else {
-			applyToAll = false;
+			applyToAll= false;
 		}
 	}
 
