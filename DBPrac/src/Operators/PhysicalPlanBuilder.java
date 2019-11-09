@@ -10,7 +10,6 @@ import logicalOperators.DuplicateEliminationLogOp;
 import logicalOperators.JoinLogOp;
 import logicalOperators.LogicalOperator;
 import logicalOperators.ProjectLogOp;
-import logicalOperators.ScanLogOp;
 import logicalOperators.SelectLogOp;
 import logicalOperators.SortLogOp;
 import net.sf.jsqlparser.expression.Expression;
@@ -88,25 +87,25 @@ public class PhysicalPlanBuilder {
 		return immOp;
 	}
 
-	public void visit(ScanLogOp scanLop) throws IOException {		
+	public void visit(SelectLogOp selectLop) {
+		indexExpr = selectLop.getSelectExpr();
+
 		Catalog catalog = Catalog.getInstance();
-		String tableName = scanLop.getTableName();
-//		String tableName = tmpName.split("AS")[0].trim();
-		String alias = scanLop.getAliasName();
+		String tableName = selectLop.getTableName();
+		String alias = selectLop.getAlias();
 		String colName = catalog.getIndexCol(tableName);
 
 		// If not using index or the data table dosen't have an index, build a full-scan operator
 		if (!useIndex || catalog.getIndexCol(tableName) == null || indexExpr == null) {
-			immOp= new ScanOperator(tableName, alias);
+			immOp = new ScanOperator(tableName, alias);
 			return;
 		}
-		
+
 		IndexConditionSeperator indexSep;
 		if (alias == "") {
 			indexSep = new IndexConditionSeperator(tableName, colName, indexExpr);
 		} else {
 			indexSep = new IndexConditionSeperator(alias, colName, indexExpr);
-
 		}
 		int lowKey= indexSep.getLowKey();
 		int highKey= indexSep.getHighKey();
@@ -114,18 +113,21 @@ public class PhysicalPlanBuilder {
 		// If the rest expressions after parsing is the same as before, then no index is applicable
 		// A full-scan operator is generated
 		if (!indexSep.changed()) {
-			immOp= new ScanOperator(tableName, alias);
+			immOp = new ScanOperator(tableName, alias);
 			return;
-		};
+		} 
+		
 		String tableIndexDir= indexDir + "/" + tableName + "." + colName;
-		immOp= new IndexScanOperator(tableName, alias, catalog.getIndexCol(tableName), tableIndexDir,
-			catalog.getIsClustered(tableName), lowKey, highKey);
-	}
-
-	public void visit(SelectLogOp selectLop) {
-		indexExpr= selectLop.getSelectExpr();
-		selectLop.getChildren()[0].accept(this);
-		immOp= new SelectOperator(indexExpr, immOp);
+		try {
+			immOp= new IndexScanOperator(tableName, alias, catalog.getIndexCol(tableName), tableIndexDir,
+					catalog.getIsClustered(tableName), lowKey, highKey);
+		} catch (IOException e) {
+			System.err.println("Error creating an index scan operator");
+			e.printStackTrace();
+		}
+		
+		if (indexSep.applyAll()) {  return;  }
+		immOp = new SelectOperator(indexExpr, immOp);
 	}
 
 	public void visit(ProjectLogOp projectLop) {
@@ -150,7 +152,7 @@ public class PhysicalPlanBuilder {
 		} else {
 			immOp= new DuplicateEliminationOperator((ExternalSortOperator) immOp);
 		}
-//		immOp= new DuplicateEliminationOperator((SortOperator) immOp);
+		//		immOp= new DuplicateEliminationOperator((SortOperator) immOp);
 	}
 
 	public void visit(JoinLogOp joinLogOp) {

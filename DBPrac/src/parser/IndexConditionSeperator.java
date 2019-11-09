@@ -58,6 +58,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private boolean flag;
 	private String tableName;
 	private boolean change = false;
+	private boolean applyToAll = true;
 
 	public IndexConditionSeperator(String tableName, String column, Expression expr) {
 		original = expr;
@@ -161,7 +162,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			flag = false;
 			change = true;
 		}
-		flag = false;
+
 		arg0.getRightExpression().accept(this);
 		if (flag) {
 			arg0.setRightExpression(new NullValue() );
@@ -243,6 +244,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			lowKey = Math.max(lowKey, value);
 			highKey = Math.min(value, highKey);
 			flag = true;
+		} else {
+			applyToAll = false;
 		}
 	}
 
@@ -258,8 +261,9 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		else if ((value=checkRight(left,right))!=null) {
 			highKey = Math.min(value-1, highKey);
 			flag = true;
+		} else {
+			applyToAll = false;
 		}
-
 	}
 
 	@Override
@@ -274,7 +278,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		else if ((value=checkRight(left,right))!=null) {
 			highKey = Math.min(value, highKey);
 			flag = true;
-
+		} else {
+			applyToAll = false;
 		}
 	}
 
@@ -304,6 +309,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		else if ((value=checkRight(left,right))!=null) {
 			lowKey = Math.max(lowKey,value+1);
 			flag = true;
+		} else {
+			applyToAll = false;
 		}
 	}
 
@@ -319,8 +326,9 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		else if ((value=checkRight(left,right))!=null) {
 			lowKey = Math.max(lowKey,value);
 			flag = true;
+		} else {
+			applyToAll = false;
 		}
-
 	}
 
 	@Override
@@ -396,4 +404,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 
 	}
 
+	public boolean applyAll() {
+		// TODO Auto-generated method stub
+		return applyToAll;
+	}
 }
