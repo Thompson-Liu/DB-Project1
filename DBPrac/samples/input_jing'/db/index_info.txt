@@ -1,2 +1,0 @@
-Sailors A 0 11
-Reserves J 1 15

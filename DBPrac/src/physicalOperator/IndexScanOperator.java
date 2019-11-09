@@ -42,7 +42,6 @@ public class IndexScanOperator extends ScanOperator {
 		int highkey) throws IOException {
 		
 		super(tableName, alias);
-
 		fin= new FileInputStream(indexFile);
 		fc= fin.getChannel();
 		buffer= ByteBuffer.allocate(4096);
