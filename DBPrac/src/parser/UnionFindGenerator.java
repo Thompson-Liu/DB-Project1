@@ -44,6 +44,8 @@ import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
+/** Implements a union find visitor. Assumes that expressions are of the form: ColName OP [ColName,
+ * integer]. All other expressions are invalid. */
 public class UnionFindGenerator implements ExpressionVisitor {
 
 	private UnionFind uf;
@@ -53,14 +55,29 @@ public class UnionFindGenerator implements ExpressionVisitor {
 	private boolean flag; // whether base case reached
 	private Column tmpCol;
 
+	/** UnionFindGenerator constructor
+	 * 
+	 * @param expr: a query expression to be accepted */
 	public UnionFindGenerator(Expression expr) {
 		uf= new UnionFind();
 		expr.accept(this);
 		flag= false;
 	}
 
+	/** @return a union find instance */
 	public UnionFind getUnionFind() {
 		return uf;
+	}
+
+	/** @return a residualSelect expression: Select expressions not captured in any blue boxes (e.g.
+	 * "!=" selections) */
+	public Expression getResidualSelect() {
+		return residualSelect;
+	}
+
+	/** @return a residualJoin expression: Join expressions other than equijoins */
+	public Expression getResidualJoin() {
+		return residualJoin;
 	}
 
 	private void updateResidual(Expression expr, Expression newExpr) {
@@ -69,14 +86,6 @@ public class UnionFindGenerator implements ExpressionVisitor {
 		} else {
 			expr= new AndExpression(expr, newExpr);
 		}
-	}
-
-	public Expression getResidualSelect() {
-		return residualSelect;
-	}
-
-	public Expression getResidualJoin() {
-		return residualJoin;
 	}
 
 	@Override
