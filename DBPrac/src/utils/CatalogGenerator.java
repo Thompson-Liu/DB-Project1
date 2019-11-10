@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import dataStructure.Catalog;
+import fileIO.BinaryTupleReader;
 
 public class CatalogGenerator {
 	
@@ -25,17 +26,29 @@ public class CatalogGenerator {
 			FileReader schemafw= new FileReader(dbDir + "/schema.txt");
 			BufferedReader readSchema= new BufferedReader(schemafw);
 			String line;
+			BinaryTupleReader tableread;
 			while ((line= readSchema.readLine()) != null) {
 				String[] schemaLine= line.trim().split("\\s+");
 				String tableName= schemaLine[0];
-				cat.addDir(tableName,  dbDir + "/data/" + tableName);
+				String tableDir = dbDir + "/data/" + tableName;
+				cat.addDir(tableName,  tableDir);
+				//read 
+				int numTuples=0;
+				tableread = new BinaryTupleReader(tableDir);
+				while(tableread.readNextTuple()!=null) {
+					numTuples++;
+				}
+				tableread.close();
+				cat.addTupleNums(tableName, numTuples);
 				ArrayList<String> schem= new ArrayList<String>();
 				for (int i= 1; i < schemaLine.length; i++ ) {
 					schem.add(schemaLine[i]);
 				}
 				cat.addSchema(tableName, schem);
+				
 			}
 			readSchema.close();
+			
 		} catch (IOException e) {
 			System.err.println("Exception unable to access the directory");
 		}
