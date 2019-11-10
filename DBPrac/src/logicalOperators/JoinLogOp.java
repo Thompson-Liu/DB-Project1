@@ -1,6 +1,8 @@
 package logicalOperators;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import Operators.PhysicalPlanBuilder;
 import net.sf.jsqlparser.expression.Expression;
@@ -8,25 +10,25 @@ import net.sf.jsqlparser.expression.Expression;
 public class JoinLogOp extends LogicalOperator{
 	
 	private Expression joinExp;
-	private LogicalOperator left;
-	private LogicalOperator right;	
+	private List<LogicalOperator> childOp;
 	
-	public JoinLogOp(LogicalOperator leftOp, LogicalOperator rightOp, Expression expr) {
+	public JoinLogOp(ArrayList<LogicalOperator> fromItems, Expression expr) {
 		joinExp = expr;
-		left = leftOp;
-		right = rightOp;
+		
+		childOp = new ArrayList<LogicalOperator>(fromItems.size());
+		for(LogicalOperator logOp: fromItems) {
+			childOp.add(logOp);
+		}
 	}
 	
 	public LogicalOperator[] getChildren() {
-		return new LogicalOperator[] { left, right };
+		LogicalOperator[] childrenOp = new LogicalOperator[childOp.size()]; 
+		childrenOp = childOp.toArray(childrenOp);
+		return childrenOp;
 	}
 	
-	public LogicalOperator getLeftChild() {
-		return left;
-	}
-
-	public LogicalOperator getRightChild() {
-		return right;
+	public LogicalOperator getChild(int index) {
+		return childOp.get(index);
 	}
 	
 	public Expression getJoinExpression() {
