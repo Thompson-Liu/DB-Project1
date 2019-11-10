@@ -3,15 +3,15 @@ package dataStructure;
 import java.util.ArrayList;
 import java.util.List;
 
-/** UnionFind elements Each element consists of a set of attributes and three numeric constraints:
+/** UnionFind elements: Each element consists of a set of attributes and three numeric constraints:
  * lo, hi, eq. */
 public class BlueBox {
 
 	private int root;
 	private List<String> attr;
-	private int lo;
-	private int hi;
-	private int eq;
+	private Integer lo;
+	private Integer hi;
+	private Integer eq;
 
 	public BlueBox(int root) {
 		attr= new ArrayList<String>();
@@ -22,15 +22,15 @@ public class BlueBox {
 		return root;
 	}
 
-	public int getLower() {
+	public Integer getLower() {
 		return lo;
 	}
 
-	public int getUpper() {
+	public Integer getUpper() {
 		return hi;
 	}
 
-	public int getEqual() {
+	public Integer getEqual() {
 		return eq;
 	}
 
