@@ -1,11 +1,13 @@
 package parser;
 
+import dataStructure.BlueBox;
 import dataStructure.UnionFind;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
 import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.InverseExpression;
@@ -45,8 +47,11 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 public class UnionFindGenerator implements ExpressionVisitor {
 
 	private UnionFind uf;
+	private Expression residualSelect;
+	private Expression residualJoin;
 	private int tmpInt;
-	private boolean flag;
+	private boolean flag; // whether base case reached
+	private Column tmpCol;
 
 	public UnionFindGenerator() {
 		uf= new UnionFind();
@@ -54,6 +59,22 @@ public class UnionFindGenerator implements ExpressionVisitor {
 
 	public UnionFind getUnionFind() {
 		return uf;
+	}
+
+	public void updateResidual(Expression expr, Expression newExpr) {
+		if (expr == null) {
+			expr= newExpr;
+		} else {
+			expr= new AndExpression(expr, newExpr);
+		}
+	}
+
+	public Expression getResidualSelect() {
+		return residualSelect;
+	}
+
+	public Expression getResidualJoin() {
+		return residualJoin;
 	}
 
 	@Override
@@ -88,7 +109,8 @@ public class UnionFindGenerator implements ExpressionVisitor {
 
 	@Override
 	public void visit(LongValue arg0) {
-
+		tmpInt= (int) arg0.getValue();
+		flag= true;
 	}
 
 	@Override
@@ -147,8 +169,8 @@ public class UnionFindGenerator implements ExpressionVisitor {
 
 	@Override
 	public void visit(AndExpression arg0) {
-		// TODO Auto-generated method stub
-
+		arg0.getLeftExpression().accept(this);
+		arg0.getRightExpression().accept(this);
 	}
 
 	@Override
@@ -165,20 +187,50 @@ public class UnionFindGenerator implements ExpressionVisitor {
 
 	@Override
 	public void visit(EqualsTo arg0) {
-		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		Column tmp= tmpCol;
+		arg0.getRightExpression().accept(this);
+		if (flag) {
+			BlueBox left= uf.find(tmp);
+			left.setEqual(tmpInt);
+		} else {
+			uf.merge(uf.find(tmp), uf.find(tmpCol));
+		}
 
 	}
 
 	@Override
 	public void visit(GreaterThan arg0) {
-		// TODO Auto-generated method stub
-
+		arg0.getLeftExpression().accept(this);
+		Column leftCol= tmpCol;
+		arg0.getRightExpression().accept(this);
+		if (flag) {
+			BlueBox left= uf.find(leftCol);
+			left.setLower(tmpInt + 1);
+		} else {
+			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
+				updateResidual(residualSelect, arg0);
+			} else {
+				updateResidual(residualJoin, arg0);
+			}
+		}
 	}
 
 	@Override
 	public void visit(GreaterThanEquals arg0) {
-		// TODO Auto-generated method stub
-
+		arg0.getLeftExpression().accept(this);
+		Column leftCol= tmpCol;
+		arg0.getRightExpression().accept(this);
+		if (flag) {
+			BlueBox left= uf.find(leftCol);
+			left.setLower(tmpInt);
+		} else {
+			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
+				updateResidual(residualSelect, arg0);
+			} else {
+				updateResidual(residualJoin, arg0);
+			}
+		}
 	}
 
 	@Override
@@ -201,25 +253,59 @@ public class UnionFindGenerator implements ExpressionVisitor {
 
 	@Override
 	public void visit(MinorThan arg0) {
-		// TODO Auto-generated method stub
-
+		arg0.getLeftExpression().accept(this);
+		Column leftCol= tmpCol;
+		arg0.getRightExpression().accept(this);
+		if (flag) {
+			BlueBox left= uf.find(leftCol);
+			left.setUpper(tmpInt - 1);
+		} else {
+			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
+				updateResidual(residualSelect, arg0);
+			} else {
+				updateResidual(residualJoin, arg0);
+			}
+		}
 	}
 
 	@Override
 	public void visit(MinorThanEquals arg0) {
-		// TODO Auto-generated method stub
+		arg0.getLeftExpression().accept(this);
+		Column leftCol= tmpCol;
+		arg0.getRightExpression().accept(this);
+		if (flag) {
+			BlueBox left= uf.find(leftCol);
+			left.setUpper(tmpInt);
+		} else {
+			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
+				updateResidual(residualSelect, arg0);
+			} else {
+				updateResidual(residualJoin, arg0);
+			}
+		}
 
 	}
 
 	@Override
 	public void visit(NotEqualsTo arg0) {
-		// TODO Auto-generated method stub
-
+		arg0.getLeftExpression().accept(this);
+		Column leftCol= tmpCol;
+		arg0.getRightExpression().accept(this);
+		if (flag) {
+			updateResidual(residualSelect, arg0);
+		} else {
+			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
+				updateResidual(residualSelect, arg0);
+			} else {
+				updateResidual(residualJoin, arg0);
+			}
+		}
 	}
 
 	@Override
 	public void visit(Column arg0) {
-		// TODO Auto-generated method stub
+		tmpCol= arg0;
+		flag= false;
 
 	}
 
