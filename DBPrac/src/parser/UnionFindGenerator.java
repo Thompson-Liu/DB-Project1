@@ -193,10 +193,11 @@ public class UnionFindGenerator implements ExpressionVisitor {
 		Column tmp= tmpCol;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
-			BlueBox left= uf.find(tmp);
+			BlueBox left= uf.find(tmp.getTable().getName() + "." + tmp.getColumnName());
 			left.setEqual(tmpInt);
 		} else {
-			uf.merge(uf.find(tmp), uf.find(tmpCol));
+			uf.merge(uf.find(tmp.getTable().getName() + "." + tmp.getColumnName()),
+				uf.find(tmpCol.getTable().getName() + "." + tmpCol.getColumnName()));
 		}
 
 	}
@@ -207,7 +208,7 @@ public class UnionFindGenerator implements ExpressionVisitor {
 		Column leftCol= tmpCol;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
-			BlueBox left= uf.find(leftCol);
+			BlueBox left= uf.find(leftCol.getTable().getName() + "." + leftCol.getColumnName());
 			left.setLower(tmpInt + 1);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
@@ -224,7 +225,7 @@ public class UnionFindGenerator implements ExpressionVisitor {
 		Column leftCol= tmpCol;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
-			BlueBox left= uf.find(leftCol);
+			BlueBox left= uf.find(leftCol.getTable().getName() + "." + leftCol.getColumnName());
 			left.setLower(tmpInt);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
@@ -259,7 +260,7 @@ public class UnionFindGenerator implements ExpressionVisitor {
 		Column leftCol= tmpCol;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
-			BlueBox left= uf.find(leftCol);
+			BlueBox left= uf.find(leftCol.getTable().getName() + "." + leftCol.getColumnName());
 			left.setUpper(tmpInt - 1);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
@@ -276,7 +277,7 @@ public class UnionFindGenerator implements ExpressionVisitor {
 		Column leftCol= tmpCol;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
-			BlueBox left= uf.find(leftCol);
+			BlueBox left= uf.find(leftCol.getTable().getName() + "." + leftCol.getColumnName());
 			left.setUpper(tmpInt);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {

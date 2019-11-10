@@ -7,13 +7,19 @@ import java.util.List;
  * lo, hi, eq. */
 public class BlueBox {
 
+	private int root;
 	private List<String> attr;
 	private int lo;
 	private int hi;
 	private int eq;
 
-	public BlueBox() {
+	public BlueBox(int root) {
 		attr= new ArrayList<String>();
+		this.root= root;
+	}
+
+	public int getRoot() {
+		return root;
 	}
 
 	public int getLower() {
@@ -28,6 +34,10 @@ public class BlueBox {
 		return eq;
 	}
 
+	public List<String> getAttr() {
+		return attr;
+	}
+
 	public void setLower(int newVal) {
 		lo= newVal;
 	}
@@ -38,6 +48,14 @@ public class BlueBox {
 
 	public void setEqual(int newVal) {
 		eq= newVal;
+	}
+
+	public void addAttr(String newAttr) {
+		attr.add(newAttr);
+	}
+
+	public void setRoot(int newRoot) {
+		root= newRoot;
 	}
 
 }
