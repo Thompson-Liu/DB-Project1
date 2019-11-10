@@ -53,15 +53,17 @@ public class UnionFindGenerator implements ExpressionVisitor {
 	private boolean flag; // whether base case reached
 	private Column tmpCol;
 
-	public UnionFindGenerator() {
+	public UnionFindGenerator(Expression expr) {
 		uf= new UnionFind();
+		expr.accept(this);
+		flag= false;
 	}
 
 	public UnionFind getUnionFind() {
 		return uf;
 	}
 
-	public void updateResidual(Expression expr, Expression newExpr) {
+	private void updateResidual(Expression expr, Expression newExpr) {
 		if (expr == null) {
 			expr= newExpr;
 		} else {
