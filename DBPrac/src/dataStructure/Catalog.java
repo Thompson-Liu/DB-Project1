@@ -14,6 +14,8 @@ public class Catalog {
 	private HashMap<String, ArrayList<String>> schemaList;
 	private HashMap<String,String> sortedCol;     // the index that the table is sorted on
 	private HashMap<String, Boolean> isClustered;
+	private HashMap<String, String> ClusteredIndex;
+	private HashMap<String, ArrayList<String>> indexes;
 	private HashMap<String, IndexInfo> tableStats; 
 
 	/**
@@ -69,34 +71,33 @@ public class Catalog {
 		return this.tableStats.get(tableName).numTuples();
 	}
 
-	/**
-	 *  add the new colStatistics to the table
-	 * @param name  the name of the data
-	 * @param colname
-	 */
-	public void addColStats(String name,String colname, int low, int high) {
-		IndexInfo tableInd = tableStats.get(name);
-		tableInd.addColInfo(colname,low,high); //add the column index information to the indexInfo
-		tableStats.put(name, tableInd);     // link the new index info to the table
-	}
-
-	/**
-	 *  set the clustered index of the table
-	 * @param tableName
-	 * @param col
-	 */
-	public void setClusteredIndex(String tableName,String col) {
-		this.tableStats.get(tableName).setClusteredIndex(col);
-	}
-
-	/**
-	 * 
-	 * @param tableName
-	 * @return the indexInfo of the table
-	 */
-	public IndexInfo getIndexInfo(String tableName) {
-		return this.tableStats.get(tableName);
-	}
+//	/**
+//	 *  add the new colStatistics to the table
+//	 * @param name  the name of the data
+//	 * @param colname
+//	 */
+//	public void addColStats(String name,String colname, int low, int high) {
+//		IndexInfo tableInd = tableStats.get(name);
+//		tableInd.addColInfo(colname,low,high); //add the column index information to the indexInfo
+//		tableStats.put(name, tableInd);     // link the new index info to the table
+//	}
+//	/**
+//	 *  set the clustered index of the table
+//	 * @param tableName
+//	 * @param col
+//	 */
+//	public void setClusteredIndex(String tableName,String col) {
+//		this.tableStats.get(tableName).setClusteredIndex(col);
+//	}
+//
+//	/**
+//	 * 
+//	 * @param tableName
+//	 * @return the indexInfo of the table
+//	 */
+//	public IndexInfo getIndexInfo(String tableName) {
+//		return this.tableStats.get(tableName);
+//	}
 
 	/**
 	 * Add the schema of the data into the catalog
