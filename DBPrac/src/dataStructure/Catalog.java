@@ -14,9 +14,10 @@ public class Catalog {
 	private HashMap<String, ArrayList<String>> schemaList;
 	private HashMap<String,String> sortedCol;     // the index that the table is sorted on
 	private HashMap<String, Boolean> isClustered;
+	// P4 added
 	private HashMap<String, String> ClusteredIndex;
-	private HashMap<String, ArrayList<String>> indexes;
-	private HashMap<String, IndexInfo> tableStats; 
+	private HashMap<String, ArrayList<String>> unClusteredIndexes;
+	//	private HashMap<String, IndexInfo> tableStats; 
 
 	/**
 	 * The private Catalog object consturctor that will not be accessed from other
@@ -25,9 +26,8 @@ public class Catalog {
 	private Catalog() {
 		tableDir = new HashMap<String, String>();
 		schemaList = new HashMap<String, ArrayList<String>>();
-		//		sortedCol = new HashMap<String,String>();
-		//		isClustered = new HashMap<String, Boolean>() ;
-		tableStats = new HashMap<String, IndexInfo>();
+		sortedCol = new HashMap<String,String>();
+		isClustered = new HashMap<String, Boolean>() ;
 	}
 
 	/**
@@ -61,43 +61,16 @@ public class Catalog {
 		tableDir.put(name, dir);
 	}
 
-	public void addTupleNums(String tableName, int totalTuples) {
-		IndexInfo tableInd = new IndexInfo();
-		tableInd.setTupleNums(totalTuples);
-		this.tableStats.put(tableName,tableInd);
-		}
-	
-	public int getTupleNums(String tableName) {
-		return this.tableStats.get(tableName).numTuples();
-	}
+	//	public void addTupleNums(String tableName, int totalTuples) {
+	//		IndexInfo tableInd = new IndexInfo();
+	//		tableInd.setTupleNums(totalTuples);
+	//		this.tableStats.put(tableName,tableInd);
+	//		}
+	//	
+	//	public int getTupleNums(String tableName) {
+	//		return this.tableStats.get(tableName).numTuples();
+	//	}
 
-//	/**
-//	 *  add the new colStatistics to the table
-//	 * @param name  the name of the data
-//	 * @param colname
-//	 */
-//	public void addColStats(String name,String colname, int low, int high) {
-//		IndexInfo tableInd = tableStats.get(name);
-//		tableInd.addColInfo(colname,low,high); //add the column index information to the indexInfo
-//		tableStats.put(name, tableInd);     // link the new index info to the table
-//	}
-//	/**
-//	 *  set the clustered index of the table
-//	 * @param tableName
-//	 * @param col
-//	 */
-//	public void setClusteredIndex(String tableName,String col) {
-//		this.tableStats.get(tableName).setClusteredIndex(col);
-//	}
-//
-//	/**
-//	 * 
-//	 * @param tableName
-//	 * @return the indexInfo of the table
-//	 */
-//	public IndexInfo getIndexInfo(String tableName) {
-//		return this.tableStats.get(tableName);
-//	}
 
 	/**
 	 * Add the schema of the data into the catalog
@@ -128,6 +101,31 @@ public class Catalog {
 	public void addIndex(String tableName, String sortedCol,boolean isClustered) {
 		this.sortedCol.put(tableName, sortedCol);
 		this.isClustered.put(tableName, isClustered);
+		//added
+		if(isClustered) {
+			this.ClusteredIndex.put(tableName, sortedCol);
+		}else {
+			ArrayList<String> unClusteredIndexes = (this.unClusteredIndexes.containsKey(tableName))? this.unClusteredIndexes.get(tableName): new ArrayList<String>();
+			unClusteredIndexes.add(sortedCol);
+		}
+	}
+
+	/**
+	 * 
+	 * @param tableName
+	 * @return the single clustered index of this table
+	 */
+	public String getClusteredIndex(String tableName){
+		return this.ClusteredIndex.get(tableName);
+	}
+
+	/**
+	 * 
+	 * @param tableName
+	 * @return the set of unclustered indexes of this table
+	 */
+	public ArrayList<String> getUnclusteredIndexes(String tableName) {
+		return this.unClusteredIndexes.get(tableName);
 	}
 
 	/**

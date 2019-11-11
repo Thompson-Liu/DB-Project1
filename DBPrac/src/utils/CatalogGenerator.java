@@ -65,7 +65,6 @@ public class CatalogGenerator {
 						colRange[i][1] = Math.max(colRange[i][1],cur.getData(i));
 					}
 				}
-				cat.addTupleNums(tableName, numTuples);
 				writer.write(Integer.toString(numTuples)+" ");
 				for(int i=0;i<schem.size();i++) {
 					writer.write(schem.get(i)+",");
