@@ -3,6 +3,7 @@ package Operators;
 import java.util.ArrayList;
 import java.util.List;
 
+import dataStructure.BlueBox;
 import dataStructure.UnionFind;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.AllColumns;
@@ -95,10 +96,11 @@ public class LogicalOperatorFactory {
 			
 			// If there is a bluebox containing the table, push down the selection
 			SelectLogOp select;
-			if  (uf.find(tempTable) !=  null) {
-				select = new SelectLogOp(tempTable, tempAlias, lowKey, highKey);
+			BlueBox bb = uf.find(tempTable);
+			if(bb !=  null) {
+				select = new SelectLogOp(tempTable, tempAlias, bb.getLower(), bb.getUpper());
 			} else {
-				select = new SelectLogOp(tempTable, tempAlias, lowKey, highKey);
+				select = new SelectLogOp(tempTable, tempAlias, null, null);
 			}
 			joinChildren.add(select);
 		}
