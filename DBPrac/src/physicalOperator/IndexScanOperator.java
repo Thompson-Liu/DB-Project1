@@ -51,6 +51,7 @@ public class IndexScanOperator extends ScanOperator {
 		Deserializer dsl= new Deserializer(indexFile);
 		this.startRid= dsl.getRid(lo, hi);
 		Catalog catalog= Catalog.getInstance();
+		catalog.setLeavesNum(tableName,index, dsl.getNumLeaves());
 		this.reader= new BinaryTupleReader(catalog.getDir(tableName)); // Dealing with alias?
 		
 		this.ptr= 0;

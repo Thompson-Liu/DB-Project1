@@ -92,8 +92,16 @@ public class Catalog {
 		schemaList.put(name, schema);
 	}
 
+	/**
+	 *  only add leaves num if the table Name has been stored in catalog
+	 * @param tableName
+	 * @param column
+	 * @param num
+	 */
 	public void setLeavesNum(String tableName,String column,int num) {
-		this.tableInfo.get(tableName).setIndexLeaves(column, num);
+		if(this.tableInfo.containsKey(tableName)) {
+			this.tableInfo.get(tableName).setIndexLeaves(column, num);
+		}
 	}
 	
 	public int getLeavesNum(String tableName,String column) {
