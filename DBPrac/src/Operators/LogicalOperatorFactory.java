@@ -77,39 +77,40 @@ public class LogicalOperatorFactory {
 		return intOp;
 	}
 
-	private LogicalOperator pushSelect(PlainSelect plainSelect, List<Join> joinList) {
-		// TODO Auto-generated method stub
-		UnionFindGenerator ufGen = new UnionFindGenerator(plainSelect.getWhere());
-		UnionFind uf = ufGen.getUnionFind();
-		ArrayList<LogicalOperator> joinChildren = new ArrayList<LogicalOperator>();
-		
-		for(int i = 0; i < joinList.size(); ++i) {
-			Join joinRel = joinList.get(i);
-			
-			String tempAlias = "";
-			String tempTable = joinRel.getRightItem().toString();
-			if(joinRel.getRightItem().getAlias()!=null) {
-				tempAlias = joinRel.getRightItem().getAlias().toString();
-				tempTable = tempTable.replace("AS " + tempAlias, "").trim();
-			}
-			
-			// If there is a bluebox containing the table, push down the selection
-			SelectLogOp select;
-			if  (uf.find(tempTable) !=  null) {
-				select = new SelectLogOp(tempTable, tempAlias, lowKey, highKey);
-			} else {
-				select = new SelectLogOp(tempTable, tempAlias, lowKey, highKey);
-			}
-			joinChildren.add(select);
-		}
-		JoinLogOp join = new JoinLogOp(joinChildren, ufGen.getResidualJoin());
-		
-		// Check if there's still some remaning selection to do
-		if (ufGen.getResidualSelect() != null) {
-			return new SelectLogOp(join);
-		}
-		return join;
-	}
+//	private LogicalOperator pushSelect(PlainSelect plainSelect, List<Join> joinList) {
+//		// TODO Auto-generated method stub
+//		UnionFindGenerator ufGen = new UnionFindGenerator(plainSelect.getWhere());
+//		UnionFind uf = ufGen.getUnionFind();
+//		ArrayList<LogicalOperator> joinChildren = new ArrayList<LogicalOperator>();
+//		
+//		for(int i = 0; i < joinList.size(); ++i) {
+//			Join joinRel = joinList.get(i);
+//			
+//			String tempAlias = "";
+//			String tempTable = joinRel.getRightItem().toString();
+//			if(joinRel.getRightItem().getAlias()!=null) {
+//				tempAlias = joinRel.getRightItem().getAlias().toString();
+//				tempTable = tempTable.replace("AS " + tempAlias, "").trim();
+//			}
+//			
+//			// If there is a bluebox containing the table, push down the selection
+//			SelectLogOp select;
+//			if  (uf.find(tempTable) !=  null) {
+//				select = new SelectLogOp(tempTable,tempAlias,);
+////				select = new SelectLogOp(tempTable, tempAlias, lowKey, highKey);
+//			} else {
+////				select = new SelectLogOp(tempTable, tempAlias, lowKey, highKey);
+//			}
+//			joinChildren.add(select);
+//		}
+//		JoinLogOp join = new JoinLogOp(joinChildren, ufGen.getResidualJoin());
+//		
+//		// Check if there's still some remaning selection to do
+//		if (ufGen.getResidualSelect() != null) {
+//			return new SelectLogOp(join);
+//		}
+//		return join;
+//	}
 	
 	/** helper function to iterate the joining tree
 	 *   perform left-deep join, add the right most branch as select each time
@@ -119,27 +120,27 @@ public class LogicalOperatorFactory {
 	 * @param joins
 	 * @return
 	 */
-//	private LogicalOperator join(PlainSelect plainSelect, List<Join> joins) {
-//		if (joins.size() == 1) {
-//			Join res= joins.get(0);
-//			String tempAlias = "";
-//			String tempTable = res.getRightItem().toString();
-//			
-//			if(res.getRightItem().getAlias() != null) {
-//				tempAlias = res.getRightItem().getAlias().toString();
-//				tempTable = tempTable.replace("AS " + tempAlias, "").trim();
-//			} 
-//			return new SelectLogOp(tempTable, tempAlias, plainSelect.getWhere());
-//		}
-//		Join rightJoin= joins.remove(joins.size() - 1);
-//		Expression whereExp = plainSelect.getWhere();
-//		String tempAlias = "";
-//		String tempTable = rightJoin.getRightItem().toString();
-//		if(rightJoin.getRightItem().getAlias()!=null) {
-//			tempAlias = rightJoin.getRightItem().getAlias().toString();
-//			tempTable = tempTable.replace("AS " + tempAlias, "").trim();
-//		}
-//		SelectLogOp rightOperator= new SelectLogOp(tempTable, tempAlias, whereExp);
-//		return (new JoinLogOp(join(plainSelect, joins), rightOperator, whereExp));
-//	}
+	private LogicalOperator join(PlainSelect plainSelect, List<Join> joins) {
+		if (joins.size() == 1) {
+			Join res= joins.get(0);
+			String tempAlias = "";
+			String tempTable = res.getRightItem().toString();
+			
+			if(res.getRightItem().getAlias() != null) {
+				tempAlias = res.getRightItem().getAlias().toString();
+				tempTable = tempTable.replace("AS " + tempAlias, "").trim();
+			} 
+			return new SelectLogOp(tempTable, tempAlias, plainSelect.getWhere());
+		}
+		Join rightJoin= joins.remove(joins.size() - 1);
+		Expression whereExp = plainSelect.getWhere();
+		String tempAlias = "";
+		String tempTable = rightJoin.getRightItem().toString();
+		if(rightJoin.getRightItem().getAlias()!=null) {
+			tempAlias = rightJoin.getRightItem().getAlias().toString();
+			tempTable = tempTable.replace("AS " + tempAlias, "").trim();
+		}
+		SelectLogOp rightOperator= new SelectLogOp(tempTable, tempAlias, whereExp);
+		return (new JoinLogOp(join(plainSelect, joins), rightOperator, whereExp));
+	}
 }
