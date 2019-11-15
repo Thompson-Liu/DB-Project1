@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -8,14 +9,32 @@ import logicalOperators.JoinLogOp;
 import logicalOperators.LogicalOperator;
 
 public class JoinCost {
+	private HashMap<HashSet<LogicalOperator>, Integer> dpTable;
 
 	public JoinCost() {
-		// TODO Auto-generated constructor stub
+		dpTable= new HashMap<HashSet<LogicalOperator>, Integer>();
 	}
 
-	public void chooseJoinOrder(JoinLogOp join) {
+	/** Compute cost of join in a bottom-up fashion using Dynamic Programming. */
+	public void findOptimalJoinOrder(JoinLogOp join) {
+
 		LogicalOperator[] joinChildren= join.getChildren();
 		List<HashSet<LogicalOperator>> subsets= findSubsets(joinChildren);
+		for (int i= 0; i < subsets.size(); i++ ) {
+			HashSet<LogicalOperator> currSet= subsets.get(i);
+
+			HashSet<LogicalOperator> subsetCopy= new HashSet<LogicalOperator>(currSet);
+			Integer bestCost= Integer.MAX_VALUE;
+			for (LogicalOperator logOp : currSet) {
+				subsetCopy.remove(logOp);
+				Integer previousCost= dpTable.get(subsetCopy);
+				// Compute join query cost here, using previous cost
+
+				subsetCopy.add(logOp);
+
+			}
+			dpTable.put(currSet, bestCost);
+		}
 
 	}
 
@@ -41,8 +60,14 @@ public class JoinCost {
 		}
 	}
 
-	private void DPHelper() {
-
-	}
+//	private void DPHelper(HashSet<LogicalOperator> combo) {
+//		if (!dpTable.containsKey(combo)) {
+//			
+//		}
+//		else {
+//			
+//		}
+//
+//	}
 
 }
