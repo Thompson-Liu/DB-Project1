@@ -12,12 +12,12 @@ public class Catalog {
 	private static Catalog dbCatalog = null;
 	private HashMap<String, String> tableDir;
 	private HashMap<String, ArrayList<String>> schemaList;
-	private HashMap<String,String> sortedCol;     // the index that the table is sorted on
-	private HashMap<String, Boolean> isClustered;
-	// P4 added
-	private HashMap<String, String> ClusteredIndex;
-	private HashMap<String, ArrayList<String>> unClusteredIndexes;
-	//	private HashMap<String, IndexInfo> tableStats; 
+	
+//	private HashMap<String,String> sortedCol;     // the index that the table is sorted on
+//	private HashMap<String, Boolean> isClustered;
+	
+	private HashMap<String,TableStats> tableInfo;
+	
 
 	/**
 	 * The private Catalog object consturctor that will not be accessed from other
@@ -26,8 +26,9 @@ public class Catalog {
 	private Catalog() {
 		tableDir = new HashMap<String, String>();
 		schemaList = new HashMap<String, ArrayList<String>>();
-		sortedCol = new HashMap<String,String>();
-		isClustered = new HashMap<String, Boolean>() ;
+//		sortedCol = new HashMap<String,String>();
+//		isClustered = new HashMap<String, Boolean>() ;
+		tableInfo = new HashMap<String,TableStats>();
 	}
 
 	/**
@@ -61,15 +62,24 @@ public class Catalog {
 		tableDir.put(name, dir);
 	}
 
-	//	public void addTupleNums(String tableName, int totalTuples) {
-	//		IndexInfo tableInd = new IndexInfo();
-	//		tableInd.setTupleNums(totalTuples);
-	//		this.tableStats.put(tableName,tableInd);
-	//		}
-	//	
-	//	public int getTupleNums(String tableName) {
-	//		return this.tableStats.get(tableName).numTuples();
-	//	}
+	/**
+	 *  set the table with its total number of tuples
+	 * @param tableName 
+	 * @param totalTuples
+	 */
+	public void setTupleNums(String tableName, int totalTuples) {
+		TableStats tab = (this.tableInfo.containsKey(tableName)) ? this.tableInfo.get(tableName) : new TableStats(tableName);
+		tab.setTuples(totalTuples);
+	}
+
+	/**
+	 * 
+	 * @param tableName
+	 * @return the total number of tuples in this table
+	 */
+	public int getTupleNums(String tableName) {
+		return this.tableInfo.get(tableName).getTuples();
+	}
 
 
 	/**
@@ -82,6 +92,13 @@ public class Catalog {
 		schemaList.put(name, schema);
 	}
 
+	public void setLeavesNum(String tableName,String column,int num) {
+		this.tableInfo.get(tableName).setIndexLeaves(column, num);
+	}
+	
+	public int getLeavesNum(String tableName,String column) {
+		return this.tableInfo.get(tableName).getNumLeaves(column);
+	}
 	/**
 	 * Get the schema associated with the data
 	 * 
@@ -98,16 +115,13 @@ public class Catalog {
 	 * @param setSortCol : index on the file that the table sorted on
 	 * @param isClustered : if the table is clustered
 	 */
-	public void addIndex(String tableName, String sortedCol,boolean isClustered) {
-		this.sortedCol.put(tableName, sortedCol);
-		this.isClustered.put(tableName, isClustered);
+	public void addIndex(String tableName, String columnName,boolean isClustered) {
+//		this.sortedCol.put(tableName, columnName);
+//		this.isClustered.put(tableName, isClustered);
+
 		//added
-		if(isClustered) {
-			this.ClusteredIndex.put(tableName, sortedCol);
-		}else {
-			ArrayList<String> unClusteredIndexes = (this.unClusteredIndexes.containsKey(tableName))? this.unClusteredIndexes.get(tableName): new ArrayList<String>();
-			unClusteredIndexes.add(sortedCol);
-		}
+		TableStats tab = (this.tableInfo.containsKey(tableName)) ? this.tableInfo.get(tableName) : new TableStats(tableName);
+		tab.addIndex(columnName, isClustered);
 	}
 
 	/**
@@ -116,34 +130,57 @@ public class Catalog {
 	 * @return the single clustered index of this table
 	 */
 	public String getClusteredIndex(String tableName){
-		return this.ClusteredIndex.get(tableName);
+		return this.tableInfo.get(tableName).getClustered();
 	}
 
 	/**
 	 * 
 	 * @param tableName
-	 * @return the set of unclustered indexes of this table
+	 * @return the set of all indexes(clustered+unclustered) of this table
 	 */
-	public ArrayList<String> getUnclusteredIndexes(String tableName) {
-		return this.unClusteredIndexes.get(tableName);
+	public ArrayList<String> getAllIndexes(String tableName) {
+		return this.tableInfo.get(tableName).getAllIndex();
 	}
+	
+	/**
+	 * 
+	 * @param tableName  the table of column stats
+	 * @param columnName  name of column
+	 * @param range     [low, high]
+	 */ 
+	public void addColRange(String tableName, String columnName, int[] range) {
+		this.tableInfo.get(tableName).setColRange(columnName, range);
+	}
+	
+	/**
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @return the range [low, high] of the tableName of columnName
+	 */
+	public int[] getColRange(String tableName,String columnName) {
+		if(this.tableInfo.containsKey(tableName)) {
+			return this.tableInfo.get(tableName).getColRange(columnName);
+		}
+		return null;
+	}
+
+//	/**
+//	 * 
+//	 * @param tableName the name of table
+//	 * @return col is sorted on on file
+//	 */
+//	public String getIndexCol(String tableName) {
+//		return sortedCol.get(tableName);
+//	}
 
 	/**
 	 * 
 	 * @param tableName the name of table
 	 * @return col is sorted on on file
 	 */
-	public String getIndexCol(String tableName) {
-		return sortedCol.get(tableName);
-	}
-
-	/**
-	 * 
-	 * @param tableName the name of table
-	 * @return col is sorted on on file
-	 */
-	public Boolean getIsClustered(String tableName) {
-		return isClustered.get(tableName);
+	public Boolean getIsClustered(String tableName,String col) {
+		return (this.tableInfo.get(tableName).getClustered().equals(col));
 	}
 
 	/** 
