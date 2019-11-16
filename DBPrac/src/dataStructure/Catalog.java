@@ -12,10 +12,6 @@ public class Catalog {
 	private static Catalog dbCatalog = null;
 	private HashMap<String, String> tableDir;
 	private HashMap<String, ArrayList<String>> schemaList;
-	
-//	private HashMap<String,String> sortedCol;     // the index that the table is sorted on
-//	private HashMap<String, Boolean> isClustered;
-	
 	private HashMap<String,TableStats> tableInfo;
 	
 
@@ -26,8 +22,6 @@ public class Catalog {
 	private Catalog() {
 		tableDir = new HashMap<String, String>();
 		schemaList = new HashMap<String, ArrayList<String>>();
-//		sortedCol = new HashMap<String,String>();
-//		isClustered = new HashMap<String, Boolean>() ;
 		tableInfo = new HashMap<String,TableStats>();
 	}
 
@@ -124,12 +118,14 @@ public class Catalog {
 	 * @param isClustered : if the table is clustered
 	 */
 	public void addIndex(String tableName, String columnName,boolean isClustered) {
-//		this.sortedCol.put(tableName, columnName);
-//		this.isClustered.put(tableName, isClustered);
-
 		//added
 		TableStats tab = (this.tableInfo.containsKey(tableName)) ? this.tableInfo.get(tableName) : new TableStats(tableName);
 		tab.addIndex(columnName, isClustered);
+	}
+	
+	public void addIndexDir(String tableName, String columnName,String dir) {
+		TableStats tab = (this.tableInfo.containsKey(tableName)) ? this.tableInfo.get(tableName) : new TableStats(tableName);
+		tab.setIndexDir(columnName,dir);
 	}
 
 	/**
