@@ -3,14 +3,19 @@ package dataStructure;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * When calling Index Builder, it will 
+ *
+ */
 public class TableStats {
 
 	private String tableName;
-	private String ClusteredIndex;
-	private ArrayList<String> Indexes;  // all index including the clustered
 	private int tableTuples;
+	private String ClusteredIndex;
+	private HashMap<String, String> indexDir;
+	private ArrayList<String> Indexes;  // all index including the clustered
 	private HashMap<String,int[]> colStats;   // statistic of column range
-	private HashMap<String,Integer> indexLeaves;   
+	private HashMap<String,Integer> indexLeaves;     // num of leave nodes
 
 	public TableStats(String tableName) {
 		this.tableName=tableName;
@@ -21,6 +26,10 @@ public class TableStats {
 	
 	public void setTuples(int tableTuples) {
 		this.tableTuples=tableTuples;
+	}
+	
+	public void setIndexDir(String column, String dir) {
+		this.indexDir.put(column, dir);
 	}
 	
 	public int getTuples() {

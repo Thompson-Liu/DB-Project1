@@ -13,7 +13,7 @@ public class UnionFind {
 	private HashMap<String, Integer> colToInd; // A mapping from column names to column ids
 	private HashMap<Integer, BlueBox> indToBox; // A mapping from column ids to blue boxes
 
-	/** Constructs a new UnionFind instance. */
+	/** Initialize class fields. */
 	public UnionFind() {
 		indList= new ArrayList<>();
 		colToInd= new HashMap<>();

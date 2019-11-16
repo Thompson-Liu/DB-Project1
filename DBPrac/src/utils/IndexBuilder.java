@@ -26,9 +26,8 @@ public class IndexBuilder {
 	
 	private void buildIndex(int isClustered, int order, String attr, String tableName) {		
 		TupleReader tr = new BinaryTupleReader(catalog.getDir(tableName));
-
 		TupleWriter tw = new BinaryTupleWriter(indexes + tableName + "." + attr);
-		
+		catalog.addIndexDir(tableName, attr, indexes + tableName + "." + attr);
 		BulkLoader bulkloading = new BulkLoader(isClustered, order, tr, tw, attr, tableName);
 		bulkloading.buildTree();
 	}

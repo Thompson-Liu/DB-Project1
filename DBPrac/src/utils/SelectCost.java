@@ -9,30 +9,36 @@ import java.util.HashMap;
 
 import dataStructure.Catalog;
 
-public class QueryCost {
+public class SelectCost {
 
-	private String tableName;
 	private int numTuples;
 	private ArrayList<String> schema; 
 	private HashMap<String,Integer[]> colRange; 
 	private String clusteredIndex;
 	private ArrayList<String> allIndexes;
+	private Catalog catalog;
 
 	/**
 	 * 
 	 * @param tableName
-	 * @param dbDir     directory of the file /input/db
 	 */
-	public QueryCost(String tableName, String dbDir) {
-		this.tableName = tableName;
-		Catalog catalog = Catalog.getInstance();
+	public SelectCost() {
+		catalog = Catalog.getInstance();
+	}
+
+	/**
+	 *  is it scan or select?
+	 * @param tableName
+	 * @param col
+	 * @param isFullScan
+	 * @param low
+	 * @param high
+	 * @return
+	 */
+	public Integer ScanCost(String tableName,String col,boolean isFullScan,Integer low, Integer high) {
 		schema = catalog.getSchema(tableName);
 		clusteredIndex = catalog.getClusteredIndex(tableName);
 		allIndexes = catalog.getAllIndexes(tableName);
-	}
-
-	public Integer ScanCost(String col,boolean isFullScan,Integer low, Integer high) {
-		// how to get the number of leave nodes ??
 		int numPages= (int) Math.ceil(numTuples*4.0*schema.size()/4096);
 		Catalog catalog = Catalog.getInstance();
 		int numLeaves = catalog.getLeavesNum(tableName, col);;
