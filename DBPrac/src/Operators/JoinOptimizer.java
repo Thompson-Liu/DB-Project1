@@ -75,11 +75,6 @@ public class JoinOptimizer {
 			PlanInfo prevOptPlan = this.subsetPlan.get(prevSubTables);
 			HashSet<String> topMostTable = new HashSet<String>();
 			PlanInfo topMostPlan = this.subsetPlan.get(topMostTable);
-			//TODO 
-			// 1. update and calculate new cost
-			// 2. create a new Plan Info and added to
-			// 3. get join expression for this new plan
-			// 4. create this logical operator either scan or select
 			PlanInfo newPlan = joinVupdate(prevOptPlan,topMostPlan);
 			prevSubTables.add(this.tableNames.get(topMost));
 			//update the hashMap if this plan is the optimal cost among operators with same set of tables 
