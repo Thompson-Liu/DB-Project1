@@ -14,6 +14,7 @@ public class PlanInfo {
 //	private Operator operator;
 	private String firstTableName;
 	private ArrayList<LogicalOperator> logOps;
+	private ArrayList<String> aliasNames;
 	private int cost;                      // total cost for this [operator] tree plan
 	private int totalTuples;                    // the total number of tuples of the relation resulted from this plan
 	private HashMap<String,Integer> columnStats;   // v(R.A)   for a column of relation
@@ -70,21 +71,22 @@ public class PlanInfo {
 		return this.totalTuples;
 	}
 	
-	/**
-	 *    helper for getFirstTableName  ,  detail check below function
-	 * @param firstTable the name of the first table
-	 */
-	public void setFirstTableName(String firstTable) {
-		this.firstTableName=firstTable;
+	
+	public void setAliasName(ArrayList<String> prev) {
+		this.aliasNames=prev;
+		
+	}
+	public void addAliasName(String alias) {
+		this.aliasNames.add(alias);
 	}
 	
-	/**
-	 *  This function is used to get the table name of the TopMost Table
-	 * @return
-	 */
-	public String getFirstTableName() {
-		return firstTableName;
+	public ArrayList<String> getAliasNames(){
+		ArrayList<String> aliases = new ArrayList<String>();
+		aliases.addAll(this.aliasNames);
+		return aliases;
 	}
+	
+	
 	
 	/**
 	 * 
@@ -106,7 +108,10 @@ public class PlanInfo {
 	 */
 	public Integer getColV(String tableName, String colName) {
 		String tabCol = tableName+"."+colName;
-		return columnStats.get(tabCol);
+		if(columnStats.containsKey(tabCol)) {
+			return columnStats.get(tabCol);
+		}
+		return null;
 	}
 
 }

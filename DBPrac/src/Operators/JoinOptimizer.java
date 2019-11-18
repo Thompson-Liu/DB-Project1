@@ -20,10 +20,9 @@ import physicalOperator.Operator;
 import physicalOperator.SelectOperator;
 
 public class JoinOptimizer {
-	private ArrayList<String> tableNames;                 // tableName not alias  注！
+	private ArrayList<String> aliasNames;                
 	private ArrayList<LogicalOperator> baseOperators;     // one-to-one position corresponding with tableName above
 	private Catalog cat;
-	private HashMap<String, String> alias;                //<tableName , alias>
 	private UnionFind unionFind;
 	private HashMap<HashSet<String> , PlanInfo> subsetPlan;        // store the optimal subset and corresponding information
 
@@ -37,7 +36,7 @@ public class JoinOptimizer {
 		this.unionFind=unionFind;
 		subsetPlan= new HashMap<HashSet<String>, PlanInfo>();
 		cat=Catalog.getInstance(); 
-		this.tableNames = new ArrayList<String>();
+		this.aliasNames = new ArrayList<String>();
 		this.baseOperators  = baseOps;
 	}
 
@@ -60,7 +59,7 @@ public class JoinOptimizer {
 					traverseSubPlans(topMost,subPlanSize,1,0,prevSub);}
 			}
 		}
-		HashSet<String> prevSubTables = new HashSet<String>(this.tableNames);
+		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
 		return optimalPlan.getOpsCopy();
 	}
@@ -84,7 +83,7 @@ public class JoinOptimizer {
 			HashSet<String> topMostTable = new HashSet<String>();
 			PlanInfo topMostPlan = this.subsetPlan.get(topMostTable);
 			PlanInfo newPlan = joinVupdate(prevOptPlan,topMostPlan);
-			prevSubTables.add(this.tableNames.get(topMost));
+			prevSubTables.add(this.aliasNames.get(topMost));
 			//update the hashMap if this plan is the optimal cost among operators with same set of tables 
 			//or it is the first time to process this set of tables
 			Boolean condition = !subsetPlan.containsKey(prevSubTables) || subsetPlan.get(prevSubTables).getCost()>newPlan.getCost();
@@ -99,7 +98,7 @@ public class JoinOptimizer {
 			traverseSubPlans(topMost, targetSize,curLen,curPos,prevSubPlan);
 		}
 		// Terminate, if no more table to join or current table size in plan exceeds
-		else if (curPos==this.tableNames.size() || prevSubPlan.size()>targetSize) {
+		else if (curPos==this.baseOperators.size() || prevSubPlan.size()>targetSize) {
 			return;
 		}
 		// Recursive: for each curPos, 2 cases: either select it / not select it
@@ -117,16 +116,18 @@ public class JoinOptimizer {
 	 * @param Operator    either scan or indexScan on base(Table) 
 	 */
 	private void baseTableVupdate(Leaf baseOp) {
+		// access catalog
 		Catalog catalog = Catalog.getInstance();
 		String tableName =baseOp.getTableName();
-		this.tableNames.add(tableName);
 		String aliasName = baseOp.getAlias();
-		this.alias.put(tableName,aliasName);
+		this.aliasNames.add(aliasName);
 		int numTuples = catalog.getTupleNums(tableName);
+		
+		// set up new PlanInfo
 		ArrayList<LogicalOperator> AbaseOp = new ArrayList<LogicalOperator>();
 		AbaseOp.add(baseOp);
 		PlanInfo basePlan = new PlanInfo(AbaseOp);
-		basePlan.setFirstTableName(tableName);
+		basePlan.addAliasName(aliasName);
 		ArrayList<String> schema = catalog.getSchema(tableName);
 		for(String col:schema) {
 			//V(R,A)=max- min +1
@@ -146,26 +147,28 @@ public class JoinOptimizer {
 	private void selectionVupdate(SelectLogOp selectOp) {
 		Catalog catalog = Catalog.getInstance();
 		String tableName = selectOp.getTableName();
-		this.tableNames.add(tableName);
-		String aliasName = selectOp.getAlias();
-		this.alias.put(tableName,aliasName);
 		ArrayList<String> schema = catalog.getSchema(tableName);
 		int numTuples = catalog.getTupleNums(tableName);
-		// TODO (call UnionFind function,e.g. getTableColRange(TableName) to get)
-		HashMap<String,int[]> colRange;
-		
 		ArrayList<LogicalOperator> AselectOp = new ArrayList<LogicalOperator>();
 		AselectOp.add(selectOp);
+		String aliasName = selectOp.getAlias();
+		this.aliasNames.add(aliasName);
+		
 		// setup the PlanInfo of this select operator
 		PlanInfo curPlan = new PlanInfo(AselectOp);
-		curPlan.setFirstTableName(tableName);
+		curPlan.addAliasName(aliasName);
+		
+		// TODO (call UnionFind function,e.g. getTableColRange(TableName) to get)
+		HashMap<ArrayList<String>,Integer[]> colRange = findSelect(aliasName);
 		double reductionFactor =1;
 		for(String col:schema) {
 			int oriHigh = catalog.getColRange(tableName, col)[1];
 			int oriLow=catalog.getColRange(tableName, col)[0];
 			if(colRange.containsKey(col)) {  // check if col is in expr {R.A=3 or R.A<4} with low and high bound
-				int newHigh = Math.min(colRange.get(col)[1],oriHigh);     // 注: union find return intMax if no upper bound
-				int newLow = Math.max(colRange.get(col)[0], oriLow);
+				int newHigh = (colRange.get(col)[1]==null) ? Integer.MAX_VALUE:colRange.get(col)[1];
+				int newLow = (colRange.get(col)[0]==null) ? Integer.MIN_VALUE:colRange.get(col)[0];
+				newHigh = Math.min(newHigh,oriHigh);     
+				newLow = Math.max(newLow, oriLow);
 				int curReductionF = (int)(newHigh-newLow)/(oriHigh-oriLow);
 				reductionFactor = reductionFactor*curReductionF;
 				int v = newHigh-newLow+1;
@@ -182,7 +185,7 @@ public class JoinOptimizer {
 		curPlan.setTotalTuples(newNum);
 		// update the V(R,A) , if there is less tuples than the V
 		for(String col:schema) {
-			if(curPlan.getColV(aliasName, col)>newNum) {
+			if(curPlan.getColV(tableName, col)==null || curPlan.getColV(aliasName, col)>newNum) {
 				curPlan.addColV(aliasName, col, newNum);
 			}
 		}
@@ -194,14 +197,21 @@ public class JoinOptimizer {
 	private PlanInfo joinVupdate(PlanInfo prevOptPlan,PlanInfo topMostPlan) {
 		// TODO           call and get the joining expression and joining columns from Union Find
 		Expression curJoinExp;      
-		ArrayList<ArrayList<String>> equTableColSet;  
+		ArrayList<ArrayList<String>> equTableColSet= this.unionFind.findJoin(prevOptPlan.getAliasNames(),topMostPlan.getAliasNames().get(0));  
 		//👆 Alias+col : equalities among a list of tables since prevOptPlan contains multiple tables
 		//  e.g.   " R.a=R.h=B.C  AND  S.d=B.e "    prevTables:[R,S]  topMostTable: [B]
 		//          WANT:  [ ["R.a","R.h" , "B.c"], ["S.d" , "B.e"] ]
-		// little change:如果一个column和很多个其他的column都相等，放到一个arraylist里
+		// little change:如果一个column和很多个其他的column都相等，放到一个arrayList里
 
 		ArrayList<LogicalOperator> newJoin = new ArrayList<LogicalOperator>();
-		// Two table join :  choose the smaller size to be the left table
+		int joinSize = prevOptPlan.getTotalTuples()*topMostPlan.getTotalTuples();    // compute intermediate relation size
+		PlanInfo newPlan = new PlanInfo(newJoin);
+		String rightMostTable= topMostPlan.getAliasNames().get(0);
+		ArrayList<String> prevAliasNames = prevOptPlan.getAliasNames();
+		prevAliasNames.add(rightMostTable);
+		newPlan.setAliasName(prevAliasNames);
+		
+		// if there are two table join :  choose the smaller size to be the left table
 		if(prevOptPlan.getNumOps()==1) {
 			if(prevOptPlan.getTotalTuples()<topMostPlan.getTotalTuples()) {
 				newJoin=prevOptPlan.getOpsCopy();
@@ -214,9 +224,6 @@ public class JoinOptimizer {
 			newJoin = prevOptPlan.getOpsCopy();
 			newJoin.addAll(topMostPlan.getOpsCopy());
 		}
-		PlanInfo newPlan = new PlanInfo(newJoin);
-		String rightMostTable= alias.get(topMostPlan.getFirstTableName());
-		int joinSize = prevOptPlan.getTotalTuples()*topMostPlan.getTotalTuples();    // compute intermediate relation size
 		// if there exists a set of bluebox relating to left and right
 		for(ArrayList<String> equ :equTableColSet) {
 			int Vupdate=Integer.MAX_VALUE;  //3.4.4 specified: updating v is the min, so start with max and keep decrease until MIN
@@ -247,9 +254,6 @@ public class JoinOptimizer {
 		int cost=prevOptPlan.getCost()+joinSize;
 		newPlan.setCost(cost);
 		newPlan.setTotalTuples(joinSize);
-
-
 		return newPlan;
-
 	}
 }
