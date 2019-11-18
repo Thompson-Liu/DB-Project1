@@ -7,19 +7,17 @@ import java.util.List;
  * lo, hi, eq. */
 public class BlueBox {
 
-	private int root;
 	private List<String> attr;
 	private Integer lo;
 	private Integer hi;
 	private Integer eq;
 
-	public BlueBox(int root) {
+	public BlueBox(List<String> attribute) {
 		attr= new ArrayList<String>();
-		this.root= root;
-	}
-
-	public int getRoot() {
-		return root;
+		attr.addAll(attribute);
+		lo = null;
+		hi = null;
+		eq = null;
 	}
 
 	public Integer getLower() {
@@ -47,15 +45,17 @@ public class BlueBox {
 	}
 
 	public void setEqual(int newVal) {
-		eq= newVal;
+		eq = newVal;
+		lo = newVal;
+		hi = newVal;
 	}
 
 	public void addAttr(String newAttr) {
 		attr.add(newAttr);
 	}
-
-	public void setRoot(int newRoot) {
-		root= newRoot;
+	
+	public boolean equals(BlueBox box) {
+		// check if working as desired
+		return box.getAttr().equals(attr);	
 	}
-
 }

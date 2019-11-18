@@ -44,7 +44,7 @@ public class IndexScanOperator extends ScanOperator {
 		fin= new FileInputStream(indexFile);
 		fc= fin.getChannel();
 		buffer= ByteBuffer.allocate(4096);
-		this.colName = (alias == "") ? tableName + "." + index : alias + "." + index;
+		this.colName = index;
 		this.isClustered= isClustered;
 		this.lo= lowkey;
 		this.hi= highkey;

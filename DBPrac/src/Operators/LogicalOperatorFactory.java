@@ -1,9 +1,11 @@
 package Operators;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import dataStructure.BlueBox;
+import dataStructure.Catalog;
 import dataStructure.UnionFind;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.AllColumns;
@@ -13,8 +15,10 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import parser.UnionFindGenerator;
+import parser.UnusedSelectVisitor;
 import logicalOperators.DuplicateEliminationLogOp;
 import logicalOperators.JoinLogOp;
+import logicalOperators.Leaf;
 import logicalOperators.LogicalOperator;
 import logicalOperators.ProjectLogOp;
 import logicalOperators.SelectLogOp;
@@ -52,9 +56,11 @@ public class LogicalOperatorFactory {
 			if(plainSelect.getFromItem().getAlias()!=null) {
 				aliasName = plainSelect.getFromItem().getAlias().toString();
 				String tempTable = fromLeft.replace("AS " + aliasName, "").trim();
-				intOp = new SelectLogOp(tempTable, aliasName, plainSelect.getWhere());
+				intOp = (plainSelect.getWhere() != null) ? new SelectLogOp(tempTable, aliasName, plainSelect.getWhere())
+						: new Leaf(tempTable, aliasName);
 			} else {
-				intOp = new SelectLogOp(fromLeft , "", plainSelect.getWhere());
+				intOp = (plainSelect.getWhere() != null) ? new SelectLogOp(fromLeft, "", plainSelect.getWhere()) 
+						: new Leaf(fromLeft, "");
 			}
 		}
 
@@ -78,7 +84,6 @@ public class LogicalOperatorFactory {
 		return intOp;
 	}
 
-<<<<<<< HEAD
 	private LogicalOperator pushSelect(PlainSelect plainSelect, List<Join> joinList) {
 		// TODO Auto-generated method stub
 		UnionFindGenerator ufGen = new UnionFindGenerator(plainSelect.getWhere());
@@ -95,58 +100,33 @@ public class LogicalOperatorFactory {
 				tempTable = tempTable.replace("AS " + tempAlias, "").trim();
 			}
 			
+			LogicalOperator select;
+			Expression unusedSelExpr = ufGen.getResidualSelect();
+			UnusedSelectVisitor visitor;
+			Catalog cat = Catalog.getInstance();
+			
 			// If there is a bluebox containing the table, push down the selection
-			SelectLogOp select;
-			BlueBox bb = uf.find(tempTable);
-			if(bb !=  null) {
-				select = new SelectLogOp(tempTable, tempAlias, bb.getLower(), bb.getUpper());
+			HashMap<List<String>, Integer[]> selectAttr;
+			if (tempAlias.equals("")) {
+				selectAttr = uf.findSelect(tempTable);
+				visitor = new UnusedSelectVisitor(tempTable, cat.getSchema(tempTable), unusedSelExpr);
 			} else {
-				select = new SelectLogOp(tempTable, tempAlias, null, null);
+				selectAttr = uf.findSelect(tempAlias);
+				visitor = new UnusedSelectVisitor(tempAlias, cat.getSchema(tempTable), unusedSelExpr);
+			}
+			
+			// if the residual selection also matches the tableName, push down too
+			Expression expr = visitor.getTableExpr();
+			if(!selectAttr.isEmpty()) {
+				select = new SelectLogOp(tempTable, tempAlias, selectAttr, expr);
+			} else if (expr != null){
+				select = new SelectLogOp(tempTable, tempAlias, expr);
+			} else {
+				select = new Leaf(tempTable, tempAlias);
 			}
 			joinChildren.add(select);
 		}
 		JoinLogOp join = new JoinLogOp(joinChildren, ufGen.getResidualJoin());
-		
-		// Check if there's still some remaning selection to do
-		if (ufGen.getResidualSelect() != null) {
-			return new SelectLogOp(join);
-		}
 		return join;
 	}
-
-
-//	private LogicalOperator pushSelect(PlainSelect plainSelect, List<Join> joinList) {
-//		// TODO Auto-generated method stub
-//		UnionFindGenerator ufGen = new UnionFindGenerator(plainSelect.getWhere());
-//		UnionFind uf = ufGen.getUnionFind();
-//		ArrayList<LogicalOperator> joinChildren = new ArrayList<LogicalOperator>();
-//		
-//		for(int i = 0; i < joinList.size(); ++i) {
-//			Join joinRel = joinList.get(i);
-//			
-//			String tempAlias = "";
-//			String tempTable = joinRel.getRightItem().toString();
-//			if(joinRel.getRightItem().getAlias()!=null) {
-//				tempAlias = joinRel.getRightItem().getAlias().toString();
-//				tempTable = tempTable.replace("AS " + tempAlias, "").trim();
-//			}
-//			
-//			// If there is a bluebox containing the table, push down the selection
-//			SelectLogOp select;
-//			if  (uf.find(tempTable) !=  null) {
-//				select = new SelectLogOp(tempTable,tempAlias,);
-////				select = new SelectLogOp(tempTable, tempAlias, lowKey, highKey);
-//			} else {
-////				select = new SelectLogOp(tempTable, tempAlias, lowKey, highKey);
-//			}
-//			joinChildren.add(select);
-//		}
-//		JoinLogOp join = new JoinLogOp(joinChildren, ufGen.getResidualJoin());
-//		
-//		// Check if there's still some remaning selection to do
-//		if (ufGen.getResidualSelect() != null) {
-//			return new SelectLogOp(join);
-//		}
-//		return join;
-//	}
 }

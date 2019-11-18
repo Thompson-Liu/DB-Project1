@@ -21,10 +21,9 @@ public class JoinLogOp extends LogicalOperator{
 		}
 	}
 	
-	public LogicalOperator[] getChildren() {
-		LogicalOperator[] childrenOp = new LogicalOperator[childOp.size()]; 
-		childrenOp = childOp.toArray(childrenOp);
-		return childrenOp;
+	@Override
+	public List<LogicalOperator> getChildren() {
+		return childOp;
 	}
 	
 	public LogicalOperator getChild(int index) {
@@ -35,7 +34,13 @@ public class JoinLogOp extends LogicalOperator{
 		return joinExp;
 	}
 	
+	@Override
 	public void accept(PhysicalPlanBuilder planBuilder) {
 		planBuilder.visit(this);
+	}
+	
+	@Override
+	public String getTableName() {
+		return "";
 	}
 }
