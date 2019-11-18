@@ -78,7 +78,6 @@ public class LogicalOperatorFactory {
 		return intOp;
 	}
 
-<<<<<<< HEAD
 	private LogicalOperator pushSelect(PlainSelect plainSelect, List<Join> joinList) {
 		// TODO Auto-generated method stub
 		UnionFindGenerator ufGen = new UnionFindGenerator(plainSelect.getWhere());

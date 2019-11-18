@@ -137,7 +137,6 @@ public class PhysicalPlanBuilder {
 
 	public void visit(SortLogOp sortLop) {
 		sortLop.getChildren()[0].accept(this);
-
 		if (sort[0] == 0) {
 			immOp= new SortOperator(immOp, sortLop.getColumns());
 		} else {

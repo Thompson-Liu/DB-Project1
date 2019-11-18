@@ -3,6 +3,7 @@
  */
 package Operators;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import logicalOperators.LogicalOperator;
@@ -10,13 +11,15 @@ import physicalOperator.Operator;
 
 public class PlanInfo {
 	
-	private Operator operator;
+//	private Operator operator;
+	private String firstTableName;
+	private ArrayList<LogicalOperator> logOps;
 	private int cost;                      // total cost for this [operator] tree plan
 	private int totalTuples;                    // the total number of tuples of the relation resulted from this plan
 	private HashMap<String,Integer> columnStats;   // v(R.A)   for a column of relation
 	
-	public PlanInfo(Operator operator) {
-		this.operator=operator;
+	public PlanInfo(ArrayList<LogicalOperator> logOps) {
+		this.logOps=logOps;
 	}
 	
 	
@@ -27,6 +30,14 @@ public class PlanInfo {
 	public void setTotalTuples(int totalTuples) {
 		totalTuples= (totalTuples==0)? 1: totalTuples;        // make sure this is not 0
 		this.totalTuples=totalTuples;
+	}
+	
+	/**
+	 * 
+	 * @return  the number of logical operators in this PlanInfo
+	 */
+	public int getNumOps() {
+		return logOps.size();
 	}
 	
 	/**
@@ -49,14 +60,31 @@ public class PlanInfo {
 		return cost;
 	}
 	
-	public Operator getOp() {
-		return this.operator;
+	public ArrayList<LogicalOperator> getOpsCopy() {
+		ArrayList<LogicalOperator> temp = new ArrayList<LogicalOperator>();
+		temp.addAll(this.logOps);
+		return temp;
 	}
 	
 	public int getTotalTuples() {
 		return this.totalTuples;
 	}
 	
+	/**
+	 *    helper for getFirstTableName  ,  detail check below function
+	 * @param firstTable the name of the first table
+	 */
+	public void setFirstTableName(String firstTable) {
+		this.firstTableName=firstTable;
+	}
+	
+	/**
+	 *  This function is used to get the table name of the TopMost Table
+	 * @return
+	 */
+	public String getFirstTableName() {
+		return firstTableName;
+	}
 	
 	/**
 	 * 
