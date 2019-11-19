@@ -27,7 +27,6 @@ import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
-import parser.IndexConditionSeperator;
 import parser.JoinTableVisitor;
 import parser.UnionFindGenerator;
 import physicalOperator.BNLJ;
