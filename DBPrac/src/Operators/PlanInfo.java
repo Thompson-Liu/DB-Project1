@@ -15,6 +15,7 @@ public class PlanInfo {
 	private String firstTableName;
 	private ArrayList<LogicalOperator> logOps;
 	private ArrayList<String> aliasNames;
+	private ArrayList<Integer> sequence;
 	private int cost;                      // total cost for this [operator] tree plan
 	private int totalTuples;                    // the total number of tuples of the relation resulted from this plan
 	private HashMap<String,Integer> columnStats;   // v(R.A)   for a column of relation

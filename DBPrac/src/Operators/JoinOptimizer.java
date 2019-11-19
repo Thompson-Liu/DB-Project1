@@ -38,10 +38,8 @@ public class JoinOptimizer {
 		cat=Catalog.getInstance(); 
 		this.aliasNames = new ArrayList<String>();
 		this.baseOperators  = baseOps;
-	}
 
-	/**  Compute cost of join in a bottom-up fashion using Dynamic Programming. */
-	public ArrayList<LogicalOperator> findOptimalJoinOrder() {
+		//Compute cost of join in a bottom-up fashion using Dynamic Programming.
 		//start from base case bottom up until the the construction contains whole
 		for(int subPlanSize=1;subPlanSize<=baseOperators.size();subPlanSize++){
 			// each table could be the top most table in the subPlan
@@ -59,6 +57,13 @@ public class JoinOptimizer {
 					traverseSubPlans(topMost,subPlanSize,1,0,prevSub);}
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * @return  the optimal join order as a list of logical operator
+	 */
+	public ArrayList<LogicalOperator> findOptimalJoinOrder() {
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
 		return optimalPlan.getOpsCopy();
@@ -122,7 +127,7 @@ public class JoinOptimizer {
 		String aliasName = baseOp.getAlias();
 		this.aliasNames.add(aliasName);
 		int numTuples = catalog.getTupleNums(tableName);
-		
+
 		// set up new PlanInfo
 		ArrayList<LogicalOperator> AbaseOp = new ArrayList<LogicalOperator>();
 		AbaseOp.add(baseOp);
@@ -153,11 +158,11 @@ public class JoinOptimizer {
 		AselectOp.add(selectOp);
 		String aliasName = selectOp.getAlias();
 		this.aliasNames.add(aliasName);
-		
+
 		// setup the PlanInfo of this select operator
 		PlanInfo curPlan = new PlanInfo(AselectOp);
 		curPlan.addAliasName(aliasName);
-		
+
 		// TODO (call UnionFind function,e.g. getTableColRange(TableName) to get)
 		HashMap<ArrayList<String>,Integer[]> colRange = findSelect(aliasName);
 		double reductionFactor =1;
@@ -210,7 +215,7 @@ public class JoinOptimizer {
 		ArrayList<String> prevAliasNames = prevOptPlan.getAliasNames();
 		prevAliasNames.add(rightMostTable);
 		newPlan.setAliasName(prevAliasNames);
-		
+
 		// if there are two table join :  choose the smaller size to be the left table
 		if(prevOptPlan.getNumOps()==1) {
 			if(prevOptPlan.getTotalTuples()<topMostPlan.getTotalTuples()) {

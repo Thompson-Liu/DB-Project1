@@ -45,11 +45,33 @@ public class Tuple {
 	/**
 	 * Return a tuple after concating the argument with existing tuple
 	 * @param b  tuple to be added 
+	 * @param pos  the starting position of the concatenating tuple
 	 * @return  a new tuple with b added to current tuple
 	 */
-	public Tuple concateTuple(Tuple b) {
-		ArrayList<Integer> result = (ArrayList<Integer>) dataTuple.clone();
-		result.addAll(b.getTuple());
+	public Tuple concateTuple(Tuple b, int pos) {
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		// if want to append at last
+		if(pos>=this.dataTuple.size()) {
+			result.addAll(this.dataTuple);
+			result.addAll(b.dataTuple);
+		}// if want to insert in the middle
+		else {
+			int leftTupPos=0;
+			int i=0;
+			while(i<this.dataTuple.size()+b.dataTuple.size()) {
+				if(i==pos) {
+					for(int ele:b.dataTuple) {
+						result.add(ele);
+						i++;
+					}
+					
+				}else {
+					result.add(this.dataTuple.get(leftTupPos));
+					leftTupPos++;
+					i++;
+				}
+			}
+		}
 		return (new Tuple(result));
 	}
 

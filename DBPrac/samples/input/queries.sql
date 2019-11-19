@@ -1,7 +1,8 @@
 ----------------============================   P 1    ===========================-----------
 
 SELECT *
-FROM Reserves;
+FROM Reserves
+WHERE Reserves.A<>Reserves.B AND Reserves.A=3;
 
 SELECT *
 FROM Reserves
