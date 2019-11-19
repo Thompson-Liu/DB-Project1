@@ -34,14 +34,14 @@ public class InputFileParser {
 		return inputDir;
 	}
 	
-	public int getFlag() {
-		int buildIndex = -1;
-		try {
-			buildIndex = Integer.parseInt(reader.readLine());
-		} catch (IOException e) {
-			System.err.println("Having error reading from the file");
-			e.printStackTrace();
-		}
-		return buildIndex;
-	}
+//	public int getFlag() {
+//		int buildIndex = -1;
+//		try {
+//			buildIndex = Integer.parseInt(reader.readLine());
+//		} catch (IOException e) {
+//			System.err.println("Having error reading from the file");
+//			e.printStackTrace();
+//		}
+//		return buildIndex;
+//	}
 }
