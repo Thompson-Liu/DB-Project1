@@ -220,8 +220,8 @@ public class PhysicalPlanBuilder {
 		}
 
 		assert(selectPlan[0].equals("index"));
-		int low;
-		int high;
+		Integer low = null;
+		Integer high = null;
 		
 		EqualsTo removed = null;
 		for (List<String> attr: attributes.keySet()) {
@@ -260,8 +260,14 @@ public class PhysicalPlanBuilder {
 		}
 		String tableIndexDir = indexDir + "/" + selectLop.getTableName() + "." + selectPlan[1].split("\\.")[1];
 		boolean clustered = selectPlan[2].equals("clustered");
-		immOp = new IndexScanOperator(selectLop.getTableName(), selectLop.getAlias(), selectPlan[1], 
-				tableIndexDir, clustered, low, high);
+		try {
+			immOp = new IndexScanOperator(selectLop.getTableName(), selectLop.getAlias(), selectPlan[1], 
+					tableIndexDir, clustered, low, high);
+		} catch(Exception e) {
+			System.err.println("Error when creating an indexScan Operator");
+			e.printStackTrace();
+		}
+		
 
 		Expression unused = selectLop.getUnusedExpr();
 		// If all select expressions are resolve, which means one indexScan is enough 

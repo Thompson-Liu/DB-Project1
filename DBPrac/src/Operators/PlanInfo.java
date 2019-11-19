@@ -12,7 +12,6 @@ import physicalOperator.Operator;
 public class PlanInfo {
 	
 //	private Operator operator;
-	private String firstTableName;
 	private ArrayList<LogicalOperator> logOps;
 	private ArrayList<String> aliasNames;
 	private int cost;                      // total cost for this [operator] tree plan
@@ -52,7 +51,7 @@ public class PlanInfo {
 		// check to make sure keep the smaller v value
 		if(columnStats.containsKey(tabCol)) {
 			int preV= columnStats.get(tabCol);
-			v = Math.min(v, preV);
+			v = Math.max(1,Math.min(v, preV));
 		}
 		this.columnStats.put(tabCol, v);
 	}
@@ -62,8 +61,7 @@ public class PlanInfo {
 	}
 	
 	public ArrayList<LogicalOperator> getOpsCopy() {
-		ArrayList<LogicalOperator> temp = new ArrayList<LogicalOperator>();
-		temp.addAll(this.logOps);
+		ArrayList<LogicalOperator> temp = new ArrayList<LogicalOperator>(this.logOps);
 		return temp;
 	}
 	
@@ -81,8 +79,7 @@ public class PlanInfo {
 	}
 	
 	public ArrayList<String> getAliasNames(){
-		ArrayList<String> aliases = new ArrayList<String>();
-		aliases.addAll(this.aliasNames);
+		ArrayList<String> aliases = new ArrayList<String>(this.aliasNames);
 		return aliases;
 	}
 	
