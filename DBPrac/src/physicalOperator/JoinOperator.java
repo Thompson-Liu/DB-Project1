@@ -4,11 +4,12 @@
 package physicalOperator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import dataStructure.Tuple;
-import fileIO.*;
+import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
+import utils.PhysicalPlanWriter;
 
 /** the class for the join operator */
 public class JoinOperator extends Operator {
@@ -25,15 +26,14 @@ public class JoinOperator extends Operator {
 	 * 
 	 * @param LeftOperator the left operator of join
 	 * @param RightOperator the right operator of join
-	 * @param expression the where expression to select tuple
-	  */
+	 * @param expression the where expression to select tuple */
 	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
 		joinExp= expression;
-		
-		schema = (ArrayList<String>) LeftOperator.schema().clone();
+
+		schema= (ArrayList<String>) LeftOperator.schema().clone();
 		schema.addAll(RightOperator.schema());
-	
-		tableName = LeftOperator.getTableName() + "," + RightOperator.getTableName();
+
+		tableName= LeftOperator.getTableName() + "," + RightOperator.getTableName();
 		leftOperator= LeftOperator;
 		rightOperator= RightOperator;
 	}
@@ -64,7 +64,7 @@ public class JoinOperator extends Operator {
 		boolean flag= true;
 		Tuple right;
 		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(), rightOperator.schema());
-		
+
 		while (flag) {
 			if (resetFlag) {
 				while ((left= leftOperator.getNextTuple()) != null) {
@@ -79,9 +79,7 @@ public class JoinOperator extends Operator {
 				flag= false;
 			} else {
 				while ((right= rightOperator.getNextTuple()) != null) {
-					if ((next= evawhere.evaluate(left, right)) != null) {
-						return next;
-					}
+					if ((next= evawhere.evaluate(left, right)) != null) { return next; }
 				}
 				rightOperator.reset();
 				resetFlag= true;
@@ -97,11 +95,15 @@ public class JoinOperator extends Operator {
 	@Override
 	public void dump(TupleWriter writer) {
 		Tuple t;
-		while((t = getNextTuple()) != null) {
+		while ((t= getNextTuple()) != null) {
 //			System.out.println(t.printData());
 			writer.addNextTuple(t);
 		}
 		writer.dump();
 		writer.close();
+	}
+
+	@Override
+	public void accept(PhysicalPlanWriter ppw) {
 	}
 }

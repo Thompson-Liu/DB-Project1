@@ -1,12 +1,13 @@
 package physicalOperator;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
+import utils.PhysicalPlanWriter;
 
 /** the class for the select operator */
 public class SelectOperator extends Operator {
@@ -70,6 +71,23 @@ public class SelectOperator extends Operator {
 	@Override
 	public String getTableName() {
 		return this.tableName;
+	}
+
+	public Operator getChild() {
+		return childOp;
+	}
+
+	public Expression getExpression() {
+		return exp;
+	}
+
+	@Override
+	public void accept(PhysicalPlanWriter ppw) {
+		try {
+			ppw.visit(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

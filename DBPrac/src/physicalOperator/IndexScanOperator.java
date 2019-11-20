@@ -11,6 +11,7 @@ import bpTree.Deserializer;
 import dataStructure.Catalog;
 import dataStructure.Tuple;
 import fileIO.BinaryTupleReader;
+import utils.PhysicalPlanWriter;
 
 /** This class implements index scan, a file scan that only retrieves a range (subset) of tuples
  * from a relation file using B+-tree indices */
@@ -39,21 +40,21 @@ public class IndexScanOperator extends ScanOperator {
 	public IndexScanOperator(String tableName, String alias, String index, String indexFile, boolean isClustered,
 		int lowkey,
 		int highkey) throws IOException {
-		
+
 		super(tableName, alias);
 		fin= new FileInputStream(indexFile);
 		fc= fin.getChannel();
 		buffer= ByteBuffer.allocate(4096);
-		this.colName = index;
+		this.colName= index;
 		this.isClustered= isClustered;
 		this.lo= lowkey;
 		this.hi= highkey;
 		Deserializer dsl= new Deserializer(indexFile);
 		this.startRid= dsl.getRid(lo, hi);
 		Catalog catalog= Catalog.getInstance();
-		catalog.setLeavesNum(tableName,index, dsl.getNumLeaves());
+		catalog.setLeavesNum(tableName, index, dsl.getNumLeaves());
 		this.reader= new BinaryTupleReader(catalog.getDir(tableName)); // Dealing with alias?
-		
+
 		this.ptr= 0;
 		this.repo= new ArrayList<int[]>();
 		if (isClustered) {
@@ -68,7 +69,7 @@ public class IndexScanOperator extends ScanOperator {
 				if (buffer.getInt(0) != 0) return;
 				int numElements= buffer.getInt(4);
 				int pos= 8;
-				
+
 				for (int i= 0; i < numElements; i++ ) {
 					int key= buffer.getInt(pos);
 					int numRids= buffer.getInt(pos + 4);
@@ -112,6 +113,27 @@ public class IndexScanOperator extends ScanOperator {
 	@Override
 	public String getTableName() {
 		return super.getTableName();
+	}
+
+	public String getCol() {
+		return colName;
+	}
+
+	public int getLow() {
+		return lo;
+	}
+
+	public int getHigh() {
+		return hi;
+	}
+
+	@Override
+	public void accept(PhysicalPlanWriter ppw) {
+		try {
+			ppw.visit(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

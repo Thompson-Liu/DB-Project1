@@ -1,5 +1,6 @@
 package physicalOperator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,14 +9,11 @@ import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateWhere;
+import utils.PhysicalPlanWriter;
 
-/**
+/** The BNLJ physcial operator that will join tuples according to the BNLJ algorithm
  * 
- * The BNLJ physcial operator that will join tuples according to the BNLJ algorithm
- * 
- * @author mingzhaoliu
- *
- */
+ * @author mingzhaoliu */
 public class BNLJ extends Operator {
 
 	private Buffer buffer;
@@ -24,124 +22,114 @@ public class BNLJ extends Operator {
 	private Operator innerOp;
 	private Expression joinCond;
 	private HashMap<String, String> alias;
-	private boolean bufState = true;
-	private boolean tupState = true;
-	private int bufTupState = 0;
+	private boolean bufState= true;
+	private boolean tupState= true;
+	private int bufTupState= 0;
 	private String tableName;
 	private ArrayList<String> schema;
 	private Tuple innerTup;
 	private EvaluateWhere eval;
 
-	/**
+	/** The constructor of BNLJ physcial operator
 	 * 
-	 * The constructor of BNLJ physcial operator 
-	 * 
-	 * @param numPages   number of pages allowed for the buffer
-	 * @param outer    	 outer operator 
-	 * @param inner		 inner operator 
-	 * @param joinExp    join expression
-	 *
-	 */
+	 * @param numPages number of pages allowed for the buffer
+	 * @param outer outer operator
+	 * @param inner inner operator
+	 * @param joinExp join expression */
 	public BNLJ(int numPages, Operator outer, Operator inner, Expression joinExp) {
-		numOuters = (int) Math.floor(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
-		buffer = new Buffer(numOuters);
+		numOuters= (int) Math.floor(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
+		buffer= new Buffer(numOuters);
 
-		outerOp = outer;
-		innerOp = inner;
-		joinCond = joinExp;
-		
-		schema = new ArrayList<String>(outer.schema());
+		outerOp= outer;
+		innerOp= inner;
+		joinCond= joinExp;
+
+		schema= new ArrayList<String>(outer.schema());
 		schema.addAll(inner.schema());
-		
-		tableName = outer.getTableName() + "," + inner.getTableName();
-		eval = new EvaluateWhere(joinCond, outer.schema(), inner.schema());
+
+		tableName= outer.getTableName() + "," + inner.getTableName();
+		eval= new EvaluateWhere(joinCond, outer.schema(), inner.schema());
 	}
 
-	/**
-	 * Populate the buffer
-	 */
+	/** Populate the buffer */
 	private void populateBuffer() {
 		buffer.clear();
 		Tuple tup;
-		while(!buffer.overflow() && (tup = outerOp.getNextTuple()) != null) {
+		while (!buffer.overflow() && (tup= outerOp.getNextTuple()) != null) {
 			buffer.addData(tup);
 		}
 	}
 
 	@Override
 	public Tuple getNextTuple() {
-		Tuple next = null;
+		Tuple next= null;
 		Tuple outerTup;
-		boolean flag = true;
+		boolean flag= true;
 
 		while (flag) {
 			// if need to get another block, repopulate the buffer
-			if (bufState)  {
+			if (bufState) {
 				populateBuffer();
-				
-				// if the new buffer is empty, indicating that nothing left from outer, 
+
+				// if the new buffer is empty, indicating that nothing left from outer,
 				// then return null
-				if(buffer.empty()) {
-					return null;
-				}
+				if (buffer.empty()) { return null; }
 
 				// if need to get another tuple from inner S
 				if (tupState) {
-					while ((innerTup = innerOp.getNextTuple()) != null) {
-						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
-							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-								tupState = false;
-								bufState = false;
+					while ((innerTup= innerOp.getNextTuple()) != null) {
+						while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
+							if ((next= eval.evaluate(outerTup, innerTup)) != null) {
+								tupState= false;
+								bufState= false;
 								return next;
 							}
-						} 
-						bufTupState = 0;
+						}
+						bufTupState= 0;
 					}
 					innerOp.reset();
 				} else {
-					while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
-						if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-							bufState = false;
+					while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
+						if ((next= eval.evaluate(outerTup, innerTup)) != null) {
+							bufState= false;
 							return next;
 						}
 					}
-					bufTupState = 0;
-					bufState = false;
-					tupState = true;
+					bufTupState= 0;
+					bufState= false;
+					tupState= true;
 				}
-			} 
-			
+			}
+
 			else {
 				if (tupState) {
-					while ((innerTup = innerOp.getNextTuple()) != null) {
-						while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
-							if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-								tupState = false;
+					while ((innerTup= innerOp.getNextTuple()) != null) {
+						while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
+							if ((next= eval.evaluate(outerTup, innerTup)) != null) {
+								tupState= false;
 								return next;
 							}
-						} 
-						bufTupState = 0;
+						}
+						bufTupState= 0;
 					}
 					innerOp.reset();
-					bufState = true;
+					bufState= true;
 				} else {
-					while ((outerTup = buffer.getTuple(bufTupState++)) != null) {
-						if ((next = eval.evaluate(outerTup, innerTup)) != null) {
-							return next;
-						}
+					while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
+						if ((next= eval.evaluate(outerTup, innerTup)) != null) { return next; }
 					}
-					bufTupState = 0;
-					tupState = true;
+					bufTupState= 0;
+					tupState= true;
 				}
 			}
 		}
 		return null;
-	} 
-	
-	@Override 
+	}
+
+	@Override
 	public void dump(TupleWriter writer) {
-		Tuple t; 
-		while ((t = getNextTuple()) != null) {
+		Tuple t;
+		while ((t= getNextTuple()) != null) {
 			writer.addNextTuple(t);
 		}
 		writer.dump();
@@ -151,9 +139,9 @@ public class BNLJ extends Operator {
 
 	@Override
 	public void reset() {
-		bufState = true;
-		tupState = true;
-		bufTupState = 0;
+		bufState= true;
+		tupState= true;
+		bufTupState= 0;
 		innerOp.reset();
 		outerOp.reset();
 	}
@@ -166,5 +154,26 @@ public class BNLJ extends Operator {
 	@Override
 	public String getTableName() {
 		return tableName;
+	}
+
+	public Operator getOuterOperator() {
+		return outerOp;
+	}
+
+	public Operator getInnerOperator() {
+		return innerOp;
+	}
+
+	public Expression getExpression() {
+		return joinCond;
+	}
+
+	@Override
+	public void accept(PhysicalPlanWriter ppw) {
+		try {
+			ppw.visit(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

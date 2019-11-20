@@ -1,9 +1,11 @@
 package physicalOperator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
+import utils.PhysicalPlanWriter;
 
 /** the class for the duplicate elimination operator that removes duplicates tuples from the data
  * its child operator generates. */
@@ -20,7 +22,7 @@ public class DuplicateEliminationOperator extends Operator {
 		prevTuple= null;
 		currTuple= tmp;
 	}
-	
+
 	public DuplicateEliminationOperator(SortOperator operator) {
 		sortOp= operator;
 		Tuple tmp= operator.getNextTuple();
@@ -68,6 +70,19 @@ public class DuplicateEliminationOperator extends Operator {
 	@Override
 	public String getTableName() {
 		return sortOp.getTableName();
+	}
+
+	public Operator getChild() {
+		return sortOp;
+	}
+
+	@Override
+	public void accept(PhysicalPlanWriter ppw) {
+		try {
+			ppw.visit(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

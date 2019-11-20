@@ -1,11 +1,13 @@
 package physicalOperator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
 import parser.EvaluateJoin;
+import utils.PhysicalPlanWriter;
 
 /** the class for implementing the Sort Merge Join algorithm */
 public class SMJ extends Operator {
@@ -20,6 +22,7 @@ public class SMJ extends Operator {
 	private int count;   // store the number of lines of ts
 	private ArrayList<String> schema;
 	private boolean useExternal;
+	private Expression expr;
 
 	private Operator leftSortOp;
 	private Operator rightSortOp;
@@ -53,8 +56,8 @@ public class SMJ extends Operator {
 		rightColList= evalJoin.getJoinAttributesRight();
 		leftOp= left;
 		rightOp= right;
+		expr= joinExpr;
 		this.useExternal= useExternal;
-
 		if (useExternal) {
 			leftSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, leftOp.getTableName());
 			rightSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
@@ -181,5 +184,26 @@ public class SMJ extends Operator {
 	@Override
 	public String getTableName() {
 		return leftOp.getTableName() + "," + rightOp.getTableName();
+	}
+
+	public Operator getLeftChild() {
+		return leftOp;
+	}
+
+	public Operator getRightChild() {
+		return rightOp;
+	}
+
+	public Expression getJoinExpression() {
+		return expr;
+	}
+
+	@Override
+	public void accept(PhysicalPlanWriter ppw) {
+		try {
+			ppw.visit(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

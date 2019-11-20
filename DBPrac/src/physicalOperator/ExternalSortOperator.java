@@ -7,6 +7,7 @@
 package physicalOperator;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +18,11 @@ import dataStructure.Tuple;
 import dataStructure.TupleComparator;
 import fileIO.BinaryTupleReader;
 import fileIO.BinaryTupleWriter;
-import fileIO.*;
+import fileIO.ReadableTupleReader;
+import fileIO.ReadableTupleWriter;
 import fileIO.TupleReader;
 import fileIO.TupleWriter;
+import utils.PhysicalPlanWriter;
 
 /** the class for the sort operator that sorts the data another operator generates. */
 public class ExternalSortOperator extends Operator {
@@ -44,8 +47,8 @@ public class ExternalSortOperator extends Operator {
 	/** @param childOp childOp is the child operator, e.g. ProjectOperator or SelectOperator
 	 * @param colList colList is the list of column names to sort data by */
 	public ExternalSortOperator(Operator childOp, List<String> colList, int bufferSize, String tempDir,
-			String usageName) {
-		this.useBinary=true;
+		String usageName) {
+		this.useBinary= true;
 		this.childOp= childOp;
 		this.bufferSize= bufferSize;
 		this.schema= childOp.schema();
@@ -53,8 +56,8 @@ public class ExternalSortOperator extends Operator {
 		this.tempDir= tempDir;
 		this.useName= usageName;
 		this.numAttr= childOp.schema().size();
-		tuplesBuffer= (int) Math.floor(1.0 * (4096)*bufferSize / (4.0 * numAttr));
-		//		tuplesBuffer= this.tuplesPage * bufferSize;
+		tuplesBuffer= (int) Math.floor(1.0 * (4096) * bufferSize / (4.0 * numAttr));
+		// tuplesBuffer= this.tuplesPage * bufferSize;
 		memoryBuffer= new Buffer(tuplesBuffer);
 
 		// pass0 and get the total number of files stored
@@ -68,12 +71,14 @@ public class ExternalSortOperator extends Operator {
 			int nextRuns= ExternalSort(curPass, runs);
 			runs= nextRuns;
 		}
-		if(useBinary) {
-			sortedReader= new BinaryTupleReader(tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0");
-		}else {
-			sortedReader= new ReadableTupleReader(tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0");
+		if (useBinary) {
+			sortedReader= new BinaryTupleReader(
+				tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0");
+		} else {
+			sortedReader= new ReadableTupleReader(
+				tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0");
 		}
-		this.file=tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0";
+		this.file= tempDir + "/ESInter" + this.useName + Integer.toString(totalPass) + " 0";
 	}
 
 	// pass0
@@ -84,15 +89,15 @@ public class ExternalSortOperator extends Operator {
 			if (memoryBuffer.overflow()) {
 				memoryBuffer.sortBuffer(colList, schema);
 				TupleWriter tuplesWriter;
-				if(useBinary) {
+				if (useBinary) {
 					tuplesWriter= new BinaryTupleWriter(
-							tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
-				}else {
+						tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
+				} else {
 					tuplesWriter= new ReadableTupleWriter(
-							tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
+						tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
 				}
-				//				tuplesWriter.write(memoryBuffer.getTuples());
-				for(Tuple tup : memoryBuffer.getTuples()) {
+				// tuplesWriter.write(memoryBuffer.getTuples());
+				for (Tuple tup : memoryBuffer.getTuples()) {
 					tuplesWriter.addNextTuple(tup);
 				}
 				tuplesWriter.dump();
@@ -106,16 +111,16 @@ public class ExternalSortOperator extends Operator {
 		if (!(memoryBuffer.empty())) {
 			memoryBuffer.sortBuffer(colList, schema);
 			TupleWriter tuplesWriter;
-			if(useBinary) {
+			if (useBinary) {
 				tuplesWriter= new BinaryTupleWriter(
-						tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
-			}else {
+					tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
+			} else {
 				tuplesWriter= new ReadableTupleWriter(
-						tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
+					tempDir + "/ESInter" + this.useName + Integer.toString(pass) + " " + Integer.toString(runs));
 			}
 			for (Tuple tup : memoryBuffer.getTuples()) {
 				tuplesWriter.addNextTuple(tup);
-				//				tuplesWriter.dump();
+				// tuplesWriter.dump();
 			}
 			tuplesWriter.dump();
 			memoryBuffer.clear();
@@ -132,7 +137,7 @@ public class ExternalSortOperator extends Operator {
 		// the number of merges needed for this pass
 		int mergenum= (int) Math.ceil(1.0 * runs / (this.bufferSize - 1));
 		int startTable= 0;
-		for (int i= 0; i < mergenum; i++ ) {			
+		for (int i= 0; i < mergenum; i++ ) {
 			int endTable= Math.min(startTable + bufferSize - 1, runs);
 			merge(startTable, endTable, i, passnum);
 			startTable= endTable;
@@ -152,12 +157,12 @@ public class ExternalSortOperator extends Operator {
 		intermediateTable= new PriorityQueue(new TupleComparator(this.colList, this.schema));
 		for (int i= firstTable; i < endTable; i++ ) {
 			TupleReader tupleRead;
-			if(useBinary) {
+			if (useBinary) {
 				tupleRead= new BinaryTupleReader(
-						tempDir + "/ESInter" + useName + Integer.toString(curPass - 1) + " " + Integer.toString(i));
-			}else {
+					tempDir + "/ESInter" + useName + Integer.toString(curPass - 1) + " " + Integer.toString(i));
+			} else {
 				tupleRead= new ReadableTupleReader(
-						tempDir + "/ESInter" + useName + Integer.toString(curPass - 1) + " " + Integer.toString(i));
+					tempDir + "/ESInter" + useName + Integer.toString(curPass - 1) + " " + Integer.toString(i));
 			}
 			Tuple tup;
 			tup= tupleRead.readNextTuple();
@@ -165,12 +170,12 @@ public class ExternalSortOperator extends Operator {
 			tupleToReader.put(tup, tupleRead);
 		}
 		TupleWriter tupleWrite;
-		if(useBinary) {
+		if (useBinary) {
 			tupleWrite= new BinaryTupleWriter(
-					tempDir + "/ESInter" + useName + Integer.toString(curPass) + " " + Integer.toString(numMerge));
+				tempDir + "/ESInter" + useName + Integer.toString(curPass) + " " + Integer.toString(numMerge));
 		} else {
 			tupleWrite= new ReadableTupleWriter(
-					tempDir + "/ESInter" + useName + Integer.toString(curPass) + " " + Integer.toString(numMerge));
+				tempDir + "/ESInter" + useName + Integer.toString(curPass) + " " + Integer.toString(numMerge));
 		}
 		Tuple next;
 		Tuple curnext;
@@ -202,16 +207,13 @@ public class ExternalSortOperator extends Operator {
 	@Override
 	public Tuple getNextTuple() {
 		Tuple tup= sortedReader.readNextTuple();
-		if(tup==null) {
+		if (tup == null) {
 			deleteFile();
 		}
 		return tup;
 	}
-	
-	/**
-	 * Delete the intermediate file created by external sort operator
-	 * 
-	 */
+
+	/** Delete the intermediate file created by external sort operator */
 	public void deleteFile() {
 		String file= this.file;
 		File deleteFile= new File(file);
@@ -229,11 +231,9 @@ public class ExternalSortOperator extends Operator {
 		sortedReader.reset();
 	}
 
-	/**
+	/** Reset the next tuple get to index [ind]
 	 * 
-	 * Reset the next tuple get to index [ind]
-	 * @param ind    The index that will be rewinded back 
-	 */
+	 * @param ind The index that will be rewinded back */
 	public void resetIndex(int ind) {
 		sortedReader.setAtt(schema.size());
 		sortedReader.reset(ind);
@@ -254,14 +254,29 @@ public class ExternalSortOperator extends Operator {
 	public String getTableName() {
 		return childOp.getTableName();
 	}
-	
-	/**
-	 * Get the file name of the file being read
+
+	/** Get the file name of the file being read
 	 * 
-	 * @return 	the file name
-	 */
+	 * @return the file name */
 	public String getFileInfo() {
 		return this.file;
+	}
+
+	public Operator getChild() {
+		return childOp;
+	}
+
+	public List<String> getColList() {
+		return colList;
+	}
+
+	@Override
+	public void accept(PhysicalPlanWriter ppw) {
+		try {
+			ppw.visit(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

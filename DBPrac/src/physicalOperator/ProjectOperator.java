@@ -1,12 +1,14 @@
 package physicalOperator;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
 import dataStructure.Tuple;
-import fileIO.*;
+import fileIO.TupleWriter;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.SelectItem;
+import utils.PhysicalPlanWriter;
 
 /** the class for the project operator */
 public class ProjectOperator extends Operator {
@@ -22,8 +24,8 @@ public class ProjectOperator extends Operator {
 	 * @param tableAlias The hashmap that maps the name of the table to the alias associated */
 	public ProjectOperator(Operator operator, List<SelectItem> list) {
 		childOp= operator;
-		selectColumns = new ArrayList<String>(list.size());
-		this.tableName = operator.getTableName();
+		selectColumns= new ArrayList<String>(list.size());
+		this.tableName= operator.getTableName();
 
 		for (SelectItem item : list) {
 			// consider the case of Select A.S, B.W, *
@@ -69,7 +71,7 @@ public class ProjectOperator extends Operator {
 	public void dump(TupleWriter writer) {
 		reset();
 		Tuple tup;
-		while((tup=getNextTuple())!=null) {
+		while ((tup= getNextTuple()) != null) {
 			writer.addNextTuple(tup);
 		}
 		writer.dump();
@@ -86,5 +88,22 @@ public class ProjectOperator extends Operator {
 	@Override
 	public String getTableName() {
 		return this.tableName;
+	}
+
+	public Operator getChild() {
+		return childOp;
+	}
+
+	public ArrayList<String> getSelectCols() {
+		return selectColumns;
+	}
+
+	@Override
+	public void accept(PhysicalPlanWriter ppw) {
+		try {
+			ppw.visit(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
