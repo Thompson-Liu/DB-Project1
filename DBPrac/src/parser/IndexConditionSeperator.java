@@ -49,6 +49,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 public class IndexConditionSeperator implements ExpressionVisitor {
 	private String indexColumn;
 	private Expression original;
+	private Expression residual;
 	private int lowKey;
 	private int highKey;
 	private boolean flag;
@@ -57,7 +58,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private boolean applyToAll= true;
 
 	public IndexConditionSeperator(String tableName, String column, Expression expr) {
-		original= expr;
+		original = expr;
+		residual = new NullValue();
 		lowKey= Integer.MIN_VALUE;
 		highKey= Integer.MAX_VALUE;
 		this.indexColumn= column;
@@ -79,11 +81,12 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	}
 	
 	public Expression getResidual() {
-		return original;
+		return residual;
 	}
 
 	@Override
 	public void visit(NullValue arg0) {
+		
 	}
 
 	@Override
@@ -173,20 +176,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 
 	@Override
 	public void visit(OrExpression arg0) {
-		flag= false;
-		arg0.getLeftExpression().accept(this);
-		if (flag) {
-			arg0.setLeftExpression(new NullValue());
-			flag= false;
-			change= true;
-		}
-		flag= false;
-		arg0.getRightExpression().accept(this);
-		if (flag) {
-			arg0.setRightExpression(new NullValue());
-			flag= false;
-			change= true;
-		}
+		
 	}
 
 	@Override
@@ -243,6 +233,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			flag= true;
 			change= true;
 		} else {
+			residual = (residual instanceof NullValue) ? arg0 : new AndExpression(residual, arg0);
 			applyToAll= false;
 		}
 	}
@@ -261,6 +252,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			flag= true;
 			change= true;
 		} else {
+			residual = (residual instanceof NullValue) ? arg0 : new AndExpression(residual, arg0);
 			applyToAll= false;
 		}
 	}
@@ -279,6 +271,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			flag= true;
 			change= true;
 		} else {
+			residual = (residual instanceof NullValue) ? arg0 : new AndExpression(residual, arg0);
 			applyToAll= false;
 		}
 	}
@@ -311,6 +304,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			flag= true;
 			change= true;
 		} else {
+			residual = (residual instanceof NullValue) ? arg0 : new AndExpression(residual, arg0);
 			applyToAll= false;
 		}
 	}
@@ -329,6 +323,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			flag= true;
 			change= true;
 		} else {
+			residual = (residual instanceof NullValue) ? arg0 : new AndExpression(residual, arg0);
 			applyToAll= false;
 		}
 	}

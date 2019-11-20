@@ -210,7 +210,6 @@ public class UnionFindGenerator implements ExpressionVisitor {
 			uf.merge(uf.find(tmp.getTable().getName() + "." + tmp.getColumnName()),
 				uf.find(tmpCol.getTable().getName() + "." + tmpCol.getColumnName()));
 		}
-
 	}
 
 	@Override

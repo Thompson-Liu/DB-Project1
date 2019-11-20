@@ -25,7 +25,9 @@ public class UnionFind {
 		}
 		List<String> attributes= new ArrayList<String>();
 		attributes.add(col);
-		return new BlueBox(attributes);
+		BlueBox newBB = new BlueBox(attributes);
+		elements.add(newBB);
+		return newBB;
 	}
 
 	public List<BlueBox> getBlueBoxes() {
@@ -37,9 +39,9 @@ public class UnionFind {
 	 * 
 	 * @param alias
 	 * @return */
-	public HashMap<List<String>, Integer[]> findSelect(String alias) {
-		HashMap<List<String>, Integer[]> attrTable= new HashMap<List<String>, Integer[]>();
-		List<String> attrs= new ArrayList<String>();
+	public ArrayList<BlueBox> findSelect(String alias) {
+		ArrayList<BlueBox> relevantBBList = new ArrayList<BlueBox>();
+		List<String> attrs = new ArrayList<String>();
 
 		// Loop through each bluebox stored
 		for (BlueBox bb : elements) {
@@ -53,14 +55,25 @@ public class UnionFind {
 					attrs.add(attr);
 				}
 			}
-
+			
+			boolean noBound = (bb.getLower() == null) && (bb.getUpper() == null);
 			// if the attributes in this bluebox are not empty, add the arraylist into the hashmap
-			if (!attrs.isEmpty()) {
-				attrTable.put(attrs, new Integer[] { bb.getLower(), bb.getUpper() });
-				attrs= new ArrayList<String>();
+			if (attrs.size() > 1 || (attrs.size() == 1 && !noBound))  {
+				BlueBox relevantBB = new BlueBox(attrs);
+				if (bb.getLower() != null) {
+					relevantBB.setLower(bb.getLower());
+				}
+				if (bb.getUpper() != null) {
+					relevantBB.setUpper(bb.getUpper());
+				} 
+				if (bb.getEqual() != null) {
+					relevantBB.setEqual(bb.getEqual());
+				}
+				relevantBBList.add(relevantBB);
 			}
+			attrs= new ArrayList<String>();
 		}
-		return attrTable;
+		return relevantBBList;
 	}
 
 	/** Example: " R.a=R.h=B.C AND S.d=B.e " prevTables:[R,S] topMostTable: [B] Return: [ ["R.a","R.h" ,
@@ -177,29 +190,31 @@ public class UnionFind {
 		// low
 		if (b1.getLower() != null && b2.getLower() != null) {
 			merged.setLower(Math.max(b1.getLower(), b2.getLower()));
-		} else if (b2.getLower() == null) {
+		} else if (b1.getLower() != null && b2.getLower() == null) {
 			merged.setLower(b1.getLower());
-		} else {
+		} else if (b1.getLower() == null && b2.getLower() != null){
 			merged.setLower(b2.getLower());
-		}
+		} 
+
 
 		// high
 		if (b1.getUpper() != null && b2.getUpper() != null) {
 			merged.setUpper(Math.min(b1.getUpper(), b2.getUpper()));
-		} else if (b2.getUpper() == null) {
+		} else if (b1.getLower() != null && b2.getUpper() == null) {
 			merged.setUpper(b1.getUpper());
-		} else {
+		} else if (b1.getLower() == null && b2.getLower() != null){
 			merged.setUpper(b2.getUpper());
 		}
 
 		// equal
-		if (b2.getEqual() == null) {
+		if (b1.getEqual() != null) {
 			merged.setEqual(b1.getEqual());
-		} else {
+		} else if (b2.getEqual() != null) {
 			merged.setEqual(b2.getEqual());
 		}
 
 		// remove box1 and box2
+		elements.add(merged);
 		elements.remove(b1);
 		elements.remove(b2);
 	}

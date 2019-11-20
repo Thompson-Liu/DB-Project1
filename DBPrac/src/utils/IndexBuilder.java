@@ -34,6 +34,7 @@ public class IndexBuilder {
 	
 	public void buildIndices() {
 		try {
+			
 			reader = new BufferedReader(new FileReader(indexInfo));
 		} catch (FileNotFoundException e) {
 			System.err.println("Input file not found");

@@ -9,7 +9,7 @@ FROM Sailors S, Reserves R
 WHERE S.B = R.G AND R.H<100 AND S.A>=9050;
 
 SELECT *
-FROM R, S
+FROM Reserves R, Sailors S
 WHERE R.A = 100 AND R.A = S.B;
 
 -- SELECT *

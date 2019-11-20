@@ -33,8 +33,6 @@ public class QueryEvaluator {
 		outputDir = outDir;
 		inputDir = inDir;
 		tempDir = tmpDir;
-		
-		
 		queryCounter = 1;
 	}
 	
@@ -52,15 +50,14 @@ public class QueryEvaluator {
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
 					
 					// Output logical plan tree
-					BufferedWriter planLWriter = new BufferedWriter(new FileWriter(outputDir + "query" + queryCounter + "_physcialplan"));
-					LogicalPlanWriter logPlanWriter = new LogicalPlanWriter(planLWriter, new UnionFindGenerator(plainSelect.getWhere()), logOp);
-					
+					BufferedWriter planLWriter = new BufferedWriter(new FileWriter(outputDir + "/query" + queryCounter + "_logicalplan"));
+					LogicalPlanWriter logPlanWriter = new LogicalPlanWriter(planLWriter, logOp);
 					
 					// need to pass in the name of the config file path
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
-					Operator op= planBuilder.generatePlan(logOp);
-					BufferedWriter planPWriter = new BufferedWriter(new FileWriter(outputDir + "query" + queryCounter + "_physicalplan"));
-					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planLWriter, op);
+//					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
+//					Operator op= planBuilder.generatePlan(logOp);
+					BufferedWriter planPWriter = new BufferedWriter(new FileWriter(outputDir + "/query" + queryCounter + "_physicalplan"));
+//					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planLWriter, op);
 
 //					ReadableTupleWriter writer= new ReadableTupleWriter(
 //						outputDir + "/query" + Integer.toString(queryCounter));
@@ -68,7 +65,7 @@ public class QueryEvaluator {
 						outputDir + "/query" + Integer.toString(queryCounter));
 
 					long time1= System.currentTimeMillis();
-					op.dump(writer);
+//					op.dump(writer);
 
 					long time2= System.currentTimeMillis();
 					long diffTime= time2 - time1;

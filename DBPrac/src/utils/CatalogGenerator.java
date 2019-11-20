@@ -26,18 +26,16 @@ public class CatalogGenerator {
 	public void createCatalog() {
 		Catalog cat= Catalog.getInstance();
 		try {
-			String current = new java.io.File( "." ).getCanonicalPath();
-			File f = new File(current + "/samples/input/db/schema.txt");
-			FileReader schemafw= new FileReader(f);
+			FileReader schemafw= new FileReader(dbDir + "/schema.txt");
 			BufferedReader readSchema= new BufferedReader(schemafw);
 			BinaryTupleReader tableread;
 			//write to file
-			BufferedWriter writer= new BufferedWriter(new FileWriter(current + "/samples/input/db/stats.txt"));
+			BufferedWriter writer= new BufferedWriter(new FileWriter(dbDir +"/stats.txt"));
 			String nextLine= readSchema.readLine();
 			while (nextLine != null && nextLine !="") {
 				String[] schemaLine= nextLine.trim().split("\\s+");
 				String tableName= schemaLine[0];
-				String tableDir = current + "/samples/input/db/data/" + tableName;
+				String tableDir = dbDir + "/data/" + tableName;
 				cat.addDir(tableName,  tableDir);
 				writer.write(tableName+" ");
 

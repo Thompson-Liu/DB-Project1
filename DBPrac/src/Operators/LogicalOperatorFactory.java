@@ -65,11 +65,11 @@ public class LogicalOperatorFactory {
 				aliasName = plainSelect.getFromItem().getAlias().toString();
 				String tempTable = fromLeft.replace("AS " + aliasName, "").trim();
 				intOp = (plainSelect.getWhere() != null) ? 
-						new SelectLogOp(tempTable, aliasName, plainSelect.getWhere(), new HashMap<List<String>, Integer[]>())
+						new SelectLogOp(tempTable, aliasName, plainSelect.getWhere(), new ArrayList<BlueBox>(), new Leaf(tempTable, aliasName))
 						: new Leaf(tempTable, aliasName);
 			} else {
 				intOp = (plainSelect.getWhere() != null) ? 
-						new SelectLogOp(fromLeft, "", plainSelect.getWhere(), new HashMap<List<String>, Integer[]>()) 
+						new SelectLogOp(fromLeft, "", plainSelect.getWhere(), new ArrayList<BlueBox>(), new Leaf(fromLeft, "")) 
 						: new Leaf(fromLeft, "");
 			}
 		}
@@ -99,7 +99,8 @@ public class LogicalOperatorFactory {
 		UnionFindGenerator ufGen = new UnionFindGenerator(plainSelect.getWhere());
 		UnionFind uf = ufGen.getUnionFind();
 		ArrayList<LogicalOperator> joinChildren = new ArrayList<LogicalOperator>();
-		
+		Expression unusedSelExpr = ufGen.getResidualSelect();
+
 		for(int i = 0; i < joinList.size(); ++i) {
 			Join joinRel = joinList.get(i);
 			
@@ -111,12 +112,11 @@ public class LogicalOperatorFactory {
 			}
 			
 			LogicalOperator select;
-			Expression unusedSelExpr = ufGen.getResidualSelect();
 			UnusedSelectVisitor visitor;
 			Catalog cat = Catalog.getInstance();
 			
 			// If there is a bluebox containing the table, push down the selection
-			HashMap<List<String>, Integer[]> selectAttr;
+			ArrayList<BlueBox> selectAttr;
 			if (tempAlias.equals("")) {
 				selectAttr = uf.findSelect(tempTable);
 				visitor = new UnusedSelectVisitor(tempTable, cat.getSchema(tempTable), unusedSelExpr);
@@ -131,25 +131,29 @@ public class LogicalOperatorFactory {
 				select = new Leaf(tempTable, tempAlias);
 			} else {
 				Expression exprInBox = buildExpression(selectAttr);
-				expr = (exprInBox == null) ? expr : new AndExpression(exprInBox, expr);
-				select = new SelectLogOp(tempTable, tempAlias, expr, selectAttr);
+				if (expr == null) {
+					expr = exprInBox;
+				} else {
+					expr = (exprInBox == null) ? expr : new AndExpression(exprInBox, expr);
+				}
+				select = new SelectLogOp(tempTable, tempAlias, expr, selectAttr, new Leaf(tempTable, tempAlias));
 			}
 			joinChildren.add(select);
 		}
-		JoinLogOp join = new JoinLogOp(joinChildren, ufGen.getResidualJoin());
+		JoinLogOp join = new JoinLogOp(joinChildren, ufGen.getResidualJoin(), uf.getBlueBoxes());
 		return join;
 	}
 	
-	private Expression buildExpression(HashMap<List<String>, Integer[]> attrs) {
+	private Expression buildExpression(ArrayList<BlueBox> selectAttr) {
 		// If the hashMap is empty, all attributes are resolved, return a null Expression
-		if (attrs.isEmpty()) {
+		if (selectAttr.isEmpty()) {
 			return null;
 		}
 
 		List<Expression> intermediate = new ArrayList<Expression>();
-		for (List<String> attribute: attrs.keySet()) {
+		for (BlueBox bb: selectAttr) {
 			// Initialize a null value to start the rescurssion 
-			intermediate.add(buildCol(new NullValue(), attribute, attrs.get(attribute)));
+			intermediate.add(buildCol(new NullValue(), bb.getAttr(), bb.getBound()));
 		}
 
 		if (intermediate.isEmpty()) {
@@ -169,9 +173,9 @@ public class LogicalOperatorFactory {
 		return buildExpressionHelper(new AndExpression(intermediate, expr.remove(0)), expr);
 	}
 
-	private Expression buildCol(Expression intermediate, List<String> attrs, Integer[] stats) {
+	private Expression buildCol(Expression intermediate, List<String> list, Integer[] stats) {
 		//  Construct a left Column object
-		String left = attrs.remove(0);
+		String left = list.remove(0);
 		String leftTableName = left.split("\\.")[0];
 		String leftTableCol = left.split("\\.")[1];
 
@@ -182,7 +186,7 @@ public class LogicalOperatorFactory {
 		leftCol.setTable(leftTable);
 
 		// if there's only one attrs left, construct a attr op val
-		if (attrs.size() == 0) {
+		if (list.size() == 0) {
 			if (stats[0] == null && stats[1] == null) {
 				// This case shouldn't happen
 				assert(! (intermediate instanceof NullValue));
@@ -209,6 +213,15 @@ public class LogicalOperatorFactory {
 				return new AndExpression(intermediate, greaterEqual);
 			}
 
+			if (stats[0] == stats[1]) {
+				EqualsTo equalExpr = new EqualsTo();
+				equalExpr.setLeftExpression(leftCol);
+				equalExpr.setRightExpression(new LongValue(stats[0].toString()));
+				if (intermediate instanceof NullValue) {
+					return equalExpr;
+				}
+				return new AndExpression(intermediate, equalExpr);
+			}
 			GreaterThanEquals greaterEqual = new GreaterThanEquals();
 			greaterEqual.setLeftExpression(leftCol);
 			greaterEqual.setRightExpression(new LongValue(stats[0].toString()));
@@ -223,7 +236,7 @@ public class LogicalOperatorFactory {
 		}
 
 		// Otherwise, construct the right Column object
-		String right = attrs.get(0);
+		String right = list.get(0);
 		String rightTableName = right.split("\\.")[0];
 		String rightTableCol = right.split("\\.")[1];
 
@@ -239,8 +252,8 @@ public class LogicalOperatorFactory {
 		colEqual.setRightExpression(rightCol);
 
 		if (intermediate instanceof NullValue) {
-			return buildCol(colEqual, attrs, stats);
+			return buildCol(colEqual, list, stats);
 		}
-		return buildCol(new AndExpression(intermediate, colEqual), attrs, stats);
+		return buildCol(new AndExpression(intermediate, colEqual), list, stats);
 	}
 }

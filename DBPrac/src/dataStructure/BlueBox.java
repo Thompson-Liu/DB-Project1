@@ -58,4 +58,9 @@ public class BlueBox {
 		// check if working as desired
 		return box.getAttr().equals(attr);	
 	}
+
+	public Integer[] getBound() {
+		// TODO Auto-generated method stub
+		return new Integer[] { lo, hi };
+	}
 }
