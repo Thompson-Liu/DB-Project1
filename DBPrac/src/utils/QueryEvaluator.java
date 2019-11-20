@@ -54,10 +54,10 @@ public class QueryEvaluator {
 					LogicalPlanWriter logPlanWriter = new LogicalPlanWriter(planLWriter, logOp);
 					
 					// need to pass in the name of the config file path
-//					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
-//					Operator op= planBuilder.generatePlan(logOp);
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
+					Operator op= planBuilder.generatePlan(logOp);
 					BufferedWriter planPWriter = new BufferedWriter(new FileWriter(outputDir + "/query" + queryCounter + "_physicalplan"));
-//					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planLWriter, op);
+					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planLWriter, op);
 
 //					ReadableTupleWriter writer= new ReadableTupleWriter(
 //						outputDir + "/query" + Integer.toString(queryCounter));
