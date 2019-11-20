@@ -22,6 +22,7 @@ public class TableStats {
 		this.Indexes = new ArrayList<String>();
 		this.colStats = new HashMap<String,int[]>();
 		this.indexLeaves = new HashMap<String,Integer>();
+		this.indexDir= new HashMap<String, String>();
 	}
 	
 	public void setTuples(int tableTuples) {

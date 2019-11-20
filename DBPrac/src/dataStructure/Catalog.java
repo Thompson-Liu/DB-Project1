@@ -62,8 +62,16 @@ public class Catalog {
 	 * @param totalTuples
 	 */
 	public void setTupleNums(String tableName, int totalTuples) {
-		TableStats tab = (this.tableInfo.containsKey(tableName)) ? this.tableInfo.get(tableName) : new TableStats(tableName);
-		tab.setTuples(totalTuples);
+		TableStats tab;
+		if (this.tableInfo.containsKey(tableName)) {
+			tab = this.tableInfo.get(tableName);
+			tab.setTuples(totalTuples);
+		}else {
+			tab = new TableStats(tableName);
+			tab.setTuples(totalTuples);
+			this.tableInfo.put(tableName,tab);
+		}
+		
 	}
 
 	/**
@@ -118,14 +126,28 @@ public class Catalog {
 	 * @param isClustered : if the table is clustered
 	 */
 	public void addIndex(String tableName, String columnName,boolean isClustered) {
+		TableStats tab;
 		//added
-		TableStats tab = (this.tableInfo.containsKey(tableName)) ? this.tableInfo.get(tableName) : new TableStats(tableName);
-		tab.addIndex(columnName, isClustered);
+		if(this.tableInfo.containsKey(tableName)) {
+			tab=this.tableInfo.get(tableName);
+			tab.addIndex(columnName, isClustered);
+		}else {
+			tab=new TableStats(tableName);
+			tab.addIndex(columnName, isClustered);
+			this.tableInfo.put(tableName, tab);
+		}		
 	}
 	
 	public void addIndexDir(String tableName, String columnName,String dir) {
-		TableStats tab = (this.tableInfo.containsKey(tableName)) ? this.tableInfo.get(tableName) : new TableStats(tableName);
-		tab.setIndexDir(columnName,dir);
+		TableStats tab ;
+		if(this.tableInfo.containsKey(tableName)) {
+			tab=this.tableInfo.get(tableName);
+			tab.setIndexDir(columnName,dir);
+		}else {
+			tab = new TableStats(tableName);
+			tab.setIndexDir(columnName,dir);
+			this.tableInfo.put(tableName, tab);
+		}		
 	}
 
 	/**
