@@ -77,6 +77,10 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	public boolean changed() {
 		return change;
 	}
+	
+	public Expression getResidual() {
+		return original;
+	}
 
 	@Override
 	public void visit(NullValue arg0) {

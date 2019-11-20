@@ -27,6 +27,7 @@ import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import parser.IndexConditionSeperator;
 import parser.JoinTableVisitor;
 import parser.UnionFindGenerator;
 import physicalOperator.BNLJ;
@@ -50,110 +51,6 @@ public class PhysicalPlanBuilder {
 	public PhysicalPlanBuilder(String tempPath, String indexPath) {
 		tempDir= tempPath;
 		indexDir= indexPath;
-	}
-
-	private Expression buildExpression(HashMap<List<String>, Integer[]> attrs) {
-		// If the hashMap is empty, all attributes are resolved, return a null Expression
-		if (attrs.isEmpty()) {
-			return null;
-		}
-
-		List<Expression> intermediate = new ArrayList<Expression>();
-		for (List<String> attribute: attrs.keySet()) {
-			// Initialize a null value to start the rescurssion 
-			intermediate.add(buildCol(new NullValue(), attribute, attrs.get(attribute)));
-		}
-
-		if (intermediate.isEmpty()) {
-			return null;
-		} else if (intermediate.size() == 1) {
-			return intermediate.get(0);
-		}
-
-		Expression result = new AndExpression(intermediate.remove(0), intermediate.remove(1));
-		return buildExpressionHelper(result, intermediate); 
-	}
-
-	private Expression buildExpressionHelper(Expression intermediate, List<Expression> expr) {
-		if (expr.size() == 0) {
-			return intermediate;
-		}
-		return buildExpressionHelper(new AndExpression(intermediate, expr.remove(0)), expr);
-	}
-
-	private Expression buildCol(Expression intermediate, List<String> attrs, Integer[] stats) {
-		//  Construct a left Column object
-		String left = attrs.remove(0);
-		String leftTableName = left.split("\\.")[0];
-		String leftTableCol = left.split("\\.")[1];
-
-		Column leftCol = new Column();
-		leftCol.setColumnName(leftTableCol);
-		Table leftTable = new Table();
-		leftTable.setName(leftTableName);
-		leftCol.setTable(leftTable);
-
-		// if there's only one attrs left, construct a attr op val
-		if (attrs.size() == 0) {
-			if (stats[0] == null && stats[1] == null) {
-				// This case shouldn't happen
-				assert(! (intermediate instanceof NullValue));
-				return intermediate;
-			} 
-
-			if (stats[0] == null && stats[1] != null) {
-				MinorThanEquals minorEqual = new MinorThanEquals();
-				minorEqual.setLeftExpression(leftCol);
-				minorEqual.setRightExpression(new LongValue(stats[1].toString()));
-				if (intermediate instanceof NullValue) {
-					return minorEqual;
-				}
-				return new AndExpression(intermediate, minorEqual);
-			}
-
-			if (stats[0] != null && stats[1] == null) {
-				GreaterThanEquals greaterEqual = new GreaterThanEquals();
-				greaterEqual.setLeftExpression(leftCol);
-				greaterEqual.setRightExpression(new LongValue(stats[0].toString()));
-				if (intermediate instanceof NullValue) {
-					return greaterEqual;
-				}
-				return new AndExpression(intermediate, greaterEqual);
-			}
-
-			GreaterThanEquals greaterEqual = new GreaterThanEquals();
-			greaterEqual.setLeftExpression(leftCol);
-			greaterEqual.setRightExpression(new LongValue(stats[0].toString()));
-
-			MinorThanEquals minorEqual = new MinorThanEquals();
-			minorEqual.setLeftExpression(leftCol);
-			minorEqual.setRightExpression(new LongValue(stats[1].toString()));
-			if (intermediate instanceof NullValue) {
-				return new AndExpression(minorEqual, greaterEqual);
-			}
-			return new AndExpression(new AndExpression(intermediate, greaterEqual), minorEqual);
-		}
-
-		// Otherwise, construct the right Column object
-		String right = attrs.get(0);
-		String rightTableName = right.split("\\.")[0];
-		String rightTableCol = right.split("\\.")[1];
-
-		Column rightCol = new Column();
-		rightCol.setColumnName(rightTableCol);
-		Table rightTable = new Table();
-		rightTable.setName(rightTableName);
-		rightCol.setTable(rightTable);
-
-		// Construct the equality between the two column
-		EqualsTo colEqual = new EqualsTo();
-		colEqual.setLeftExpression(leftCol);
-		colEqual.setRightExpression(rightCol);
-
-		if (intermediate instanceof NullValue) {
-			return buildCol(colEqual, attrs, stats);
-		}
-		return buildCol(new AndExpression(intermediate, colEqual), attrs, stats);
 	}
 	
 	private Expression buildJoinExpr(Expression unused, List<ArrayList<String>> condFromBox) {
@@ -204,17 +101,7 @@ public class PhysicalPlanBuilder {
 		// If the first element of the array is "full", generate a full scan
 		if (selectPlan[0].equals("full")) {
 			immOp = new ScanOperator(selectLop.getTableName(), selectLop.getAlias());
-
-			Expression unused = selectLop.getUnusedExpr();
-			if (attributes.isEmpty()) {
-				// It must have some expression, otherwise, should generate a leaf
-				assert(unused != null);
-				immOp = new SelectOperator(unused, immOp);
-				return;
-			}
-			Expression expr = buildExpression(attributes);
-			expr = (unused == null) ? expr : new AndExpression(expr, unused);
-			immOp = new SelectOperator(unused, immOp);
+			immOp = new SelectOperator(selectLop.getSelectExpr(), immOp);
 			return;
 		}
 
@@ -228,13 +115,6 @@ public class PhysicalPlanBuilder {
 			if (attr.contains(selectPlan[1])) {
 				low = (attributes.get(attr)[0] != null) ? attributes.get(attr)[0] : Integer.MIN_VALUE;
 				high = (attributes.get(attr)[1] != null) ? attributes.get(attr)[1] : Integer.MAX_VALUE;
-				
-				// Removed the indexed column from the hashmap
-				Integer[] removedBound = attributes.get(attr);
-				attributes.remove(attr);
-				attr.remove(selectPlan[1]);
-				attributes.put(attr, removedBound);
-				
 				
 				// Example: [S.A = S.B AND S.A < 3] -> [S.B] if indexing on column A, then the expression built 
 				// becomes [S.B < 3], want to restore [S.A = S.B]
@@ -255,36 +135,26 @@ public class PhysicalPlanBuilder {
 					removed.setLeftExpression(removedColExpr);
 					removed.setRightExpression(nextColExpr);
 				}
+				return;
 			}
 		}
 		String tableIndexDir = indexDir + "/" + selectLop.getTableName() + "." + selectPlan[1].split("\\.")[1];
 		boolean clustered = selectPlan[2].equals("clustered");
 		try {
+			String tableName = (selectLop.getAlias().equals("")) ? selectLop.getTableName() : selectLop.getAlias();
+			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1], selectLop.getSelectExpr());
 			immOp = new IndexScanOperator(selectLop.getTableName(), selectLop.getAlias(), selectPlan[1], 
 					tableIndexDir, clustered, low, high);
+			if (indexSep.applyAll()) {
+				return;
+			}
+			
+			// Deal with the rest expressions with another select operator
+			immOp = new SelectOperator(indexSep.getResidual(), immOp);
 		} catch(Exception e) {
 			System.err.println("Error when creating an indexScan Operator");
 			e.printStackTrace();
-		}
-		
-
-		Expression unused = selectLop.getUnusedExpr();
-		// If all select expressions are resolve, which means one indexScan is enough 
-		if (attributes.isEmpty() && unused == null) {
-			return;
-		}
-
-		if (attributes.isEmpty()) {
-			// It must have some expression, otherwise, should generate a leaf
-			assert(unused != null);
-			immOp = new SelectOperator(unused, immOp);
-			return;
-		}
-		Expression expr = buildExpression(attributes);
-		expr = (unused == null) ? expr : new AndExpression(expr, unused);
-		expr = (removed == null) ? expr : new AndExpression(removed, expr);
-		immOp = new SelectOperator(expr, immOp);
-		return;
+		}				
 	}
 
 	public void visit(ProjectLogOp projectLop) {
