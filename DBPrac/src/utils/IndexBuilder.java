@@ -24,7 +24,7 @@ public class IndexBuilder {
 		indexes = dbDir + "/indexes/";
 	}
 	
-	private void buildIndex(int isClustered, int order, String attr, String tableName) {		
+	private void buildIndex(int isClustered, int order, String attr, String tableName) {
 		TupleReader tr = new BinaryTupleReader(catalog.getDir(tableName));
 		TupleWriter tw = new BinaryTupleWriter(indexes + tableName + "." + attr);
 		catalog.addIndexDir(tableName, attr, indexes + tableName + "." + attr);
