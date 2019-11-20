@@ -50,7 +50,6 @@ public class CatalogGenerator {
 				cat.addSchema(tableName, schem);
 				
 				//read table
-				System.out.println(tableDir);
 				tableread = new BinaryTupleReader(tableDir);
 				int numTuples=0;
 				int[][] colRange = new int[schem.size()][2];  //[low,high]
