@@ -72,7 +72,7 @@ public class UnionFindGenerator implements ExpressionVisitor {
 	/** @return a residualSelect expression: Select expressions not captured in any blue boxes (e.g.
 	 * "!=" selections) */
 	public Expression getResidualSelect() {
-		
+
 		// need to separate residual selections by table
 		return residualSelect;
 	}
@@ -82,11 +82,19 @@ public class UnionFindGenerator implements ExpressionVisitor {
 		return residualJoin;
 	}
 
-	private void updateResidual(Expression expr, Expression newExpr) {
-		if (expr == null) {
-			expr= newExpr;
+	private void updateSelectResidual(Expression newExpr) {
+		if (residualSelect == null) {
+			residualSelect= newExpr;
 		} else {
-			expr= new AndExpression(expr, newExpr);
+			residualSelect= new AndExpression(residualSelect, newExpr);
+		}
+	}
+
+	private void updateJoinResidual(Expression newExpr) {
+		if (residualJoin == null) {
+			residualJoin= newExpr;
+		} else {
+			residualJoin= new AndExpression(residualJoin, newExpr);
 		}
 	}
 
@@ -223,9 +231,9 @@ public class UnionFindGenerator implements ExpressionVisitor {
 			left.setLower(tmpInt + 1);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
-				updateResidual(residualSelect, arg0);
+				updateSelectResidual(arg0);
 			} else {
-				updateResidual(residualJoin, arg0);
+				updateJoinResidual(arg0);
 			}
 		}
 	}
@@ -240,9 +248,9 @@ public class UnionFindGenerator implements ExpressionVisitor {
 			left.setLower(tmpInt);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
-				updateResidual(residualSelect, arg0);
+				updateSelectResidual(arg0);
 			} else {
-				updateResidual(residualJoin, arg0);
+				updateJoinResidual(arg0);
 			}
 		}
 	}
@@ -275,9 +283,9 @@ public class UnionFindGenerator implements ExpressionVisitor {
 			left.setUpper(tmpInt - 1);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
-				updateResidual(residualSelect, arg0);
+				updateSelectResidual(arg0);
 			} else {
-				updateResidual(residualJoin, arg0);
+				updateJoinResidual(arg0);
 			}
 		}
 	}
@@ -292,9 +300,9 @@ public class UnionFindGenerator implements ExpressionVisitor {
 			left.setUpper(tmpInt);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
-				updateResidual(residualSelect, arg0);
+				updateSelectResidual(arg0);
 			} else {
-				updateResidual(residualJoin, arg0);
+				updateJoinResidual(arg0);
 			}
 		}
 
@@ -306,12 +314,12 @@ public class UnionFindGenerator implements ExpressionVisitor {
 		Column leftCol= tmpCol;
 		arg0.getRightExpression().accept(this);
 		if (flag) {
-			updateResidual(residualSelect, arg0);
+			updateSelectResidual(arg0);
 		} else {
 			if (leftCol.getTable().getName().equals(tmpCol.getTable().getName())) {
-				updateResidual(residualSelect, arg0);
+				updateSelectResidual(arg0);
 			} else {
-				updateResidual(residualJoin, arg0);
+				updateJoinResidual(arg0);
 			}
 		}
 	}
