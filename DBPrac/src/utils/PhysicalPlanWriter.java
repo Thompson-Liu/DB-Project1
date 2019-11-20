@@ -8,6 +8,7 @@ import physicalOperator.DuplicateEliminationOperator;
 import physicalOperator.ExternalSortOperator;
 import physicalOperator.IndexScanOperator;
 import physicalOperator.JoinOperator;
+import physicalOperator.Operator;
 import physicalOperator.ProjectOperator;
 import physicalOperator.SMJ;
 import physicalOperator.ScanOperator;
@@ -18,8 +19,9 @@ public class PhysicalPlanWriter {
 	private int level;
 	private BufferedWriter writer;
 
-	public PhysicalPlanWriter(BufferedWriter bw) {
+	public PhysicalPlanWriter(BufferedWriter bw, Operator op) {
 		writer= bw;
+		op.accept(this);
 	}
 
 	public void visit(BNLJ op) throws IOException {
