@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import dataStructure.BlueBox;
 import dataStructure.Catalog;
 
 public class SelectCost {
@@ -27,10 +28,10 @@ public class SelectCost {
 	 *  ["full","",""] if using full scan   
 	 *  ["index","S.A","clustered"] if using index        here S is alias name
 	 * @param tableName      the name of table not alias
-	 * @param colRange       the range of column scanned
+	 * @param attributes       the range of column scanned
 	 * @return
 	 */
-	public String[] selectScan(String tableName, String alias,HashMap<List<String> , Integer[]> colRange) {
+	public String[] selectScan(String tableName, String alias,List<BlueBox> attributes) {
 		ArrayList<String> schema = catalog.getSchema(tableName);
 		int numTuples =catalog.getTupleNums(tableName);
 		int numPages= (int) Math.ceil(numTuples*4.0*schema.size()/4096);
@@ -44,8 +45,9 @@ public class SelectCost {
 		int minVal;
 		double r;
 		
-		for(List<String> eqCols : colRange.keySet()) {
-			Integer[] range = colRange.get(eqCols);
+		for(BlueBox box: attributes) {
+			List<String> eqCols = box.getAttr();
+			Integer[] range = box.getBound();
 			range[0] = (range[0]==null) ? Integer.MIN_VALUE : range[0];
 			range[1] = (range[1]==null) ? Integer.MAX_VALUE : range[1];
  			for(String tabcol:eqCols) {

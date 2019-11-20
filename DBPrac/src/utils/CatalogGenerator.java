@@ -1,27 +1,24 @@
 package utils;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
-
 import dataStructure.Catalog;
 import dataStructure.Tuple;
 import fileIO.BinaryTupleReader;
 
 public class CatalogGenerator {
-	
+
 	String dbDir; 
-	
+
 	public CatalogGenerator(String dbDir) {
 		this.dbDir = dbDir;
 	}
-	
+
 	/** Construct catalog from directory
 	 * 
 	 * @param directory directory to find the schema file
@@ -31,7 +28,6 @@ public class CatalogGenerator {
 		try {
 			FileReader schemafw= new FileReader(dbDir + "/schema.txt");
 			BufferedReader readSchema= new BufferedReader(schemafw);
-			String line;
 			BinaryTupleReader tableread;
 			//write to file
 			BufferedWriter writer= new BufferedWriter(new FileWriter(dbDir +"/stats.txt"));
@@ -42,13 +38,13 @@ public class CatalogGenerator {
 				String tableDir = dbDir + "/data/" + tableName;
 				cat.addDir(tableName,  tableDir);
 				writer.write(tableName+" ");
-				
+
 				ArrayList<String> schem= new ArrayList<String>();
 				for (int i= 1; i < schemaLine.length; i++ ) {
 					schem.add(schemaLine[i]);
 				}
 				cat.addSchema(tableName, schem);
-				
+
 				//read table
 				tableread = new BinaryTupleReader(tableDir);
 				int numTuples=0;
@@ -77,8 +73,8 @@ public class CatalogGenerator {
 				tableread.close();	
 				nextLine= readSchema.readLine();
 			}
-			
-			
+
+
 			writer.close();
 			readSchema.close();
 		} catch (IOException e) {

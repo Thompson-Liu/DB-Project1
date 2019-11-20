@@ -60,7 +60,9 @@ public class UnionFindGenerator implements ExpressionVisitor {
 	 * @param expr: a query expression to be accepted */
 	public UnionFindGenerator(Expression expr) {
 		uf= new UnionFind();
-		expr.accept(this);
+		if (expr != null) {
+			expr.accept(this);
+		}
 		flag= false;
 	}
 
@@ -218,7 +220,6 @@ public class UnionFindGenerator implements ExpressionVisitor {
 			uf.merge(uf.find(tmp.getTable().getName() + "." + tmp.getColumnName()),
 				uf.find(tmpCol.getTable().getName() + "." + tmpCol.getColumnName()));
 		}
-
 	}
 
 	@Override

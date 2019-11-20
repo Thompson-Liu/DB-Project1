@@ -57,7 +57,9 @@ public class UnusedSelectVisitor implements ExpressionVisitor {
 		schema.addAll(tableSchema);
 		tableExpr = new ArrayList<Expression>();
 		
-		expr.accept(this);
+		if (expr != null) {
+			expr.accept(this);
+		}
 	}
 	
 	public Expression getTableExpr() {

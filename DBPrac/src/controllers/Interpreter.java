@@ -1,5 +1,7 @@
 package controllers;
 
+import java.io.IOException;
+
 import fileIO.BinaryTupleWriter;
 import utils.CatalogGenerator;
 import utils.DataGenerator;
@@ -16,32 +18,35 @@ public class Interpreter {
 
 		// Parse the input file
 		InputFileParser fileParser = new InputFileParser(args[0]);
-		String inputDir = fileParser.getDir();
-		String outputDir = fileParser.getDir();
-		String tempDir = fileParser.getDir();
-
-		//		int buildIndex = fileParser.getFlag();
-		//		int evalQuery = fileParser.getFlag();
+//		String inputDir = fileParser.getDir();
+//		String outputDir = fileParser.getDir();
+//		String tempDir = fileParser.getDir();
+		
+		String current = "";
+		try {
+			current = new java.io.File( "." ).getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String inputDir = current + "/samples/input";
+		String outputDir = current + "/samples/output";
+		String tempDir = current + "/samples/tempdir";
 
 		// Generate the catalog of data relations' directory and schema
 		CatalogGenerator catalogGen = new CatalogGenerator(inputDir + "/db");
 		catalogGen.createCatalog();
 
 		// build random testing data
-		//		DataGenerator dataGen = new DataGenerator(3, inputDir, 3, 4, 100000);
+		// DataGenerator dataGen = new DataGenerator(3, inputDir, 3, 4, 100000);
 
-		// If buildIndex = 1, build the index
 		IndexBuilder indexBuilder = new IndexBuilder(inputDir + "/db");
-		//		if (buildIndex == 1) {
+		
 		indexBuilder.buildIndices();
-		//		}
-
-		// If evalQuery = 1, evaluate the qeury
-		//		if (evalQuery == 1) {
 		indexBuilder.readIndices();
+		
 		QueryEvaluator queryEval = new QueryEvaluator(inputDir + "/queries.sql", 
 				outputDir, inputDir, tempDir);
 		queryEval.evaluateQuery();
-		//		}
 	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Operators.PhysicalPlanBuilder;
+import dataStructure.BlueBox;
 import net.sf.jsqlparser.expression.Expression;
 import utils.LogicalPlanWriter;
 
@@ -12,14 +13,21 @@ public class JoinLogOp extends LogicalOperator {
 
 	private Expression joinExp;
 	private List<LogicalOperator> childOp;
+	private List<BlueBox> blueBoxList;
 
-	public JoinLogOp(ArrayList<LogicalOperator> fromItems, Expression expr) {
+	public JoinLogOp(ArrayList<LogicalOperator> fromItems, Expression expr, List<BlueBox> list) {
 		joinExp= expr;
 
 		childOp= new ArrayList<LogicalOperator>(fromItems.size());
 		for (LogicalOperator logOp : fromItems) {
 			childOp.add(logOp);
 		}
+		
+		blueBoxList = new ArrayList<BlueBox>(list);
+	}
+	
+	public List<BlueBox> getBlueBoxes() {
+		return blueBoxList;
 	}
 
 	@Override

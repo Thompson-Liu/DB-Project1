@@ -22,6 +22,13 @@ public class PhysicalPlanWriter {
 	public PhysicalPlanWriter(BufferedWriter bw, Operator op) {
 		writer= bw;
 		op.accept(this);
+		
+		try {
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void visit(BNLJ op) throws IOException {

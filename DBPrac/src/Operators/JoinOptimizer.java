@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
+import dataStructure.BlueBox;
 import dataStructure.Catalog;
 import dataStructure.UnionFind;
 import logicalOperators.Leaf;
@@ -166,24 +168,27 @@ public class JoinOptimizer {
 		curPlan.addAliasName(aliasName);
 
 		// TODO (call UnionFind function,e.g. getTableColRange(TableName) to get)
-		HashMap<List<String>,Integer[]> colRange = this.unionFind.findSelect(aliasName);
+		ArrayList<BlueBox> blueBoxes = this.unionFind.findSelect(aliasName);
 		double reductionFactor =1;
 		for(String col:schema) {
 			int oriHigh = catalog.getColRange(tableName, col)[1];
 			int oriLow=catalog.getColRange(tableName, col)[0];
-			if(colRange.containsKey(col)) {  // check if col is in expr {R.A=3 or R.A<4} with low and high bound
-				int newHigh = (colRange.get(col)[1]==null) ? Integer.MAX_VALUE:colRange.get(col)[1];
-				int newLow = (colRange.get(col)[0]==null) ? Integer.MIN_VALUE:colRange.get(col)[0];
-				newHigh = Math.min(newHigh,oriHigh);     
-				newLow = Math.max(newLow, oriLow);
-				int curReductionF = (int)(newHigh-newLow)/(oriHigh-oriLow);
-				reductionFactor = reductionFactor*curReductionF;
-				int v = newHigh-newLow+1;
-				curPlan.addColV(aliasName, col, v);
-			}
-			else {
-				int v = oriHigh-oriLow+1;
-				curPlan.addColV(aliasName, col, v);
+			for (BlueBox box: blueBoxes) {
+				List<String> colRange = box.getAttr();
+				if(colRange.contains(col)) {  // check if col is in expr {R.A=3 or R.A<4} with low and high bound
+					int newHigh = (box.getUpper()==null) ? Integer.MAX_VALUE : box.getUpper();
+					int newLow = (box.getLower()==null) ? Integer.MIN_VALUE : box.getLower();
+					newHigh = Math.min(newHigh,oriHigh);     
+					newLow = Math.max(newLow, oriLow);
+					int curReductionF = (int)(newHigh-newLow)/(oriHigh-oriLow);
+					reductionFactor = reductionFactor*curReductionF;
+					int v = newHigh-newLow+1;
+					curPlan.addColV(aliasName, col, v);
+				}
+				else {
+					int v = oriHigh-oriLow+1;
+					curPlan.addColV(aliasName, col, v);
+				}
 			}
 		}
 		int newNum = (int) (reductionFactor*numTuples);

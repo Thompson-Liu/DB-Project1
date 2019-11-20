@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import dataStructure.BlueBox;
 import dataStructure.Catalog;
 import dataStructure.UnionFind;
 import logicalOperators.DuplicateEliminationLogOp;
@@ -94,7 +95,7 @@ public class PhysicalPlanBuilder {
 	}
 
 	public void visit(SelectLogOp selectLop) {
-		HashMap<List<String>, Integer[]> attributes = selectLop.getAttrributes();
+		List<BlueBox> attributes = selectLop.getAttributes();
 		SelectCost costCalc = new SelectCost();
 		String[] selectPlan = costCalc.selectScan(selectLop.getTableName(), selectLop.getAlias(), attributes);
 
@@ -110,11 +111,12 @@ public class PhysicalPlanBuilder {
 		Integer high = null;
 		
 		EqualsTo removed = null;
-		for (List<String> attr: attributes.keySet()) {
+		for (BlueBox attrBB: attributes) {
 			// check if the original hashmap is modified correctly
+			List<String> attr = attrBB.getAttr();
 			if (attr.contains(selectPlan[1])) {
-				low = (attributes.get(attr)[0] != null) ? attributes.get(attr)[0] : Integer.MIN_VALUE;
-				high = (attributes.get(attr)[1] != null) ? attributes.get(attr)[1] : Integer.MAX_VALUE;
+				low = (attrBB.getLower() != null) ? attrBB.getLower() : Integer.MIN_VALUE;
+				high = (attrBB.getUpper() != null) ? attrBB.getUpper() : Integer.MAX_VALUE;
 				
 				// Example: [S.A = S.B AND S.A < 3] -> [S.B] if indexing on column A, then the expression built 
 				// becomes [S.B < 3], want to restore [S.A = S.B]
