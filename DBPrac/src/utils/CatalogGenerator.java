@@ -36,7 +36,7 @@ public class CatalogGenerator {
 			//write to file
 			BufferedWriter writer= new BufferedWriter(new FileWriter(dbDir +"/stats.txt"));
 			String nextLine= readSchema.readLine();
-			while ((nextLine= readSchema.readLine()) != null && nextLine !="") {
+			while (nextLine != null && nextLine !="") {
 				String[] schemaLine= nextLine.trim().split("\\s+");
 				String tableName= schemaLine[0];
 				String tableDir = dbDir + "/data/" + tableName;
@@ -57,13 +57,14 @@ public class CatalogGenerator {
 				for(int i=0;i<schem.size();i++) {
 					colRange[i][0] =Integer.MAX_VALUE; 
 					colRange[i][1]=Integer.MIN_VALUE;}
-				Tuple cur;
-				while((cur=tableread.readNextTuple())!=null) {
+				Tuple cur=tableread.readNextTuple();
+				while(cur!=null) {
 					numTuples++;
 					for(int i=0;i<schem.size();i++) {
 						colRange[i][0] = Math.min(colRange[i][0], cur.getData(i));
 						colRange[i][1] = Math.max(colRange[i][1],cur.getData(i));
 					}
+					cur=tableread.readNextTuple();
 				}
 				cat.setTupleNums(tableName, numTuples);
 				writer.write(Integer.toString(numTuples)+" ");
@@ -75,6 +76,7 @@ public class CatalogGenerator {
 				}
 				writer.newLine();
 				tableread.close();	
+				nextLine= readSchema.readLine();
 			}
 			
 			
