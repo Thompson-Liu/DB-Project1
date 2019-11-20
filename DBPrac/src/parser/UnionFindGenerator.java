@@ -60,7 +60,9 @@ public class UnionFindGenerator implements ExpressionVisitor {
 	 * @param expr: a query expression to be accepted */
 	public UnionFindGenerator(Expression expr) {
 		uf= new UnionFind();
-		expr.accept(this);
+		if (expr != null) {
+			expr.accept(this);
+		}
 		flag= false;
 	}
 
