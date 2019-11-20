@@ -1,39 +1,62 @@
-----------------============================   P 1    ===========================-----------
-
-SELECT *
-FROM Reserves;
-
-SELECT *
-FROM Reserves
-WHERE Sailors.A = Reserves.G;
-
-SELECT S.A, S.C, S.B
-FROM Sailors S;
-
-SELECT *
-FROM Sailors S
-ORDER BY S.B, S.C, S.A;
+----------  ===============        P 4          =============== -----------------
+SELECT DISTINCT S.A, R.G
+FROM Sailors S, Reserves R, Boats B
+WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
+ORDER BY S.A;
 
 SELECT S.A
-FROM Sailors S
-WHERE S.A < 10000;
-
-SELECT DISTINCT R.H
-FROM Reserves R
-WHERE R.G=1;
-
-SELECT DISTINCT Sailors.A
-FROM Sailors, Reserves
-WHERE Sailors.A = Reserves.G;
+FROM Sailors S, Reserves R
+WHERE S.B = R.G AND R.H<100 AND S.A>=9050;
 
 SELECT *
-FROM Sailors S1, Sailors S2
-WHERE S1.A = S2.A
-ORDER BY S1.B,S1.C,S1.A;
+FROM R, S
+WHERE R.A = 100 AND R.A = S.B;
 
-SELECT S1.B
-FROM Sailors S1, Sailors S2
-WHERE S1.A = S2.B;
+-- SELECT *
+-- FROM Reserves R, Sailors S, Test T, UTest U
+-- WHERE R.A<>U.B AND R.A=S.B AND S.C=T.D AND R.A=2 AND T.D=T.X AND U.Y<>42;
+
+----------------============================   P 1    ===========================-----------
+
+-- SELECT *
+-- FROM Reserves
+-- WHERE Reserves.A<>Reserves.B AND Reserves.A=3;
+
+-- SELECT *
+-- FROM Sailors S
+-- WHERE S.A =5 AND S.B=S.A;
+
+-- SELECT *
+-- FROM Reserves
+-- WHERE Sailors.A = Reserves.G;
+
+-- SELECT S.A, S.C, S.B
+-- FROM Sailors S;
+
+-- SELECT *
+-- FROM Sailors S
+-- ORDER BY S.B, S.C, S.A;
+
+-- SELECT S.A
+-- FROM Sailors S
+-- WHERE S.A < 10000;
+
+-- SELECT DISTINCT R.H
+-- FROM Reserves R
+-- WHERE R.G=1;
+
+-- SELECT DISTINCT Sailors.A
+-- FROM Sailors, Reserves
+-- WHERE Sailors.A = Reserves.G;
+
+-- SELECT *
+-- FROM Sailors S1, Sailors S2
+-- WHERE S1.A = S2.A
+-- ORDER BY S1.B,S1.C,S1.A;
+
+-- SELECT S1.B
+-- FROM Sailors S1, Sailors S2
+-- WHERE S1.A = S2.B;
 
 -- SELECT *
 -- FROM Sailors S1, Boats B, Sailors S2
