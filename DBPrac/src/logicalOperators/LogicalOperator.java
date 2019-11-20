@@ -3,6 +3,7 @@ package logicalOperators;
 import java.util.List;
 
 import Operators.PhysicalPlanBuilder;
+import utils.LogicalPlanWriter;
 
 /** the abstract class that all operator classes extend. */
 public abstract class LogicalOperator {
@@ -12,6 +13,10 @@ public abstract class LogicalOperator {
 	}
 
 	public void accept(PhysicalPlanBuilder physicalPlanBuilder) {
+		// TODO Auto-generated method stub
+	}
+
+	public void accept(LogicalPlanWriter lpw) {
 		// TODO Auto-generated method stub
 	}
 

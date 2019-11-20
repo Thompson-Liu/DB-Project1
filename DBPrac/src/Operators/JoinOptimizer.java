@@ -33,44 +33,36 @@ public class JoinOptimizer {
 		subsetPlan= new HashMap<HashSet<String>, PlanInfo>();
 		cat=Catalog.getInstance(); 
 		this.aliasNames = new ArrayList<String>();
-
-		/**|
-		 *  A B C D
-		 *  {A}  {B}  {C} {D}
-		 *  {AB} {BA} {BC} ..
-		 *  {BC A}  { CD A} {BD A} {AC B}
-		 *  {ABC D}  {BCD A}  {ACD B} { ABD C}
-		 */
-		/**  Compute cost of join in a bottom-up fashion using Dynamic Programming. */
-		//Compute cost of join in a bottom-up fashion using Dynamic Programming.
 		this.baseOperators  = joinChildren;
-		//start from base case bottom up until the the construction contains whole
-				for(int subPlanSize=1;subPlanSize<=baseOperators.size();subPlanSize++){
-					// each table could be the top most table in the subPlan
-					for (int topMost= 0; topMost < baseOperators.size(); topMost++ ) {
-						//base case
-						if(subPlanSize==1) {
-							LogicalOperator cur = this.baseOperators.get(topMost);
-							if(cur instanceof SelectLogOp) {
-								selectionVupdate( (SelectLogOp)cur);
-							}else {
-								baseTableVupdate((Leaf)cur);
-							}
-						}else {
-							ArrayList<String> prevSub=new ArrayList<String>();  // track the previous traversed subPlans
-							traverseSubPlans(topMost,subPlanSize,0,prevSub);
-						}
-					}
-				}
-		
 	}
 
-
-	/**
-	 * 
-	 * @return  the optimal join order as a list of logical operator
+	/**|
+	 *  A B C D
+	 *  {A}  {B}  {C} {D}
+	 *  {AB} {BA} {BC} ..
+	 *  {BC A}  { CD A} {BD A} {AC B}
+	 *  {ABC D}  {BCD A}  {ACD B} { ABD C}
 	 */
+	/**  Compute cost of join in a bottom-up fashion using Dynamic Programming. */
 	public ArrayList<LogicalOperator> findOptimalJoinOrder() {
+		//start from base case bottom up until the the construction contains whole
+		for(int subPlanSize=1;subPlanSize<=baseOperators.size();subPlanSize++){
+			// each table could be the top most table in the subPlan
+			for (int topMost= 0; topMost < baseOperators.size(); topMost++ ) {
+				//base case
+				if(subPlanSize==1) {
+					LogicalOperator cur = this.baseOperators.get(topMost);
+					if(cur instanceof SelectLogOp) {
+						selectionVupdate( (SelectLogOp)cur);
+					}else {
+						baseTableVupdate((Leaf)cur);
+					}
+				}else {
+					ArrayList<String> prevSub=new ArrayList<String>();  // track the previous traversed subPlans
+					traverseSubPlans(topMost,subPlanSize,0,prevSub);
+				}
+			}
+		}
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
 		return optimalPlan.getOpsCopy();
@@ -136,7 +128,6 @@ public class JoinOptimizer {
 		String tableName =baseOp.getTableName();
 		String aliasName = baseOp.getAlias();
 		this.aliasNames.add(aliasName);
-
 		int numTuples = cat.getTupleNums(tableName);
 
 		// set up new PlanInfo
