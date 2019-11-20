@@ -1,11 +1,13 @@
 package logicalOperators;
 
+import java.util.List;
+
 import Operators.PhysicalPlanBuilder;
 
 /** the abstract class that all operator classes extend. */
 public abstract class LogicalOperator {
 
-	public LogicalOperator[] getChildren() {
+	public List<LogicalOperator> getChildren() {
 		return null;
 	}
 
@@ -13,4 +15,8 @@ public abstract class LogicalOperator {
 		// TODO Auto-generated method stub
 	}
 
+	public String getTableName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

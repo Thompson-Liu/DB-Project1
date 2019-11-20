@@ -49,7 +49,7 @@ public class QueryEvaluator {
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
 
 					// need to pass in the name of the config file path
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(inputDir + "/plan_builder_config.txt", tempDir, inputDir + "/db/indexes");
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
 					Operator op= planBuilder.generatePlan(logOp);
 
 //					ReadableTupleWriter writer= new ReadableTupleWriter(

@@ -1,5 +1,6 @@
 package logicalOperators;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,16 +17,24 @@ public class ProjectLogOp extends LogicalOperator{
 		projItems = items;
 	}
 	
-	public LogicalOperator[] getChildren() {
-		return new LogicalOperator[] { childOp };
+	@Override
+	public List<LogicalOperator> getChildren() {
+		List<LogicalOperator> children = new ArrayList<LogicalOperator>();
+		children.add(childOp);
+		return children;
 	}
 	
 	public List<SelectItem> getItems() {
 		return projItems;
 	}
 	
+	@Override
 	public void accept(PhysicalPlanBuilder planBuilder) {
 		planBuilder.visit(this);
 	}
-
+	
+	@Override
+	public String getTableName() {
+		return "";
+	}
 }

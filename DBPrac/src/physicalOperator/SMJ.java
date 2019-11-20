@@ -51,7 +51,6 @@ public class SMJ extends Operator {
 		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName());
 		leftColList= evalJoin.getJoinAttributesLeft();
 		rightColList= evalJoin.getJoinAttributesRight();
-		System.out.println("SMJ");
 		leftOp= left;
 		rightOp= right;
 		this.useExternal= useExternal;

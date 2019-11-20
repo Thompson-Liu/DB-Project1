@@ -1,5 +1,8 @@
 package logicalOperators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Operators.PhysicalPlanBuilder;
 
 public class DuplicateEliminationLogOp extends LogicalOperator {
@@ -10,12 +13,20 @@ public class DuplicateEliminationLogOp extends LogicalOperator {
 		childOp = child;
 	}
 	
-	public LogicalOperator[] getChidren() {
-		return new LogicalOperator[] { childOp }; 
+	@Override
+	public List<LogicalOperator> getChildren() {
+		List<LogicalOperator> children = new ArrayList<LogicalOperator>();
+		children.add(childOp);
+		return children;
 	}
 	
+	@Override
 	public void accept(PhysicalPlanBuilder planBuilder) {
 		planBuilder.visit(this);
 	}
 	
+	@Override
+	public String getTableName() {
+		return "";
+	}
 }
