@@ -39,7 +39,6 @@ public class JoinOptimizer {
 		
 		//start from base case bottom up until the the construction contains whole
 		for(int subPlanSize=1;subPlanSize<=baseOperators.size();subPlanSize++){
-			System.out.println(subPlanSize);
 			// each table could be the top most table in the subPlan
 			for (int topMost= 0; topMost < baseOperators.size(); topMost++ ) {
 				//base case
@@ -70,7 +69,6 @@ public class JoinOptimizer {
 	public ArrayList<LogicalOperator> findOptimalJoinOrder() {
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
-		System.out.println(optimalPlan.getAliasNames().toString());
 		ArrayList<LogicalOperator> ret = optimalPlan.getOpsCopy();
 		return optimalPlan.getOpsCopy();
 	}
@@ -226,22 +224,28 @@ public class JoinOptimizer {
 		int joinSize = prevOptPlan.getTotalTuples()*topMostPlan.getTotalTuples();    // compute intermediate relation size
 		PlanInfo newPlan = new PlanInfo(newJoin);
 		String rightMostTable= topMostPlan.getAliasNames().get(0);
-		ArrayList<String> prevAliasNames = prevOptPlan.getAliasNames();
-		prevAliasNames.add(rightMostTable);
-		newPlan.setAliasName(prevAliasNames);
+		ArrayList<String> newAliasNames = new ArrayList<String>();
+		
 
 		// if there are two table join :  choose the smaller size to be the left table
 		if(prevOptPlan.getNumOps()==1) {
 			if(prevOptPlan.getTotalTuples()<topMostPlan.getTotalTuples()) {
 				newJoin=prevOptPlan.getOpsCopy();
 				newJoin.addAll(topMostPlan.getOpsCopy());
+				newAliasNames = prevOptPlan.getAliasNames();
+				newAliasNames.add(rightMostTable);
+
 			}else {
 				newJoin=topMostPlan.getOpsCopy();
 				newJoin.addAll(prevOptPlan.getOpsCopy());
+				newAliasNames.add(rightMostTable);
+				newAliasNames.addAll(prevOptPlan.getAliasNames());
 			}
 		}else {
 			newJoin = prevOptPlan.getOpsCopy();
 			newJoin.addAll(topMostPlan.getOpsCopy());
+			newAliasNames.addAll(prevOptPlan.getAliasNames());
+			newAliasNames.add(rightMostTable);
 		}
 		// if there exists a set of bluebox relating to left and right
 		for(ArrayList<String> equ :equTableColSet) {
@@ -269,6 +273,7 @@ public class JoinOptimizer {
 			}
 		}
 		newPlan.setOptimalOrder(newJoin);
+		newPlan.setAliasName(newAliasNames);
 
 		
 		// filling the rest of cols V and compare with the new Tuple number
