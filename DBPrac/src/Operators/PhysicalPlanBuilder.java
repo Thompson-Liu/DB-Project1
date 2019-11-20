@@ -95,7 +95,7 @@ public class PhysicalPlanBuilder {
 	}
 
 	public void visit(SelectLogOp selectLop) {
-		ArrayList<BlueBox> attributes = selectLop.getAttributes();
+		List<BlueBox> attributes = selectLop.getAttributes();
 		SelectCost costCalc = new SelectCost();
 		String[] selectPlan = costCalc.selectScan(selectLop.getTableName(), selectLop.getAlias(), attributes);
 
