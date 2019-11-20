@@ -40,7 +40,7 @@ public class LogicalPlanWriter {
 	public void visit(JoinLogOp op) throws IOException {
 		// need residual join here
 		writer.write(new String(new char[level]).replace("\0", "-") + "Join[" +
-			ufg.getResidualJoin().toString() + "]\n");
+			op.getJoinExpression().toString() + "]\n");
 		List<BlueBox> boxes= ufg.getUnionFind().getBlueBoxes();
 		for (int i= 0; i < boxes.size(); i++ ) {
 			writer.write(
