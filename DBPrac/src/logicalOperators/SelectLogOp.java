@@ -14,39 +14,25 @@ public class SelectLogOp extends LogicalOperator {
 	private String tableName;
 	private String alias;
 	private Expression exp;
-	private Expression unusedExpr;
-	private HashMap<List<String>, Integer[]> attributes;
+	private HashMap<List<String>, Integer[]> attrsInBB;
 
-	public SelectLogOp(String tableName, String alias, Expression expression) {
+	public SelectLogOp(String tableName, String alias, Expression expression, HashMap<List<String>, Integer[]> selectAttr) {
 		this.tableName= tableName;
 		this.alias= alias;
 		exp= expression;
-		attributes= new HashMap<List<String>, Integer[]>();
-	}
-
-	public SelectLogOp(String tableName, String alias,
-		HashMap<List<String>, Integer[]> attrs, Expression expression) {
-		this.tableName= tableName;
-		this.alias= alias;
-		unusedExpr= expression;
-
-		// check if a hashmap is copied correctly
-		attributes= new HashMap<List<String>, Integer[]>();
-		for (List<String> attribute : attrs.keySet()) {
-			attributes.put(attribute, attrs.get(attribute));
+		
+		attrsInBB = new HashMap<List<String>, Integer[]>();
+		for (List<String> attribute: selectAttr.keySet()) {
+			attrsInBB.put(attribute, selectAttr.get(attribute));
 		}
 	}
 
 	public Expression getSelectExpr() {
 		return exp;
 	}
-
-	public Expression getUnusedExpr() {
-		return unusedExpr;
-	}
-
+	
 	public HashMap<List<String>, Integer[]> getAttrributes() {
-		return attributes;
+		return attrsInBB;
 	}
 
 	@Override
