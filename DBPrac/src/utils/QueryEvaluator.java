@@ -1,8 +1,10 @@
 package utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 
 import Operators.LogicalOperatorFactory;
 import Operators.PhysicalPlanBuilder;
@@ -15,6 +17,7 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
+import parser.UnionFindGenerator;
 import physicalOperator.Operator;
 
 public class QueryEvaluator {
@@ -47,7 +50,12 @@ public class QueryEvaluator {
 
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
-
+					
+					// Output logical plan tree
+					BufferedWriter planLWriter = new BufferedWriter(new FileWriter(outputDir + "query" + queryCounter + " logicalplan"));
+					LogicalPlanWriter logPlanWriter = new LogicalPlanWriter(planLWriter, new UnionFindGenerator(plainSelect.getWhere()), logOp);
+					
+					
 					// need to pass in the name of the config file path
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
 					Operator op= planBuilder.generatePlan(logOp);

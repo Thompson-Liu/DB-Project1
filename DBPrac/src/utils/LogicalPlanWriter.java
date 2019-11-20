@@ -19,9 +19,10 @@ public class LogicalPlanWriter {
 	private BufferedWriter writer;
 	private UnionFindGenerator ufg;
 
-	public LogicalPlanWriter(BufferedWriter bw, UnionFindGenerator ufg) {
+	public LogicalPlanWriter(BufferedWriter bw, UnionFindGenerator ufg, LogicalOperator logOp) {
 		writer= bw;
 		this.ufg= ufg;
+		logOp.accept(this);
 	}
 
 	public void visit(DuplicateEliminationLogOp op) throws IOException {
