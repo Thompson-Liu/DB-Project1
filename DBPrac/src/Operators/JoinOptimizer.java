@@ -36,17 +36,7 @@ public class JoinOptimizer {
 		cat=Catalog.getInstance(); 
 		this.aliasNames = new ArrayList<String>();
 		this.baseOperators  = joinChildren;
-	}
-
-	/**|
-	 *  A B C D
-	 *  {A}  {B}  {C} {D}
-	 *  {AB} {BA} {BC} ..
-	 *  {BC A}  { CD A} {BD A} {AC B}
-	 *  {ABC D}  {BCD A}  {ACD B} { ABD C}
-	 */
-	/**  Compute cost of join in a bottom-up fashion using Dynamic Programming. */
-	public ArrayList<LogicalOperator> findOptimalJoinOrder() {
+		
 		//start from base case bottom up until the the construction contains whole
 		for(int subPlanSize=1;subPlanSize<=baseOperators.size();subPlanSize++){
 			// each table could be the top most table in the subPlan
@@ -65,6 +55,18 @@ public class JoinOptimizer {
 				}
 			}
 		}
+		
+	}
+
+	/**|
+	 *  A B C D
+	 *  {A}  {B}  {C} {D}
+	 *  {AB} {BA} {BC} ..
+	 *  {BC A}  { CD A} {BD A} {AC B}
+	 *  {ABC D}  {BCD A}  {ACD B} { ABD C}
+	 */
+	/**  Compute cost of join in a bottom-up fashion using Dynamic Programming. */
+	public ArrayList<LogicalOperator> findOptimalJoinOrder() {
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
 		return optimalPlan.getOpsCopy();
@@ -89,6 +91,7 @@ public class JoinOptimizer {
 			HashSet<String> prevSubTables = new HashSet<String>(prevSubCopy);
 			PlanInfo prevOptPlan = this.subsetPlan.get(prevSubTables);
 			HashSet<String> topMostTable = new HashSet<String>();
+			topMostTable.add(this.aliasNames.get(topMost));
 			PlanInfo topMostPlan = this.subsetPlan.get(topMostTable);
 			PlanInfo newPlan = joinVupdate(prevOptPlan,topMostPlan);
 			prevSubTables.add(this.aliasNames.get(topMost));
@@ -100,13 +103,14 @@ public class JoinOptimizer {
 			}
 			return;
 		}
-		// Skip if this new table is the topMost table
-		else if (curPos == topMost ) {
-			traverseSubPlans(topMost,targetSize,curPos++,prevSubPlan);
-			return;
-		}
 		// Terminate, if no more table to join or current table size in plan exceeds
 		else if (curPos>=this.baseOperators.size() || prevSubPlan.size()>=targetSize) {
+			return;
+		}
+		// Skip if this new table is the topMost table
+		else if (curPos == topMost ) {
+			int newPos = curPos+1;
+			traverseSubPlans(topMost,targetSize,newPos,prevSubPlan);
 			return;
 		}
 		// Recursive: for each curPos, 2 cases: either select it / not select it
@@ -116,7 +120,7 @@ public class JoinOptimizer {
 			addedSubPlan.addAll(prevSubPlan);
 			addedSubPlan.add(this.aliasNames.get(curPos));
 			traverseSubPlans(topMost,targetSize,newPos,addedSubPlan);
-			
+
 			traverseSubPlans(topMost,targetSize,newPos,prevSubPlan);
 		}
 	}
@@ -207,13 +211,13 @@ public class JoinOptimizer {
 	}
 
 	private PlanInfo joinVupdate(PlanInfo prevOptPlan,PlanInfo topMostPlan) {
-		// TODO           call and get the joining expression and joining columns from Union Find
-		Expression curJoinExp;      
-		List<ArrayList<String>> equTableColSet= this.unionFind.findJoin(prevOptPlan.getAliasNames(),topMostPlan.getAliasNames().get(0));  
+		List<ArrayList<String>> equTableColSet = new ArrayList<ArrayList<String>>();
+		if(this.unionFind!=null) {
+			equTableColSet= this.unionFind.findJoin(prevOptPlan.getAliasNames(),topMostPlan.getAliasNames().get(0));  
+		}
 		//👆 Alias+col : equalities among a list of tables since prevOptPlan contains multiple tables
 		//  e.g.   " R.a=R.h=B.C  AND  S.d=B.e "    prevTables:[R,S]  topMostTable: [B]
 		//          WANT:  [ ["R.a","R.h" , "B.c"], ["S.d" , "B.e"] ]
-		// little change:如果一个column和很多个其他的column都相等，放到一个arrayList里
 
 		ArrayList<LogicalOperator> newJoin = new ArrayList<LogicalOperator>();
 		int joinSize = prevOptPlan.getTotalTuples()*topMostPlan.getTotalTuples();    // compute intermediate relation size

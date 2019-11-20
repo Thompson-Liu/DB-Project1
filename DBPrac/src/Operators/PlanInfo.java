@@ -20,6 +20,8 @@ public class PlanInfo {
 	
 	public PlanInfo(ArrayList<LogicalOperator> logOps) {
 		this.logOps=logOps;
+		this.aliasNames= new ArrayList<String>();
+		this.columnStats = new HashMap<String,Integer>();
 	}
 	
 	
