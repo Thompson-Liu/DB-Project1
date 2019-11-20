@@ -10,7 +10,9 @@ WHERE S.B = R.G AND R.H<100 AND S.A>=9050;
 
 SELECT *
 FROM Reserves R, Sailors S
-WHERE R.A = 100 AND R.A = S.B;
+WHERE S.B = R.G AND R.H<100 AND S.A>=9050;
+
+-- WHERE R.A = 100 AND R.A = S.B;
 
 -- SELECT *
 -- FROM Reserves R, Sailors S, Test T, UTest U

@@ -59,7 +59,9 @@ public class JoinTableVisitor implements ExpressionVisitor {
 		prevJoined.addAll(prev);
 		curTable = tableAlias;
 		
-		expr.accept(this);
+		if (expr != null) {
+			expr.accept(this);
+		}
 	}
 	
 	public Expression getResidual() {

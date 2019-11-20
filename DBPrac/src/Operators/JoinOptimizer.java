@@ -39,6 +39,7 @@ public class JoinOptimizer {
 		
 		//start from base case bottom up until the the construction contains whole
 		for(int subPlanSize=1;subPlanSize<=baseOperators.size();subPlanSize++){
+			System.out.println(subPlanSize);
 			// each table could be the top most table in the subPlan
 			for (int topMost= 0; topMost < baseOperators.size(); topMost++ ) {
 				//base case
@@ -69,6 +70,8 @@ public class JoinOptimizer {
 	public ArrayList<LogicalOperator> findOptimalJoinOrder() {
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
+		System.out.println(optimalPlan.getAliasNames().toString());
+		ArrayList<LogicalOperator> ret = optimalPlan.getOpsCopy();
 		return optimalPlan.getOpsCopy();
 	}
 
@@ -246,8 +249,8 @@ public class JoinOptimizer {
 			int Vproduct = 1;               //3.4.3 specified: shrink size is the max amoung (V(R.A,S.C)), so start with 1, and keep increase
 			// get the minimum column V
 			for(String condition:equ) {
-				String aliasName = condition.split("//.")[0];
-				String columnName = condition.split("//.")[1];
+				String aliasName = condition.split("\\.")[0];
+				String columnName = condition.split("\\.")[1];
 				int curV;
 				if(aliasName==rightMostTable) {
 					curV=topMostPlan.getColV(aliasName, columnName);
@@ -260,13 +263,24 @@ public class JoinOptimizer {
 			joinSize = (int)joinSize/Vproduct;
 			// set the V value of columns in newPlan  as   V(R,a)=V(R,h)=V(B,c)=min V = Vupdate  
 			for(String condition:equ) {
-				String aliasName = condition.split("//.")[0];
-				String columnName = condition.split("//.")[1];
+				String aliasName = condition.split("\\.")[0];
+				String columnName = condition.split("\\.")[1];
 				newPlan.addColV(aliasName, columnName, Vupdate);
 			}
 		}
+		newPlan.setOptimalOrder(newJoin);
 
+		
 		// filling the rest of cols V and compare with the new Tuple number
+		HashMap<String, Integer> updateAll = prevOptPlan.copyColStas();
+		updateAll.putAll(topMostPlan.copyColStas());
+		for(String colKey:updateAll.keySet()) {
+			String aliasName = colKey.split("\\.")[0];
+			String columnName = colKey.split("\\.")[1];
+			int updateV = Math.min(updateAll.get(colKey),joinSize);
+			// will always add if smaller (enforced in PlanInfo)
+			newPlan.addColV(aliasName, columnName, updateV);
+		}
 		int cost=prevOptPlan.getCost()+joinSize;
 		newPlan.setCost(cost);
 		newPlan.setTotalTuples(joinSize);
