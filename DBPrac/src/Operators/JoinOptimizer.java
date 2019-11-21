@@ -69,6 +69,7 @@ public class JoinOptimizer {
 	public ArrayList<LogicalOperator> findOptimalJoinOrder() {
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
+		ArrayList<LogicalOperator> ret = optimalPlan.getOpsCopy();
 		return optimalPlan.getOpsCopy();
 	}
 
@@ -223,22 +224,28 @@ public class JoinOptimizer {
 		int joinSize = prevOptPlan.getTotalTuples()*topMostPlan.getTotalTuples();    // compute intermediate relation size
 		PlanInfo newPlan = new PlanInfo(newJoin);
 		String rightMostTable= topMostPlan.getAliasNames().get(0);
-		ArrayList<String> prevAliasNames = prevOptPlan.getAliasNames();
-		prevAliasNames.add(rightMostTable);
-		newPlan.setAliasName(prevAliasNames);
+		ArrayList<String> newAliasNames = new ArrayList<String>();
+		
 
 		// if there are two table join :  choose the smaller size to be the left table
 		if(prevOptPlan.getNumOps()==1) {
 			if(prevOptPlan.getTotalTuples()<topMostPlan.getTotalTuples()) {
 				newJoin=prevOptPlan.getOpsCopy();
 				newJoin.addAll(topMostPlan.getOpsCopy());
+				newAliasNames = prevOptPlan.getAliasNames();
+				newAliasNames.add(rightMostTable);
+
 			}else {
 				newJoin=topMostPlan.getOpsCopy();
 				newJoin.addAll(prevOptPlan.getOpsCopy());
+				newAliasNames.add(rightMostTable);
+				newAliasNames.addAll(prevOptPlan.getAliasNames());
 			}
 		}else {
 			newJoin = prevOptPlan.getOpsCopy();
 			newJoin.addAll(topMostPlan.getOpsCopy());
+			newAliasNames.addAll(prevOptPlan.getAliasNames());
+			newAliasNames.add(rightMostTable);
 		}
 		// if there exists a set of bluebox relating to left and right
 		for(ArrayList<String> equ :equTableColSet) {
@@ -246,8 +253,8 @@ public class JoinOptimizer {
 			int Vproduct = 1;               //3.4.3 specified: shrink size is the max amoung (V(R.A,S.C)), so start with 1, and keep increase
 			// get the minimum column V
 			for(String condition:equ) {
-				String aliasName = condition.split("//.")[0];
-				String columnName = condition.split("//.")[1];
+				String aliasName = condition.split("\\.")[0];
+				String columnName = condition.split("\\.")[1];
 				int curV;
 				if(aliasName==rightMostTable) {
 					curV=topMostPlan.getColV(aliasName, columnName);
@@ -260,13 +267,25 @@ public class JoinOptimizer {
 			joinSize = (int)joinSize/Vproduct;
 			// set the V value of columns in newPlan  as   V(R,a)=V(R,h)=V(B,c)=min V = Vupdate  
 			for(String condition:equ) {
-				String aliasName = condition.split("//.")[0];
-				String columnName = condition.split("//.")[1];
+				String aliasName = condition.split("\\.")[0];
+				String columnName = condition.split("\\.")[1];
 				newPlan.addColV(aliasName, columnName, Vupdate);
 			}
 		}
+		newPlan.setOptimalOrder(newJoin);
+		newPlan.setAliasName(newAliasNames);
 
+		
 		// filling the rest of cols V and compare with the new Tuple number
+		HashMap<String, Integer> updateAll = prevOptPlan.copyColStas();
+		updateAll.putAll(topMostPlan.copyColStas());
+		for(String colKey:updateAll.keySet()) {
+			String aliasName = colKey.split("\\.")[0];
+			String columnName = colKey.split("\\.")[1];
+			int updateV = Math.min(updateAll.get(colKey),joinSize);
+			// will always add if smaller (enforced in PlanInfo)
+			newPlan.addColV(aliasName, columnName, updateV);
+		}
 		int cost=prevOptPlan.getCost()+joinSize;
 		newPlan.setCost(cost);
 		newPlan.setTotalTuples(joinSize);

@@ -34,6 +34,11 @@ public class PlanInfo {
 		this.totalTuples=totalTuples;
 	}
 	
+	public void setOptimalOrder(ArrayList<LogicalOperator> opt) {
+		ArrayList<LogicalOperator> newOpt = new ArrayList<LogicalOperator>(opt);
+		this.logOps=newOpt;
+	}
+	
 	/**
 	 * 
 	 * @return  the number of logical operators in this PlanInfo
