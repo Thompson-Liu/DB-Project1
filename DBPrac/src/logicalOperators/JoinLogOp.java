@@ -23,7 +23,6 @@ public class JoinLogOp extends LogicalOperator {
 		for (LogicalOperator logOp : fromItems) {
 			childOp.add(logOp);
 		}
-		
 		blueBoxList = list;
 	}
 	

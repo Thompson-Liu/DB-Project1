@@ -63,4 +63,22 @@ public class BlueBox {
 		// TODO Auto-generated method stub
 		return new Integer[] { lo, hi };
 	}
+	
+	public BlueBox copy(BlueBox box) {
+		List<String> attributes = new ArrayList<String>(box.getAttr());
+		BlueBox copy = new BlueBox(attributes);
+		
+		if (box.getEqual() != null) {
+			copy.setEqual(box.getEqual());
+		} else {
+			if (box.getLower() != null) {
+				copy.setLower(box.getLower());
+			}
+			
+			if (box.getUpper() != null) {
+				copy.setUpper(box.getUpper());
+			}
+		}
+		return copy;
+	}
 }

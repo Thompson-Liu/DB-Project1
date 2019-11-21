@@ -116,7 +116,7 @@ public class LogicalOperatorFactory {
 			Catalog cat = Catalog.getInstance();
 			
 			// If there is a bluebox containing the table, push down the selection
-			ArrayList<BlueBox> selectAttr;
+			List<BlueBox> selectAttr;
 			if (tempAlias.equals("")) {
 				selectAttr = uf.findSelect(tempTable);
 				visitor = new UnusedSelectVisitor(tempTable, cat.getSchema(tempTable), unusedSelExpr);
@@ -130,7 +130,13 @@ public class LogicalOperatorFactory {
 			if(selectAttr.isEmpty() && expr == null) {
 				select = new Leaf(tempTable, tempAlias);
 			} else {
-				Expression exprInBox = buildExpression(selectAttr);
+				// generate a copy of the attributes list
+				List<BlueBox> selectAttrCopy = new ArrayList<BlueBox>();
+				for (BlueBox bb: selectAttr) {
+					selectAttrCopy.add(bb.copy(bb));
+				}
+				
+				Expression exprInBox = buildExpression(selectAttrCopy);
 				if (expr == null) {
 					expr = exprInBox;
 				} else {
@@ -144,7 +150,7 @@ public class LogicalOperatorFactory {
 		return join;
 	}
 	
-	private Expression buildExpression(ArrayList<BlueBox> selectAttr) {
+	private Expression buildExpression(List<BlueBox> selectAttr) {
 		// If the hashMap is empty, all attributes are resolved, return a null Expression
 		if (selectAttr.isEmpty()) {
 			return null;
