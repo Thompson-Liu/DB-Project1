@@ -140,7 +140,7 @@ public class LogicalOperatorFactory {
 			}
 			joinChildren.add(select);
 		}
-		JoinLogOp join = new JoinLogOp(joinChildren, ufGen.getResidualJoin(), uf.getBlueBoxes());
+		JoinLogOp join = new JoinLogOp(joinChildren, ufGen.getResidualJoin(), uf);
 		return join;
 	}
 	

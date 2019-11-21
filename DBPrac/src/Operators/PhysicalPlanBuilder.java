@@ -1,15 +1,8 @@
 package Operators;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 import dataStructure.BlueBox;
-import dataStructure.Catalog;
 import dataStructure.UnionFind;
 import logicalOperators.DuplicateEliminationLogOp;
 import logicalOperators.JoinLogOp;
@@ -20,12 +13,8 @@ import logicalOperators.SelectLogOp;
 import logicalOperators.SortLogOp;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.NullValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
-import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
-import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import parser.IndexConditionSeperator;
@@ -35,7 +24,6 @@ import physicalOperator.BNLJ;
 import physicalOperator.DuplicateEliminationOperator;
 import physicalOperator.ExternalSortOperator;
 import physicalOperator.IndexScanOperator;
-import physicalOperator.JoinOperator;
 import physicalOperator.Operator;
 import physicalOperator.ProjectOperator;
 import physicalOperator.SMJ;
@@ -185,8 +173,7 @@ public class PhysicalPlanBuilder {
 	 * @param joinLogOp
 	 */
 	public void visit(JoinLogOp joinLogOp) {
-		UnionFindGenerator ufGen = new UnionFindGenerator(joinLogOp.getJoinExpression());
-		UnionFind uf = ufGen.getUnionFind();
+		UnionFind uf = joinLogOp.getUnionFind();
 		List<LogicalOperator> joinChildren = joinLogOp.getChildren();
 		JoinOptimizer joinOptimizer = new JoinOptimizer(joinChildren, uf);
 		List<LogicalOperator> joinOrder = joinOptimizer.findOptimalJoinOrder();
@@ -213,24 +200,23 @@ public class PhysicalPlanBuilder {
 		}
 		
 		// reset to loop through the remaining tables
-		Expression restExpr = buildJoinExpr(joinVisitor.getResidual(), uf.findJoinInBox(joinedTable, rightChildOp.getTableName()));
 		joinedTable.add(rightChildOp.getTableName());
 		
 		for(int i = 2; i < joinOrder.size(); ++i) {
 			joinOrder.get(i).accept(this);
 			Operator rightJoin = immOp;
 			
+			Expression restExpr = buildJoinExpr(joinVisitor.getResidual(), uf.findJoinInBox(joinedTable, rightJoin.getTableName()));
 			joinVisitor = new JoinTableVisitor(restExpr, joinedTable, rightJoin.getTableName());
 			
 			// choose between SMJ and BNLJ
 			joinOrderCopy = new ArrayList<LogicalOperator>(joinOrder);
 			if(joinVisitor.allEquality() && checkSMJ(joinVisitor.getRelevant(), joinOrder)) {
-				immOp = new SMJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant(), tempDir, true);
+				immOp = new SMJ(10, immOp, rightJoin, joinVisitor.getRelevant(), tempDir, true);
 			} else {
-				immOp = new BNLJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant());
+				immOp = new BNLJ(10, immOp, rightJoin, joinVisitor.getRelevant());
 			}			
 			
-			restExpr = buildJoinExpr(joinVisitor.getResidual(), uf.findJoinInBox(joinedTable, rightChildOp.getTableName()));
 			joinedTable.add(rightChildOp.getTableName());
 		}
 	}

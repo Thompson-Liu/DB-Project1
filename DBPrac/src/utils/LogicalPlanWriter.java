@@ -51,7 +51,7 @@ public class LogicalPlanWriter {
 		} else {
 			writer.write(new String(new char[level]).replace("\0", "-") + "Join[]\n");
 		}
-		List<BlueBox> boxes= ((JoinLogOp) op).getBlueBoxes();
+		List<BlueBox> boxes= ((JoinLogOp) op).getUnionFind().getBlueBoxes();
 		for (int i= 0; i < boxes.size(); i++ ) {
 			writer.write(
 				"[[" + String.join(", ", boxes.get(i).getAttr()) + "]], equals " + helper(boxes.get(i).getEqual()) +

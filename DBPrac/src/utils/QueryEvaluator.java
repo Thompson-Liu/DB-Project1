@@ -65,7 +65,7 @@ public class QueryEvaluator {
 						outputDir + "/query" + Integer.toString(queryCounter));
 
 					long time1= System.currentTimeMillis();
-//					op.dump(writer);
+					op.dump(writer);
 
 					long time2= System.currentTimeMillis();
 					long diffTime= time2 - time1;
