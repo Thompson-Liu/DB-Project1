@@ -34,7 +34,7 @@ public class PhysicalPlanWriter {
 	public void visit(BNLJ op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "BNLJ[" +
 				op.getExpression().toString() + "]\n");
-		level++ ;
+		level++;
 		int prevLevel= level;
 		op.getOuterOperator().accept(this);
 		level= prevLevel;
@@ -44,20 +44,21 @@ public class PhysicalPlanWriter {
 
 	public void visit(DuplicateEliminationOperator op) throws IOException {
 		writer.write("DupElim\n");
-		level++ ;
+		level++;
 		op.getChild().accept(this);
 	}
 
 	public void visit(ExternalSortOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "ExternalSort[" +
 				String.join(", ", op.getColList()) + "]\n");
-		level++ ;
+		level++;
 		op.getChild().accept(this);
 	}
 
 	public void visit(IndexScanOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "IndexScan[" +
-				op.getTableName() + ", " + op.getCol() + ", " + op.getLow() + ", " + op.getHigh() + "]\n");
+				op.getOriginalTableName() + ", " + op.getCol().split("\\.")[1] + ", " 
+				+ op.getLow() + ", " + op.getHigh() + "]\n");
 	}
 
 	// No need to implement this
@@ -67,7 +68,7 @@ public class PhysicalPlanWriter {
 	public void visit(ProjectOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "Project[" +
 				String.join(", ", op.getSelectCols()) + "]\n");
-		level++ ;
+		level++;
 		op.getChild().accept(this);
 	}
 
@@ -79,7 +80,7 @@ public class PhysicalPlanWriter {
 	public void visit(SelectOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "Select[" +
 				op.getExpression() + "]\n");
-		level++ ;
+		level++;
 		int prevLevel= level;
 		op.getChild().accept(this);
 		level= prevLevel;
@@ -88,7 +89,7 @@ public class PhysicalPlanWriter {
 	public void visit(SMJ op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "SMJ[" +
 				op.getJoinExpression().toString() + "]\n");
-		level++ ;
+		level++;
 		int prevLevel= level;
 		op.getLeftChild().accept(this);
 		level= prevLevel;
@@ -99,7 +100,7 @@ public class PhysicalPlanWriter {
 	public void visit(SortOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "InMemorySort[" +
 				String.join(", ", op.getColList()) + "]\n");
-		level++ ;
+		level++;
 		op.getChild().accept(this);
 	}
 }

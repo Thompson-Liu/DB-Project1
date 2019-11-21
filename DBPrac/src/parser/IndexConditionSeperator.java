@@ -54,8 +54,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private int highKey;
 	private boolean flag;
 	private String tableName;
-	private boolean change= false;
-	private boolean applyToAll= true;
+	private boolean change = false;
+	private boolean applyToAll = true;
 
 	public IndexConditionSeperator(String tableName, String column, Expression expr) {
 		original = expr;
@@ -226,7 +226,6 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			highKey= Math.min(highKey, value);
 			flag= true;
 			change= true;
-
 		} else if ((value= checkRight(left, right)) != null) {
 			lowKey= Math.max(lowKey, value);
 			highKey= Math.min(value, highKey);
@@ -234,7 +233,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 			change= true;
 		} else {
 			residual = (residual instanceof NullValue) ? arg0 : new AndExpression(residual, arg0);
-			applyToAll= false;
+			applyToAll = false;
 		}
 	}
 

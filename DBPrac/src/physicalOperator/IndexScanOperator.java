@@ -17,6 +17,7 @@ import utils.PhysicalPlanWriter;
  * from a relation file using B+-tree indices */
 public class IndexScanOperator extends ScanOperator {
 
+	private String oriTableName;
 	private String colName;
 	private FileInputStream fin;
 	private FileChannel fc;
@@ -42,6 +43,7 @@ public class IndexScanOperator extends ScanOperator {
 		int highkey) throws IOException {
 
 		super(tableName, alias);
+		oriTableName = tableName;
 		fin= new FileInputStream(indexFile);
 		fc= fin.getChannel();
 		buffer= ByteBuffer.allocate(4096);
@@ -113,6 +115,10 @@ public class IndexScanOperator extends ScanOperator {
 	@Override
 	public String getTableName() {
 		return super.getTableName();
+	}
+	
+	public String getOriginalTableName() {
+		return oriTableName;
 	}
 
 	public String getCol() {

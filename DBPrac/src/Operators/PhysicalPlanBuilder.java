@@ -100,7 +100,6 @@ public class PhysicalPlanBuilder {
 		
 		EqualsTo removed = null;
 		for (BlueBox attrBB: attributes) {
-			// check if the original hashmap is modified correctly
 			List<String> attr = attrBB.getAttr();
 			if (attr.contains(selectPlan[1])) {
 				low = (attrBB.getLower() != null) ? attrBB.getLower() : Integer.MIN_VALUE;
@@ -108,7 +107,7 @@ public class PhysicalPlanBuilder {
 				
 				// Example: [S.A = S.B AND S.A < 3] -> [S.B] if indexing on column A, then the expression built 
 				// becomes [S.B < 3], want to restore [S.A = S.B]
-				if (attr.size() > 0 && high != low) {
+				if (attr.size() > 1 && high != low) {
 					Column removedColExpr = new Column();
 					removedColExpr.setColumnName(selectPlan[1].split("\\.")[1]);
 					Table removedTable = new Table();
@@ -125,7 +124,7 @@ public class PhysicalPlanBuilder {
 					removed.setLeftExpression(removedColExpr);
 					removed.setRightExpression(nextColExpr);
 				}
-				return;
+				break;
 			}
 		}
 		String tableIndexDir = indexDir + "/" + selectLop.getTableName() + "." + selectPlan[1].split("\\.")[1];
