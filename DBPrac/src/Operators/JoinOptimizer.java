@@ -256,7 +256,7 @@ public class JoinOptimizer {
 				String aliasName = condition.split("\\.")[0];
 				String columnName = condition.split("\\.")[1];
 				int curV;
-				if(aliasName==rightMostTable) {
+				if(aliasName.equals(rightMostTable)) {
 					curV=topMostPlan.getColV(aliasName, columnName);
 				}else {
 					curV=prevOptPlan.getColV(aliasName, columnName);
