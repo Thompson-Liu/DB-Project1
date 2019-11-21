@@ -187,11 +187,11 @@ public class SMJ extends Operator {
 	}
 
 	public Operator getLeftChild() {
-		return leftOp;
+		return leftSortOp;
 	}
 
 	public Operator getRightChild() {
-		return rightOp;
+		return rightSortOp;
 	}
 
 	public Expression getJoinExpression() {

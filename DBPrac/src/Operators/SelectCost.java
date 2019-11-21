@@ -1,13 +1,7 @@
 package Operators;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 import dataStructure.BlueBox;
 import dataStructure.Catalog;
 
@@ -40,7 +34,7 @@ public class SelectCost {
 		// start with full scan
 		String[] plan = {"full","",""};
 		int optPageIO=numPages;
-		int level=3;   // assumed in write-out   可能要算😢
+		int level=3;   // assumed in write-out
 		int maxVal;
 		int minVal;
 		double r;

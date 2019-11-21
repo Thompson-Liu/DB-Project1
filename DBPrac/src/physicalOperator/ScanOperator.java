@@ -16,6 +16,7 @@ public class ScanOperator extends Operator {
 	private BinaryTupleReader reader;
 	private ArrayList<String> schema;
 	private String tableName;  // if there is Alias then use Alias, otherwise use TableName
+	private String oriTableName;
 	private String dirName;   // only the name of the table,
 						      // to get the directory and schema from the catalog
 
@@ -23,7 +24,8 @@ public class ScanOperator extends Operator {
 	 * tableName= "Sailors AS S"
 	 * @param hasAlias */
 	public ScanOperator(String tableName, String aliasName) {
-		this.tableName= (aliasName != "") ? aliasName : tableName;
+		this.tableName = (aliasName.equals("")) ? tableName : aliasName;
+		this.oriTableName = tableName;
 		this.dirName= tableName;
 
 		Catalog catalog= Catalog.getInstance();
@@ -70,6 +72,9 @@ public class ScanOperator extends Operator {
 		return this.tableName;
 	}
 
+	public String getOriginlTableName() {
+		return oriTableName;
+	}
 	@Override
 	public void accept(PhysicalPlanWriter ppw) {
 		try {

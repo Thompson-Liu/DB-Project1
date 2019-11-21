@@ -52,13 +52,13 @@ public class PhysicalPlanBuilder {
 			assert(attrs.size() == 2);
 			
 			Column leftCol = new Column();
-			leftCol.setColumnName(attrs.get(0));
+			leftCol.setColumnName(attrs.get(0).split("\\.")[1]);
 			Table leftTable = new Table();
 			leftTable.setName(attrs.get(0).split("\\.")[0]);
 			leftCol.setTable(leftTable);
 			
 			Column rightCol = new Column();
-			rightCol.setColumnName(attrs.get(1));
+			rightCol.setColumnName(attrs.get(1).split("\\.")[1]);
 			Table rightTable = new Table();
 			rightTable.setName(attrs.get(1).split("\\.")[0]);
 			rightCol.setTable(rightTable);
@@ -187,16 +187,19 @@ public class PhysicalPlanBuilder {
 		
 		List<String> joinedTable = new ArrayList<String>();
 		joinedTable.add(leftChildOp.getTableName());
+		
 		Expression joinCondition = buildJoinExpr(joinLogOp.getJoinExpression(), uf.findJoinInBox(joinedTable, rightChildOp.getTableName()));
 		JoinTableVisitor joinVisitor = new JoinTableVisitor(joinCondition, joinedTable, rightChildOp.getTableName());
 		
-		
+		Operator joinIntermediate;
 		// choose between SMJ and BNLJ
-		List<LogicalOperator> joinOrderCopy = new ArrayList<LogicalOperator>(joinOrder);
-		if(joinVisitor.allEquality() && checkSMJ(joinVisitor.getRelevant(), joinOrderCopy)) {
-			immOp = new SMJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant(), tempDir, true);
+		List<String> joinedTableCopy = new ArrayList<String>(joinedTable);
+		joinedTableCopy.add(rightChildOp.getTableName());
+		
+		if(joinVisitor.allEquality() && checkSMJ(joinVisitor.getRelevant(), joinedTableCopy)) {
+			joinIntermediate = new SMJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant(), tempDir, true);
 		} else {
-			immOp = new BNLJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant());
+			joinIntermediate = new BNLJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant());
 		}
 		
 		// reset to loop through the remaining tables
@@ -206,19 +209,20 @@ public class PhysicalPlanBuilder {
 			joinOrder.get(i).accept(this);
 			Operator rightJoin = immOp;
 			
+			joinedTable.add(joinOrder.get(i).getTableName());
+			joinedTableCopy = new ArrayList<String>(joinedTable);
+
 			Expression restExpr = buildJoinExpr(joinVisitor.getResidual(), uf.findJoinInBox(joinedTable, rightJoin.getTableName()));
 			joinVisitor = new JoinTableVisitor(restExpr, joinedTable, rightJoin.getTableName());
 			
 			// choose between SMJ and BNLJ
-			joinOrderCopy = new ArrayList<LogicalOperator>(joinOrder);
-			if(joinVisitor.allEquality() && checkSMJ(joinVisitor.getRelevant(), joinOrder)) {
-				immOp = new SMJ(10, immOp, rightJoin, joinVisitor.getRelevant(), tempDir, true);
+			if(joinVisitor.allEquality() && checkSMJ(joinVisitor.getRelevant(), joinedTableCopy)) {
+				joinIntermediate = new SMJ(10, joinIntermediate, rightJoin, joinVisitor.getRelevant(), tempDir, true);
 			} else {
-				immOp = new BNLJ(10, immOp, rightJoin, joinVisitor.getRelevant());
-			}			
-			
-			joinedTable.add(rightChildOp.getTableName());
+				joinIntermediate = new BNLJ(10, joinIntermediate, rightJoin, joinVisitor.getRelevant());
+			}		
 		}
+		immOp = joinIntermediate;
 	}
 	
 	/**
@@ -226,13 +230,13 @@ public class PhysicalPlanBuilder {
 	 * Example: FROM S, R, B WHERE S.A = R.B AND S.C = B.G is valid
 	 * 
 	 * @param joinExpr
-	 * @param joinOrder
+	 * @param joinedTable
 	 * @return
 	 */
-	private boolean checkSMJ(Expression joinExpr, List<LogicalOperator> joinOrder) {
+	private boolean checkSMJ(Expression joinExpr, List<String> joinedTable) {
 		if (! (joinExpr instanceof AndExpression)) {
 			assert(joinExpr instanceof BinaryExpression);
-			if (joinOrder.size() != 2) {
+			if (joinedTable.size() != 2) {
 				return false;
 			} 
 
@@ -241,8 +245,9 @@ public class PhysicalPlanBuilder {
 			
 			String leftTableName = left.getTable().getName();
 			String rightTableName = right.getTable().getName();
-			String leftJoinName = joinOrder.get(0).getTableName();
-			String rightJoinName = joinOrder.get(1).getTableName();
+			
+			String leftJoinName = joinedTable.get(0);
+			String rightJoinName = joinedTable.get(1);
 			
 			return ((leftJoinName.equals(leftTableName) && rightJoinName.equals(rightTableName))
 				|| (leftJoinName.equals(rightTableName) && rightJoinName.equals(leftTableName)));
@@ -253,9 +258,9 @@ public class PhysicalPlanBuilder {
 		Column right = (Column) ((BinaryExpression) rightExpr).getRightExpression();
 		String leftExprName = left.getTable().getName();
 		String rightExprName = right.getTable().getName();
-		String rightJoinName = joinOrder.remove(joinOrder.size() - 1).getTableName();
+		String rightJoinName = joinedTable.remove(joinedTable.size() - 1);
 		
-		return checkSMJ(((AndExpression) joinExpr).getLeftExpression(), joinOrder) && 
+		return checkSMJ(((AndExpression) joinExpr).getLeftExpression(), joinedTable) && 
 				(leftExprName.equals(rightJoinName) || rightExprName.equals(rightJoinName));
 	}
 }

@@ -61,7 +61,6 @@ public class EvaluateJoin implements ExpressionVisitor {
 	public EvaluateJoin(Expression whereExpr, String leftTableName, String rightTableName) {
 		joinAttributesLeft= new ArrayList<String>();
 		joinAttributesRight= new ArrayList<String>();
-		System.out.println(leftTableName==null);
 		this.leftTableNames= Arrays.asList(leftTableName.trim().split(","));
 		this.rightTableNames= Arrays.asList(rightTableName.trim().split(","));
 		this.expr= whereExpr;

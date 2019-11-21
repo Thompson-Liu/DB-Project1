@@ -1,0 +1,8 @@
+Project[S.A]
+-SMJ[R.G = S.B]
+--ExternalSort[R.G]
+---Select[R.H <= 99]
+----TableScan[Reserves]
+--ExternalSort[S.B]
+---Select[S.A >= 9050]
+----TableScan[Sailors]

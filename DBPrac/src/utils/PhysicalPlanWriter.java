@@ -22,7 +22,7 @@ public class PhysicalPlanWriter {
 	public PhysicalPlanWriter(BufferedWriter bw, Operator op) {
 		writer= bw;
 		op.accept(this);
-		
+
 		try {
 			bw.close();
 		} catch (IOException e) {
@@ -33,7 +33,7 @@ public class PhysicalPlanWriter {
 
 	public void visit(BNLJ op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "BNLJ[" +
-			op.getExpression().toString() + "]\n");
+				op.getExpression().toString() + "]\n");
 		level++ ;
 		int prevLevel= level;
 		op.getOuterOperator().accept(this);
@@ -43,21 +43,21 @@ public class PhysicalPlanWriter {
 	}
 
 	public void visit(DuplicateEliminationOperator op) throws IOException {
-		writer.write("DupElim");
+		writer.write("DupElim\n");
 		level++ ;
 		op.getChild().accept(this);
 	}
 
 	public void visit(ExternalSortOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "ExternalSort[" +
-			String.join(", ", op.getColList()) + "]\n");
+				String.join(", ", op.getColList()) + "]\n");
 		level++ ;
 		op.getChild().accept(this);
 	}
 
 	public void visit(IndexScanOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "IndexScan[" +
-			op.getTableName() + ", " + op.getCol() + ", " + op.getLow() + ", " + op.getHigh() + "]\n");
+				op.getTableName() + ", " + op.getCol() + ", " + op.getLow() + ", " + op.getHigh() + "]\n");
 	}
 
 	// No need to implement this
@@ -66,19 +66,19 @@ public class PhysicalPlanWriter {
 
 	public void visit(ProjectOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "Project[" +
-			String.join(", ", op.getSelectCols()) + "]\n");
+				String.join(", ", op.getSelectCols()) + "]\n");
 		level++ ;
 		op.getChild().accept(this);
 	}
 
 	public void visit(ScanOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "TableScan[" +
-			op.getTableName() + "]\n");
+				op.getOriginlTableName() + "]\n");
 	}
 
 	public void visit(SelectOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "Select[" +
-			op.getExpression() + "]\n");
+				op.getExpression() + "]\n");
 		level++ ;
 		int prevLevel= level;
 		op.getChild().accept(this);
@@ -87,7 +87,7 @@ public class PhysicalPlanWriter {
 
 	public void visit(SMJ op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "SMJ[" +
-			op.getJoinExpression().toString() + "]\n");
+				op.getJoinExpression().toString() + "]\n");
 		level++ ;
 		int prevLevel= level;
 		op.getLeftChild().accept(this);
@@ -98,7 +98,7 @@ public class PhysicalPlanWriter {
 
 	public void visit(SortOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "InMemorySort[" +
-			String.join(", ", op.getColList()) + "]\n");
+				String.join(", ", op.getColList()) + "]\n");
 		level++ ;
 		op.getChild().accept(this);
 	}

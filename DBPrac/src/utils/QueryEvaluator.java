@@ -57,7 +57,7 @@ public class QueryEvaluator {
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
 					Operator op= planBuilder.generatePlan(logOp);
 					BufferedWriter planPWriter = new BufferedWriter(new FileWriter(outputDir + "/query" + queryCounter + "_physicalplan"));
-					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planLWriter, op);
+					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planPWriter, op);
 
 //					ReadableTupleWriter writer= new ReadableTupleWriter(
 //						outputDir + "/query" + Integer.toString(queryCounter));

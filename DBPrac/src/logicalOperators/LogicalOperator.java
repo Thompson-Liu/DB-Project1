@@ -24,4 +24,9 @@ public abstract class LogicalOperator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public String getAlias() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
