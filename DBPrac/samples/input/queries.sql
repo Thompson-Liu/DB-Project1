@@ -4,8 +4,8 @@
 -- WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
 -- ORDER BY S.A;
 
-SELECT S.A FROM Sailors S, Reserves R
-WHERE S.B = R.G AND R.H < 100 AND S.A >= 9050;
+-- SELECT S.A FROM Sailors S, Reserves R
+-- WHERE S.B = R.G AND R.H < 100 AND S.A >= 9050;
 
 
 -- SELECT S.A
@@ -51,9 +51,9 @@ WHERE S.B = R.G AND R.H < 100 AND S.A >= 9050;
 -- FROM Reserves R
 -- WHERE R.G=1;
 
--- SELECT DISTINCT Sailors.A
--- FROM Sailors, Reserves
--- WHERE Sailors.A = Reserves.G;
+SELECT DISTINCT Sailors.A
+FROM Sailors, Reserves
+WHERE Sailors.A = Reserves.G;
 
 -- SELECT *
 -- FROM Sailors S1, Sailors S2

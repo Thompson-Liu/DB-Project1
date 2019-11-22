@@ -132,6 +132,18 @@ public class IndexScanOperator extends ScanOperator {
 	public int getHigh() {
 		return hi;
 	}
+	
+	public Integer[] getBound() {
+		Integer upBound = hi;
+		Integer lowBound = lo;
+		if (hi == Integer.MAX_VALUE) {
+			upBound = null;
+		} 
+		if (lo == Integer.MIN_VALUE) {
+			lowBound = null;
+		}
+		return new Integer[] { lowBound, upBound };
+	}
 
 	@Override
 	public void accept(PhysicalPlanWriter ppw) {

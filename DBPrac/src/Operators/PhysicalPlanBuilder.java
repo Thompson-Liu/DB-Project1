@@ -131,7 +131,7 @@ public class PhysicalPlanBuilder {
 		boolean clustered = selectPlan[2].equals("clustered");
 		try {
 			String tableName = (selectLop.getAlias().equals("")) ? selectLop.getTableName() : selectLop.getAlias();
-			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1], selectLop.getSelectExpr());
+			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1].split("\\.")[1], selectLop.getSelectExpr());
 			immOp = new IndexScanOperator(selectLop.getTableName(), selectLop.getAlias(), selectPlan[1], 
 					tableIndexDir, clustered, low, high);
 			if (indexSep.applyAll()) {

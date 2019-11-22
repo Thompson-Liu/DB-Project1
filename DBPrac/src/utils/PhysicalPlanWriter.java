@@ -57,12 +57,13 @@ public class PhysicalPlanWriter {
 
 	public void visit(IndexScanOperator op) throws IOException {
 		writer.write(new String(new char[level]).replace("\0", "-") + "IndexScan[" +
-				op.getOriginalTableName() + ", " + op.getCol().split("\\.")[1] + ", " 
-				+ op.getLow() + ", " + op.getHigh() + "]\n");
+				op.getOriginalTableName() + "," + op.getCol().split("\\.")[1] + "," 
+				+ op.getBound()[0] + "," + op.getBound()[1] + "]\n");
 	}
 
 	// No need to implement this
 	public void visit(JoinOperator op) {
+		
 	}
 
 	public void visit(ProjectOperator op) throws IOException {
