@@ -3,7 +3,7 @@ package physicalOperator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 import dataStructure.Buffer;
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
@@ -21,7 +21,6 @@ public class BNLJ extends Operator {
 	private Operator outerOp;
 	private Operator innerOp;
 	private Expression joinCond;
-	private HashMap<String, String> alias;
 	private boolean bufState= true;
 	private boolean tupState= true;
 	private int bufTupState= 0;
@@ -35,8 +34,9 @@ public class BNLJ extends Operator {
 	 * @param numPages number of pages allowed for the buffer
 	 * @param outer outer operator
 	 * @param inner inner operator
-	 * @param joinExp join expression */
-	public BNLJ(int numPages, Operator outer, Operator inner, Expression joinExp) {
+	 * @param joinExp join expression 
+	 * @param tableOrder2 */
+	public BNLJ(int numPages, Operator outer, Operator inner, Expression joinExp, List<String> tableOrder) {
 		numOuters= (int) Math.floor(1.0 * numPages * 4096 / 4 / (outer.schema().size()));
 		buffer= new Buffer(numOuters);
 
@@ -44,11 +44,41 @@ public class BNLJ extends Operator {
 		innerOp= inner;
 		joinCond= joinExp;
 
-		schema= new ArrayList<String>(outer.schema());
-		schema.addAll(inner.schema());
-
-		tableName= outer.getTableName() + "," + inner.getTableName();
-		eval= new EvaluateWhere(joinCond, outer.schema(), inner.schema());
+		// construct the new schema
+		List<String> outerSchema = outer.schema();
+		schema = new ArrayList<String>();		
+		int tableIndex = tableOrder.indexOf(inner.getTableName());
+		int tupleIndex = outer.schema().size();
+		int counter = 0;
+		String strCounter = "";
+		
+		if (tableIndex == tableOrder.size() - 1) {
+			schema.addAll(outerSchema);
+			schema.addAll(inner.schema());
+		} else {
+			for (int i = 0; i < outerSchema.size(); ++i) {
+				String curName = outerSchema.get(i).split("\\.")[0];
+				if (!curName.equals(strCounter)) {
+					if (counter == tableIndex) {
+						tupleIndex = (i--);
+						schema.addAll(inner.schema());
+						counter++;
+						continue;
+					}
+					counter++;
+					strCounter = curName;
+				}
+			    schema.add(outerSchema.get(i));
+			}
+		}
+		
+		
+		// Construct the new table name, enforcing join order
+		for (int i = 0; i < tableOrder.size() - 1; ++i) {
+			tableName += (tableOrder.get(i) + ",");
+		}
+		tableName += (tableOrder.get(tableOrder.size() - 1));
+		eval= new EvaluateWhere(joinCond, outer.schema(), inner.schema(), tupleIndex);
 	}
 
 	/** Populate the buffer */

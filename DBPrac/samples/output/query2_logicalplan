@@ -1,5 +1,0 @@
-Join[]
-[[testRelation3.P, testRelation2.M, testRelation1.J], equals null, min null, max null]
--Leaf[testRelation3]
--Leaf[testRelation2]
--Leaf[testRelation1]

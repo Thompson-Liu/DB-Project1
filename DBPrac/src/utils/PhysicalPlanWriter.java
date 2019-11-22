@@ -32,8 +32,12 @@ public class PhysicalPlanWriter {
 	}
 
 	public void visit(BNLJ op) throws IOException {
-		writer.write(new String(new char[level]).replace("\0", "-") + "BNLJ[" +
-				op.getExpression().toString() + "]\n");
+		String exprStr = "";
+		if (op.getExpression() != null) {
+			exprStr = op.getExpression().toString();
+		}
+		
+		writer.write(new String(new char[level]).replace("\0", "-") + "BNLJ[" + exprStr + "]\n");
 		level++;
 		int prevLevel= level;
 		op.getOuterOperator().accept(this);
@@ -87,8 +91,13 @@ public class PhysicalPlanWriter {
 	}
 
 	public void visit(SelectOperator op) throws IOException {
+		String exprStr = "";
+		if (op.getExpression() != null) {
+			exprStr = op.getExpression().toString();
+		}
+		
 		writer.write(new String(new char[level]).replace("\0", "-") + "Select[" +
-				op.getExpression() + "]\n");
+				exprStr + "]\n");
 		level++;
 		int prevLevel= level;
 		op.getChild().accept(this);
@@ -96,8 +105,13 @@ public class PhysicalPlanWriter {
 	}
 
 	public void visit(SMJ op) throws IOException {
+		String exprStr = "";
+		if (op.getJoinExpression() != null) {
+			exprStr = op.getJoinExpression().toString();
+		}
+		
 		writer.write(new String(new char[level]).replace("\0", "-") + "SMJ[" +
-				op.getJoinExpression().toString() + "]\n");
+				exprStr + "]\n");
 		level++;
 		int prevLevel= level;
 		op.getLeftChild().accept(this);
