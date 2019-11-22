@@ -56,9 +56,17 @@ public class PhysicalPlanWriter {
 	}
 
 	public void visit(IndexScanOperator op) throws IOException {
+		String hi = "null";
+		if (op.getHigh() != Integer.MAX_VALUE) {
+			hi = op.getHigh() + "";
+		}
+		String lo = "null";
+		if (op.getHigh() != Integer.MIN_VALUE) {
+			lo = op.getLow() + "";
+		}
 		writer.write(new String(new char[level]).replace("\0", "-") + "IndexScan[" +
 				op.getOriginalTableName() + ", " + op.getCol().split("\\.")[1] + ", " 
-				+ op.getLow() + ", " + op.getHigh() + "]\n");
+				+ lo + ", " + hi + "]\n");
 	}
 
 	// No need to implement this
