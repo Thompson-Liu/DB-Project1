@@ -1,0 +1,7 @@
+BNLJ[testRelation3.P = testRelation3.P]
+-SMJ[testRelation1.J = testRelation2.M]
+--ExternalSort[testRelation1.J]
+---TableScan[testRelation1]
+--ExternalSort[testRelation2.M]
+---TableScan[testRelation2]
+-TableScan[testRelation3]
