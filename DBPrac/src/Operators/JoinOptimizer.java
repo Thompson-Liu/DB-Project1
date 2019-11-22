@@ -88,7 +88,6 @@ public class JoinOptimizer {
 	public void traverseSubPlans(int topMost,int targetSize, int curPos,ArrayList<String> prevSubPlan) {
 		// get one set of size=subPlanSize, compute cost of joining topMost with the best plan of this set
 		if(prevSubPlan.size()==targetSize-1) {
-			System.out.println(topMost);
 			ArrayList<String> prevSubCopy = new ArrayList<String>();
 			prevSubCopy.addAll(prevSubPlan);
 			HashSet<String> prevSubTables = new HashSet<String>(prevSubCopy);
@@ -136,6 +135,9 @@ public class JoinOptimizer {
 		// access catalog
 		String tableName =baseOp.getTableName();
 		String aliasName = baseOp.getAlias();
+		if(aliasName=="") {
+			aliasName=tableName;
+		}
 		this.aliasNames.add(aliasName);
 		int numTuples = cat.getTupleNums(tableName);
 
@@ -168,6 +170,9 @@ public class JoinOptimizer {
 		ArrayList<LogicalOperator> AselectOp = new ArrayList<LogicalOperator>();
 		AselectOp.add(selectOp);
 		String aliasName = selectOp.getAlias();
+		if(aliasName=="") {
+			aliasName=tableName;
+		}
 		this.aliasNames.add(aliasName);
 
 		// setup the PlanInfo of this select operator
