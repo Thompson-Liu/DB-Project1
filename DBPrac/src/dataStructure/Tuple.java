@@ -16,7 +16,7 @@ public class Tuple {
 	public Tuple() {
 		dataTuple = new ArrayList<Integer>();
 	}
-	
+
 	/**
 	 * Another constructor that will instantiate a tuple object from the data read 
 	 * from the stream. Each line of data will be input as a line of string. The 
@@ -32,7 +32,7 @@ public class Tuple {
 			dataTuple.add(Integer.parseInt(x));
 		}
 	}
-	
+
 	/**
 	 * Return a tuple obejct that represents the data stored in Arraylist
 	 * 
@@ -41,7 +41,7 @@ public class Tuple {
 	public Tuple(ArrayList<Integer> tuple) {
 		dataTuple = tuple;
 	}
-	
+
 	/**
 	 * Return a tuple after concating the argument with existing tuple
 	 * @param b  tuple to be added 
@@ -50,11 +50,16 @@ public class Tuple {
 	 */
 	public Tuple concateTuple(Tuple b, int concatPos) {
 		ArrayList<Integer> result = new ArrayList<Integer>();
-		for (int i = 0; i < dataTuple.size(); ++i) {
-			if (i == concatPos) {
-				result.addAll(b.getTuple());
+		if (concatPos == dataTuple.size()) {
+			result.addAll(dataTuple);
+			result.addAll(b.getTuple());
+		} else {
+			for (int i = 0; i < dataTuple.size(); ++i) {
+				if (i == concatPos) {
+					result.addAll(b.getTuple());
+				}
+				result.add(dataTuple.get(i));
 			}
-			result.add(dataTuple.get(i));
 		}
 		return (new Tuple(result));
 	}
@@ -66,7 +71,7 @@ public class Tuple {
 	public ArrayList<Integer> getTuple() {
 		return dataTuple;
 	}
-	
+
 	/**
 	 * Add data into the arraylist
 	 * 
@@ -99,7 +104,7 @@ public class Tuple {
 		}
 		return str;
 	}
-	
+
 	/**
 	 * 
 	 * Test to see if two tuples are the same 
