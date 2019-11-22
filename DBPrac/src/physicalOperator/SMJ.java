@@ -2,6 +2,7 @@ package physicalOperator;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
@@ -23,11 +24,13 @@ public class SMJ extends Operator {
 	private ArrayList<String> schema;
 	private boolean useExternal;
 	private Expression expr;
+	private List<String> joinOrder;
 
 	private Operator leftSortOp;
 	private Operator rightSortOp;
 	private ArrayList<String> leftSchema;
 	private ArrayList<String> rightSchema;
+	private int tupleIndex;
 
 	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
 	 * each other for the two given tuples, and false otherwise. */
@@ -37,20 +40,21 @@ public class SMJ extends Operator {
 		int count= 0;
 		while (count < leftColList.size() && result == 0) {
 			result= leftTup.getData(leftSchema.indexOf(leftColList.get(count))) - rightTup
-				.getData(rightSchema.indexOf(rightColList.get(count)));
+					.getData(rightSchema.indexOf(rightColList.get(count)));
 			count++ ;
 		}
 		return result;
 	}
 
-	/** @param bufferSize: the buffer size used in external sort
+	/** @param tableOrder 
+	 * @param bufferSize: the buffer size used in external sort
 	 * @param left: the left child operator
 	 * @param right: the right child operator
 	 * @param joinExpr: the join evaluation to be evaluated
 	 * @param alias: the mapping between table names and aliases
 	 * @param dir: the prefix of the directory that stores the temporary files generated during external
 	 * sort. */
-	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, String dir, boolean useExternal) {
+	public SMJ(int bufferSize, Operator left, Operator right, Expression joinExpr, List<String> tableOrder, String dir, boolean useExternal) {
 		EvaluateJoin evalJoin= new EvaluateJoin(joinExpr, left.getTableName(), right.getTableName());
 		leftColList= evalJoin.getJoinAttributesLeft();
 		rightColList= evalJoin.getJoinAttributesRight();
@@ -65,18 +69,35 @@ public class SMJ extends Operator {
 			leftSortOp= new SortOperator(leftOp, leftColList);
 			rightSortOp= new SortOperator(rightOp, rightColList);
 		}
+		joinOrder = new ArrayList<String>(tableOrder);
 
 		tr= leftSortOp.getNextTuple();
-
 		ts= rightSortOp.getNextTuple();
 		gs= null;
 		ptr= 0;
 		count= 0;
-		this.schema= new ArrayList<String>(left.schema());
-		this.schema.addAll(right.schema());
-
 		leftSchema= leftSortOp.schema();
 		rightSchema= rightSortOp.schema();
+
+		// construct the new schema, enforcing join order
+		schema = new ArrayList<String>();		
+		int tableIndex = joinOrder.indexOf(rightSortOp.getTableName());
+		int counter = 0;
+		tupleIndex = leftSchema.size();
+		String strCounter = "";
+		for (int i = 0; i < leftSchema.size(); ++i) {
+			if ((counter++) == tableIndex) {
+				tupleIndex = (i--);
+				schema.addAll(rightSortOp.schema());
+				continue;
+			} 
+			String curName = leftSchema.get(i).split("\\.")[0];
+			if (!curName.equals(strCounter)) {
+				counter++;
+				strCounter = curName;
+			}
+			schema.add(leftSchema.get(i));
+		}
 	}
 
 	@Override
@@ -114,11 +135,19 @@ public class SMJ extends Operator {
 				joinedTuple= new Tuple();
 
 				// Generate the combined tuple result
-				for (int j= 0; j < leftOp.schema().size(); j++ ) {
-					joinedTuple.addData(tr.getData(j));
-				}
-				for (int j= 0; j < rightOp.schema().size(); j++ ) {
-					joinedTuple.addData(ts.getData(j));
+				if (tupleIndex >= leftSchema.size()) {
+					ArrayList<Integer> leftTuple = new ArrayList<Integer>(tr.getTuple());
+					leftTuple.addAll(ts.getTuple());
+					joinedTuple = new Tuple(leftTuple);
+				} else {
+					for (int i = 0; i < leftOp.schema().size(); i++ ) {
+						if (i == tupleIndex) {
+							for (int j = 0; j < rightOp.schema().size(); ++j) {
+								joinedTuple.addData(ts.getData(j));
+							}
+						}
+						joinedTuple.addData(tr.getData(i));
+					}
 				}
 
 				ts= rightSortOp.getNextTuple();
@@ -183,7 +212,12 @@ public class SMJ extends Operator {
 
 	@Override
 	public String getTableName() {
-		return leftOp.getTableName() + "," + rightOp.getTableName();
+		String tableName = "";
+		for (int i = 0; i < joinOrder.size() - 1; ++i) {
+			tableName += (joinOrder.get(i) + ",");
+		}
+		tableName += (joinOrder.get(joinOrder.size() - 1));
+		return tableName;
 	}
 
 	public Operator getLeftChild() {

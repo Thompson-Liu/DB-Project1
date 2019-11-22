@@ -45,19 +45,18 @@ public class Tuple {
 	/**
 	 * Return a tuple after concating the argument with existing tuple
 	 * @param b  tuple to be added 
+	 * @param concatPos 
 	 * @return  a new tuple with b added to current tuple
 	 */
-	public Tuple concateTuple(Tuple b) {
-		ArrayList<Integer> result = (ArrayList<Integer>) dataTuple.clone();
-		result.addAll(b.getTuple());
+	public Tuple concateTuple(Tuple b, int concatPos) {
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		for (int i = 0; i < dataTuple.size(); ++i) {
+			if (i == concatPos) {
+				result.addAll(b.getTuple());
+			}
+			result.add(dataTuple.get(i));
+		}
 		return (new Tuple(result));
-	}
-	
-	public Tuple mergeNewTuple(Tuple tup, int pos) {
-		ArrayList<Integer> result = new ArrayList<Integer>(this.dataTuple.subList(0, pos));
-		result.addAll(tup.dataTuple);
-		result.addAll(this.dataTuple.subList(pos+1, this.dataTuple.size()));
-		return new Tuple(result);
 	}
 
 	/**

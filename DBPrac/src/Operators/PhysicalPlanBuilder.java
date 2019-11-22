@@ -1,6 +1,7 @@
 package Operators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import dataStructure.BlueBox;
 import dataStructure.UnionFind;
@@ -174,6 +175,13 @@ public class PhysicalPlanBuilder {
 	public void visit(JoinLogOp joinLogOp) {
 		UnionFind uf = joinLogOp.getUnionFind();
 		List<LogicalOperator> joinChildren = joinLogOp.getChildren();
+		// Maintain the original Orderr
+		List<String> oriJoinOrder = new ArrayList<String>();
+		for (LogicalOperator logOp: joinChildren) {
+			String name = logOp.getAlias().equals("") ? logOp.getTableName() : logOp.getAlias();
+			oriJoinOrder.add(name);
+		}
+		
 		JoinOptimizer joinOptimizer = new JoinOptimizer(joinChildren, uf);
 		List<LogicalOperator> joinOrder = joinOptimizer.findOptimalJoinOrder();
 		
@@ -195,10 +203,21 @@ public class PhysicalPlanBuilder {
 		List<String> joinedTableCopy = new ArrayList<String>(joinedTable);
 		joinedTableCopy.add(rightChildOp.getTableName());
 		
+		// restore the original join order
+		List<String> tableOrder = new ArrayList<String>();
+		List<Integer> tableOrderIndx = new ArrayList<Integer>();
+		for (String tableName: joinedTableCopy) {
+			tableOrderIndx.add(oriJoinOrder.indexOf(tableName));
+		}
+		tableOrderIndx.sort(null);
+		for (Integer indx: tableOrderIndx) {
+			tableOrder.add(oriJoinOrder.get(indx));
+		}
+		
 		if(joinVisitor.allEquality() && checkSMJ(joinVisitor.getRelevant(), joinedTableCopy)) {
-			joinIntermediate = new SMJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant(), tempDir, true);
+			joinIntermediate = new SMJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant(), tableOrder, tempDir, true);
 		} else {
-			joinIntermediate = new BNLJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant());
+			joinIntermediate = new BNLJ(10, leftChildOp, rightChildOp, joinVisitor.getRelevant(), tableOrder);
 		}
 		
 		// reset to loop through the remaining tables
@@ -208,17 +227,29 @@ public class PhysicalPlanBuilder {
 			joinOrder.get(i).accept(this);
 			Operator rightJoin = immOp;
 			
-			joinedTable.add(joinOrder.get(i).getTableName());
+			joinedTable.add(rightJoin.getTableName());
 			joinedTableCopy = new ArrayList<String>(joinedTable);
+			
+			
+			// restore the original join order
+			tableOrder = new ArrayList<String>();
+			tableOrderIndx = new ArrayList<Integer>();
+			for (String tableName: joinedTableCopy) {
+				tableOrderIndx.add(oriJoinOrder.indexOf(tableName));
+			}
+			tableOrderIndx.sort(null);
+			for (Integer indx: tableOrderIndx) {
+				tableOrder.add(oriJoinOrder.get(indx));
+			}
 
 			Expression restExpr = buildJoinExpr(joinVisitor.getResidual(), uf.findJoinInBox(joinedTable, rightJoin.getTableName()));
 			joinVisitor = new JoinTableVisitor(restExpr, joinedTable, rightJoin.getTableName());
 			
 			// choose between SMJ and BNLJ
 			if(joinVisitor.allEquality() && checkSMJ(joinVisitor.getRelevant(), joinedTableCopy)) {
-				joinIntermediate = new SMJ(10, joinIntermediate, rightJoin, joinVisitor.getRelevant(), tempDir, true);
+				joinIntermediate = new SMJ(10, joinIntermediate, rightJoin, joinVisitor.getRelevant(), tableOrder, tempDir, true);
 			} else {
-				joinIntermediate = new BNLJ(10, joinIntermediate, rightJoin, joinVisitor.getRelevant());
+				joinIntermediate = new BNLJ(10, joinIntermediate, rightJoin, joinVisitor.getRelevant(), tableOrder);
 			}		
 		}
 		immOp = joinIntermediate;

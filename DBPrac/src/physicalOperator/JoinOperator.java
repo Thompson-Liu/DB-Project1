@@ -4,7 +4,7 @@
 package physicalOperator;
 
 import java.util.ArrayList;
-
+import java.util.List;
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
@@ -21,21 +21,52 @@ public class JoinOperator extends Operator {
 	private Expression joinExp;
 	private boolean resetFlag= true;
 	private Tuple left;
+	private EvaluateWhere evawhere;
 
 	/** Constructor to create JOIN operator
 	 * 
 	 * @param LeftOperator the left operator of join
 	 * @param RightOperator the right operator of join
 	 * @param expression the where expression to select tuple */
-	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression) {
+	public JoinOperator(Operator LeftOperator, Operator RightOperator, Expression expression, List<String> joinOrder) {
 		joinExp= expression;
-
-		schema= (ArrayList<String>) LeftOperator.schema().clone();
-		schema.addAll(RightOperator.schema());
-
-		tableName= LeftOperator.getTableName() + "," + RightOperator.getTableName();
 		leftOperator= LeftOperator;
 		rightOperator= RightOperator;
+		
+		// construct the new schema, enforcing join order
+		List<String> outerSchema = leftOperator.schema();
+		schema = new ArrayList<String>();		
+		int tableIndex = joinOrder.indexOf(rightOperator.getTableName());
+		int tupleIndex = outerSchema.size();
+		int counter = 0;
+		String strCounter = "";
+		if (tableIndex == joinOrder.size() - 1) {
+			schema.addAll(outerSchema);
+			schema.addAll(rightOperator.schema());
+		} else {
+			for (int i = 0; i < outerSchema.size(); ++i) {
+				String curName = outerSchema.get(i).split("\\.")[0];
+				if (!curName.equals(strCounter)) {
+					if (counter == tableIndex) {
+						tupleIndex = (i--);
+						schema.addAll(rightOperator.schema());
+						counter++;
+						continue;
+					}
+					counter++;
+					strCounter = curName;
+				}
+			    schema.add(outerSchema.get(i));
+			}
+		}
+
+		tableName = "";
+		for (int i = 0; i < joinOrder.size() - 1; ++i) {
+			tableName += (joinOrder.get(i) + ",");
+		}
+		tableName += (joinOrder.get(joinOrder.size() - 1));
+		
+		evawhere = new EvaluateWhere(joinExp, leftOperator.schema(), rightOperator.schema(), tupleIndex);
 	}
 
 	/** reset both left operator and right operator to start from beginning */
@@ -63,7 +94,6 @@ public class JoinOperator extends Operator {
 		Tuple next= null;
 		boolean flag= true;
 		Tuple right;
-		EvaluateWhere evawhere= new EvaluateWhere(joinExp, leftOperator.schema(), rightOperator.schema());
 
 		while (flag) {
 			if (resetFlag) {

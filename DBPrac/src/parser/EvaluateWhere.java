@@ -87,12 +87,14 @@ public class EvaluateWhere implements ExpressionVisitor {
 	private ArrayList<String> leftSchema = new ArrayList<String>();
 	private ArrayList<String> rightSchema = new ArrayList<String>();
 	private Expression expr;
+	private int concatPos;
 
 
-	public EvaluateWhere(Expression whereExpr, ArrayList<String> leftSchema, ArrayList<String> rightSchema) {
+	public EvaluateWhere(Expression whereExpr, ArrayList<String> leftSchema, ArrayList<String> rightSchema, int tupleIndex) {
 		this.expr=whereExpr;
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
+		concatPos = tupleIndex;
 	}
 
 	public Tuple evaluate(Tuple leftTuple, Tuple rightTuple) {
@@ -106,7 +108,7 @@ public class EvaluateWhere implements ExpressionVisitor {
 		}
 		if (leftTuple != null) {
 			resultTuple = leftTuple;
-			resultTuple=resultTuple.concateTuple(rightTuple);
+			resultTuple=resultTuple.concateTuple(rightTuple, concatPos);
 		} else {
 			resultTuple = rightTuple;
 		}

@@ -33,7 +33,7 @@ public class SelectOperator extends Operator {
 	@Override
 	public Tuple getNextTuple() {
 		Tuple next;
-		EvaluateWhere exprVisitor= new EvaluateWhere(exp, new ArrayList<String>(), childOp.schema());
+		EvaluateWhere exprVisitor= new EvaluateWhere(exp, new ArrayList<String>(), childOp.schema(), 0);
 		while ((next= childOp.getNextTuple()) != null) {
 			if ((next= exprVisitor.evaluate(null, next)) != null) { 
 				return next; }
