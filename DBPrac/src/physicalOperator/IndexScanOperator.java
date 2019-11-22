@@ -100,7 +100,12 @@ public class IndexScanOperator extends ScanOperator {
 		if (ptr >= repo.size()) return null;
 		reader.reset(repo.get(ptr)[0], repo.get(ptr)[1]);
 		ptr+= 1;
-		return reader.readNextTuple();
+		Tuple temp =reader.readNextTuple();
+		System.out.println(this.hi);
+		System.out.println(this.lo);
+		System.out.println(this.oriTableName);
+		System.out.println(temp.getTuple().toString());
+		return temp;
 	}
 
 	@Override
