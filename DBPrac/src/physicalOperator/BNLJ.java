@@ -2,7 +2,6 @@ package physicalOperator;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import dataStructure.Buffer;
 import dataStructure.Tuple;
@@ -51,7 +50,7 @@ public class BNLJ extends Operator {
 		int tupleIndex = outer.schema().size();
 		int counter = 0;
 		String strCounter = "";
-		
+
 		if (tableIndex == tableOrder.size() - 1) {
 			schema.addAll(outerSchema);
 			schema.addAll(inner.schema());
@@ -68,11 +67,11 @@ public class BNLJ extends Operator {
 					counter++;
 					strCounter = curName;
 				}
-			    schema.add(outerSchema.get(i));
+				schema.add(outerSchema.get(i));
 			}
 		}
-		
-		
+
+
 		// Construct the new table name, enforcing join order
 		for (int i = 0; i < tableOrder.size() - 1; ++i) {
 			tableName += (tableOrder.get(i) + ",");
@@ -112,6 +111,7 @@ public class BNLJ extends Operator {
 							if ((next= eval.evaluate(outerTup, innerTup)) != null) {
 								tupState= false;
 								bufState= false;
+								System.out.println(next.getTuple().toString());
 								return next;
 							}
 						}
@@ -122,6 +122,7 @@ public class BNLJ extends Operator {
 					while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
 						if ((next= eval.evaluate(outerTup, innerTup)) != null) {
 							bufState= false;
+							System.out.println(next.getTuple().toString());
 							return next;
 						}
 					}
@@ -137,6 +138,7 @@ public class BNLJ extends Operator {
 						while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
 							if ((next= eval.evaluate(outerTup, innerTup)) != null) {
 								tupState= false;
+								System.out.println(next.getTuple().toString());
 								return next;
 							}
 						}
@@ -146,7 +148,10 @@ public class BNLJ extends Operator {
 					bufState= true;
 				} else {
 					while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
-						if ((next= eval.evaluate(outerTup, innerTup)) != null) { return next; }
+						if ((next= eval.evaluate(outerTup, innerTup)) != null) { 
+							System.out.println(next.getTuple().toString());
+							return next; 
+						}
 					}
 					bufTupState= 0;
 					tupState= true;

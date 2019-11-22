@@ -227,9 +227,8 @@ public class PhysicalPlanBuilder {
 			joinOrder.get(i).accept(this);
 			Operator rightJoin = immOp;
 			
-			joinedTable.add(rightJoin.getTableName());
 			joinedTableCopy = new ArrayList<String>(joinedTable);
-			
+			joinedTableCopy.add(rightJoin.getTableName());
 			
 			// restore the original join order
 			tableOrder = new ArrayList<String>();
@@ -250,7 +249,8 @@ public class PhysicalPlanBuilder {
 				joinIntermediate = new SMJ(10, joinIntermediate, rightJoin, joinVisitor.getRelevant(), tableOrder, tempDir, true);
 			} else {
 				joinIntermediate = new BNLJ(10, joinIntermediate, rightJoin, joinVisitor.getRelevant(), tableOrder);
-			}		
+			}	
+			joinedTable.add(rightJoin.getTableName());
 		}
 		immOp = joinIntermediate;
 	}
