@@ -3,3 +3,8 @@ Boats E 0 10
 Sailors A 1 15
 Sailors B 0 15
 Reserves G 1 15
+testRelation1 J 0 15
+testRelation2 M 1 15
+testRelation3 P 1 15
+testRelation4 S 1 15
+testRelation5 V 1 15

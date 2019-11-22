@@ -1,5 +1,8 @@
 Sailors 10000 A,1,10000 B,0,10000 C,2,9998 
 Boats 10000 D,1,10000 E,4,9999 F,0,10000 
 Reserves 1000 G,0,200 H,0,200 
-testRelation0 5240 A,0,999 B,0,999 C,0,999 
-testRelation1 5155 D,0,1999 E,0,1999 F,0,1999 G,0,1999 
+testRelation1 50 J,0,46 K,1,48 L,2,49 
+testRelation2 100 M,1,99 N,0,99 O,0,99 
+testRelation3 1000 P,2,998 Q,3,999 R,0,998 
+testRelation4 5000 S,0,4999 T,1,4999 U,0,4999 
+testRelation5 500 V,0,498 W,0,499 X,0,499 
