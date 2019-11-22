@@ -23,7 +23,8 @@
 
 SELECT *
 FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
-WHERE R.G<>U.N AND R.G=S.A AND S.C=T.J AND R.G=2 AND T.J=T.K AND U.N<>42;
+WHERE R.G<>U.N AND R.G=S.A; 
+-- AND S.C=T.J AND T.J=T.K AND U.N<>42;
 
 ----------------============================   P 1    ===========================-----------
 

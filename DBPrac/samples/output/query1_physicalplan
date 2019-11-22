@@ -1,0 +1,7 @@
+BNLJ[R.G = S.A]
+-BNLJ[R.G <> U.N]
+--BNLJ[]
+---TableScan[testRelation1]
+---TableScan[testRelation2]
+--TableScan[Reserves]
+-TableScan[Sailors]
