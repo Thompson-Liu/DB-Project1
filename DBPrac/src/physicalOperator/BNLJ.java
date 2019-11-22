@@ -111,7 +111,7 @@ public class BNLJ extends Operator {
 							if ((next= eval.evaluate(outerTup, innerTup)) != null) {
 								tupState= false;
 								bufState= false;
-								System.out.println(next.getTuple().toString());
+//								System.out.println(next.getTuple().toString());
 								return next;
 							}
 						}
@@ -122,7 +122,7 @@ public class BNLJ extends Operator {
 					while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
 						if ((next= eval.evaluate(outerTup, innerTup)) != null) {
 							bufState= false;
-							System.out.println(next.getTuple().toString());
+//							System.out.println(next.getTuple().toString());
 							return next;
 						}
 					}
@@ -138,7 +138,7 @@ public class BNLJ extends Operator {
 						while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
 							if ((next= eval.evaluate(outerTup, innerTup)) != null) {
 								tupState= false;
-								System.out.println(next.getTuple().toString());
+//								System.out.println(next.getTuple().toString());
 								return next;
 							}
 						}
@@ -149,7 +149,7 @@ public class BNLJ extends Operator {
 				} else {
 					while ((outerTup= buffer.getTuple(bufTupState++ )) != null) {
 						if ((next= eval.evaluate(outerTup, innerTup)) != null) { 
-							System.out.println(next.getTuple().toString());
+//							System.out.println(next.getTuple().toString());
 							return next; 
 						}
 					}
