@@ -71,6 +71,7 @@ public class PhysicalPlanWriter {
 
 	// No need to implement this
 	public void visit(JoinOperator op) {
+
 	}
 
 	public void visit(ProjectOperator op) throws IOException {

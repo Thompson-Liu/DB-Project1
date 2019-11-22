@@ -4,8 +4,11 @@
 -- WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
 -- ORDER BY S.A;
 
+-- SELECT S.A FROM Sailors S, Reserves R
+-- WHERE S.B = R.G AND R.H < 100 AND S.A >= 9050;
+
 SELECT *
-FROM testRelation4, testRelation3, testRelation2, testRelation1;
+FROM testRelation3, testRelation2, testRelation1;
 -- WHERE testRelation3.P = testRelation2.M AND testRelation2.M= testRelation1.J;
 
 
