@@ -49,7 +49,9 @@ public class IndexBuilder {
 				String columnName = components[1];
 				int isClustered = Integer.parseInt(components[2]);
 				int order = Integer.parseInt(components[3]);
-				
+				System.out.println(columnName);
+				System.out.println(tableName);
+				System.out.println(isClustered);
 				// Build the index accordingly
 				buildIndex(isClustered, order, columnName, tableName);
 			}

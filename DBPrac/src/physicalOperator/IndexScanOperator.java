@@ -101,10 +101,6 @@ public class IndexScanOperator extends ScanOperator {
 		reader.reset(repo.get(ptr)[0], repo.get(ptr)[1]);
 		ptr+= 1;
 		Tuple temp =reader.readNextTuple();
-		System.out.println(this.hi);
-		System.out.println(this.lo);
-		System.out.println(this.oriTableName);
-		System.out.println(temp.getTuple().toString());
 		return temp;
 	}
 
