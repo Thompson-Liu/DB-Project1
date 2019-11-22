@@ -52,6 +52,13 @@ public class Tuple {
 		result.addAll(b.getTuple());
 		return (new Tuple(result));
 	}
+	
+	public Tuple mergeNewTuple(Tuple tup, int pos) {
+		ArrayList<Integer> result = new ArrayList<Integer>(this.dataTuple.subList(0, pos));
+		result.addAll(tup.dataTuple);
+		result.addAll(this.dataTuple.subList(pos+1, this.dataTuple.size()));
+		return new Tuple(result);
+	}
 
 	/**
 	 * Get the arraylist representation of the data stored in tuple object
