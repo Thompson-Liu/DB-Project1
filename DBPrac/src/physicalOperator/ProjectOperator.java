@@ -44,10 +44,11 @@ public class ProjectOperator extends Operator {
 	/** @return Returns the next tuple read from the data */
 	@Override
 	public Tuple getNextTuple() {
+		
 		Tuple next= null;
 		while ((next= childOp.getNextTuple()) != null) {
 			Tuple tup= new Tuple();
-
+//			System.out.println(tup.getTuple().toString());
 			for (String item : selectColumns) {
 				int index= childOp.schema().indexOf(item.toString());
 				tup.addData(next.getData(index));

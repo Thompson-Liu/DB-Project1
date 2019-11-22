@@ -38,7 +38,7 @@ public class Interpreter {
 		catalogGen.createCatalog();
 
 		// build random testing data
-		// DataGenerator dataGen = new DataGenerator(3, inputDir, 3, 4, 100000);
+//		 DataGenerator dataGen = new DataGenerator(1, inputDir, 500, 3, 500);
 
 		IndexBuilder indexBuilder = new IndexBuilder(inputDir + "/db");
 		

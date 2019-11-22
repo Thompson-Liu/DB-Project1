@@ -100,7 +100,8 @@ public class IndexScanOperator extends ScanOperator {
 		if (ptr >= repo.size()) return null;
 		reader.reset(repo.get(ptr)[0], repo.get(ptr)[1]);
 		ptr+= 1;
-		return reader.readNextTuple();
+		Tuple temp =reader.readNextTuple();
+		return temp;
 	}
 
 	@Override
@@ -131,18 +132,6 @@ public class IndexScanOperator extends ScanOperator {
 
 	public int getHigh() {
 		return hi;
-	}
-	
-	public Integer[] getBound() {
-		Integer upBound = hi;
-		Integer lowBound = lo;
-		if (hi == Integer.MAX_VALUE) {
-			upBound = null;
-		} 
-		if (lo == Integer.MIN_VALUE) {
-			lowBound = null;
-		}
-		return new Integer[] { lowBound, upBound };
 	}
 
 	@Override
