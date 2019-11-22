@@ -1,0 +1,4 @@
+BNLJ[]
+-Select[R.G = 100]
+--TableScan[Reserves]
+-IndexScan[Sailors, B, 100, 100]

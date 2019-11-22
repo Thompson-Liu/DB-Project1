@@ -206,6 +206,10 @@ public class Catalog {
 	 * @return col is sorted on on file
 	 */
 	public Boolean getIsClustered(String tableName,String col) {
+		System.out.println(tableName);
+		if(this.tableInfo.get(tableName).getClustered()==null) {
+			return false;
+		}
 		return (this.tableInfo.get(tableName).getClustered().equals(col));
 	}
 
@@ -213,7 +217,6 @@ public class Catalog {
 	 * Print the catalog: data, directory tuples and data, schema tuples for debugging, 
 	 */
 	public void printCatalog() {
-		System.out.println("Tables directorys:");
 		for(String table: tableDir.keySet()) {
 			System.out.println(table+tableDir.get(table));
 		}
