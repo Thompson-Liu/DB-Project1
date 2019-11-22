@@ -233,6 +233,10 @@ public class PhysicalPlanBuilder {
 	 * @return
 	 */
 	private boolean checkSMJ(Expression joinExpr, List<String> joinedTable) {
+		if (joinExpr == null) {
+			return false;
+		}
+		
 		if (! (joinExpr instanceof AndExpression)) {
 			assert(joinExpr instanceof BinaryExpression);
 			if (joinedTable.size() != 2) {

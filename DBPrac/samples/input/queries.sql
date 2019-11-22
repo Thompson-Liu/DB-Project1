@@ -7,8 +7,8 @@
 -- SELECT S.A FROM Sailors S, Reserves R
 -- WHERE S.B = R.G AND R.H < 100 AND S.A >= 9050;
 
-SELECT *
-FROM testRelation3, testRelation2, testRelation1;
+-- SELECT *
+-- FROM testRelation3, testRelation2, testRelation1;
 -- WHERE testRelation3.P = testRelation2.M AND testRelation2.M= testRelation1.J;
 
 
@@ -55,9 +55,9 @@ FROM testRelation3, testRelation2, testRelation1;
 -- FROM Reserves R
 -- WHERE R.G=1;
 
--- SELECT DISTINCT Sailors.A
--- FROM Sailors, Reserves
--- WHERE Sailors.A = Reserves.G;
+SELECT DISTINCT Sailors.A
+FROM Sailors, Reserves
+WHERE Sailors.A = Reserves.G;
 
 -- SELECT *
 -- FROM Sailors S1, Sailors S2
