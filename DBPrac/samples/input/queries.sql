@@ -1,8 +1,8 @@
 ----------  ===============        P 4          =============== -----------------
-SELECT DISTINCT S.A, R.G
-FROM Sailors S, Boats B, Reserves R
-WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
-ORDER BY S.A;
+-- SELECT DISTINCT S.A, R.G
+-- FROM Sailors S, Boats B, Reserves R
+-- WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
+-- ORDER BY S.A;
 
 -- SELECT S.A FROM Sailors S, Reserves R
 -- WHERE S.B = R.G AND R.H < 100 AND S.A >= 9050;
@@ -12,19 +12,18 @@ ORDER BY S.A;
 -- WHERE testRelation3.P = testRelation2.M AND testRelation2.M= testRelation1.J;
 
 
+
 -- SELECT S.A
 -- FROM Sailors S, Reserves R
 -- WHERE S.B = R.G AND R.H<100 AND S.A>=9050;
 
 -- SELECT *
 -- FROM Reserves R, Sailors S
--- WHERE S.B = R.G AND R.H<100 AND S.A>=9050;
+-- WHERE R.G = 100 AND R.G = S.B;
 
--- WHERE R.A = 100 AND R.A = S.B;
-
--- SELECT *
--- FROM Reserves R, Sailors S, Test T, UTest U
--- WHERE R.A<>U.B AND R.A=S.B AND S.C=T.D AND R.A=2 AND T.D=T.X AND U.Y<>42;
+SELECT *
+FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
+WHERE R.G<>U.N AND R.G=S.A AND S.C=T.J AND R.G=2 AND T.J=T.K AND U.N<>42;
 
 ----------------============================   P 1    ===========================-----------
 
