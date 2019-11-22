@@ -88,6 +88,7 @@ public class JoinOptimizer {
 	public void traverseSubPlans(int topMost,int targetSize, int curPos,ArrayList<String> prevSubPlan) {
 		// get one set of size=subPlanSize, compute cost of joining topMost with the best plan of this set
 		if(prevSubPlan.size()==targetSize-1) {
+			System.out.println(topMost);
 			ArrayList<String> prevSubCopy = new ArrayList<String>();
 			prevSubCopy.addAll(prevSubPlan);
 			HashSet<String> prevSubTables = new HashSet<String>(prevSubCopy);

@@ -5,7 +5,7 @@
 -- ORDER BY S.A;
 
 SELECT *
-FROM testRelation3, testRelation2, testRelation1;
+FROM testRelation4, testRelation3, testRelation2, testRelation1;
 -- WHERE testRelation3.P = testRelation2.M AND testRelation2.M= testRelation1.J;
 
 
