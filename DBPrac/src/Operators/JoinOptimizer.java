@@ -293,7 +293,7 @@ public class JoinOptimizer {
 			// will always add if smaller (enforced in PlanInfo)
 			newPlan.addColV(aliasName, columnName, updateV);
 		}
-		int cost=prevOptPlan.getCost()+joinSize;
+		int cost=prevOptPlan.getCost()+prevOptPlan.getTotalTuples();
 		newPlan.setCost(cost);
 		newPlan.setTotalTuples(joinSize);
 		return newPlan;
