@@ -82,16 +82,28 @@ public class LogicalPlanWriter {
 	}
 
 	public void visit(SelectLogOp op) throws IOException {
+		String selectExpr = "";
+		if (op.getSelectExpr() != null) {
+			selectExpr = op.getSelectExpr().toString();
+		}
+		
 		writer.write(new String(new char[level]).replace("\0", "-") + "Select[" +
-			op.getSelectExpr().toString() + "]\n");
+			selectExpr + "]\n");
 		level++;
 		List<LogicalOperator> children= op.getChildren();
 		children.get(0).accept(this);
 	}
 
 	public void visit(SortLogOp op) throws IOException {
-		writer.write(new String(new char[level]).replace("\0", "-") + "Sort[" +
-			String.join(", ", op.getColumns()) + "]\n");
+		List<String> SortedByCols = op.getColumns();
+		if (SortedByCols != null) {
+			writer.write(new String(new char[level]).replace("\0", "-") + "Sort[" +
+					String.join(", ", op.getColumns()) + "]\n");
+		} else {
+			writer.write(new String(new char[level]).replace("\0", "-") + "Sort[]\n");
+		}
+		
+		
 		level++ ;
 		List<LogicalOperator> children= op.getChildren();
 		assert children.size() == 1;
