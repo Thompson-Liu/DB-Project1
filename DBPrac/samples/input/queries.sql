@@ -27,16 +27,16 @@
 -- FROM Sailors, Reserves, Boats
 -- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
 
--- SELECT *
--- FROM Sailors, Reserves, Boats
--- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
+SELECT *
+FROM Sailors, Reserves, Boats
+WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
 
 -- SELECT DISTINCT *
 -- FROM Sailors;
 
-SELECT DISTINCT *
-FROM Sailors S1, Sailors S2
-WHERE S1.A < S2.A;
+-- SELECT DISTINCT *
+-- FROM Sailors S1, Sailors S2
+-- WHERE S1.A < S2.A;
 
 -- SELECT B.F, B.D
 -- FROM Boats B

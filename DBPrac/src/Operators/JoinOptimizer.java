@@ -185,9 +185,10 @@ public class JoinOptimizer {
 		for(String col:schema) {
 			int oriHigh = catalog.getColRange(tableName, col)[1];
 			int oriLow=catalog.getColRange(tableName, col)[0];
+			String tabCol = tableName+"."+col;
 			for (BlueBox box: blueBoxes) {
 				List<String> colRange = box.getAttr();
-				if(colRange.contains(col)) {  // check if col is in expr {R.A=3 or R.A<4} with low and high bound
+				if(colRange.contains(tabCol)) {  // check if col is in expr {R.A=3 or R.A<4} with low and high bound
 					int newHigh = (box.getUpper()==null) ? Integer.MAX_VALUE : box.getUpper();
 					int newLow = (box.getLower()==null) ? Integer.MIN_VALUE : box.getLower();
 					newHigh = Math.min(newHigh,oriHigh);     
@@ -294,6 +295,9 @@ public class JoinOptimizer {
 			newPlan.addColV(aliasName, columnName, updateV);
 		}
 		int cost=prevOptPlan.getCost()+prevOptPlan.getTotalTuples();
+		if(prevOptPlan.getNumOps()==1) {
+			cost=0;
+		}
 		newPlan.setCost(cost);
 		newPlan.setTotalTuples(joinSize);
 		return newPlan;
