@@ -91,6 +91,12 @@ public class LogicalOperatorFactory {
 			intOp= new SortLogOp(intOp, orderByList);
 			return (d == null) ? intOp : new DuplicateEliminationLogOp((SortLogOp) intOp);
 		}
+		
+		if (d != null) {
+			intOp= new SortLogOp(intOp, null);
+			return new DuplicateEliminationLogOp((SortLogOp) intOp);
+
+		}
 		return intOp;
 	}
 

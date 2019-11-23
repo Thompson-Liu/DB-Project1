@@ -1,7 +1,7 @@
 ----------  ===============        P 4          =============== -----------------
--- SELECT DISTINCT S.A, R.G
--- FROM Sailors S, Boats B, Reserves R
--- WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
+SELECT DISTINCT S.A, R.G
+FROM Sailors S, Boats B, Reserves R
+WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
 -- ORDER BY S.A;
 
 -- SELECT S.A FROM Sailors S, Reserves R
@@ -21,9 +21,10 @@
 -- FROM Reserves R, Sailors S
 -- WHERE R.G = 100 AND R.G = S.B;
 
-SELECT *
-FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
-WHERE R.G<>U.N AND R.G=S.A AND S.C=T.J;
+-- SELECT *
+-- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
+-- WHERE R.G<>U.N AND R.G=S.A;
+ -- AND S.C=T.J;
  -- AND T.J=T.K AND U.N<>42;
 
 ----------------============================   P 1    ===========================-----------
