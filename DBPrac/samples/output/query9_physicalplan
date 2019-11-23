@@ -1,0 +1,8 @@
+BNLJ[Reserves.G = Sailors.A]
+-SMJ[Reserves.H = Boats.D]
+--ExternalSort[Reserves.H]
+---TableScan[Reserves]
+--ExternalSort[Boats.D]
+---TableScan[Boats]
+-Select[Sailors.B <= 149]
+--TableScan[Sailors]
