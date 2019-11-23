@@ -3,7 +3,6 @@ package physicalOperator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import dataStructure.Tuple;
 import fileIO.TupleWriter;
 import net.sf.jsqlparser.expression.Expression;
@@ -90,18 +89,25 @@ public class SMJ extends Operator {
 		int counter = 0;
 		tupleIndex = leftSchema.size();
 		String strCounter = "";
-		for (int i = 0; i < leftSchema.size(); ++i) {
-			if ((counter++) == tableIndex) {
-				tupleIndex = (i--);
-				schema.addAll(rightSortOp.schema());
-				continue;
-			} 
-			String curName = leftSchema.get(i).split("\\.")[0];
-			if (!curName.equals(strCounter)) {
-				counter++;
-				strCounter = curName;
+		
+		if (tableIndex == tableOrder.size() - 1) {
+			schema.addAll(leftSchema);
+			schema.addAll(rightSchema);
+		} else {
+			for (int i = 0; i < leftSchema.size(); ++i) {
+				String curName = leftSchema.get(i).split("\\.")[0];
+				if (!curName.equals(strCounter)) {
+					if (counter == tableIndex) {
+						tupleIndex = (i--);
+						schema.addAll(rightSchema);
+						counter++;
+						continue;
+					}
+					counter++;
+					strCounter = curName;
+				}
+				schema.add(leftSchema.get(i));
 			}
-			schema.add(leftSchema.get(i));
 		}
 	}
 
@@ -169,6 +175,7 @@ public class SMJ extends Operator {
 					ts= rightSortOp.getNextTuple();
 					count= ptr;
 				}
+//				System.out.println(joinedTuple.getTuple());
 				return joinedTuple;
 			}
 
