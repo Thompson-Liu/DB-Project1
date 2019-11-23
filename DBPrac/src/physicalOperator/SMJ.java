@@ -30,6 +30,8 @@ public class SMJ extends Operator {
 	private Operator rightSortOp;
 	private ArrayList<String> leftSchema;
 	private ArrayList<String> rightSchema;
+	private int smjBufferSize;
+	private String smjTempDir;
 	private int tupleIndex;
 
 	/** @return true if the first k pairs of attributes in leftColList and rightColList are equal to
@@ -62,9 +64,12 @@ public class SMJ extends Operator {
 		rightOp= right;
 		expr= joinExpr;
 		this.useExternal= useExternal;
+		smjBufferSize = bufferSize;
+		smjTempDir = dir;
+		
 		if (useExternal) {
-			leftSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, dir, leftOp.getTableName());
-			rightSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, dir, "right");
+			leftSortOp= new ExternalSortOperator(leftOp, leftColList, bufferSize, smjTempDir, leftOp.getTableName());
+			rightSortOp= new ExternalSortOperator(rightOp, rightColList, bufferSize, smjTempDir, "right");
 		} else {
 			leftSortOp= new SortOperator(leftOp, leftColList);
 			rightSortOp= new SortOperator(rightOp, rightColList);
@@ -197,8 +202,17 @@ public class SMJ extends Operator {
 
 	@Override
 	public void reset() {
-		leftSortOp.reset();
-		rightSortOp.reset();
+		leftOp.reset();
+		rightOp.reset();
+		
+		if (useExternal) {
+			leftSortOp= new ExternalSortOperator(leftOp, leftColList, smjBufferSize, smjTempDir, leftOp.getTableName());
+			rightSortOp= new ExternalSortOperator(rightOp, rightColList, smjBufferSize, smjTempDir, "right");
+		} else {
+			leftSortOp= new SortOperator(leftOp, leftColList);
+			rightSortOp= new SortOperator(rightOp, rightColList);
+		}
+
 		tr= leftSortOp.getNextTuple();
 		Tuple firstTuple= rightSortOp.getNextTuple();
 		ts= firstTuple;

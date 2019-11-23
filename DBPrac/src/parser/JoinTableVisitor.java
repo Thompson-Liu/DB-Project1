@@ -50,7 +50,6 @@ public class JoinTableVisitor implements ExpressionVisitor {
 
 	private Expression residual = null;
 	private Expression relevant = null;
-	private boolean allEquality = true;
 	private List<String> prevJoined;
 	private String curTable;
 	
@@ -72,10 +71,6 @@ public class JoinTableVisitor implements ExpressionVisitor {
 		return relevant;
 	}
 	
-	public boolean allEquality() {
-		return allEquality;
-	}
-	
 	private void BinaryVisit(Expression arg0) {
 		Expression left = ((BinaryExpression) arg0).getLeftExpression();
 		Expression right = ((BinaryExpression) arg0).getRightExpression();
@@ -90,9 +85,6 @@ public class JoinTableVisitor implements ExpressionVisitor {
 		if ((leftName.equals(curTable) && prevJoined.contains(rightName)) 
 				|| (rightName.equals(curTable) && prevJoined.contains(leftName))){
 			
-			if (! (arg0 instanceof EqualsTo)) {
-				allEquality = false;
-			}
 			relevant = (relevant == null) ? arg0 : new AndExpression(relevant, arg0);
 		} else {
 			residual = (residual == null) ? arg0 : new AndExpression(residual, arg0);

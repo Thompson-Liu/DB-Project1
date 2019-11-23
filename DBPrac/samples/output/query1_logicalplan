@@ -1,0 +1,7 @@
+Join[R.G <> U.N]
+[[R.G, S.A], equals null, min null, max null]
+[[S.C, T.J], equals null, min null, max null]
+-Leaf[Reserves]
+-Leaf[Sailors]
+-Leaf[testRelation1]
+-Leaf[testRelation2]
