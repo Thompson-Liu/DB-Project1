@@ -1,9 +1,7 @@
 package Operators;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 import dataStructure.BlueBox;
 import dataStructure.Catalog;
 import dataStructure.UnionFind;
@@ -100,6 +98,13 @@ public class LogicalOperatorFactory {
 		return intOp;
 	}
 
+	/**
+	 * The logic to push down the select conditions
+	 * 
+	 * @param plainSelect    the query statement
+	 * @param joinList       the list of join items 
+	 * @return			     a logical operator after pushing down availale conditions
+	 */
 	private LogicalOperator pushSelect(PlainSelect plainSelect, List<Join> joinList) {
 		// TODO Auto-generated method stub
 		UnionFindGenerator ufGen = new UnionFindGenerator(plainSelect.getWhere());
@@ -156,6 +161,12 @@ public class LogicalOperatorFactory {
 		return join;
 	}
 	
+	/**
+	 * Build expressions from the bluebox that contains attributes of the table
+	 * 
+	 * @param selectAttr 	a list of bluebox which contains equality between column attributs of the current table
+	 * @return        		an expression built from the list of blueboxes
+	 */
 	private Expression buildExpression(List<BlueBox> selectAttr) {
 		// If the hashMap is empty, all attributes are resolved, return a null Expression
 		if (selectAttr.isEmpty()) {
@@ -178,6 +189,13 @@ public class LogicalOperatorFactory {
 		return buildExpressionHelper(result, intermediate); 
 	}
 
+	/**
+	 * A helper to connect each intermediate expressions with an AndExpression. 
+	 * 
+	 * @param intermediate   Intermediate result of the recurssive step
+	 * @param expr           List of expression parsed before that need to be connected together
+	 * @return				 A connected expression
+	 */
 	private Expression buildExpressionHelper(Expression intermediate, List<Expression> expr) {
 		if (expr.size() == 0) {
 			return intermediate;
@@ -185,6 +203,15 @@ public class LogicalOperatorFactory {
 		return buildExpressionHelper(new AndExpression(intermediate, expr.remove(0)), expr);
 	}
 
+	/**
+	 * Construct a series of column Expression from the list of equal column attributes, 
+	 * and also the boundaries on them too.
+	 * 
+	 * @param intermediate		Intermediate result of the recurssive step
+	 * @param list				a list of equal column attributes	
+	 * @param stats				the bound on the equal column attributes
+	 * @return
+	 */
 	private Expression buildCol(Expression intermediate, List<String> list, Integer[] stats) {
 		//  Construct a left Column object
 		String left = list.remove(0);

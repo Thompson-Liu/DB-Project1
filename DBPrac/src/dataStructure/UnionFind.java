@@ -1,7 +1,6 @@
 package dataStructure;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /** This class implements the union find algorithm. An instance is a UnionFind object containing

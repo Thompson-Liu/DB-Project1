@@ -2,14 +2,17 @@ package logicalOperators;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 import Operators.PhysicalPlanBuilder;
 import dataStructure.BlueBox;
 import net.sf.jsqlparser.expression.Expression;
 import utils.LogicalPlanWriter;
 
+/**
+ * Logical Operator that represents a select
+ * 
+ * @author mingzhaoliu
+ */
 public class SelectLogOp extends LogicalOperator {
 
 	private String tableName;
@@ -18,6 +21,15 @@ public class SelectLogOp extends LogicalOperator {
 	private ArrayList<BlueBox> attributes;
 	private LogicalOperator child;
 
+	/**
+	 * SelectLogOp consturctor 
+	 * 
+	 * @param tableName    the tableName
+	 * @param alias 	   the aliasName
+	 * @param expression   the expression to select on the table
+	 * @param bb           an arrayList of blueBox
+	 * @param leaf         the child of selectLogOp
+	 */
 	public SelectLogOp(String tableName, String alias, Expression expression, 
 			List<BlueBox> bb, LogicalOperator leaf) {
 		this.tableName= tableName;

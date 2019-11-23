@@ -39,6 +39,11 @@ public class IndexNode extends Node {
 		return pageNum;
 	}
 
+	/**
+	 * Add children node
+	 * 
+	 * @param child
+	 */
 	public void addChild(Node child) {
 		children.add(child);
 	}

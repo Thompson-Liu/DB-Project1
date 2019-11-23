@@ -67,14 +67,28 @@ public class JoinTableVisitor implements ExpressionVisitor {
 		}
 	}
 	
+	/**
+	 * @return the leftover expression that is not relevant to both tables
+	 */
 	public Expression getResidual() {
 		return residual;
 	}
 	
+	/**
+	 * 
+	 * @return the join condition that is relevant to join the two tables
+	 */
 	public Expression getRelevant() {
 		return relevant;
 	}
 	
+	/**
+	 * A helper to build the residual expression and relevant expression from a binary expression
+	 * EqualsTo, MinorThan, MinorThanEquals, GreaterThan, GreaterThanEquals are all instances of Binary
+	 * Expression
+	 * 
+	 * @param arg0	The bianry Expression that will be visited and parsed
+	 */
 	private void BinaryVisit(Expression arg0) {
 		Expression left = ((BinaryExpression) arg0).getLeftExpression();
 		Expression right = ((BinaryExpression) arg0).getRightExpression();

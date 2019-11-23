@@ -65,6 +65,9 @@ public class UnusedSelectVisitor implements ExpressionVisitor {
 		}
 	}
 	
+	/**
+	 * @return   The unused select expression of the table
+	 */
 	public Expression getTableExpr() {
 		
 		if (tableExpr.isEmpty()) {
@@ -75,9 +78,15 @@ public class UnusedSelectVisitor implements ExpressionVisitor {
 		
 		Expression result = new AndExpression(tableExpr.remove(0), tableExpr.remove(1));
 		return buildExpression(result, tableExpr);
-		
 	}
 	
+	/**
+	 * A helper recurssive function that is used to build the select expression about the table
+	 * 
+	 * @param intermediate		intermediate result of each recursive steps
+	 * @param expr			a list of relevant unused expression 
+	 * @return		the unused select expression of the table being selected 
+	 */
 	private Expression buildExpression(Expression intermediate, List<Expression> expr) {
 		if (expr.size() == 0) {
 			return intermediate;

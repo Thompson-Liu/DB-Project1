@@ -43,6 +43,13 @@ public class PhysicalPlanBuilder {
 		indexDir= indexPath;
 	}
 
+	/**
+	 * Build the join conditon from residual join and the bluebox
+	 * 
+	 * @param unused  	residual join condition that cannot fit in the bluebox
+	 * @param condFromBox	 a list of list of equal column attributes that from the same bluebox 
+	 * @return
+	 */
 	private Expression buildJoinExpr(Expression unused, List<ArrayList<String>> condFromBox) {
 		if (condFromBox.isEmpty()) {
 			return unused;
@@ -74,6 +81,12 @@ public class PhysicalPlanBuilder {
 		return expr;
 	}
 
+	/**
+	 * Generate the physcial operator from the logical Operator  
+	 * 
+	 * @param lop 	the logical operator built from logical operator factory
+	 * @return
+	 */
 	public Operator generatePlan(LogicalOperator lop) {
 		lop.accept(this);
 		return immOp;
@@ -256,11 +269,12 @@ public class PhysicalPlanBuilder {
 	}
 
 	/**
-	 * 
+	 * Check if SMJ is applicable
 	 * Example: FROM S, R, B WHERE S.A = R.B AND S.C = B.G is valid
 	 * 
-	 * @param joinExpr
-	 * @param joinedTable
+	 * @param joinExpr         the expression between two  joined table
+	 * @param joinedTable 	   a list of tableNames that are already joined together
+	 * @param tableRight	   the table being joined together      
 	 * @return
 	 */
 	private boolean checkSMJ(Expression joinExpr, List<String> joinedTable, String tableRight) {

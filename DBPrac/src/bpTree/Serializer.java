@@ -17,6 +17,13 @@ public class Serializer {
 		this.bw= bw;
 	}
 
+	/**
+	 * Write the header page
+	 * 
+	 * @param rootAddress  the address of the root node
+	 * @param numLeaves    the number of leaves
+	 * @param order        the order of the leaf
+	 */
 	public void writeHeader(int rootAddress, int numLeaves, int order) {
 		bw.reset(0);
 		bw.addNextValue(rootAddress);
@@ -25,6 +32,11 @@ public class Serializer {
 		bw.dump();
 	}
 
+	/**
+	 * Write the leaf node 
+	 * 
+	 * @param leaf     the leaf node
+	 */
 	public void writeLeaveNode(LeafNode leaf) {
 		bw.addNextValue(leaf.getType());
 		bw.addNextValue(leaf.getNumElement());
@@ -47,6 +59,11 @@ public class Serializer {
 		bw.dump();
 	}
 
+	/**
+	 * Write the index node
+	 * 
+	 * @param indexNode   the index node
+	 */
 	public void writeIndexNode(IndexNode indexNode) {
 		bw.addNextValue(indexNode.getType());
 		bw.addNextValue(indexNode.getNumElement());
