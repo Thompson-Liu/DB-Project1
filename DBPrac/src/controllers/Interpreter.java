@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.IOException;
 import utils.CatalogGenerator;
 import utils.IndexBuilder;
 import utils.InputFileParser;
