@@ -1,3 +1,5 @@
+The top-level class of our code is src/controllers/Interpreter.java, which reads the input and produces output. 
+
 - Push Select Conditions:
 There are two parts of select conditions, first is the conditions that can be included in a bluebox, like Sailors.A = Sailors.B; the other kind is those conditions that cannot go into bluebox, like Sailors.A != 30 or Sailors.C != Sailors.B. So, to select on each table in LogicalOperatorFactory, we will search through each bluebox for column attributes that have the same tableName. Then we will build a partial select expression from each bluebox. For example, if the bluebox contains Sailors.A, Sailors.B, and the bounds are null and 149, then the condition built is Sailors.A = Sailors.B and. Sailors.B <= 149. The expression is built by looping through each column attributes in the bluebox and construct an AndExpression between the two columns. If the last column attribute is met, then we will construct a MinorThanEqual, or GreaterThanEqual, or both, which depends on the existence of both upper and lower bounds. If both bounds are not null, then both MinorThanEqual and GreaterThanEqual will be constructed and connected by an AndExpression. 
 
@@ -12,7 +14,7 @@ The SelectCost.selectScan method will return a String array of size 3. If an ind
 
 If a fullScan is chosen, then the returned array is ["full", "", ""]. A full scan will not take any select condition, and all the select conditions will be added to construct a Select physical operator, which is the parent class of the full scan physical operator. 
 
-
+For fullScan the cost is total number of tuples, and for index scan 
 
 
 
