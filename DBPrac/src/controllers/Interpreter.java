@@ -1,10 +1,6 @@
 package controllers;
 
-import java.io.IOException;
-
-import fileIO.BinaryTupleWriter;
 import utils.CatalogGenerator;
-import utils.DataGenerator;
 import utils.IndexBuilder;
 import utils.InputFileParser;
 import utils.QueryEvaluator;
