@@ -1,3 +1,6 @@
+/**
+ * Visit and parse the expression 
+ */
 package parser;
 
 import java.util.ArrayList;

@@ -1,3 +1,7 @@
+/**
+ * visit the join visitor to return the expression after previous list of table join with
+ * the right most table
+ */
 package parser;
 
 import java.util.ArrayList;

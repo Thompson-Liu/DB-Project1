@@ -24,16 +24,27 @@ public class PlanInfo {
 		this.columnStats = new HashMap<String,Integer>();
 	}
 	
-	
+	/**
+	 * Set the cost of the plan
+	 * @param c
+	 */
 	public void setCost(int c) {
 		this.cost =c;
 	}
 	
+	/**
+	 * set the total tuples size
+	 * @param totalTuples
+	 */
 	public void setTotalTuples(int totalTuples) {
 		totalTuples= (totalTuples==0)? 1: totalTuples;        // make sure this is not 0
 		this.totalTuples=totalTuples;
 	}
 	
+	/**
+	 * 
+	 * @param opt this optimal Array operators
+	 */
 	public void setOptimalOrder(ArrayList<LogicalOperator> opt) {
 		ArrayList<LogicalOperator> newOpt = new ArrayList<LogicalOperator>(opt);
 		this.logOps=newOpt;

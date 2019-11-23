@@ -1,3 +1,6 @@
+/**
+ * Compute the cost of using index or full scan
+ */
 package Operators;
 
 import java.util.ArrayList;

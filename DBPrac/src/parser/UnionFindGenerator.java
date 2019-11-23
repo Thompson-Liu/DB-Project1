@@ -1,3 +1,7 @@
+/**
+ * based on union join parse the expression to have the remaining expression as after joining
+ * result.
+ */
 package parser;
 
 import dataStructure.BlueBox;
