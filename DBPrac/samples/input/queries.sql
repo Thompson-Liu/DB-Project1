@@ -61,10 +61,17 @@ ORDER BY S.C;
 -- FROM Reserves R, Sailors S
 -- WHERE R.G = 100 AND R.G = S.B;
 
+<<<<<<< HEAD
 -- SELECT *
 -- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
 -- WHERE R.G<>U.N AND R.G=S.A; 
 -- AND S.C=T.J AND T.J=T.K AND U.N<>42;
+=======
+SELECT *
+FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
+WHERE R.G<>U.N AND R.G=S.A AND S.C=T.J;
+-- AND T.J=T.K AND U.N<>42;
+>>>>>>> 3b64dd067aabe01208f78b0f3cedb76dc4d53cce
 
 ----------------============================   P 1    ===========================-----------
 
