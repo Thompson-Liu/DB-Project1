@@ -6,7 +6,6 @@ There are two parts of select conditions, first is the conditions that can be in
 Then the other part of the select expression comes from those that cannot go into bluebox. A visitor is used to visit on the usedExpression to find the ones that are relevant to the current table. If it's not null, we will connect it with the expression parsed from the unionFind result by an AndExpression. This is the select condition that's pushed down to the current table before executing join. 
 
 
-
 - Implement Logical Selection Operator: 
 If the combined expression is null, then physicalPlanBuilder will construct a fullScanOperator. Otherwise, we will calculate the cost as follows to choose between full scan, indexScan, and which column to use as the index column: 
 
@@ -14,10 +13,7 @@ The SelectCost.selectScan method will return a String array of size 3. If an ind
 
 If a fullScan is chosen, then the returned array is ["full", "", ""]. A full scan will not take any select condition, and all the select conditions will be added to construct a Select physical operator, which is the parent class of the full scan physical operator. 
 
-For fullScan the cost is total number of tuples, and for index scan 
-
-
-
+To compute the cost of different select choices based on the index we have in the index file that specify which index is stored in the file as clustered or not. For fullScan the cost is total number of tuples, and for index scan, we first determine if it is clustered index, or unclustered index, and compute the cost of reaching the leaves and retrieve each tuples or pages. The we will 
 
 
 Refactor logical and physical query plans:
@@ -27,9 +23,9 @@ TableStas:
 we refactored our catalog to maintain more information of join tuple.
 
 Join Optimizer:
-We compute the cost of join in Dynamic Programing in bottom-up sequence. The data structure we use
-
-
+We compute the cost of join in Dynamic Programing in bottom-up sequence. The data structure we use is HashMap<tables set, planInformation> (called subOptimalPlan). The planInfo is a class we construct that store the intermediate tuple size, cost of the plan, the order of the operators as <ArrayList<Operator>>, and the v-value of each column. We used HashSet to store the set of tables for the plan, since for the set of {A B C} we want to keep the optimal join order, so using Hashset, to process ABC or CAB or BAC will be hash to the same hashes, so that we can directly compare the newly computed with the previous result, and update only if the newly generated plan is less cost comparing to the previous one.
+Hash Start from the smallest set number of table(base case) of select or scan, we compute their cost and number of tuples, value V for each column of each table, and store them in the subOptimalPlan structure. Then we proceed to the next level of joining tables, from two tables to multiple tables. For each number of joining tables, we pull out every table as the top most table, and traverse to join this table with all other possible tables chosen from size (k-1) from total of n tables. 
+For two tables we compute their intermediate result tuples size v-values and set the cost to be 0. For more than two tables, we compute the intermediate join size by the reduction factor, and the cost. Since we memorize the previous optimal planInfo with respect to each set of tables with number of joining tables less than or equal to the current joining number of tables, we can use the previous optimal plan of table {A B C} when joining with the topMost table, then store or update this new set to the subOptimalPlan.
 
 - Choice of each join operator:
 In Project2, we experimented and found out that SMJ usually have better performance than BNLJ. Therefore, we will check for select conditions: (1) if it contains only EqualsToExpression, (2) if it's applicable to use SMJ. When checking expressions, it takes the list of tableNames that are already joined together, and the name of the table that is being joined. If the joined expression between these two tables only contains an equality condition, that has one side included in the joined tableName list, and the other side equals the tableName being joined, then we will construct a SMJ. Otherwise, if the expression is an instance of AndExpression, ie. more than two conditions, or no conditions at all, it's not applicable to use SMJ, so a BNLJ will be constructed.
