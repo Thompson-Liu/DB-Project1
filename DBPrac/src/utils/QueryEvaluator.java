@@ -59,10 +59,10 @@ public class QueryEvaluator {
 					BufferedWriter planPWriter = new BufferedWriter(new FileWriter(outputDir + "/query" + queryCounter + "_physicalplan"));
 					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planPWriter, op);
 
-//					ReadableTupleWriter writer= new ReadableTupleWriter(
-//						outputDir + "/query" + Integer.toString(queryCounter));
-					BinaryTupleWriter writer= new BinaryTupleWriter(
+					ReadableTupleWriter writer= new ReadableTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
+//					BinaryTupleWriter writer= new BinaryTupleWriter(
+//						outputDi\r + "/query" + Integer.toString(queryCounter));
 
 					long time1= System.currentTimeMillis();
 					op.dump(writer);
@@ -82,6 +82,7 @@ public class QueryEvaluator {
 			System.err.println("The query file directory does not exist");
 			System.err.println(queryDir);
 		} catch (ParseException parseException) {
+			parseException.printStackTrace();
 			System.err.println("Exception occured during parsing");
 		}
 	}

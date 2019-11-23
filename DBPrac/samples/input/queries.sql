@@ -46,12 +46,10 @@ WHERE S1.A < S2.A;
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
 -- ORDER BY S.C;
-
 -- SELECT DISTINCT *
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
 -- ORDER BY S.C;
-
 ----------  ===============        P 4          =============== -----------------
 
 -- SELECT DISTINCT S.A, R.G
@@ -76,9 +74,9 @@ WHERE S1.A < S2.A;
 -- FROM Reserves R, Sailors S
 -- WHERE R.G = 100 AND R.G = S.B;
 
-SELECT *
-FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
-WHERE R.G<>U.N AND R.G=S.A AND S.C=T.J;
+-- SELECT *
+-- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
+-- WHERE R.G<>U.N AND R.G=S.A AND S.C=T.J;
 -- AND T.J=T.K AND U.N<>42;
 ----------------============================   P 1    ===========================-----------
 
