@@ -1,5 +1,0 @@
-DupElim
--ExternalSort[]
---BNLJ[S1.A < S2.A]
----TableScan[Sailors]
----TableScan[Sailors]
