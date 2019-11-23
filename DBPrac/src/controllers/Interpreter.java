@@ -23,7 +23,6 @@ public class Interpreter {
 //		try {
 //			current = new java.io.File( "." ).getCanonicalPath();
 //		} catch (IOException e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 //		String inputDir = current + "/samples/input";

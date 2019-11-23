@@ -1,3 +1,6 @@
+/**
+ * data structure to save the union box that combines the equality condition 
+ */
 package dataStructure;
 
 import java.util.ArrayList;

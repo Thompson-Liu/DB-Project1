@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * When calling Index Builder, it will 
+ * When calling Index Builder, it will scan the datatables and produce this 
+ * TableStats structure that keep the information of each table for the query optimization
  *
  */
 public class TableStats {
