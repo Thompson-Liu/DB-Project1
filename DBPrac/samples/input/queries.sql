@@ -1,37 +1,47 @@
--- SELECT *
--- FROM Sailors;
 -- SELECT Sailors.A
 -- FROM Sailors;
+
 -- SELECT Boats.F, Boats.D
 -- FROM Boats;
+
 -- SELECT Reserves.G, Reserves.H
 -- FROM Reserves;
+
 -- SELECT *
 -- FROM Sailors
 -- WHERE Sailors.B >= Sailors.C;
+
 -- SELECT Sailors.A
 -- FROM Sailors
 -- WHERE Sailors.B >= Sailors.C
+
 -- SELECT Sailors.A
 -- FROM Sailors
 -- WHERE Sailors.B >= Sailors.C AND Sailors.B < Sailors.C;
+
 -- SELECT *
 -- FROM Sailors, Reserves
 -- WHERE Sailors.A = Reserves.G;
-SELECT *
-FROM Sailors, Reserves, Boats
-WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
+
+-- SELECT *
+-- FROM Sailors, Reserves, Boats
+-- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
+
 -- SELECT *
 -- FROM Sailors, Reserves, Boats
 -- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
+
 -- SELECT DISTINCT *
 -- FROM Sailors;
--- SELECT DISTINCT *
--- FROM Sailors S1, Sailors S2
--- WHERE S1.A < S2.A;
+
+SELECT DISTINCT *
+FROM Sailors S1, Sailors S2
+WHERE S1.A < S2.A;
+
 -- SELECT B.F, B.D
 -- FROM Boats B
 -- ORDER BY B.D;
+
 -- SELECT *
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
@@ -41,6 +51,7 @@ WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
 -- WHERE S.A = R.G AND R.H = B.D
 -- ORDER BY S.C;
 ----------  ===============        P 4          =============== -----------------
+
 -- SELECT DISTINCT S.A, R.G
 -- FROM Sailors S, Boats B, Reserves R
 -- WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
@@ -67,7 +78,6 @@ WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
 -- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
 -- WHERE R.G<>U.N AND R.G=S.A AND S.C=T.J;
 -- AND T.J=T.K AND U.N<>42;
-
 ----------------============================   P 1    ===========================-----------
 
 -- SELECT *

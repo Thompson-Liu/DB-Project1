@@ -52,6 +52,9 @@ public class ExternalSortOperator extends Operator {
 		this.childOp= childOp;
 		this.bufferSize= bufferSize;
 		this.schema= childOp.schema();
+		if(colList==null) {
+			colList = new ArrayList<String>();
+		}
 		this.colList= (ArrayList<String>) colList;
 		this.tempDir= tempDir;
 		this.useName= usageName;

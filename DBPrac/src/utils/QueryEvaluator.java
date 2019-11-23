@@ -62,7 +62,7 @@ public class QueryEvaluator {
 					ReadableTupleWriter writer= new ReadableTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
 //					BinaryTupleWriter writer= new BinaryTupleWriter(
-//						outputDir + "/query" + Integer.toString(queryCounter));
+//						outputDi\r + "/query" + Integer.toString(queryCounter));
 
 					long time1= System.currentTimeMillis();
 					op.dump(writer);
