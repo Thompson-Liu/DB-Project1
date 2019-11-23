@@ -17,7 +17,6 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
-import parser.UnionFindGenerator;
 import physicalOperator.Operator;
 
 public class QueryEvaluator {
@@ -59,10 +58,10 @@ public class QueryEvaluator {
 					BufferedWriter planPWriter = new BufferedWriter(new FileWriter(outputDir + "/query" + queryCounter + "_physicalplan"));
 					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planPWriter, op);
 
-					ReadableTupleWriter writer= new ReadableTupleWriter(
+//					ReadableTupleWriter writer= new ReadableTupleWriter(
+//						outputDir + "/query" + Integer.toString(queryCounter));
+					BinaryTupleWriter writer= new BinaryTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
-//					BinaryTupleWriter writer= new BinaryTupleWriter(
-//						outputDi\r + "/query" + Integer.toString(queryCounter));
 
 					long time1= System.currentTimeMillis();
 					op.dump(writer);
