@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-Project[Sailors.A]
+Join[]
+[[Sailors.A, Reserves.G], equals null, min null, max null]
+[[Reserves.H, Boats.D], equals null, min null, max null]
 -Leaf[Sailors]
-=======
-Join[R.G <> U.N]
-[[R.G, S.A], equals null, min null, max null]
-[[S.C, T.J], equals null, min null, max null]
 -Leaf[Reserves]
--Leaf[Sailors]
--Leaf[testRelation1]
--Leaf[testRelation2]
->>>>>>> 3b64dd067aabe01208f78b0f3cedb76dc4d53cce
+-Leaf[Boats]

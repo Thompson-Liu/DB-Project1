@@ -1,8 +1,0 @@
-ExternalSort[S.C]
--BNLJ[R.G = S.A]
---SMJ[R.H = B.D]
----ExternalSort[R.H]
-----TableScan[Reserves]
----ExternalSort[B.D]
-----TableScan[Boats]
---TableScan[Sailors]
