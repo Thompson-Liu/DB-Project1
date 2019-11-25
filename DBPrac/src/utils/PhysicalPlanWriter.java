@@ -65,7 +65,7 @@ public class PhysicalPlanWriter {
 			hi = op.getHigh() + "";
 		}
 		String lo = "null";
-		if (op.getHigh() != Integer.MIN_VALUE) {
+		if (op.getLow() != Integer.MIN_VALUE) {
 			lo = op.getLow() + "";
 		}
 		writer.write(new String(new char[level]).replace("\0", "-") + "IndexScan[" +
