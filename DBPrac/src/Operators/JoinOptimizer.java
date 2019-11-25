@@ -70,6 +70,7 @@ public class JoinOptimizer {
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
 		ArrayList<LogicalOperator> ret = optimalPlan.getOpsCopy();
+		System.out.print(optimalPlan.getAliasNames().toString());
 		return optimalPlan.getOpsCopy();
 	}
 
@@ -180,11 +181,11 @@ public class JoinOptimizer {
 
 		// TODO (call UnionFind function,e.g. getTableColRange(TableName) to get)
 		ArrayList<BlueBox> blueBoxes = this.unionFind.findSelect(aliasName);
-		double reductionFactor =1;
+		double reductionFactor =1.0;
 		for(String col:schema) {
 			int oriHigh = catalog.getColRange(tableName, col)[1];
 			int oriLow=catalog.getColRange(tableName, col)[0];
-			String tabCol = tableName+"."+col;
+			String tabCol = aliasName+"."+col;
 			for (BlueBox box: blueBoxes) {
 				List<String> colRange = box.getAttr();
 				if(colRange.contains(tabCol)) {  // check if col is in expr {R.A=3 or R.A<4} with low and high bound
@@ -192,7 +193,7 @@ public class JoinOptimizer {
 					int newLow = (box.getLower()==null) ? Integer.MIN_VALUE : box.getLower();
 					newHigh = Math.min(newHigh,oriHigh);     
 					newLow = Math.max(newLow, oriLow);
-					int curReductionF = (int)(newHigh-newLow)/(oriHigh-oriLow);
+					double curReductionF = 1.0*(Math.max(1, newHigh-newLow))/(oriHigh-oriLow);
 					reductionFactor = reductionFactor*curReductionF;
 					int v = newHigh-newLow+1;
 					curPlan.addColV(aliasName, col, v);

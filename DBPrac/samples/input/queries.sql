@@ -1,4 +1,8 @@
 -- SELECT *
+-- FROM Sailors S1, Sailors S2, Sailors S3
+-- WHERE S3.A = S2.A AND S3.C = S2.A;
+
+-- SELECT *
 -- FROM Sailors;
 
 -- SELECT Sailors.A

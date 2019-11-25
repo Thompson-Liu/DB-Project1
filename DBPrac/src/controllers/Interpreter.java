@@ -14,21 +14,21 @@ public class Interpreter {
 	public static void main(String[] args) {
 
 		// Parse the input file
-		InputFileParser fileParser = new InputFileParser(args[0]);
-		String inputDir = fileParser.getDir();
-		String outputDir = fileParser.getDir();
-		String tempDir = fileParser.getDir();
+//		InputFileParser fileParser = new InputFileParser(args[0]);
+//		String inputDir = fileParser.getDir();
+//		String outputDir = fileParser.getDir();
+//		String tempDir = fileParser.getDir();
 		
-//		String current = "";
-//		try {
-//			current = new java.io.File( "." ).getCanonicalPath();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		String inputDir = current + "/samples/input";
-//		String outputDir = current + "/samples/output";
-//		String tempDir = current + "/samples/tempdir";
+		String current = "";
+		try {
+			current = new java.io.File( "." ).getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String inputDir = current + "/samples/input";
+		String outputDir = current + "/samples/output";
+		String tempDir = current + "/samples/tempdir";
 
 		// Generate the catalog of data relations' directory and schema
 		CatalogGenerator catalogGen = new CatalogGenerator(inputDir + "/db");
