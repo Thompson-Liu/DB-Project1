@@ -1,59 +1,63 @@
 SELECT *
-FROM Sailors;
+FROM Sailors S1, Sailors S2, Sailors S3
+WHERE S3.A=S2.A AND S3.C=S2.A;
 
-SELECT Sailors.A
-FROM Sailors;
+-- SELECT *
+-- FROM Sailors;
 
-SELECT Boats.F, Boats.D
-FROM Boats;
+-- SELECT Sailors.A
+-- FROM Sailors;
 
-SELECT Reserves.G, Reserves.H
-FROM Reserves;
+-- SELECT Boats.F, Boats.D
+-- FROM Boats;
 
-SELECT *
-FROM Sailors
-WHERE Sailors.B >= Sailors.C;
+-- SELECT Reserves.G, Reserves.H
+-- FROM Reserves;
 
-SELECT Sailors.A
-FROM Sailors
-WHERE Sailors.B >= Sailors.C
+-- SELECT *
+-- FROM Sailors
+-- WHERE Sailors.B >= Sailors.C;
 
-SELECT Sailors.A
-FROM Sailors
-WHERE Sailors.B >= Sailors.C AND Sailors.B < Sailors.C;
+-- SELECT Sailors.A
+-- FROM Sailors
+-- WHERE Sailors.B >= Sailors.C
 
-SELECT *
-FROM Sailors, Reserves
-WHERE Sailors.A = Reserves.G;
+-- SELECT Sailors.A
+-- FROM Sailors
+-- WHERE Sailors.B >= Sailors.C AND Sailors.B < Sailors.C;
 
-SELECT *
-FROM Sailors, Reserves, Boats
-WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
+-- SELECT *
+-- FROM Sailors, Reserves
+-- WHERE Sailors.A = Reserves.G;
 
-SELECT *
-FROM Sailors, Reserves, Boats
-WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
+-- SELECT *
+-- FROM Sailors, Reserves, Boats
+-- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
 
-SELECT DISTINCT *
-FROM Sailors;
+-- SELECT *
+-- FROM Sailors, Reserves, Boats
+-- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
 
-SELECT DISTINCT *
-FROM Sailors S1, Sailors S2
-WHERE S1.A < S2.A;
+-- SELECT DISTINCT *
+-- FROM Sailors;
 
-SELECT B.F, B.D
-FROM Boats B
-ORDER BY B.D;
+-- SELECT DISTINCT *
+-- FROM Sailors S1, Sailors S2
+-- WHERE S1.A < S2.A;
 
-SELECT *
-FROM Sailors S, Reserves R, Boats B
-WHERE S.A = R.G AND R.H = B.D
-ORDER BY S.C;
+-- SELECT B.F, B.D
+-- FROM Boats B
+-- ORDER BY B.D;
 
-SELECT DISTINCT *
-FROM Sailors S, Reserves R, Boats B
-WHERE S.A = R.G AND R.H = B.D
-ORDER BY S.C;
+-- SELECT *
+-- FROM Sailors S, Reserves R, Boats B
+-- WHERE S.A = R.G AND R.H = B.D
+-- ORDER BY S.C;
+
+-- SELECT DISTINCT *
+-- FROM Sailors S, Reserves R, Boats B
+-- WHERE S.A = R.G AND R.H = B.D
+-- ORDER BY S.C;
 ----------  ===============        P 4          =============== -----------------
 
 -- SELECT DISTINCT S.A, R.G

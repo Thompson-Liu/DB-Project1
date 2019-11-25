@@ -1,0 +1,6 @@
+Join[]
+[[S3.C, S3.A, S2.A], equals null, min null, max null]
+-Leaf[Sailors]
+-Leaf[Sailors]
+-Select[S3.C = S3.A]
+--Leaf[Sailors]
