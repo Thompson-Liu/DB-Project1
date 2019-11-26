@@ -1,0 +1,5 @@
+SMJ[T1.J = S.A]
+-ExternalSort[T1.J]
+--TableScan[testRelation1]
+-ExternalSort[S.A]
+--TableScan[Sailors]
