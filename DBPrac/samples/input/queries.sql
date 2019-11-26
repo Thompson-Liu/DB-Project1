@@ -1,6 +1,7 @@
 -- SELECT *
 -- FROM Sailors S, testRelation1 T1
 -- WHERE S.A=T1.J;
+
 -- SELECT *
 -- FROM Sailors S1, Sailors S2, Sailors S3
 -- WHERE S3.A = S2.A AND S3.C = S2.A;
@@ -44,9 +45,9 @@
 -- SELECT DISTINCT *
 -- FROM Sailors;
 
--- SELECT DISTINCT *
--- FROM Sailors S1, Sailors S2
--- WHERE S1.A < S2.A;
+SELECT DISTINCT *
+FROM testRelation1 S1, testRelation1 S2
+WHERE S1.J < S2.J;
 
 -- SELECT B.F, B.D
 -- FROM Boats B
@@ -204,22 +205,21 @@
 
 
 ---------------------================   P2 SMJ BNLJ EXTERNAL SORT    =============----------
-SELECT *
-FROM testRelation1 S, testRelation2 R, testRelation3 B
-WHERE S.J = R.M AND S.K = R.N
-ORDER BY S.L;
 
-SELECT DISTINCT *
-FROM Sailors S, Reserves R, Boats B
-WHERE S.A = R.G AND R.H = B.D
-ORDER BY S.C;
+-- SELECT *
+-- FROM testRelation1 S, testRelation2 R, testRelation3 B
+-- WHERE S.J = R.M AND S.K = R.N
+-- ORDER BY S.L;
 
-SELECT *
-FROM Sailors, Reserves, Boats
-WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D
-ORDER BY Sailors.A, Reserves.H;
+-- SELECT DISTINCT *
+-- FROM Sailors S, Reserves R, Boats B
+-- WHERE S.A = R.G AND R.H = B.D
+-- ORDER BY S.C;
 
-
+-- SELECT *
+-- FROM Sailors, Reserves, Boats
+-- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D
+-- ORDER BY Sailors.A, Reserves.H;
 
 -------------------===============   P3   test index scan   ==================-----------------
 -- SELECT *

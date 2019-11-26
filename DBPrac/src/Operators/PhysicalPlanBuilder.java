@@ -200,9 +200,9 @@ public class PhysicalPlanBuilder {
 
 
 		// Build the Join tree
-		joinOrder.get(0).accept(this);;
+		joinOrder.get(0).accept(this);
 		Operator leftChildOp = immOp;
-		joinOrder.get(1).accept(this);;
+		joinOrder.get(1).accept(this);
 		Operator rightChildOp = immOp;
 
 		List<String> joinedTable = new ArrayList<String>();
