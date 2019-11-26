@@ -76,9 +76,9 @@
 -- FROM testRelation3, testRelation2, testRelation1;
 -- WHERE testRelation3.P = testRelation2.M AND testRelation2.M= testRelation1.J;
 
-SELECT *
-FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
-WHERE R.G <> U.N AND R.G = S.B AND S.C = T.L AND R.G = 2 AND T.L = T.K AND U.O <> 42;
+-- SELECT *
+-- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
+-- WHERE R.G <> U.N AND R.G = S.B AND S.C = T.L AND R.G = 2 AND T.L = T.K AND U.O <> 42;
 
 -- SELECT *
 -- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
@@ -204,10 +204,10 @@ WHERE R.G <> U.N AND R.G = S.B AND S.C = T.L AND R.G = 2 AND T.L = T.K AND U.O <
 
 
 ---------------------================   P2 SMJ BNLJ EXTERNAL SORT    =============----------
--- SELECT *
--- FROM Sailors S, Reserves R, Boats B
--- WHERE S.A = R.G AND R.H = B.D
--- ORDER BY S.C;
+SELECT *
+FROM testRelation1 S, testRelation2 R, testRelation3 B
+WHERE S.J = R.M AND S.K = R.N
+ORDER BY S.L;
 -- SELECT DISTINCT *
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
