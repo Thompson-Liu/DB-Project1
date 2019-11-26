@@ -1,4 +1,7 @@
 -- SELECT *
+-- FROM Sailors S, testRelation1 T1
+-- WHERE S.A=T1.J;
+-- SELECT *
 -- FROM Sailors S1, Sailors S2, Sailors S3
 -- WHERE S3.A = S2.A AND S3.C = S2.A;
 
