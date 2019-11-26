@@ -278,17 +278,27 @@ public class PhysicalPlanBuilder {
 	 * @return
 	 */
 	private boolean checkSMJ(Expression joinExpr, List<String> joinedTable, String tableRight) {
-		if (joinExpr == null || !(joinExpr instanceof EqualsTo)) {
+		if (joinExpr == null) {
 			return false;
 		}
 
-		Column left = (Column) ((BinaryExpression) joinExpr).getLeftExpression();
-		Column right = (Column) ((BinaryExpression) joinExpr).getRightExpression();
+		if (joinExpr instanceof EqualsTo) {
+			Column left = (Column) ((BinaryExpression) joinExpr).getLeftExpression();
+			Column right = (Column) ((BinaryExpression) joinExpr).getRightExpression();
 
-		String leftTableName = left.getTable().getName();
-		String rightTableName = right.getTable().getName();
+			String leftTableName = left.getTable().getName();
+			String rightTableName = right.getTable().getName();
 
-		return ((joinedTable.contains(leftTableName) && tableRight.equals(rightTableName))
-				|| (tableRight.equals(leftTableName) && joinedTable.contains(rightTableName)));
+			return ((joinedTable.contains(leftTableName) && tableRight.equals(rightTableName))
+					|| (tableRight.equals(leftTableName) && joinedTable.contains(rightTableName)));
+		} 
+		
+		if (!(joinExpr instanceof AndExpression)) {
+			return false;
+		}
+		
+		Expression right = ((BinaryExpression) joinExpr).getRightExpression();
+		Expression left = ((BinaryExpression) joinExpr).getLeftExpression();
+		return checkSMJ(right, joinedTable, tableRight) && checkSMJ(left, joinedTable, tableRight);
 	}
 }

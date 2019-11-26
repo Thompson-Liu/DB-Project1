@@ -70,7 +70,6 @@ public class JoinOptimizer {
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
 		ArrayList<LogicalOperator> ret = optimalPlan.getOpsCopy();
-		System.out.print(optimalPlan.getAliasNames().toString());
 		return optimalPlan.getOpsCopy();
 	}
 
