@@ -4,7 +4,9 @@ FROM testRelation2
 WHERE testRelation2.M=5;
 SELECT *
 FROM testRelation2
-WHERE testRelation2.M>50;
+WHERE testRelation2.M>10;
+SELECT *
+FROM testRelation2;
 SELECT *
 FROM testRelation3 R3, testRelation4 R4
 WHERE R3.P= R4.S AND R3.Q=500;
