@@ -41,20 +41,30 @@ public class QueryEvaluator {
 			Statement statement;
 			while ((statement= parser.Statement()) != null) {
 				try {
+					System.out.println("Running query" + queryCounter);
 					Select select= (Select) statement;
 					SelectBody selectBody= select.getSelectBody();
 					PlainSelect plainSelect= (PlainSelect) selectBody;
 
+					long time1 = System.currentTimeMillis();
 					LogicalOperatorFactory logOpFactory= new LogicalOperatorFactory();
 					LogicalOperator logOp= logOpFactory.generateQueryPlan(plainSelect);
-					
+					long time2= System.currentTimeMillis();
+					long diffTime= time2 - time1;
+					System.out.println("Total time requried to generate the logical plan: " + diffTime);
+
 					// Output logical plan tree
 					BufferedWriter planLWriter = new BufferedWriter(new FileWriter(outputDir + "/query" + queryCounter + "_logicalplan"));
 					LogicalPlanWriter logPlanWriter = new LogicalPlanWriter(planLWriter, logOp);
 					
 					// need to pass in the name of the config file path
+					time1 = System.currentTimeMillis();
 					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
 					Operator op= planBuilder.generatePlan(logOp);
+					time2 = System.currentTimeMillis();
+					diffTime = time2 - time1;
+					System.out.println("Total time requried to generate the physcial plan: " + diffTime);
+
 					BufferedWriter planPWriter = new BufferedWriter(new FileWriter(outputDir + "/query" + queryCounter + "_physicalplan"));
 					PhysicalPlanWriter physicalPlanWriter = new PhysicalPlanWriter(planPWriter, op);
 
@@ -63,12 +73,12 @@ public class QueryEvaluator {
 					BinaryTupleWriter writer= new BinaryTupleWriter(
 						outputDir + "/query" + Integer.toString(queryCounter));
 
-					long time1= System.currentTimeMillis();
+					time1= System.currentTimeMillis();
 					op.dump(writer);
 
-					long time2= System.currentTimeMillis();
-					long diffTime= time2 - time1;
-					System.out.println(diffTime);
+					time2 = System.currentTimeMillis();
+					diffTime = time2 - time1;
+					System.out.println("time requried to run the query is: " + diffTime);
 					queryCounter++ ;
 				} catch (Exception e) {
 					System.err.println(
@@ -76,6 +86,7 @@ public class QueryEvaluator {
 					queryCounter++ ;
 					e.printStackTrace();
 				}
+				System.out.println("\n");
 			}
 		} catch (FileNotFoundException fileNotFound) {
 			System.err.println("The query file directory does not exist");
