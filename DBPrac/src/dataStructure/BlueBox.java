@@ -22,7 +22,7 @@ public class BlueBox {
 		hi = null;
 		eq = null;
 	}
-
+	
 	public Integer getLower() {
 		return lo;
 	}
@@ -39,15 +39,15 @@ public class BlueBox {
 		return attr;
 	}
 
-	public void setLower(int newVal) {
+	public void setLower(Integer newVal) {
 		lo= newVal;
 	}
 
-	public void setUpper(int newVal) {
+	public void setUpper(Integer newVal) {
 		hi= newVal;
 	}
 
-	public void setEqual(int newVal) {
+	public void setEqual(Integer newVal) {
 		eq = newVal;
 		lo = newVal;
 		hi = newVal;
@@ -67,20 +67,15 @@ public class BlueBox {
 		return new Integer[] { lo, hi };
 	}
 	
-	public BlueBox copy(BlueBox box) {
-		List<String> attributes = new ArrayList<String>(box.getAttr());
+	public BlueBox copy() {
+		List<String> attributes = new ArrayList<String>(attr);
 		BlueBox copy = new BlueBox(attributes);
 		
-		if (box.getEqual() != null) {
-			copy.setEqual(box.getEqual());
+		if (eq != null) {
+			copy.setEqual(eq);
 		} else {
-			if (box.getLower() != null) {
-				copy.setLower(box.getLower());
-			}
-			
-			if (box.getUpper() != null) {
-				copy.setUpper(box.getUpper());
-			}
+			copy.setLower(lo);
+			copy.setUpper(hi);
 		}
 		return copy;
 	}

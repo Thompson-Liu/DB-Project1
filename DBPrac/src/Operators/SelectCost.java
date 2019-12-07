@@ -55,13 +55,14 @@ public class SelectCost {
 					
 					int orihigh = catalog.getColRange(tableName, col)[1];
 					int orilow = catalog.getColRange(tableName, col)[0];
-					maxVal = Math.min(orihigh,range[0]);
-					minVal = Math.max(orilow, range[1]);
+					maxVal = Math.min(orihigh,range[1]);
+					minVal = Math.max(orilow, range[0]);
 					r =1.0*(maxVal-minVal)/(orihigh-orilow);        //reduction factor
 					totalPageIO= (int) (level+r*numPages);
 					if(totalPageIO <optPageIO) {
 						optPageIO = totalPageIO;
-						plan = new String[] {"index",alias+"."+col,"clustered"};
+						String returnTableName = (alias.equals("")) ? tableName : alias;
+						plan = new String[] {"index",returnTableName+"."+col,"clustered"};
 					}
 				}
 				// check if use unclustered scan
@@ -69,13 +70,14 @@ public class SelectCost {
 					int numLeaves = catalog.getLeavesNum(tableName, col);
 					int orihigh = catalog.getColRange(tableName, col)[1];
 					int orilow = catalog.getColRange(tableName, col)[0];
-					maxVal = Math.min(orihigh,range[0]);
-					minVal = Math.max(orilow, range[1]);
+					maxVal = Math.min(orihigh,range[1]);
+					minVal = Math.max(orilow, range[0]);
 					r = 1.0*(maxVal-minVal)/(orihigh-orilow);        //reduction factor
 					totalPageIO = (int) (level + numLeaves*r + numTuples*r);
 					if(totalPageIO <optPageIO) {
 						optPageIO = totalPageIO;
-						plan = new String[] {"index",alias + "." + col, "unclustered"};
+						String returnTableName = (alias.equals("")) ? tableName : alias;
+						plan = new String[] {"index", returnTableName + "." + col, "unclustered"};
 					}
 				}
 			}

@@ -1,8 +1,3 @@
 Sailors A B C
 Boats D E F
 Reserves G H
-testRelation1 J K L
-testRelation2 M N O
-testRelation3 P Q R
-testRelation4 S T U
-testRelation5 V W X

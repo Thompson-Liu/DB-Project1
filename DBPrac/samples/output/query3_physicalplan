@@ -1,0 +1,7 @@
+Project[R.G, R.H, B.D, B.E, B.F]
+-SMJ[B.D = R.G]
+--ExternalSort[B.D]
+---Select[B.D <= 99]
+----TableScan[Boats]
+--ExternalSort[R.G]
+---IndexScan[Reserves,G,null,99]

@@ -223,7 +223,8 @@ public class SMJ extends Operator {
 		tr= leftSortOp.getNextTuple();
 		Tuple firstTuple= rightSortOp.getNextTuple();
 		ts= firstTuple;
-		gs= firstTuple;
+		gs= null;
+		ptr = count = 0;
 	}
 
 	@Override

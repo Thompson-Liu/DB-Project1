@@ -1,8 +1,4 @@
 ----------  ===============        P 4          =============== -----------------
-SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G;
-SELECT R.G, R.H, B.D, B.E, B.F, S.A, S.B, S.C FROM Sailors S, Reserves R, Boats B WHERE B.D=R.G AND R.H = S.A;
-SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 100;
-
 -- SELECT DISTINCT S.A, R.G
 -- FROM Sailors S, Boats B, Reserves R
 -- WHERE S.B=R.G AND S.A = B.D AND R.H<> B.D AND R.H<100
@@ -47,8 +43,7 @@ SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 
 -- SELECT * FROM Sailors S, Reserves R
 -- WHERE S.A = R.G AND S.A < 100;
 
--- SELECT * FROM Sailors S, Reserves R
--- ORDER BY R.H;
+-- SELECT * FROM Sailors S, Reserves R;
 
 -- SELECT * FROM Sailors S, Reserves R
 -- WHERE S.B = R.G AND S.B = 100 AND S.C > 100 AND S.C <> 199;
@@ -59,36 +54,9 @@ SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 
 -- SELECT * FROM Sailors S, Reserves R
 -- WHERE S.B = R.G AND S.B = 100 AND R.H <> 2;
 
--- SELECT *
--- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
--- WHERE R.G <> U.N AND R.G = S.B AND S.C = T.J AND R.G = 2 AND T.J = T.K AND U.O <> 42;
-
--- SELECT * FROM Sailors S
--- WHERE S.A < 100 AND S.A <> 99;
-
--- SELECT DISTINCT *
--- FROM testRelation2 U, testRelation5 V, testRelation1 T
--- WHERE T.J = U.M AND T.J = V.V;
-
--- SELECT Sailors.B
--- FROM Sailors
--- WHERE Sailors.A > 9000;
-
--- SELECT Sailors.A
--- FROM Sailors
--- WHERE Sailors.B >= Sailors.C;
-
--- SELECT *
--- FROM Reserves
--- WHERE Reserves.G <> Reserves.H AND Reserves.G = 3;
-
--- SELECT DISTINCT *
--- FROM testRelation1 T, testRelation2 U, testRelation5 V
--- WHERE V.V = U.M AND T.J = U.M;
-
--- SELECT DISTINCT *
--- FROM testRelation1 T, testRelation2 U, testRelation5 V
--- WHERE T.J = U.M AND T.J = V.V AND T.K = V.W;
+SELECT *
+FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
+WHERE R.G <> U.N AND R.G = S.B AND S.C = T.J AND R.G = 2 AND T.J = T.K AND U.O <> 42;
 
 
 ----------------============================   P 1    ===========================-----------

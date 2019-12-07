@@ -69,7 +69,6 @@ public class ProjectOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		reset();
 		Tuple tup;
 		while ((tup= getNextTuple()) != null) {
 			writer.addNextTuple(tup);

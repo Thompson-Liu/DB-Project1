@@ -65,6 +65,10 @@ public class ExternalSortOperator extends Operator {
 
 		// pass0 and get the total number of files stored
 		int totalFiles= initialRun();
+		if (totalFiles == 0) {
+			return;
+		}
+		
 		runs= totalFiles;
 		Double div= Math.ceil(1.0 * runs);
 		totalPass= (int) Math.ceil(Math.log(div) / Math.log(1.0 * (bufferSize - 1)));
@@ -209,6 +213,11 @@ public class ExternalSortOperator extends Operator {
 	/** @return the next tuple in the sorted TupleReader */
 	@Override
 	public Tuple getNextTuple() {
+		if (sortedReader == null) {
+			deleteFile();
+			return null;
+		}
+		
 		Tuple tup= sortedReader.readNextTuple();
 		if (tup == null) {
 			deleteFile();
@@ -218,6 +227,9 @@ public class ExternalSortOperator extends Operator {
 
 	/** Delete the intermediate file created by external sort operator */
 	public void deleteFile() {
+		if (sortedReader == null) {
+			return;
+		}
 		String file= this.file;
 		File deleteFile= new File(file);
 		deleteFile.delete();

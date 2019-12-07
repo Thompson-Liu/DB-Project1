@@ -18,6 +18,7 @@ public class SelectLogOp extends LogicalOperator {
 	private String tableName;
 	private String alias;
 	private Expression exp;
+	private Expression unusedExpr;
 	private ArrayList<BlueBox> attributes;
 	private LogicalOperator child;
 
@@ -31,10 +32,11 @@ public class SelectLogOp extends LogicalOperator {
 	 * @param leaf         the child of selectLogOp
 	 */
 	public SelectLogOp(String tableName, String alias, Expression expression, 
-			List<BlueBox> bb, LogicalOperator leaf) {
+			Expression unusedExpr, List<BlueBox> bb, LogicalOperator leaf) {
 		this.tableName= tableName;
 		this.alias= alias;
 		exp= expression;
+		this.unusedExpr = unusedExpr;
 		
 		attributes = new ArrayList<BlueBox>();
 		if (!bb.isEmpty()) {
@@ -45,6 +47,10 @@ public class SelectLogOp extends LogicalOperator {
 
 	public Expression getSelectExpr() {
 		return exp;
+	}
+	
+	public Expression getUnusedExpr() {
+		return unusedExpr;
 	}
 	
 	public ArrayList<BlueBox> getAttributes() {

@@ -111,41 +111,35 @@ public class PhysicalPlanBuilder {
 		assert(selectPlan[0].equals("index"));
 		Integer low = null;
 		Integer high = null;
-
-		EqualsTo removed = null;
+		
 		for (BlueBox attrBB: attributes) {
 			List<String> attr = attrBB.getAttr();
 			if (attr.contains(selectPlan[1])) {
 				low = (attrBB.getLower() != null) ? attrBB.getLower() : Integer.MIN_VALUE;
 				high = (attrBB.getUpper() != null) ? attrBB.getUpper() : Integer.MAX_VALUE;
-
-				// Example: [S.A = S.B AND S.A < 3] -> [S.B] if indexing on column A, then the expression built 
-				// becomes [S.B < 3], want to restore [S.A = S.B]
-				if (attr.size() > 1 && high != low) {
-					Column removedColExpr = new Column();
-					removedColExpr.setColumnName(selectPlan[1].split("\\.")[1]);
-					Table removedTable = new Table();
-					removedTable.setName(selectPlan[1].split("\\.")[0]);
-					removedColExpr.setTable(removedTable);
-
-					Column nextColExpr = new Column();
-					nextColExpr.setColumnName(attr.get(0).split("\\.")[1]);
-					Table nextTable = new Table();
-					nextTable.setName(attr.get(0).split("\\.")[0]);
-					nextColExpr.setTable(nextTable);
-
-					removed = new EqualsTo();
-					removed.setLeftExpression(removedColExpr);
-					removed.setRightExpression(nextColExpr);
+				
+				if (attr.size() == 1) {
+					attributes.remove(attrBB);
+				} else {
+					attrBB.setEqual((Integer) null);
+					attrBB.setUpper((Integer) null);
+					attrBB.setLower((Integer) null);
 				}
 				break;
 			}
 		}
+		Expression selectExpr = (new UnionFind(attributes)).buildExpression();
+		Expression unusedExpr = selectLop.getUnusedExpr();
+		if (selectExpr != null && unusedExpr != null) {
+			selectExpr = new AndExpression(selectExpr, unusedExpr);
+		} else if (selectExpr == null && unusedExpr != null) {
+			selectExpr = unusedExpr;
+		} 
 		String tableIndexDir = indexDir + "/" + selectLop.getTableName() + "." + selectPlan[1].split("\\.")[1];
 		boolean clustered = selectPlan[2].equals("clustered");
 		try {
 			String tableName = (selectLop.getAlias().equals("")) ? selectLop.getTableName() : selectLop.getAlias();
-			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1].split("\\.")[1], selectLop.getSelectExpr());
+			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1].split("\\.")[1], selectExpr);
 			immOp = new IndexScanOperator(selectLop.getTableName(), selectLop.getAlias(), selectPlan[1], 
 					tableIndexDir, clustered, low, high);
 			if (indexSep.applyAll()) {

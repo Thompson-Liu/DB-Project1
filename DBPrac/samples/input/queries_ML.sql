@@ -1,7 +1,74 @@
+-- SELECT *
+-- FROM Sailors, Reserves;
+
+
+
+-- SELECT *
+-- FROM Sailors S, testRelation1 T1
+-- WHERE S.A=T1.J;
+
+-- SELECT *
+-- FROM Sailors S1, Sailors S2, Sailors S3
+-- WHERE S3.A = S2.A AND S3.C = S2.A;
+
+-- SELECT *
+-- FROM Sailors;
+
+-- SELECT Sailors.A
+-- FROM Sailors;
+
+-- SELECT Boats.F, Boats.D
+-- FROM Boats;
+
+-- SELECT Reserves.G, Reserves.H
+-- FROM Reserves;
+
+-- SELECT *
+-- FROM Sailors
+-- WHERE Sailors.B >= Sailors.C;
+
+-- SELECT Sailors.A
+-- FROM Sailors
+-- WHERE Sailors.B >= Sailors.C
+
+-- SELECT Sailors.A
+-- FROM Sailors
+-- WHERE Sailors.B >= Sailors.C AND Sailors.B < Sailors.C;
+
+-- SELECT *
+-- FROM Sailors, Reserves
+-- WHERE Sailors.A = Reserves.G;
+
+-- SELECT *
+-- FROM Sailors, Reserves, Boats
+-- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D;
+
+-- SELECT *
+-- FROM Sailors, Reserves, Boats
+-- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D AND Sailors.B < 150;
+
+-- SELECT DISTINCT *
+-- FROM Sailors;
+
+-- SELECT DISTINCT *
+-- FROM testRelation1 S1, testRelation1 S2
+-- WHERE S1.J < S2.J;
+
+-- SELECT B.F, B.D
+-- FROM Boats B
+-- ORDER BY B.D;
+
+-- SELECT *
+-- FROM Sailors S, Reserves R, Boats B
+-- WHERE S.A = R.G AND R.H = B.D
+-- ORDER BY S.C;
+
+-- SELECT DISTINCT *
+-- FROM Sailors S, Reserves R, Boats B
+-- WHERE S.A = R.G AND R.H = B.D
+-- ORDER BY S.C;
+
 ----------  ===============        P 4          =============== -----------------
-SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G;
-SELECT R.G, R.H, B.D, B.E, B.F, S.A, S.B, S.C FROM Sailors S, Reserves R, Boats B WHERE B.D=R.G AND R.H = S.A;
-SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 100;
 
 -- SELECT DISTINCT S.A, R.G
 -- FROM Sailors S, Boats B, Reserves R
@@ -15,6 +82,13 @@ SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 
 -- FROM testRelation3, testRelation2, testRelation1;
 -- WHERE testRelation3.P = testRelation2.M AND testRelation2.M= testRelation1.J;
 
+-- SELECT *
+-- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
+-- WHERE R.G <> U.N AND R.G = S.B AND S.C = T.L AND R.G = 2 AND T.L = T.K AND U.O <> 42;
+
+-- SELECT *
+-- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
+-- WHERE R.A <> U.B AND R.A = S.B AND S.C = T.D AND R.A = 2 AND T.D = T.X AND U.Y <> 42;
 
 -- SELECT S.A
 -- FROM Sailors S, Reserves R
@@ -22,75 +96,12 @@ SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 
 
 -- SELECT *
 -- FROM Reserves R, Sailors S
--- WHERE S.B = R.G AND R.H<100 AND S.A>=9050;
-
--- WHERE R.A = 100 AND R.A = S.B;
+-- WHERE R.G = 100 AND R.G = S.B;
 
 -- SELECT *
 -- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
--- WHERE R.G <> U.N AND R.G = S.B AND U.N = T.L AND R.G = 2 AND U.O <> 42
--- ORDER BY R.H;
-
-
--- SELECT DISTINCT S.A, R.G
--- FROM Sailors S, Reserves R, Boats B
--- WHERE S.B = R.G AND S.A = B.D AND R.H <> B.D AND R.H < 100
--- ORDER BY S.A;
-
-
--- SELECT S.A FROM Sailors S, Reserves R
--- WHERE S.B = R.G AND R.H < 100 AND S.A >= 9050;
-
--- SELECT * FROM Sailors S, Reserves R
--- WHERE S.B = R.G AND S.B = 100;
-
--- SELECT * FROM Sailors S, Reserves R
--- WHERE S.A = R.G AND S.A < 100;
-
--- SELECT * FROM Sailors S, Reserves R
--- ORDER BY R.H;
-
--- SELECT * FROM Sailors S, Reserves R
--- WHERE S.B = R.G AND S.B = 100 AND S.C > 100 AND S.C <> 199;
-
--- SELECT * FROM Sailors S
--- WHERE S.B = S.C AND S.C < 2;
-
--- SELECT * FROM Sailors S, Reserves R
--- WHERE S.B = R.G AND S.B = 100 AND R.H <> 2;
-
--- SELECT *
--- FROM Reserves R, Sailors S, testRelation1 T, testRelation2 U
--- WHERE R.G <> U.N AND R.G = S.B AND S.C = T.J AND R.G = 2 AND T.J = T.K AND U.O <> 42;
-
--- SELECT * FROM Sailors S
--- WHERE S.A < 100 AND S.A <> 99;
-
--- SELECT DISTINCT *
--- FROM testRelation2 U, testRelation5 V, testRelation1 T
--- WHERE T.J = U.M AND T.J = V.V;
-
--- SELECT Sailors.B
--- FROM Sailors
--- WHERE Sailors.A > 9000;
-
--- SELECT Sailors.A
--- FROM Sailors
--- WHERE Sailors.B >= Sailors.C;
-
--- SELECT *
--- FROM Reserves
--- WHERE Reserves.G <> Reserves.H AND Reserves.G = 3;
-
--- SELECT DISTINCT *
--- FROM testRelation1 T, testRelation2 U, testRelation5 V
--- WHERE V.V = U.M AND T.J = U.M;
-
--- SELECT DISTINCT *
--- FROM testRelation1 T, testRelation2 U, testRelation5 V
--- WHERE T.J = U.M AND T.J = V.V AND T.K = V.W;
-
-
+-- WHERE R.G<>U.N AND R.G=S.A AND S.C=T.J;
+-- AND T.J=T.K AND U.N<>42;
 ----------------============================   P 1    ===========================-----------
 
 -- SELECT *
@@ -199,20 +210,21 @@ SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 
 
 
 ---------------------================   P2 SMJ BNLJ EXTERNAL SORT    =============----------
+
 -- SELECT *
--- FROM Sailors S, Reserves R, Boats B
--- WHERE S.A = R.G AND R.H = B.D
--- ORDER BY S.C;
+-- FROM testRelation1 S, testRelation2 R, testRelation3 B
+-- WHERE S.J = R.M AND S.K = R.N
+-- ORDER BY S.L;
+
 -- SELECT DISTINCT *
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
 -- ORDER BY S.C;
+
 -- SELECT *
 -- FROM Sailors, Reserves, Boats
 -- WHERE Sailors.A = Reserves.G AND Reserves.H = Boats.D
 -- ORDER BY Sailors.A, Reserves.H;
-
-
 
 -------------------===============   P3   test index scan   ==================-----------------
 -- SELECT *
@@ -225,7 +237,7 @@ SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 
 
 -- SELECT *
 -- FROM testRelation0
--- WHERE testRelation0.B<=910 AND testRelation0.C>=600 OR testRelation0.C!=600
+-- WHERE testRelation0.B<=910 AND testRelation0.C>=600 OR testRelation0.C!=600 
 -- AND testRelation0.A<800;
 
 
