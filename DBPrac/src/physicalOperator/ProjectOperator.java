@@ -44,7 +44,6 @@ public class ProjectOperator extends Operator {
 	/** @return Returns the next tuple read from the data */
 	@Override
 	public Tuple getNextTuple() {
-		
 		Tuple next= null;
 		while ((next= childOp.getNextTuple()) != null) {
 			Tuple tup= new Tuple();
