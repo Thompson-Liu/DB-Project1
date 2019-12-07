@@ -1,29 +1,33 @@
 ----------  ===============        P 5          =============== -----------------
-SELECT *
-FROM testRelation3
-WHERE testRelation3.P=5;
+-- SELECT *
+-- FROM Sailors
+-- WHERE Sailors.A=1251;
+
+-- SELECT *
+-- FROM Sailors
+-- WHERE Sailors.A>2000;
+
+-- SELECT *
+-- FROM Sairlors;
+
+-- SELECT Sailors.A
+-- FROM Sairlors
+-- WHERE Sailors.B=2822 AND Sailors.A>1000;
 
 SELECT *
-FROM testRelation3
-WHERE testRelation3.P>10;
-
-SELECT *
-FROM testRelation3;
+FROM testRelation4;
 
 
 
-
-
-
-SELECT *
-FROM testRelation3 R3, testRelation4 R4
-WHERE R3.P= R4.S AND R3.Q=500;
-SELECT *
-FROM testRelation3 R3, testRelation4 R4
-WHERE R3.P<400 AND R3.P<R4.S;
-SELECT *
-FROM testRelation3 R3, testRelation4 R4
-WHERE R3.P<500 AND R3.P=R4.S;
+-- SELECT *
+-- FROM testRelation3 R3, testRelation4 R4
+-- WHERE R3.P= R4.S AND R3.Q=500;
+-- SELECT *
+-- FROM testRelation3 R3, testRelation4 R4
+-- WHERE R3.P<400 AND R3.P<R4.S;
+-- SELECT *
+-- FROM testRelation3 R3, testRelation4 R4
+-- WHERE R3.P<500 AND R3.P=R4.S;
 
 
 
