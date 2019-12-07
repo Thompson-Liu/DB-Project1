@@ -32,9 +32,8 @@ public class IndexBuilder {
 		bulkloading.buildTree();
 	}
 	
-	public void buildIndices() {
+	public void buildIndices_opt(boolean optimize, String table) {
 		try {
-			
 			reader = new BufferedReader(new FileReader(indexInfo));
 		} catch (FileNotFoundException e) {
 			System.err.println("Input file not found");
@@ -50,7 +49,9 @@ public class IndexBuilder {
 				int isClustered = Integer.parseInt(components[2]);
 				int order = Integer.parseInt(components[3]);
 				// Build the index accordingly
-				buildIndex(isClustered, order, columnName, tableName);
+				if ((optimize && tableName.equals(table)) || !optimize) {
+					buildIndex(isClustered, order, columnName, tableName);
+				}
 			}
 		} catch (NumberFormatException e) {
 			System.err.println("Error when converting integer to String");

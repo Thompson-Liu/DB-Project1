@@ -37,10 +37,12 @@ public class PhysicalPlanBuilder {
 	static Operator immOp;
 	private String tempDir;
 	private String indexDir;
+	private String inputDir;
 
-	public PhysicalPlanBuilder(String tempPath, String indexPath) {
+	public PhysicalPlanBuilder(String input, String tempPath) {
 		tempDir= tempPath;
-		indexDir= indexPath;
+		inputDir = input;
+		indexDir= inputDir + "/db/indexes";
 	}
 
 	/**
@@ -141,7 +143,7 @@ public class PhysicalPlanBuilder {
 			String tableName = (selectLop.getAlias().equals("")) ? selectLop.getTableName() : selectLop.getAlias();
 			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1].split("\\.")[1], selectExpr);
 			immOp = new IndexScanOperator(selectLop.getTableName(), selectLop.getAlias(), selectPlan[1], 
-					tableIndexDir, clustered, low, high);
+					tableIndexDir, inputDir, clustered, low, high);
 			if (indexSep.applyAll()) {
 				return;
 			}

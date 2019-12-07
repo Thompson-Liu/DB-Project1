@@ -11,6 +11,7 @@ import bpTree.Deserializer;
 import dataStructure.Catalog;
 import dataStructure.Tuple;
 import fileIO.BinaryTupleReader;
+import utils.IndexBuilder;
 import utils.PhysicalPlanWriter;
 
 /** This class implements index scan, a file scan that only retrieves a range (subset) of tuples
@@ -30,7 +31,8 @@ public class IndexScanOperator extends ScanOperator {
 	private List<int[]> repo; // Rids
 	private int ptr; // point to the correct position in repo
 
-	/** @param tableName: the relation to scan
+	/** @param inputDir 
+	 * @param tableName: the relation to scan
 	 * @param alias: the alias
 	 * @param index: the index column to use
 	 * @param indexFile: the serialized B+- tree index file
@@ -38,11 +40,15 @@ public class IndexScanOperator extends ScanOperator {
 	 * @param lowkey: the lower bound of the range of the scan (inclusive)
 	 * @param highkey: the higher bound of the range of the scan (inclusive)
 	 * @throws IOException */
-	public IndexScanOperator(String tableName, String alias, String index, String indexFile, boolean isClustered,
-		int lowkey,
-		int highkey) throws IOException {
+	public IndexScanOperator(String tableName, String alias, String index, String indexFile, String inputDir, 
+			boolean isClustered, int lowkey, int highkey) throws IOException {
 
 		super(tableName, alias);
+		
+		// Generate the index when needed
+		IndexBuilder indexBuilder = new IndexBuilder(inputDir);
+		indexBuilder.buildIndices_opt(true, super.getTableName());
+
 		oriTableName = tableName;
 		fin= new FileInputStream(indexFile);
 		fc= fin.getChannel();

@@ -59,7 +59,7 @@ public class QueryEvaluator {
 					
 					// need to pass in the name of the config file path
 					time1 = System.currentTimeMillis();
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(tempDir, inputDir + "/db/indexes");
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(inputDir, tempDir);
 					Operator op= planBuilder.generatePlan(logOp);
 					time2 = System.currentTimeMillis();
 					diffTime = time2 - time1;

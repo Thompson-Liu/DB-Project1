@@ -15,6 +15,7 @@ public class Interpreter {
 
 		// Parse the input file
 		InputFileParser fileParser = new InputFileParser(args[0]);
+		boolean optimize = false;
 //		String inputDir = fileParser.getDir();
 //		String outputDir = fileParser.getDir();
 //		String tempDir = fileParser.getDir();
@@ -37,14 +38,13 @@ public class Interpreter {
 		long time2= System.currentTimeMillis();
 		long diffTime= time2 - time1;
 		System.out.println("time requried to generate the catalog: " + diffTime);
-
-		// build random testing data
-//		 DataGenerator dataGen = new DataGenerator(1, inputDir, 500, 3, 500);
-
-		// build the index
+		
 		time1 = System.currentTimeMillis();
 		IndexBuilder indexBuilder = new IndexBuilder(inputDir + "/db");
-		indexBuilder.buildIndices();
+		if (!optimize) {
+			// build the index
+			indexBuilder.buildIndices_opt(optimize, "");
+		}
 		indexBuilder.readIndices();
 		time2 = System.currentTimeMillis();
 		diffTime = time2 - time1;
