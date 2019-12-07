@@ -64,8 +64,10 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 		highKey= Integer.MAX_VALUE;
 		this.indexColumn= column;
 		this.tableName= tableName;
-
-		original.accept(this);
+		
+		if (original != null) {
+			original.accept(this);
+		}
 	}
 
 	public int getLowKey() {
@@ -79,14 +81,14 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	public boolean changed() {
 		return change;
 	}
-	
+
 	public Expression getResidual() {
 		return residual;
 	}
 
 	@Override
 	public void visit(NullValue arg0) {
-		
+
 	}
 
 	@Override
@@ -176,7 +178,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 
 	@Override
 	public void visit(OrExpression arg0) {
-		
+
 	}
 
 	@Override
@@ -192,7 +194,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private Integer checkLeft(Expression left, Expression right) {
 		if ((left instanceof Column) && (right instanceof DoubleValue || right instanceof LongValue)) {
 			if (((Column) left).getColumnName().equals(indexColumn) &&
-				((Column) left).getTable().getName().equals(tableName)) {
+					((Column) left).getTable().getName().equals(tableName)) {
 				if (right instanceof DoubleValue) { return (int) ((DoubleValue) right).getValue(); }
 				return (int) ((LongValue) right).getValue();
 			}
@@ -203,7 +205,7 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 	private Integer checkRight(Expression left, Expression right) {
 		if ((left instanceof DoubleValue) && (right instanceof Column)) {
 			if (((Column) right).getColumnName() == indexColumn &&
-				(((Column) right).getTable().getName() == tableName)) {
+					(((Column) right).getTable().getName() == tableName)) {
 				if (left instanceof DoubleValue) {
 					return (int) ((DoubleValue) left).getValue();
 				}
@@ -329,6 +331,8 @@ public class IndexConditionSeperator implements ExpressionVisitor {
 
 	@Override
 	public void visit(NotEqualsTo arg0) {
+		residual = (residual instanceof NullValue) ? arg0 : new AndExpression(residual, arg0);
+		applyToAll= false;
 	}
 
 	@Override

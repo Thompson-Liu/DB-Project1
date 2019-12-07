@@ -1,6 +1,0 @@
-ExternalSort[S.L]
--BNLJ[]
---BNLJ[S.J = R.M AND S.K = R.N]
----TableScan[testRelation1]
----TableScan[testRelation2]
---TableScan[testRelation3]

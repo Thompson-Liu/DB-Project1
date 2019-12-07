@@ -111,41 +111,35 @@ public class PhysicalPlanBuilder {
 		assert(selectPlan[0].equals("index"));
 		Integer low = null;
 		Integer high = null;
-
-		EqualsTo removed = null;
+		
 		for (BlueBox attrBB: attributes) {
 			List<String> attr = attrBB.getAttr();
 			if (attr.contains(selectPlan[1])) {
 				low = (attrBB.getLower() != null) ? attrBB.getLower() : Integer.MIN_VALUE;
 				high = (attrBB.getUpper() != null) ? attrBB.getUpper() : Integer.MAX_VALUE;
-
-				// Example: [S.A = S.B AND S.A < 3] -> [S.B] if indexing on column A, then the expression built 
-				// becomes [S.B < 3], want to restore [S.A = S.B]
-				if (attr.size() > 1 && high != low) {
-					Column removedColExpr = new Column();
-					removedColExpr.setColumnName(selectPlan[1].split("\\.")[1]);
-					Table removedTable = new Table();
-					removedTable.setName(selectPlan[1].split("\\.")[0]);
-					removedColExpr.setTable(removedTable);
-
-					Column nextColExpr = new Column();
-					nextColExpr.setColumnName(attr.get(0).split("\\.")[1]);
-					Table nextTable = new Table();
-					nextTable.setName(attr.get(0).split("\\.")[0]);
-					nextColExpr.setTable(nextTable);
-
-					removed = new EqualsTo();
-					removed.setLeftExpression(removedColExpr);
-					removed.setRightExpression(nextColExpr);
+				
+				if (attr.size() == 1) {
+					attributes.remove(attrBB);
+				} else {
+					attrBB.setEqual((Integer) null);
+					attrBB.setUpper((Integer) null);
+					attrBB.setLower((Integer) null);
 				}
 				break;
 			}
 		}
+		Expression selectExpr = (new UnionFind(attributes)).buildExpression();
+		Expression unusedExpr = selectLop.getUnusedExpr();
+		if (selectExpr != null && unusedExpr != null) {
+			selectExpr = new AndExpression(selectExpr, unusedExpr);
+		} else if (selectExpr == null && unusedExpr != null) {
+			selectExpr = unusedExpr;
+		} 
 		String tableIndexDir = indexDir + "/" + selectLop.getTableName() + "." + selectPlan[1].split("\\.")[1];
 		boolean clustered = selectPlan[2].equals("clustered");
 		try {
 			String tableName = (selectLop.getAlias().equals("")) ? selectLop.getTableName() : selectLop.getAlias();
-			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1].split("\\.")[1], selectLop.getSelectExpr());
+			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1].split("\\.")[1], selectExpr);
 			immOp = new IndexScanOperator(selectLop.getTableName(), selectLop.getAlias(), selectPlan[1], 
 					tableIndexDir, clustered, low, high);
 			if (indexSep.applyAll()) {
@@ -200,9 +194,9 @@ public class PhysicalPlanBuilder {
 
 
 		// Build the Join tree
-		joinOrder.get(0).accept(this);;
+		joinOrder.get(0).accept(this);
 		Operator leftChildOp = immOp;
-		joinOrder.get(1).accept(this);;
+		joinOrder.get(1).accept(this);
 		Operator rightChildOp = immOp;
 
 		List<String> joinedTable = new ArrayList<String>();
@@ -278,17 +272,27 @@ public class PhysicalPlanBuilder {
 	 * @return
 	 */
 	private boolean checkSMJ(Expression joinExpr, List<String> joinedTable, String tableRight) {
-		if (joinExpr == null || !(joinExpr instanceof EqualsTo)) {
+		if (joinExpr == null) {
 			return false;
 		}
 
-		Column left = (Column) ((BinaryExpression) joinExpr).getLeftExpression();
-		Column right = (Column) ((BinaryExpression) joinExpr).getRightExpression();
+		if (joinExpr instanceof EqualsTo) {
+			Column left = (Column) ((BinaryExpression) joinExpr).getLeftExpression();
+			Column right = (Column) ((BinaryExpression) joinExpr).getRightExpression();
 
-		String leftTableName = left.getTable().getName();
-		String rightTableName = right.getTable().getName();
+			String leftTableName = left.getTable().getName();
+			String rightTableName = right.getTable().getName();
 
-		return ((joinedTable.contains(leftTableName) && tableRight.equals(rightTableName))
-				|| (tableRight.equals(leftTableName) && joinedTable.contains(rightTableName)));
+			return ((joinedTable.contains(leftTableName) && tableRight.equals(rightTableName))
+					|| (tableRight.equals(leftTableName) && joinedTable.contains(rightTableName)));
+		} 
+		
+		if (!(joinExpr instanceof AndExpression)) {
+			return false;
+		}
+		
+		Expression right = ((BinaryExpression) joinExpr).getRightExpression();
+		Expression left = ((BinaryExpression) joinExpr).getLeftExpression();
+		return checkSMJ(right, joinedTable, tableRight) && checkSMJ(left, joinedTable, tableRight);
 	}
 }

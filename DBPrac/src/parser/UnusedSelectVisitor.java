@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
 import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.DoubleValue;
@@ -212,13 +213,13 @@ public class UnusedSelectVisitor implements ExpressionVisitor {
 	@Override
 	public void visit(GreaterThan arg0) {
 		// TODO Auto-generated method stub
-		
+		parseBinary(arg0);
 	}
 
 	@Override
 	public void visit(GreaterThanEquals arg0) {
 		// TODO Auto-generated method stub
-		
+		parseBinary(arg0);
 	}
 
 	@Override
@@ -242,13 +243,30 @@ public class UnusedSelectVisitor implements ExpressionVisitor {
 	@Override
 	public void visit(MinorThan arg0) {
 		// TODO Auto-generated method stub
-		
+		parseBinary(arg0);
 	}
 
 	@Override
 	public void visit(MinorThanEquals arg0) {
 		// TODO Auto-generated method stub
+		parseBinary(arg0);
+	}
+	
+	private void parseBinary(Expression arg0) {
+		Expression left = ((BinaryExpression) arg0).getLeftExpression();
+		Expression right = ((BinaryExpression) arg0).getRightExpression();
 		
+		assert(left instanceof Column && right instanceof Column);
+		
+		Column col1= (Column) left;
+		String tableName = col1.getTable().getName();
+		
+		Column col2 = (Column) right;
+		String tableNameR = col2.getTable().getName();
+		
+		if (tableName.equals(name) &&  tableNameR.equals(name)) {
+			tableExpr.add(arg0);
+		}	
 	}
 
 	@Override
@@ -268,11 +286,10 @@ public class UnusedSelectVisitor implements ExpressionVisitor {
 			assert(schema.contains(tableCol));
 			if (right instanceof Column) {
 				Column col2 = (Column) right;
-				String col2Table = col2.getTable().getName();
-				String table2Name = col2Table.split("\\.")[0];
-				String table2Schema = col2Table.split("\\.")[1];
-				assert(table2Name.equals(name));
-				assert(schema.contains(table2Schema));
+				String col2TableName = col2.getTable().getName();
+				String col2Schema = col2.getColumnName();
+				assert(col2TableName.equals(name));
+				assert(schema.contains(col2Schema));
 			}
 			tableExpr.add(arg0);
 		}

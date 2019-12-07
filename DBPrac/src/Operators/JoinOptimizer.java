@@ -70,7 +70,6 @@ public class JoinOptimizer {
 		HashSet<String> prevSubTables = new HashSet<String>(this.aliasNames);
 		PlanInfo optimalPlan = this.subsetPlan.get(prevSubTables);
 		ArrayList<LogicalOperator> ret = optimalPlan.getOpsCopy();
-		System.out.print(optimalPlan.getAliasNames().toString());
 		return optimalPlan.getOpsCopy();
 	}
 
@@ -180,7 +179,7 @@ public class JoinOptimizer {
 		curPlan.addAliasName(aliasName);
 
 		// TODO (call UnionFind function,e.g. getTableColRange(TableName) to get)
-		ArrayList<BlueBox> blueBoxes = this.unionFind.findSelect(aliasName);
+		List<BlueBox> blueBoxes = this.unionFind.findSelect(aliasName).getBlueBoxes();
 		double reductionFactor =1.0;
 		for(String col:schema) {
 			int oriHigh = catalog.getColRange(tableName, col)[1];

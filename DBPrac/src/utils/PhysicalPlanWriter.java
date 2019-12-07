@@ -69,8 +69,8 @@ public class PhysicalPlanWriter {
 			lo = op.getLow() + "";
 		}
 		writer.write(new String(new char[level]).replace("\0", "-") + "IndexScan[" +
-				op.getOriginalTableName() + ", " + op.getCol().split("\\.")[1] + ", " 
-				+ lo + ", " + hi + "]\n");
+				op.getOriginalTableName() + "," + op.getCol().split("\\.")[1] + "," 
+				+ lo + "," + hi + "]\n");
 	}
 
 	// No need to implement this

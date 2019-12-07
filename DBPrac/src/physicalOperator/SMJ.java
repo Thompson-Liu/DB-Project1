@@ -40,8 +40,8 @@ public class SMJ extends Operator {
 		int result= 0;
 		int count= 0;
 		while (count < leftColList.size() && result == 0) {
-			result= leftTup.getData(leftSchema.indexOf(leftColList.get(count))) - rightTup
-					.getData(rightSchema.indexOf(rightColList.get(count)));
+			result= leftTup.getData(leftSchema.indexOf(leftColList.get(count))) 
+					- rightTup.getData(rightSchema.indexOf(rightColList.get(count)));
 			count++ ;
 		}
 		return result;
@@ -223,7 +223,8 @@ public class SMJ extends Operator {
 		tr= leftSortOp.getNextTuple();
 		Tuple firstTuple= rightSortOp.getNextTuple();
 		ts= firstTuple;
-		gs= firstTuple;
+		gs= null;
+		ptr = count = 0;
 	}
 
 	@Override

@@ -1,7 +1,0 @@
-Sort[S.L]
--Join[]
-[[S.J, R.M], equals null, min null, max null]
-[[S.K, R.N], equals null, min null, max null]
---Leaf[testRelation1]
---Leaf[testRelation2]
---Leaf[testRelation3]

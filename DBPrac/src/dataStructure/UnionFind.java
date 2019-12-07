@@ -3,6 +3,16 @@ package dataStructure;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.NullValue;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
+import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
+
 /** This class implements the union find algorithm. An instance is a UnionFind object containing
  * blue boxes generated from the queries. */
 public class UnionFind {
@@ -12,6 +22,156 @@ public class UnionFind {
 	/** Initialize class fields. */
 	public UnionFind() {
 		elements= new ArrayList<BlueBox>();
+	}
+
+	public UnionFind(List<BlueBox> uf) {
+		elements = new ArrayList<BlueBox>();
+		for (BlueBox bb: uf) {
+			elements.add(bb.copy());
+		}
+	}
+
+	/** Copy constructor  **/
+	public UnionFind(UnionFind ufCopy) {
+		elements = new ArrayList<BlueBox>();
+		for (BlueBox bb: ufCopy.getBlueBoxes()) {
+			elements.add(bb.copy());
+		}
+	}
+
+	/**
+	 * Build expressions from the bluebox that contains attributes of the table
+	 * 
+	 * @param selectAttr 	a list of bluebox which contains equality between column attributs of the current table
+	 * @return        		an expression built from the list of blueboxes
+	 */
+	public Expression buildExpression() {
+		// If the hashMap is empty, all attributes are resolved, return a null Expression
+		if (elements.isEmpty()) {
+			return null;
+		}
+
+		List<Expression> intermediate = new ArrayList<Expression>();
+		for (BlueBox bb: elements) {
+			// Initialize a null value to start the rescurssion 
+			intermediate.add(buildCol(new NullValue(), bb.getAttr(), bb.getBound()));
+		}
+
+		if (intermediate.isEmpty()) {
+			return null;
+		} else if (intermediate.size() == 1) {
+			return intermediate.get(0);
+		}
+
+		Expression result = new AndExpression(intermediate.remove(0), intermediate.remove(0));
+		return buildExpressionHelper(result, intermediate); 
+	}
+
+	/**
+	 * A helper to connect each intermediate expressions with an AndExpression. 
+	 * 
+	 * @param intermediate   Intermediate result of the recurssive step
+	 * @param expr           List of expression parsed before that need to be connected together
+	 * @return				 A connected expression
+	 */
+	private Expression buildExpressionHelper(Expression intermediate, List<Expression> expr) {
+		if (expr.size() == 0) {
+			return intermediate;
+		}
+		return buildExpressionHelper(new AndExpression(intermediate, expr.remove(0)), expr);
+	}
+
+	/**
+	 * Construct a series of column Expression from the list of equal column attributes, 
+	 * and also the boundaries on them too.
+	 * 
+	 * @param intermediate		Intermediate result of the recurssive step
+	 * @param list				a list of equal column attributes	
+	 * @param stats				the bound on the equal column attributes
+	 * @return
+	 */
+	private Expression buildCol(Expression intermediate, List<String> list, Integer[] stats) {
+		//  Construct a left Column object
+		String left = list.remove(0);
+		String leftTableName = left.split("\\.")[0];
+		String leftTableCol = left.split("\\.")[1];
+
+		Column leftCol = new Column();
+		leftCol.setColumnName(leftTableCol);
+		Table leftTable = new Table();
+		leftTable.setName(leftTableName);
+		leftCol.setTable(leftTable);
+
+		// if there's only one attrs left, construct a attr op val
+		if (list.size() == 0) {
+			if (stats[0] == null && stats[1] == null) {
+				// This case shouldn't happen
+				assert(! (intermediate instanceof NullValue));
+				return intermediate;
+			} 
+
+			if (stats[0] == null && stats[1] != null) {
+				MinorThanEquals minorEqual = new MinorThanEquals();
+				minorEqual.setLeftExpression(leftCol);
+				minorEqual.setRightExpression(new LongValue(stats[1].toString()));
+				if (intermediate instanceof NullValue) {
+					return minorEqual;
+				}
+				return new AndExpression(intermediate, minorEqual);
+			}
+
+			if (stats[0] != null && stats[1] == null) {
+				GreaterThanEquals greaterEqual = new GreaterThanEquals();
+				greaterEqual.setLeftExpression(leftCol);
+				greaterEqual.setRightExpression(new LongValue(stats[0].toString()));
+				if (intermediate instanceof NullValue) {
+					return greaterEqual;
+				}
+				return new AndExpression(intermediate, greaterEqual);
+			}
+
+			if (stats[0] == stats[1]) {
+				EqualsTo equalExpr = new EqualsTo();
+				equalExpr.setLeftExpression(leftCol);
+				equalExpr.setRightExpression(new LongValue(stats[0].toString()));
+				if (intermediate instanceof NullValue) {
+					return equalExpr;
+				}
+				return new AndExpression(intermediate, equalExpr);
+			}
+			GreaterThanEquals greaterEqual = new GreaterThanEquals();
+			greaterEqual.setLeftExpression(leftCol);
+			greaterEqual.setRightExpression(new LongValue(stats[0].toString()));
+
+			MinorThanEquals minorEqual = new MinorThanEquals();
+			minorEqual.setLeftExpression(leftCol);
+			minorEqual.setRightExpression(new LongValue(stats[1].toString()));
+			if (intermediate instanceof NullValue) {
+				return new AndExpression(minorEqual, greaterEqual);
+			}
+			return new AndExpression(new AndExpression(intermediate, greaterEqual), minorEqual);
+		}
+
+		// Otherwise, construct the right Column object
+		String right = list.get(0);
+		String rightTableName = right.split("\\.")[0];
+		String rightTableCol = right.split("\\.")[1];
+
+		Column rightCol = new Column();
+		rightCol.setColumnName(rightTableCol);
+		Table rightTable = new Table();
+		rightTable.setName(rightTableName);
+		rightCol.setTable(rightTable);
+
+		// Construct the equality between the two column
+		EqualsTo colEqual = new EqualsTo();
+		colEqual.setLeftExpression(leftCol);
+		colEqual.setRightExpression(rightCol);
+
+		if (intermediate instanceof NullValue) {
+			return buildCol(colEqual, list, stats);
+		}
+		return buildCol(new AndExpression(intermediate, colEqual), list, stats);
 	}
 
 	/** Find the bluebox that col is in. If no such box exists, create a new bluebox containing col.
@@ -33,13 +193,17 @@ public class UnionFind {
 		return elements;
 	}
 
+	public Boolean isEmpty() {
+		return elements.isEmpty();
+	}
+
 	/** Example: WHERE S.A = S.B AND S.B = S.C AND S.D = 15 Return: <[S.A, S.B, S.C]: [Null, Null]>,
 	 * <[S.D]: [15,15]>
 	 * 
 	 * @param alias
 	 * @return */
-	public ArrayList<BlueBox> findSelect(String alias) {
-		ArrayList<BlueBox> relevantBBList = new ArrayList<BlueBox>();
+	public UnionFind findSelect(String alias) {
+		List<BlueBox> relevantBBList = new ArrayList<BlueBox>();
 		List<String> attrs = new ArrayList<String>();
 
 		// Loop through each bluebox stored
@@ -54,7 +218,7 @@ public class UnionFind {
 					attrs.add(attr);
 				}
 			}
-			
+
 			boolean noBound = (bb.getLower() == null) && (bb.getUpper() == null);
 			// if the attributes in this bluebox are not empty, add the arraylist into the hashmap
 			if (attrs.size() > 1 || (attrs.size() == 1 && !noBound))  {
@@ -72,7 +236,7 @@ public class UnionFind {
 			}
 			attrs= new ArrayList<String>();
 		}
-		return relevantBBList;
+		return new UnionFind(relevantBBList);
 	}
 
 	/** Example: " R.a=R.h=B.C AND S.d=B.e " prevTables:[R,S] topMostTable: [B] Return: [ ["R.a","R.h" ,

@@ -44,7 +44,6 @@ public class ProjectOperator extends Operator {
 	/** @return Returns the next tuple read from the data */
 	@Override
 	public Tuple getNextTuple() {
-		
 		Tuple next= null;
 		while ((next= childOp.getNextTuple()) != null) {
 			Tuple tup= new Tuple();
@@ -69,7 +68,6 @@ public class ProjectOperator extends Operator {
 	 * @param print boolean decides whether the data will actually be printed */
 	@Override
 	public void dump(TupleWriter writer) {
-		reset();
 		Tuple tup;
 		while ((tup= getNextTuple()) != null) {
 			writer.addNextTuple(tup);
