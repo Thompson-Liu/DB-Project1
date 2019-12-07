@@ -1,21 +1,21 @@
 ----------  ===============        P 5          =============== -----------------
-SELECT *
-FROM Sailors
-WHERE Sailors.A=1251;
-
-SELECT *
-FROM Sailors
-WHERE Sailors.A>2000;
-
-SELECT *
-FROM Sairlors;
-
-SELECT Sailors.A
-FROM Sairlors
-WHERE Sailors.B=2822 AND Sailors.A>1000;
+-- SELECT *
+-- FROM Sailors
+-- WHERE Sailors.A=1251;
 
 -- SELECT *
--- FROM testRelation4;
+-- FROM Sailors
+-- WHERE Sailors.A>2000;
+
+-- SELECT *
+-- FROM Sairlors;
+
+-- SELECT Sailors.A
+-- FROM Sairlors
+-- WHERE Sailors.B=2822 AND Sailors.A>1000;
+
+SELECT *
+FROM testRelation4;
 
 
 
