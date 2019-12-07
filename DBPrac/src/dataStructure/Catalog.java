@@ -206,7 +206,6 @@ public class Catalog {
 	 * @return col is sorted on on file
 	 */
 	public Boolean getIsClustered(String tableName,String col) {
-		System.out.println(tableName);
 		if(this.tableInfo.get(tableName).getClustered()==null) {
 			return false;
 		}

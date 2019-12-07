@@ -1,7 +1,33 @@
-----------  ===============        P 4          =============== -----------------
-SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G;
-SELECT R.G, R.H, B.D, B.E, B.F, S.A, S.B, S.C FROM Sailors S, Reserves R, Boats B WHERE B.D=R.G AND R.H = S.A;
-SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 100;
+----------  ===============        P 5          =============== -----------------
+SELECT *
+FROM testRelation2
+WHERE testRelation2.M=5;
+SELECT *
+FROM testRelation2
+WHERE testRelation2.M>50;
+SELECT *
+FROM testRelation3 R3, testRelation4 R4
+WHERE R3.P= R4.S AND R3.Q=500;
+SELECT *
+FROM testRelation3 R3, testRelation4 R4
+WHERE R3.P<400 AND R3.P<R4.S;
+SELECT *
+FROM testRelation3 R3, testRelation4 R4
+WHERE R3.P<500 AND R3.P=R4.S;
+
+
+
+
+----------  ===============        P 4          =============== ----------------
+-- SELECT R.G, R.H, B.D, B.E, B.F
+-- FROM Reserves R, Boats B
+-- WHERE B.D=R.G;
+-- SELECT R.G, R.H, B.D, B.E, B.F, S.A, S.B, S.C
+-- FROM Sailors S, Reserves R, Boats B
+-- WHERE B.D=R.G AND R.H = S.A;
+-- SELECT R.G, R.H, B.D, B.E, B.F
+-- FROM Reserves R, Boats B
+-- WHERE B.D=R.G AND B.D < 100;
 
 -- SELECT DISTINCT S.A, R.G
 -- FROM Sailors S, Boats B, Reserves R
@@ -200,9 +226,9 @@ SELECT R.G, R.H, B.D, B.E, B.F FROM Reserves R, Boats B WHERE B.D=R.G AND B.D < 
 
 ---------------------================   P2 SMJ BNLJ EXTERNAL SORT    =============----------
 -- SELECT *
--- FROM Sailors S, Reserves R, Boats B
--- WHERE S.A = R.G AND R.H = B.D
--- ORDER BY S.C;
+-- FROM testRelation1 S, testRelation2 R, testRelation3 B
+-- WHERE S.J = R.M AND S.K = R.N
+-- ORDER BY S.L;
 -- SELECT DISTINCT *
 -- FROM Sailors S, Reserves R, Boats B
 -- WHERE S.A = R.G AND R.H = B.D
