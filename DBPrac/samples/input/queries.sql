@@ -1,11 +1,11 @@
 ----------  ===============        P 5          =============== -----------------
 SELECT *
 FROM testRelation3
-WHERE testRelation3.M=5;
+WHERE testRelation3.P=5;
 
 SELECT *
 FROM testRelation3
-WHERE testRelation3.M>10;
+WHERE testRelation3.P>10;
 
 SELECT *
 FROM testRelation3;
