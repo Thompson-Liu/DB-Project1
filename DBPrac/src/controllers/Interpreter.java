@@ -15,32 +15,40 @@ public class Interpreter {
 
 		// Parse the input file
 		InputFileParser fileParser = new InputFileParser(args[0]);
-		String inputDir = fileParser.getDir();
-		String outputDir = fileParser.getDir();
-		String tempDir = fileParser.getDir();
+//		String inputDir = fileParser.getDir();
+//		String outputDir = fileParser.getDir();
+//		String tempDir = fileParser.getDir();
 		
-//		String current = "";
-//		try {
-//			current = new java.io.File( "." ).getCanonicalPath();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		String inputDir = current + "/samples/input";
-//		String outputDir = current + "/samples/output";
-//		String tempDir = current + "/samples/tempdir";
+		String current = "";
+		try {
+			current = new java.io.File( "." ).getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String inputDir = current + "/samples/input";
+		String outputDir = current + "/samples/output";
+		String tempDir = current + "/samples/tempdir";
 
 		// Generate the catalog of data relations' directory and schema
+		long time1= System.currentTimeMillis();
 		CatalogGenerator catalogGen = new CatalogGenerator(inputDir + "/db");
 		catalogGen.createCatalog();
+		long time2= System.currentTimeMillis();
+		long diffTime= time2 - time1;
+		System.out.println("time requried to generate the catalog: " + diffTime);
 
 		// build random testing data
 //		 DataGenerator dataGen = new DataGenerator(1, inputDir, 500, 3, 500);
 
+		// build the index
+		time1 = System.currentTimeMillis();
 		IndexBuilder indexBuilder = new IndexBuilder(inputDir + "/db");
-		
 		indexBuilder.buildIndices();
 		indexBuilder.readIndices();
+		time2 = System.currentTimeMillis();
+		diffTime = time2 - time1;
+		System.out.println("time requried to generate indexes is: " + diffTime);
 		
 		QueryEvaluator queryEval = new QueryEvaluator(inputDir + "/queries.sql", 
 				outputDir, inputDir, tempDir);
