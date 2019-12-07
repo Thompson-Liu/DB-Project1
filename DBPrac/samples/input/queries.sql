@@ -1,14 +1,14 @@
 ----------  ===============        P 5          =============== -----------------
 SELECT *
-FROM testRelation3
-WHERE testRelation3.P=5;
+FROM Sailors
+WHERE Sailors.D=5;
 
 SELECT *
-FROM testRelation3
-WHERE testRelation3.P>10;
+FROM Sailors
+WHERE Sailors.D>10;
 
 SELECT *
-FROM testRelation3;
+FROM Sairlors;
 
 
 
