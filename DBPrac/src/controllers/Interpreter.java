@@ -32,6 +32,7 @@ public class Interpreter {
 		String tempDir = current + "/samples/tempdir";
 
 		// Generate the catalog of data relations' directory and schema
+		long time1_start = System.currentTimeMillis();
 		long time1= System.currentTimeMillis();
 		CatalogGenerator catalogGen = new CatalogGenerator(inputDir + "/db");
 		catalogGen.createCatalog();
@@ -50,8 +51,11 @@ public class Interpreter {
 		diffTime = time2 - time1;
 		System.out.println("time requried to generate indexes is: " + diffTime);
 		
-		QueryEvaluator queryEval = new QueryEvaluator(inputDir + "/queries.sql", 
+		QueryEvaluator queryEval = new QueryEvaluator(optimize, inputDir + "/queries.sql", 
 				outputDir, inputDir, tempDir);
 		queryEval.evaluateQuery();
+		long time2_end = System.currentTimeMillis();
+		diffTime = time2_end - time1_start;
+		System.out.println("Total time to run the benchmark: " + diffTime);	
 	}
 }

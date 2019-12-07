@@ -1,1 +1,2 @@
-Leaf[testRelation3]
+Select[Sailors.A = 1251]
+-Leaf[Sailors]

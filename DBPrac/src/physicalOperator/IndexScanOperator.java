@@ -1,5 +1,6 @@
 package physicalOperator;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -41,14 +42,19 @@ public class IndexScanOperator extends ScanOperator {
 	 * @param highkey: the higher bound of the range of the scan (inclusive)
 	 * @throws IOException */
 	public IndexScanOperator(String tableName, String alias, String index, String indexFile, String inputDir, 
-			boolean isClustered, int lowkey, int highkey) throws IOException {
+			boolean optimize, boolean isClustered, int lowkey, int highkey) throws IOException {
 
 		super(tableName, alias);
 		
-		// Generate the index when needed
-		IndexBuilder indexBuilder = new IndexBuilder(inputDir);
-		indexBuilder.buildIndices_opt(true, super.getTableName());
-
+		if (optimize) {
+			File tempFile = new File(indexFile);
+			if (!tempFile.exists()) {
+				// Generate the index when needed
+				IndexBuilder indexBuilder = new IndexBuilder(inputDir + "/db");
+				indexBuilder.buildIndices_opt(true, super.getTableName());
+			}
+		}
+		
 		oriTableName = tableName;
 		fin= new FileInputStream(indexFile);
 		fc= fin.getChannel();

@@ -35,11 +35,13 @@ import physicalOperator.SortOperator;
 public class PhysicalPlanBuilder {
 
 	static Operator immOp;
+	private boolean opt_flag;
 	private String tempDir;
 	private String indexDir;
 	private String inputDir;
 
-	public PhysicalPlanBuilder(String input, String tempPath) {
+	public PhysicalPlanBuilder(Boolean optimize, String input, String tempPath) {
+		opt_flag = optimize;
 		tempDir= tempPath;
 		inputDir = input;
 		indexDir= inputDir + "/db/indexes";
@@ -143,7 +145,7 @@ public class PhysicalPlanBuilder {
 			String tableName = (selectLop.getAlias().equals("")) ? selectLop.getTableName() : selectLop.getAlias();
 			IndexConditionSeperator indexSep= new IndexConditionSeperator(tableName, selectPlan[1].split("\\.")[1], selectExpr);
 			immOp = new IndexScanOperator(selectLop.getTableName(), selectLop.getAlias(), selectPlan[1], 
-					tableIndexDir, inputDir, clustered, low, high);
+					tableIndexDir, inputDir, clustered, opt_flag, low, high);
 			if (indexSep.applyAll()) {
 				return;
 			}

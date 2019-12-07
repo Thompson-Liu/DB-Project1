@@ -24,10 +24,12 @@ public class QueryEvaluator {
 	private String outputDir;
 	private String inputDir;
 	private String tempDir;
+	private boolean optimize;
 	
 	private int queryCounter;
 	
-	public QueryEvaluator(String queriesFile, String outDir, String inDir, String tmpDir) {
+	public QueryEvaluator(Boolean opt, String queriesFile, String outDir, String inDir, String tmpDir) {
+		optimize = opt;
 		queryDir = queriesFile;
 		outputDir = outDir;
 		inputDir = inDir;
@@ -59,7 +61,7 @@ public class QueryEvaluator {
 					
 					// need to pass in the name of the config file path
 					time1 = System.currentTimeMillis();
-					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(inputDir, tempDir);
+					PhysicalPlanBuilder planBuilder= new PhysicalPlanBuilder(optimize, inputDir, tempDir);
 					Operator op= planBuilder.generatePlan(logOp);
 					time2 = System.currentTimeMillis();
 					diffTime = time2 - time1;
