@@ -1,12 +1,20 @@
 ----------  ===============        P 5          =============== -----------------
 SELECT *
-FROM testRelation2
-WHERE testRelation2.M=5;
+FROM testRelation3
+WHERE testRelation3.M=5;
+
 SELECT *
-FROM testRelation2
-WHERE testRelation2.M>10;
+FROM testRelation3
+WHERE testRelation3.M>10;
+
 SELECT *
-FROM testRelation2;
+FROM testRelation3;
+
+
+
+
+
+
 SELECT *
 FROM testRelation3 R3, testRelation4 R4
 WHERE R3.P= R4.S AND R3.Q=500;
